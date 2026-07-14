@@ -3,8 +3,6 @@ import {
   presetWind3,
   presetAttributify,
   presetIcons,
-  presetWebFonts,
-  transformerDirectives,
   transformerVariantGroup,
 } from 'unocss'
 import { readFileSync, existsSync } from 'node:fs'
@@ -12,6 +10,7 @@ import { readFileSync, existsSync } from 'node:fs'
 import { UI } from './src/config'
 import projecstData from './src/content/projects/data.json'
 
+import type { PresetWind3Theme } from 'unocss'
 import type {
   IconNavItem,
   ResponsiveNavItem,
@@ -20,6 +19,7 @@ import type {
 } from './src/types'
 
 const { internalNavs, socialLinks, githubView } = UI
+
 const navIcons = internalNavs
   .filter(
     (item) =>
@@ -56,23 +56,26 @@ function getBlogIcons(): string[] {
 const blogIcons = getBlogIcons()
 
 const githubVersionColor: Record<string, string> = {
-  major: 'bg-rose/15 text-rose-7 dark:text-rose-3',
-  minor: 'bg-purple/15 text-purple-7 dark:text-purple-3',
-  patch: 'bg-green/15 text-green-7 dark:text-green-3',
-  pre: 'bg-teal/15 text-teal-7 dark:text-teal-3',
+  major: 'bg-rose/15 text-rose-700 dark:text-rose-300',
+  minor: 'bg-purple/15 text-purple-700 dark:text-purple-300',
+  patch: 'bg-green/15 text-green-700 dark:text-green-300',
+  pre: 'bg-teal/15 text-teal-700 dark:text-teal-300',
 }
 const githubVersionClass = Object.keys(githubVersionColor).map(
   (k) => `github-${k}`
 )
 const githubSubLogos = githubView.subLogoMatches.map((item) => item[1])
 
-export default defineConfig({
-  // Astro 5 no longer pipes `src/content/**/*.{md,mdx}` through Vite
+export default defineConfig<PresetWind3Theme>({
   content: {
-    filesystem: ['./src/{content,pages}/**/*.{md,mdx}'],
+    // From 66.6.5, custom `filesystem` overrides default
+    // `'./src/components/**/*'` instead of merging it
+    filesystem: [
+      './src/content/**/*.{md,mdx}',
+      './src/pages/**/*.{astro,md,mdx}',
+      './src/{layouts,components}/**/*.astro',
+    ],
   },
-
-  // will be deep-merged to the default theme
   extendTheme: (theme) => {
     return {
       ...theme,
@@ -80,13 +83,15 @@ export default defineConfig({
         ...theme.breakpoints,
         lgp: '1128px',
       },
+      fontFamily: {
+        ...theme.fontFamily,
+        sans: 'var(--font-sans)',
+        mono: 'var(--font-mono)',
+        condensed: 'var(--font-condensed)',
+      },
     }
   },
-
-  // define utility classes and the resulting CSS
   rules: [],
-
-  // combine multiple rules as utility classes
   shortcuts: [
     [
       /^(\w+)-transition(?:-(\d+))?$/,
@@ -137,8 +142,6 @@ export default defineConfig({
       ([, version]) => `rounded ${githubVersionColor[version]}`,
     ],
   ],
-
-  // presets are partial configurations
   presets: [
     presetWind3(),
     presetAttributify({
@@ -154,17 +157,8 @@ export default defineConfig({
         'vertical-align': 'text-bottom',
       },
     }),
-    // 关闭远程字体拉取，避免网络超时告警。如需使用，请改回 provider 并配置本地/可用源。
-    presetWebFonts({
-      provider: 'none',
-    }),
   ],
-
-  // provides a unified interface to transform source code in order to support conventions
-  transformers: [transformerDirectives(), transformerVariantGroup()],
-
-  // work around the limitation of dynamically constructed utilities
-  // https://unocss.dev/guide/extracting#limitations
+  transformers: [transformerVariantGroup()],
   safelist: [
     ...navIcons,
     ...socialIcons,

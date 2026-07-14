@@ -7,6 +7,7 @@ import Warning from '~/components/base/Warning.astro'
 
 import {
   getFilteredPosts,
+  getMinutesRead,
   buildNestedCategoryTree,
   flattenCategoryTree,
   type CategoryTreeNode,
@@ -91,7 +92,7 @@ const postsWithReadTime: PostWithReadTime[] = await processPostsInBatches(
   postsInDisplayOrder,
   10, // Process 10 posts at a time
   async ({ post, categoryPath }, globalIdx) => {
-    let minutesRead = post.data.minutesRead || 0
+    let minutesRead = getMinutesRead(post.data.minutesRead, 0)
 
     try {
       // Add timeout wrapper to prevent hanging
@@ -102,15 +103,15 @@ const postsWithReadTime: PostWithReadTime[] = await processPostsInBatches(
         ),
       ])
 
-      minutesRead =
-        post.data.minutesRead ||
-        renderResult.remarkPluginFrontmatter.minutesRead ||
-        0
+      minutesRead = getMinutesRead(
+        post.data.minutesRead,
+        renderResult.remarkPluginFrontmatter.minutesRead || 0
+      )
     } catch (error) {
       // Log error but don't fail the entire page
       console.error(`Failed to render post ${post.id}:`, error)
       // Use default value
-      minutesRead = post.data.minutesRead || 0
+      minutesRead = getMinutesRead(post.data.minutesRead, 0)
     }
 
     return {

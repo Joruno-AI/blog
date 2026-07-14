@@ -36,16 +36,12 @@ export function toggleFadeEffect(
   if (visible) {
     element.classList.remove(hiddenClass)
     if (elementId === 'backdrop') lockScroll()
-    // if (elementId === 'backdrop') document.body.style.overflow = 'hidden'
-    // if (elementId === 'backdrop') document.documentElement.style.overflow = 'hidden'
     if (window.matchMedia('(prefers-reduced-motion)').matches) return
     element.classList.add('fade-in')
   } else {
     if (window.matchMedia('(prefers-reduced-motion)').matches) {
       element.classList.add(hiddenClass)
       if (elementId === 'backdrop') unlockScroll()
-      // if (elementId === 'backdrop') document.body.style.overflow = ''
-      // if (elementId === 'backdrop') document.documentElement.style.overflow = ''
       return
     }
     element.classList.add('fade-out')
@@ -55,10 +51,23 @@ export function toggleFadeEffect(
         element.classList.remove('fade-in', 'fade-out')
         element.classList.add(hiddenClass)
         if (elementId === 'backdrop') unlockScroll()
-        // if (elementId === 'backdrop') document.body.style.overflow = ''
-        // if (elementId === 'backdrop') document.documentElement.style.overflow = ''
       },
       { once: true }
     )
   }
+}
+
+/**
+ * Resolves a browser URL with Astro's configured base path.
+ *
+ * base: "/base" + trailingSlash: "ignore" -> BASE_URL: "/base"
+ * base: "/base/" + trailingSlash: "ignore" -> BASE_URL: "/base/"
+ */
+export function withClientBasePath(path: string): string {
+  const resolvedPath = `/${import.meta.env.BASE_URL}/${path}`.replace(
+    /\/+/,
+    '/'
+  )
+
+  return new URL(resolvedPath, location.origin).href
 }

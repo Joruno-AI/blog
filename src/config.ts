@@ -101,6 +101,10 @@ export const UI: Ui = {
     { title: 'AstroBlog', path: '/feeds' },
     { title: 'AstroStreams', path: '/streams' },
   ],
+  postView: {
+    postMetaStyle: 'minimal',
+    useCoverAltAsCaption: true,
+  },
   groupView: {
     maxGroupColumns: 3,
     showGroupItemColorOnHover: true,
@@ -117,7 +121,8 @@ export const UI: Ui = {
     subLogoMatches: [
       [/theme/, 'i-unjs-theme-colors'],
       [/github/, 'https://github.githubassets.com/favicons/favicon.svg'],
-      [/tweet/, 'i-logos-twitter'],
+      [/tweet/, 'i-prime-twitter'],
+      [/ins/, 'i-skill-icons-instagram'],
       [/bluesky/, 'i-logos-bluesky'],
     ],
   },
@@ -126,11 +131,10 @@ export const UI: Ui = {
     cursorType: '',
     showNewTabIcon: true,
   },
-  postMetaStyle: 'minimal',
 }
 
 /**
- * Configures whether to enable special features:
+ * Globally controls whether to enable special features:
  *  - Set to `false` or `[false, {...}]` to disable the feature.
  *  - Set to `[true, {...}]` to enable and configure the feature.
  */
@@ -142,6 +146,11 @@ export const FEATURES: Features = {
       authorOrBrand: 'wangshengliang',
       fallbackTitle: '技术博客',
       fallbackBgType: 'plum',
+      collections: [
+        { collection: 'blog', pathnamePrefix: '/blog' },
+        { collection: 'changelog', pathnamePrefix: '/changelog' },
+        { collection: 'shorts', pathnamePrefix: '/shorts' },
+      ],
     },
   ],
   toc: [
@@ -185,11 +194,19 @@ export const FEATURES: Features = {
   search: [
     true,
     {
-      includes: ['blog', 'changelog'],
+      includes: ['blog', 'shorts', 'changelog'],
       filter: true,
       navHighlight: true,
       batchLoadSize: [true, 5],
       maxItemsPerPage: [true, 3],
+    },
+  ],
+  tag: [
+    true,
+    {
+      displayPosition: 'right',
+      displayMode: 'content',
+      filterMode: 'AND',
     },
   ],
 }

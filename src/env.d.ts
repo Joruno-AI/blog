@@ -11,7 +11,8 @@ type Prefix = 'u-' // change it to your prefix
 declare global {
   namespace astroHTML.JSX {
     interface HTMLAttributes
-      extends AttributifyAttributes,
+      extends
+        AttributifyAttributes,
         Partial<Record<AttributifyNames<Prefix>, string>> {}
   }
 }

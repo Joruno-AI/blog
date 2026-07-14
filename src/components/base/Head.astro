@@ -1,39 +1,49 @@
 ---
+import { Font } from 'astro:assets'
 import { ClientRouter } from 'astro:transitions'
 
+import {
+  getOgImageConfig,
+  resolveOgImagePathname,
+} from '~/utils/og-image/routing'
+import { silentLogger } from '~/utils/server'
 import { withBasePath } from '~/utils/path'
 import { SITE } from '~/config'
 
 interface Props {
   title?: string
   description?: string
+  ogImage?: string | boolean
   pubDate?: string
   lastModDate?: string
   tags?: string[]
   category?: string
-  ogImage?: string
 }
 
-const { title, description, pubDate, lastModDate, tags, category, ogImage } =
+const { title, description, ogImage, pubDate, lastModDate, tags, category } =
   Astro.props
 
-const siteName = new URL(SITE.website).hostname
-
-// 优化标题长度，避免过长
 const rawTitle =
   title && title !== SITE.title ? `${title} - ${SITE.title}` : SITE.title
 const pageTitle = rawTitle.length > 60 ? title || SITE.title : rawTitle
-
 const pageDescription = description || SITE.description
 
+const siteName = new URL(SITE.website).hostname
 const canonicalURL = new URL(Astro.url.pathname, Astro.site)
+const ogImageConfig = getOgImageConfig()
+const ogImagePathname = ogImageConfig
+  ? resolveOgImagePathname({
+      ogImage,
+      title,
+      authorOrBrand: ogImageConfig.authorOrBrand,
+      pathname: Astro.url.pathname,
+      logger: Astro.logger ?? silentLogger,
+    })
+  : undefined
+const ogImageURL = ogImagePathname
+  ? new URL(withBasePath(ogImagePathname), Astro.url).href
+  : undefined
 
-// OG 图片 URL
-const ogImageURL = ogImage
-  ? new URL(withBasePath('og-images', ogImage), Astro.url).href
-  : new URL(withBasePath('og-images', 'og-image.png'), Astro.url).href
-
-// 生成面包屑结构化数据
 const pathSegments = Astro.url.pathname.split('/').filter(Boolean)
 const breadcrumbItems = pathSegments.map((segment, index) => ({
   '@type': 'ListItem',
@@ -61,19 +71,14 @@ const breadcrumbData = {
 const blogPostingData = {
   '@context': 'https://schema.org',
   '@type': 'BlogPosting',
-  'headline': title || SITE.title,
-  'image': ogImageURL,
+  'headline': pageTitle,
+  ...(ogImageURL && { image: ogImageURL }),
   'url': canonicalURL.href,
   'datePublished': pubDate,
   ...(lastModDate && { dateModified: lastModDate }),
-  ...(description && { description: description }),
-  ...(tags &&
-    tags.length > 0 && {
-      keywords: tags.join(', '),
-    }),
-  ...(category && {
-    articleSection: category,
-  }),
+  ...(description && { description }),
+  ...(tags && tags.length > 0 && { keywords: tags.join(', ') }),
+  ...(category && { articleSection: category }),
   'author': {
     '@type': 'Person',
     'name': SITE.author,
@@ -100,7 +105,7 @@ const webPageData = {
   '@type': 'WebPage',
   'name': `${title || SITE.title}`,
   'url': canonicalURL.href,
-  ...(description && { description: description }),
+  ...(description && { description }),
   'publisher': {
     '@type': 'Organization',
     'name': SITE.title,
@@ -109,7 +114,6 @@ const webPageData = {
   'breadcrumb': breadcrumbData,
 }
 
-// 网站整体结构化数据
 const websiteData = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
@@ -137,6 +141,11 @@ const websiteData = {
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="generator" content={Astro.generator} />
 
+<!-- Font -->
+<Font cssVariable="--font-sans" preload />
+<Font cssVariable="--font-mono" />
+<Font cssVariable="--font-condensed" />
+
 <!-- Primary Metadata -->
 <title>{pageTitle}</title>
 <meta name="title" content={pageTitle} />
@@ -148,31 +157,48 @@ const websiteData = {
   content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"
 />
 
-<!-- Keywords (if tags provided) -->
 {tags && tags.length > 0 && <meta name="keywords" content={tags.join(', ')} />}
 
 <!-- Color -->
-<meta
-  name="theme-color"
-  content="#050505"
-  media="(prefers-color-scheme: dark)"
-/>
-<meta
-  name="theme-color"
-  content="#ffffff"
-  media="(prefers-color-scheme: light)"
-/>
-<meta name="color-scheme" content="light dark" />
+<meta name="color-scheme" content="" />
+<meta name="theme-color" content="" />
+<!-- Initialize as inline scripts for faster response, avoiding FOUC -->
+<script is:inline data-astro-rerun>
+  ;(() => {
+    const storedTheme = localStorage.getItem('theme')
+    const prefersDark = window.matchMedia(
+      '(prefers-color-scheme: dark)'
+    ).matches
+    const theme = storedTheme || (prefersDark ? 'dark' : 'light')
+    const themeColor = theme === 'dark' ? '#050505' : '#fff'
+
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+    window.localStorage.setItem('theme', theme)
+
+    const colorScheme = document.querySelector("meta[name='color-scheme']")
+    colorScheme?.setAttribute(
+      'content',
+      theme === 'dark' ? 'dark light' : 'light dark'
+    )
+
+    const themeColorMeta = document.querySelector("meta[name='theme-color']")
+    themeColorMeta?.setAttribute('content', themeColor)
+  })()
+</script>
 
 <!-- Open Graph & Facebook -->
 <meta property="og:type" content={pubDate ? 'article' : 'website'} />
 <meta property="og:url" content={canonicalURL} />
-<meta property="og:title" content={title || SITE.title} />
+<meta property="og:title" content={pageTitle} />
 <meta property="og:description" content={pageDescription} />
-<meta property="og:image" content={ogImageURL} />
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
-<meta property="og:image:alt" content={title || SITE.title} />
+{ogImageURL && <meta property="og:image" content={ogImageURL} />}
+{ogImageURL && <meta property="og:image:width" content="1200" />}
+{ogImageURL && <meta property="og:image:height" content="630" />}
+{ogImageURL && <meta property="og:image:alt" content={title || SITE.title} />}
 <meta property="og:site_name" content={siteName} />
 <meta property="og:locale" content={SITE.ogLocale} />
 {
@@ -192,10 +218,10 @@ const websiteData = {
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:url" content={canonicalURL} />
-<meta name="twitter:title" content={title || SITE.title} />
+<meta name="twitter:title" content={pageTitle} />
 <meta name="twitter:description" content={pageDescription} />
-<meta name="twitter:image" content={ogImageURL} />
-<meta name="twitter:image:alt" content={title || SITE.title} />
+{ogImageURL && <meta name="twitter:image" content={ogImageURL} />}
+{ogImageURL && <meta name="twitter:image:alt" content={title || SITE.title} />}
 
 <!-- Canonical URL -->
 <link rel="canonical" href={canonicalURL} />
@@ -253,4 +279,5 @@ const websiteData = {
   )
 }
 
+<!-- Router -->
 <ClientRouter />

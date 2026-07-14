@@ -1,6 +1,13 @@
-import { getCollection, render } from 'astro:content'
-
-import { resolvePath } from './path'
+import { getCollection } from 'astro:content'
+import {
+  AppBskyEmbedImages,
+  AppBskyEmbedVideo,
+  AppBskyEmbedExternal,
+  AppBskyEmbedRecord,
+  AppBskyEmbedRecordWithMedia,
+} from '@atproto/api'
+import { atUriToPostUri } from 'astro-loader-bluesky-posts'
+import { SITE } from '../config'
 
 import type { CollectionEntry, CollectionKey } from 'astro:content'
 import type { CardItemData } from '~/components/views/CardItem.astro'
@@ -334,10 +341,26 @@ export function parseTuple(
 }
 
 /**
+ * Retrieves the minutes read for a post.
+ */
+export function getMinutesRead(
+  minutesRead: number | boolean,
+  computedMinutesRead: number
+) {
+  return minutesRead === false
+    ? 0
+    : typeof minutesRead === 'number' && minutesRead > 0
+      ? minutesRead
+      : computedMinutesRead
+}
+
+/**
  * Retrieves filtered posts from the specified content collection.
  * In production, it filters out draft posts.
  */
-export async function getFilteredPosts(collection: 'blog' | 'changelog') {
+export async function getFilteredPosts<
+  K extends 'blog' | 'changelog' | 'shorts',
+>(collection: K): Promise<CollectionEntryList<K>> {
   return await getCollection(collection, ({ data }) => {
     return import.meta.env.PROD ? !data.draft : true
   })
@@ -347,7 +370,7 @@ export async function getFilteredPosts(collection: 'blog' | 'changelog') {
  * Sorts an array of posts by their publication date in descending order.
  */
 export function getSortedPosts(
-  posts: CollectionEntryList<'blog' | 'changelog'>
+  posts: CollectionEntryList<'blog' | 'changelog' | 'shorts'>
 ) {
   return posts.sort(
     (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
@@ -411,6 +434,27 @@ export function isSameCategory(
   const currentCategory = currentPost.data.category || defaultCategory
   const previousCategory = previousPost.data.category || defaultCategory
   return currentCategory === previousCategory
+}
+
+export function sortPostsByField(
+  posts: CollectionEntryList<'blog' | 'changelog' | 'shorts'>,
+  field: 'pubDate' | 'lastModDate' | 'title'
+) {
+  return posts.sort((a, b) => {
+    if (field === 'title') {
+      return a.data.title.localeCompare(b.data.title, SITE.lang, {
+        sensitivity: 'base',
+      })
+    }
+
+    if (field === 'pubDate' || field === 'lastModDate') {
+      const aTime = (a.data[field] as Date).getTime()
+      const bTime = (b.data[field] as Date).getTime()
+      return bTime - aTime
+    }
+
+    return 0
+  })
 }
 
 /**
@@ -489,68 +533,245 @@ export function processVersion(
   return [versionType, nonHighlightedPart, highlightedPart]
 }
 
+type BlueskyImage = {
+  thumb?: string
+  alt?: string | null
+}
+
+type BlueskyVideo = {
+  cid?: string
+  alt?: string | null
+  thumbnail?: string | null
+}
+
+type BlueskyExternal = {
+  external: {
+    uri: string
+    title?: string | null
+    description?: string | null
+    thumb?: string | null
+  }
+}
+
+type BlueskyQuoteRecord = {
+  uri: string
+  value: {
+    text?: string
+  }
+  author: {
+    handle: string
+    avatar?: string | null
+    displayName?: string | null
+  }
+}
+
+type BlueskyReply = {
+  html: string
+}
+
+type BlueskyPostItem = {
+  data: {
+    post: {
+      indexedAt: string
+      html: string
+      link: string
+      embed?: unknown
+      author: {
+        did: string
+      }
+    }
+    replies?: BlueskyReply[]
+  }
+}
+
 /**
- * Processes blog posts and converts them into `CardItemData` interface.
+ * Processes Bluesky posts and converts them into `CardItemData` interface.
  */
-export async function getShortsFromBlog(data: CollectionEntryList<'blog'>) {
+export function processBlueskyPosts(data: BlueskyPostItem[]) {
   const cards: CardItemData[] = []
-  const basePath = resolvePath('/blog')
-  const sortedData = data.sort(
-    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-  )
 
-  for (const item of sortedData) {
-    const slug = item.id
-    const title = item.data.title
-    const date = item.data.pubDate
+  for (const item of data) {
+    const { post, replies } = item.data
+    const { indexedAt, html, link, embed, author } = post
 
-    if (slug === 'markdown-syntax-guide') {
-      cards.push({
-        link: `${basePath}/${slug}`,
-        text: title,
-        date: date,
-      })
-    } else {
-      const { headings } = await render(item)
-      const neededHeadingLevel = slug === 'faqs-and-known-issues' ? 3 : 2
-      let processedTitle = title
-      switch (slug) {
-        case 'faqs-and-known-issues':
-          processedTitle = 'FAQs'
-          break
-        case 'adding-new-posts':
-          processedTitle = 'New Posts'
-          break
-        case 'recreating-current-pages':
-          processedTitle = 'Current Pages'
-          break
-        case 'customizing-github-activity-pages':
-          processedTitle = 'GitHub Activity'
-          break
-        case 'markdown-mdx-extended-features':
-          processedTitle = 'Extended Features'
-          break
-        case 'managing-image-assets':
-          processedTitle = 'Asset Management'
-          break
-        case 'about-open-graph-images':
-          processedTitle = 'Open Graph'
-          break
+    const card: CardItemData = {
+      date: indexedAt,
+      html: html,
+      link: link,
+    }
+
+    if (embed) {
+      if (AppBskyEmbedImages.isView(embed)) {
+        const images = (embed as { images?: BlueskyImage[] }).images ?? []
+        card.images = images.map((img) => ({
+          src: img.thumb ?? '',
+          alt: img.alt ?? '',
+        }))
       }
 
-      const itemCards = headings
-        .filter(
-          (h) => h.depth === neededHeadingLevel && h.text !== 'Wrapping Up'
-        )
-        .map((h) => ({
-          link: `${basePath}${slug}/#${h.slug}`,
-          text: `${processedTitle}: ${h.text}`,
-          date: date,
-        }))
+      if (AppBskyEmbedVideo.isView(embed)) {
+        const video = embed as BlueskyVideo
+        card.video = {
+          src: `https://bsky.social/xrpc/com.atproto.sync.getBlob?did=${author.did}&cid=${video.cid ?? ''}`,
+          alt: video.alt ?? '',
+          poster: video.thumbnail ?? '',
+        }
+      }
 
-      cards.push(...itemCards)
+      if (AppBskyEmbedExternal.isView(embed)) {
+        const external = (embed as unknown as BlueskyExternal).external
+        card.external = {
+          uri: external.uri,
+          title: external.title ?? '',
+          description: external.description ?? '',
+          img: external.thumb ?? '',
+        }
+      }
+
+      if (AppBskyEmbedRecord.isView(embed)) {
+        const { uri, value, author } = (
+          embed as unknown as { record: BlueskyQuoteRecord }
+        ).record
+
+        card.quote = {
+          uri: atUriToPostUri(uri),
+          text: value.text ?? '',
+          author: {
+            link: `https://bsky.app/profile/${author.handle}`,
+            avatar: author.avatar ?? '',
+            name: author.displayName ?? '',
+            handle: author.handle,
+          },
+        }
+      }
+
+      if (AppBskyEmbedRecordWithMedia.isView(embed)) {
+        const { record, media } = embed as unknown as {
+          record: { record?: unknown }
+          media?: unknown
+        }
+
+        if (media) {
+          if (AppBskyEmbedImages.isView(media))
+            card.images = (
+              (media as { images?: BlueskyImage[] }).images ?? []
+            ).map((img) => ({
+              src: img.thumb ?? '',
+              alt: img.alt ?? '',
+            }))
+
+          if (AppBskyEmbedVideo.isView(media)) {
+            const video = media as BlueskyVideo
+            card.video = {
+              src: `https://bsky.social/xrpc/com.atproto.sync.getBlob?did=${author.did}&cid=${video.cid ?? ''}`,
+              alt: video.alt ?? '',
+              poster: video.thumbnail ?? '',
+            }
+          }
+
+          if (AppBskyEmbedExternal.isView(media)) {
+            const external = (media as unknown as BlueskyExternal).external
+            card.external = {
+              uri: external.uri,
+              title: external.title ?? '',
+              description: external.description ?? '',
+              img: external.thumb ?? '',
+            }
+          }
+        }
+
+        const embeddedRecord = record.record
+        if (AppBskyEmbedRecord.isViewRecord(embeddedRecord)) {
+          const { uri, value, author } =
+            embeddedRecord as unknown as BlueskyQuoteRecord
+
+          card.quote = {
+            uri: atUriToPostUri(uri),
+            text: value.text ?? '',
+            author: {
+              link: `https://bsky.app/profile/${author.handle}`,
+              avatar: author.avatar ?? '',
+              name: author.displayName ?? '',
+              handle: author.handle,
+            },
+          }
+        }
+      }
     }
+
+    if (replies && replies.length > 0) {
+      card.details = replies.map((reply: BlueskyReply) => reply.html)
+    }
+
+    cards.push(card)
   }
 
   return cards
+}
+
+/**
+ * Build tag relations from input shapes.
+ */
+export function buildTagRelations(
+  input: string[][] | string[] | Record<string, string[]>
+): { unique: string[]; relations: Record<string, string[]> } {
+  // use Map+Set to store de-duplicated relations
+  const relMap = new Map<string, Set<string>>()
+
+  // ensure a key exists in relMap and return its Set
+  const ensure = (k: string): Set<string> => {
+    let set = relMap.get(k)
+    if (!set) {
+      set = new Set<string>()
+      relMap.set(k, set)
+    }
+    return set
+  }
+
+  // type guard: check if an array is string[][]
+  const isString2DArray = (arr: unknown[]): arr is string[][] =>
+    arr.length > 0 && Array.isArray(arr[0])
+
+  if (Array.isArray(input)) {
+    if (isString2DArray(input)) {
+      // string[][]: each is a post's tags
+      for (const group of input) {
+        const clean = Array.from(
+          new Set(group.map((t) => t.trim()).filter(Boolean))
+        )
+
+        for (const a of clean) {
+          const setA = ensure(a)
+          for (const b of clean) {
+            if (a !== b) setA.add(b)
+          }
+        }
+      }
+    } else {
+      // string[] unique only
+      for (const t of input) {
+        ensure(String(t))
+      }
+    }
+  } else {
+    // mapping provided: each key is a tag, value is its related tags
+    for (const [k, v] of Object.entries(input)) {
+      const set = ensure(k)
+      for (const t of v) {
+        if (t && t !== k) set.add(t)
+      }
+    }
+  }
+
+  // collect all unique tags and sort them alphabetically
+  const unique = Array.from(relMap.keys()).sort((a, b) => a.localeCompare(b))
+
+  // convert Map<string, Set<string>> into Record<string, string[]>
+  const relations: Record<string, string[]> = {}
+  for (const key of unique) {
+    const set = relMap.get(key)
+    relations[key] = set ? Array.from(set) : []
+  }
+
+  return { unique, relations }
 }

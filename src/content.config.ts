@@ -11,11 +11,10 @@ import {
   projectSchema,
   streamSchema,
   photoSchema,
-} from '~/content/schema'
+} from '~/schema'
 import { cmsLoader } from '~/loaders/cms'
 import { mediaLoader } from '~/loaders/cms/media'
 
-// CMS API base URL from environment variable
 const CMS_API_URL = import.meta.env.CMS_API_URL
 
 const pages = defineCollection({
@@ -27,7 +26,6 @@ const home = defineCollection({
   loader: glob({ base: './src/content/home', pattern: 'index.{md,mdx}' }),
 })
 
-// Use CMS loader if API URL is configured, otherwise use local files
 const blog = defineCollection({
   loader: CMS_API_URL
     ? cmsLoader({ apiBaseUrl: CMS_API_URL })
@@ -40,7 +38,6 @@ const projects = defineCollection({
   schema: projectSchema,
 })
 
-// 注释掉需要 GitHub Token 的 loader，避免开发时报错
 // const releases = defineCollection({
 //   loader: githubReleasesLoader({
 //     mode: 'repoList',
@@ -65,12 +62,16 @@ const projects = defineCollection({
 //   }),
 // })
 
-// Use CMS media loader if API URL is configured, otherwise use local files
 const photos = defineCollection({
   loader: CMS_API_URL
     ? mediaLoader({ apiBaseUrl: CMS_API_URL })
     : file('src/content/photos/data.json'),
   schema: photoSchema,
+})
+
+const shorts = defineCollection({
+  loader: glob({ base: './src/content/shorts', pattern: '**/[^_]*.{md,mdx}' }),
+  schema: postSchema,
 })
 
 const changelog = defineCollection({
@@ -86,7 +87,6 @@ const streams = defineCollection({
   schema: streamSchema,
 })
 
-// 注释掉需要网络请求的 loader，避免开发时网络超时报错
 // const feeds = defineCollection({
 //   loader: feedLoader({
 //     url: 'https://astro.build/rss.xml',
@@ -101,6 +101,7 @@ export const collections = {
   // releases,
   // prs,
   photos,
+  shorts,
   changelog,
   streams,
   // feeds,

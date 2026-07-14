@@ -29,5 +29,12 @@ pnpm-debug.log*
 # build cache
 .cache/
 
+# vibe coding tools
+.agent/
+.cursor/
+.windsurf/
+.codex/
+.claude/
+
 # local archive
-.local
+.local/

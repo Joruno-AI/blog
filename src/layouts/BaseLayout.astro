@@ -1,9 +1,7 @@
 ---
-import '@unocss/reset/tailwind.css'
 import '~/styles/main.css'
 import '~/styles/prose.css'
 import '~/styles/markdown.css'
-import '~/styles/page.css'
 import '~/styles/mobile.css'
 
 import Head from '~/components/base/Head.astro'
@@ -26,12 +24,24 @@ import type { BgType } from '~/types'
 interface Props {
   title?: string
   description?: string
+  ogImage?: string | boolean
   bgType?: BgType | false
   pubDate?: string
   lastModDate?: string
+  tags?: string[]
+  category?: string
 }
 
-const { title, description, bgType, pubDate, lastModDate } = Astro.props
+const {
+  title,
+  description,
+  ogImage,
+  bgType,
+  pubDate,
+  lastModDate,
+  tags,
+  category,
+} = Astro.props
 
 let style: Record<string, string> = {}
 
@@ -51,7 +61,15 @@ if (hasCustomCursor) style['--external-link-cursor'] = cursorType
 <!doctype html>
 <html lang={SITE.lang}>
   <head>
-    <Head {title} {description} {pubDate} {lastModDate} />
+    <Head
+      {title}
+      {description}
+      {ogImage}
+      {pubDate}
+      {lastModDate}
+      {tags}
+      {category}
+    />
   </head>
 
   <body

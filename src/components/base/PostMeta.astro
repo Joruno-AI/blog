@@ -11,7 +11,7 @@ interface Props {
 
 const { pubDate, lastModDate, minutesRead, tags = [] } = Astro.props
 
-const isMinimal = UI.postMetaStyle === 'minimal'
+const isMinimal = UI.postView.postMetaStyle === 'minimal'
 ---
 
 <div class="post-meta-wrapper">
@@ -19,7 +19,7 @@ const isMinimal = UI.postMetaStyle === 'minimal'
     isMinimal ? (
       <div class="op-50">
         <time datetime={pubDate}>{formatDate(pubDate)}</time>
-        {minutesRead !== 0 && <span> · {minutesRead} min</span>}
+        {minutesRead > 0 && <span> · {minutesRead} min</span>}
         {lastModDate && (
           <time class="lt-sm:hidden" datetime={lastModDate}>
             · Updated {formatDate(lastModDate)}
@@ -38,7 +38,7 @@ const isMinimal = UI.postMetaStyle === 'minimal'
             <time datetime={lastModDate}>{formatDate(lastModDate)}</time>
           </div>
         )}
-        {minutesRead !== 0 && (
+        {minutesRead > 0 && (
           <div class="flex items-center">
             <span class="i-ri-timer-line mr-1.2" />
             <span>{minutesRead} min read</span>
@@ -49,7 +49,7 @@ const isMinimal = UI.postMetaStyle === 'minimal'
   }
 
   {
-    tags && tags.length > 0 && (
+    tags.length > 0 && (
       <div class="flex flex-wrap items-center gap-2 mt-3">
         <span class="i-ri-price-tag-3-line op-40 text-sm" />
         {tags.map((tag) => (
