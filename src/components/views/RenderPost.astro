@@ -11,7 +11,6 @@ import PostCover from '~/components/base/PostCover.astro'
 import ShareLink from '~/components/widgets/ShareLink.astro'
 import Giscus from '~/components/widgets/Giscus.astro'
 import ImageViewer from '~/components/widgets/ImageViewer.astro'
-import BlogDirectoryAside from '~/components/blog/BlogDirectoryAside.astro'
 
 import { getMinutesRead } from '~/utils/data'
 import { FEATURES } from '~/config'
@@ -57,7 +56,6 @@ const giscusEnabled =
   isCommentable && Array.isArray(giscus) && giscus[0] && frontmatter.giscus
 
 const collectionType = post.collection
-const isBlogPost = collectionType === 'blog'
 const isSearchable =
   Array.isArray(search) &&
   search[0] &&
@@ -93,19 +91,10 @@ frontmatter to <code>false</code> or remove it to publish the post.`
     </Fragment>
     <Fragment slot="article">
       {isDraft && <Warning html={WARNING} />}
-      {isBlogPost && <BlogDirectoryAside currentPostId={post.id} />}
       {
         haveHeadings && (
           <>
-            <DesktopAside
-              {headings}
-              style={
-                isBlogPost
-                  ? 'left: calc(100vw - 15.625rem - 3.2rem); right: auto;'
-                  : undefined
-              }
-              tocStyle={isBlogPost ? 'opacity: 0.72;' : undefined}
-            />
+            <DesktopAside {headings} />
             <MobileControl {headings} />
           </>
         )
