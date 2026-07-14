@@ -30,28 +30,27 @@ const isImageUrl = (icon: string) => /^https?:\/\//.test(icon)
       <Link
         class={`group relative flex items-center
           px-3.5 pt-2 pb-3.5 rounded-md
-          bg-transparent hover:bg-[#88888811]
-          text-4.4 transition-all duration-300`}
+          bg-transparent hover:bg-[#88888816]
+          op-86! hover:op-100! text-4.4 transition-all duration-300`}
         href={item.link}
-        aria-hidden={true}
         external={true}
       >
         {isImageUrl(item.icon) ? (
           <img
             src={item.icon}
             alt={item.id}
-            class="group-hover:data-[show-color]:saturate-100 op-50 saturate-0 w-15 h-15 object-contain mr-5"
+            class="group-hover:data-[show-color]:saturate-100 op-65 saturate-0 w-15 h-15 object-contain mr-5 transition-all duration-300"
             data-show-color={showGroupItemColorOnHover ? '' : undefined}
           />
         ) : (
           <div
-            class={`group-hover:data-[show-color]:saturate-100 op-50 saturate-0 leading-9 text-7.5 ${item.icon} w-15 h-15 mr-5`}
+            class={`group-hover:data-[show-color]:saturate-100 op-65 saturate-0 leading-9 text-7.5 ${item.icon} w-15 h-15 mr-5 transition-all duration-300`}
             data-show-color={showGroupItemColorOnHover ? '' : undefined}
           />
         )}
         <div class="flex-auto">
           <div>{item.id}</div>
-          <div class="op-50 text-sm font-normal">{item.desc}</div>
+          <div class="op-62 text-sm font-normal">{item.desc}</div>
         </div>
       </Link>
     ))

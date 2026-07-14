@@ -44,12 +44,14 @@ export const UI: Ui = {
       displayMode: 'alwaysIcon',
       icon: 'i-ri-camera-ai-line',
     },
-    {
-      path: '/shorts',
-      title: 'Shorts',
-      displayMode: 'alwaysIcon',
-      icon: 'i-meteor-icons-grid',
-    },
+    // Shorts is kept in the content model, but hidden from the public nav until
+    // there is real configured content behind it.
+    // {
+    //   path: '/shorts',
+    //   title: 'Shorts',
+    //   displayMode: 'alwaysIcon',
+    //   icon: 'i-meteor-icons-grid',
+    // },
     {
       path: '/music',
       title: 'Music Player',
@@ -149,7 +151,6 @@ export const FEATURES: Features = {
       collections: [
         { collection: 'blog', pathnamePrefix: '/blog' },
         { collection: 'changelog', pathnamePrefix: '/changelog' },
-        { collection: 'shorts', pathnamePrefix: '/shorts' },
       ],
     },
   ],
@@ -194,7 +195,7 @@ export const FEATURES: Features = {
   search: [
     true,
     {
-      includes: ['blog', 'shorts', 'changelog'],
+      includes: ['blog', 'changelog'],
       filter: true,
       navHighlight: true,
       batchLoadSize: [true, 5],

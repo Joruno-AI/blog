@@ -76,7 +76,7 @@ const { albums } = Astro.props
     align-items: center;
     justify-content: space-between;
     padding: 1rem 0.75rem;
-    border-bottom: 1px solid rgba(128, 128, 128, 0.1);
+    border-bottom: 1px solid rgba(128, 128, 128, 0.16);
   }
 
   .sidebar-title {
@@ -106,17 +106,18 @@ const { albums } = Astro.props
   .vinyl-search input {
     width: 100%;
     padding: 0.6rem 2rem 0.6rem 2rem;
-    border: 1px solid rgba(128, 128, 128, 0.2);
+    border: 1px solid rgba(128, 128, 128, 0.24);
     border-radius: 8px;
-    background: rgba(128, 128, 128, 0.05);
+    background: rgba(128, 128, 128, 0.06);
     font-size: 0.8rem;
+    color: inherit;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     outline: none;
   }
 
   .vinyl-search input:focus {
     border-color: rgba(139, 69, 19, 0.5);
-    background: rgba(128, 128, 128, 0.1);
+    background: rgba(128, 128, 128, 0.11);
     box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.1);
     transform: scale(1.02);
   }
@@ -126,9 +127,14 @@ const { albums } = Astro.props
     left: 0.75rem;
     top: 50%;
     transform: translateY(-50%);
-    opacity: 0.5;
+    opacity: 0.62;
     transition: all 0.3s ease;
     pointer-events: none;
+  }
+
+  .vinyl-search input::placeholder {
+    color: inherit;
+    opacity: 0.55;
   }
 
   .vinyl-search input:focus + .search-icon,

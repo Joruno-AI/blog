@@ -59,14 +59,16 @@ const { album, index: _index } = Astro.props
     position: relative;
     padding: 0.875rem;
     border-radius: 12px;
-    background: rgba(128, 128, 128, 0.05);
+    background: rgba(128, 128, 128, 0.06);
+    border: 1px solid rgba(128, 128, 128, 0.12);
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     user-select: none;
   }
 
   .vinyl-card:hover {
-    background: rgba(128, 128, 128, 0.1);
+    background: rgba(128, 128, 128, 0.12);
+    border-color: rgba(128, 128, 128, 0.22);
     transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
   }
@@ -76,8 +78,9 @@ const { album, index: _index } = Astro.props
   }
 
   .vinyl-card.active {
-    background: rgba(139, 69, 19, 0.1);
-    box-shadow: 0 0 0 2px rgba(139, 69, 19, 0.3);
+    background: rgba(139, 69, 19, 0.12);
+    border-color: rgba(139, 69, 19, 0.32);
+    box-shadow: 0 0 0 2px rgba(139, 69, 19, 0.22);
   }
 
   .vinyl-card-inner {
@@ -154,7 +157,7 @@ const { album, index: _index } = Astro.props
 
   .vinyl-artist {
     font-size: 0.8125rem;
-    opacity: 0.6;
+    opacity: 0.72;
     margin: 0 0 0.25rem;
     white-space: nowrap;
     overflow: hidden;
@@ -163,7 +166,7 @@ const { album, index: _index } = Astro.props
 
   .vinyl-songs-count {
     font-size: 0.75rem;
-    opacity: 0.4;
+    opacity: 0.58;
     margin: 0;
   }
 
@@ -175,7 +178,7 @@ const { album, index: _index } = Astro.props
     opacity: 0;
     transition: opacity 0.2s ease;
     font-size: 1.5rem;
-    color: rgba(139, 69, 19, 0.8);
+    color: rgba(139, 69, 19, 0.9);
   }
 
   .vinyl-card:hover .play-indicator {
