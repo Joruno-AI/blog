@@ -42,15 +42,19 @@ const iconClass =
       ? titleIcon
       : `i-${titleIcon}`
     : undefined
+
+const normalizedRedirect = redirect?.trim()
+const href =
+  normalizedRedirect || withBasePath(`/${collectionType}/${postSlug}/`)
 ---
 
 <div class="slide-enter" style={{ '--enter-stage': idx }} data-tags={tags}>
   <Link
     u-flex="~ items-center lt-md:(col items-start) gap-2"
     class="border-b-none! mb-6 mt-2 op-transition!"
-    href={redirect ?? withBasePath(`/${collectionType}/${postSlug}/`)}
-    external={redirect ? true : false}
-    enableNewTabWarning={redirect ? true : false}
+    {href}
+    external={normalizedRedirect ? true : false}
+    enableNewTabWarning={normalizedRedirect ? true : false}
   >
     <Fragment slot="title">
       {
