@@ -6,14 +6,15 @@ import type {
 } from './types'
 
 /**
- * Fetch with retry logic and timeout
+ * Fetch JSON with retry logic and timeout.
+ * A request only succeeds after the response body is fully read.
  */
-async function fetchWithRetry(
+async function fetchJsonWithRetry<T>(
   url: string,
   options: RequestInit,
   maxRetries = 3,
   retryDelay = 1000
-): Promise<Response> {
+): Promise<T> {
   let lastError: Error | null = null
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
@@ -21,13 +22,22 @@ async function fetchWithRetry(
       const controller = new AbortController()
       const timeoutId = setTimeout(() => controller.abort(), 60000) // 60s timeout
 
-      const response = await fetch(url, {
-        ...options,
-        signal: controller.signal,
-      })
+      try {
+        const response = await fetch(url, {
+          ...options,
+          signal: controller.signal,
+        })
 
-      clearTimeout(timeoutId)
-      return response
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${url}`)
+        }
+
+        const data = (await response.json()) as T
+
+        return data
+      } finally {
+        clearTimeout(timeoutId)
+      }
     } catch (error) {
       lastError = error instanceof Error ? error : new Error(String(error))
 
@@ -63,21 +73,14 @@ export function cmsLoader(options: CMSLoaderOptions): Loader {
 
         // First, get total count
         const countUrl = `${apiBaseUrl}/api/public/posts?limit=1&offset=0`
-        const countResponse = await fetchWithRetry(countUrl, {
+        const countData = await fetchJsonWithRetry<{ total: number }>(countUrl, {
           headers: {
             'Accept': 'application/json',
             'User-Agent': 'AstroBlog/1.0 (Build Process)',
           },
         })
 
-        if (!countResponse.ok) {
-          throw new Error(
-            `Failed to get post count: HTTP ${countResponse.status}`
-          )
-        }
-
-        const countData = await countResponse.json()
-        const total = countData.total as number
+        const total = countData.total
 
         logger.info(
           `Total posts: ${total}, fetching with batch size ${batchSize}`
@@ -108,21 +111,16 @@ export function cmsLoader(options: CMSLoaderOptions): Loader {
               `Fetching batch ${batchIndex + 1}/${totalBatches}: offset=${offset}`
             )
 
-            const promise = fetchWithRetry(postsUrl, {
-              headers: {
-                'Accept': 'application/json',
-                'Connection': 'keep-alive',
-                'User-Agent': 'AstroBlog/1.0 (Build Process)',
-              },
-            }).then(async (response) => {
-              if (!response.ok) {
-                throw new Error(
-                  `HTTP ${response.status}: Failed to fetch posts`
-                )
+            const promise = fetchJsonWithRetry<CMSPostsWithContentResponse>(
+              postsUrl,
+              {
+                headers: {
+                  'Accept': 'application/json',
+                  'Connection': 'keep-alive',
+                  'User-Agent': 'AstroBlog/1.0 (Build Process)',
+                },
               }
-              const data: CMSPostsWithContentResponse = await response.json()
-              return data.posts
-            })
+            ).then((data) => data.posts)
 
             batchPromises.push(promise)
           }

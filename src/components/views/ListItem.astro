@@ -5,35 +5,36 @@ import { withBasePath } from '~/utils/path'
 import { formatDate } from '~/utils/datetime'
 
 interface Props {
-  collectionType: string
   idx: number
+  collectionType: string
+  redirect?: string
   postSlug?: string
   title: string
   titleIcon?: string
   tags?: string[]
-  minutesRead?: number
-  date: string | Date
-  radio?: boolean
   video?: boolean
+  radio?: boolean
+  date: string | Date
+  minutesRead?: number
   platform?: string
-  redirect?: string
 }
 
 const {
-  collectionType,
   idx,
+  redirect,
+  collectionType,
   postSlug,
   title,
   titleIcon,
   tags,
-  minutesRead,
-  date,
   video,
   radio,
+  date,
+  minutesRead,
   platform,
-  redirect,
 } = Astro.props
 
+// Check if titleIcon is a URL or an icon class
 const isImageUrl = titleIcon ? /^https?:\/\//.test(titleIcon) : false
 const iconClass =
   titleIcon && !isImageUrl
@@ -45,11 +46,9 @@ const iconClass =
 
 <div class="slide-enter" style={{ '--enter-stage': idx }} data-tags={tags}>
   <Link
-    u-flex={tags && tags.length > 0
-      ? '~ col items-start gap-2'
-      : '~ items-center lt-md:(col items-start) gap-2'}
-    class="border-b-none! mb-6 mt-2 op-transition! overflow-hidden"
-    href={redirect ? redirect : withBasePath(`/${collectionType}/${postSlug}/`)}
+    u-flex="~ items-center lt-md:(col items-start) gap-2"
+    class="border-b-none! mb-6 mt-2 op-transition!"
+    href={redirect ?? withBasePath(`/${collectionType}/${postSlug}/`)}
     external={redirect ? true : false}
     enableNewTabWarning={redirect ? true : false}
   >
@@ -67,9 +66,9 @@ const iconClass =
             <span class={`${iconClass}`} aria-hidden="true" />
           ) : null)
       }
-      <span class:list={{ 'ml-2.5': !!titleIcon }}>{title}</span>
+      <span class="ml-2.5">{title}</span>
     </Fragment>
-    <span slot="end" u-flex="~ gap-2 items-center" class="max-w-full">
+    <span slot="end" u-flex="~ gap-2 items-center">
       {
         video && (
           <span
@@ -97,21 +96,11 @@ const iconClass =
         {formatDate(date, false)}
       </time>
       {
-        !!minutesRead && (
+        typeof minutesRead === 'number' && minutesRead > 0 && (
           <span class="op-40 text-sm ws-nowrap">· {minutesRead} min</span>
         )
       }
       {platform && <span class="op-40 text-sm ws-nowrap">· {platform}</span>}
-      {
-        tags && tags.length > 0 && (
-          <>
-            <span class="op-40 text-sm">· </span>
-            <span class="op-40 text-sm ws-nowrap inner-x-scroll">
-              {tags.join(' / ')}
-            </span>
-          </>
-        )
-      }
     </span>
   </Link>
 </div>

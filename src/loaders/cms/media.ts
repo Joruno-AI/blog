@@ -25,14 +25,15 @@ export interface MediaLoaderOptions {
 }
 
 /**
- * Fetch with retry logic
+ * Fetch JSON with retry logic.
+ * A request only succeeds after the response body is fully read.
  */
-async function fetchWithRetry(
+async function fetchJsonWithRetry<T>(
   url: string,
   options: RequestInit,
   maxRetries = 3,
   retryDelay = 1000
-): Promise<Response> {
+): Promise<T> {
   let lastError: Error | null = null
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
@@ -40,13 +41,22 @@ async function fetchWithRetry(
       const controller = new AbortController()
       const timeoutId = setTimeout(() => controller.abort(), 30000) // 30s timeout
 
-      const response = await fetch(url, {
-        ...options,
-        signal: controller.signal,
-      })
+      try {
+        const response = await fetch(url, {
+          ...options,
+          signal: controller.signal,
+        })
 
-      clearTimeout(timeoutId)
-      return response
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${url}`)
+        }
+
+        const data = (await response.json()) as T
+
+        return data
+      } finally {
+        clearTimeout(timeoutId)
+      }
     } catch (error) {
       lastError = error instanceof Error ? error : new Error(String(error))
 
@@ -80,9 +90,9 @@ export function mediaLoader(options: MediaLoaderOptions): Loader {
         // Fetch all media in one request (usually small number)
         const mediaUrl = `${apiBaseUrl}/api/public/media?limit=${batchSize}&offset=0&type=image`
 
-        let response: Response
+        let data: CMSMediaResponse
         try {
-          response = await fetchWithRetry(mediaUrl, {
+          data = await fetchJsonWithRetry<CMSMediaResponse>(mediaUrl, {
             headers: {
               'Accept': 'application/json',
               'User-Agent': 'AstroBlog/1.0 (Build Process)',
@@ -99,13 +109,6 @@ export function mediaLoader(options: MediaLoaderOptions): Loader {
           )
         }
 
-        if (!response.ok) {
-          throw new Error(
-            `HTTP ${response.status}: Failed to fetch media from ${mediaUrl}`
-          )
-        }
-
-        const data: CMSMediaResponse = await response.json()
         let totalFetched = 0
 
         // Process each media item
@@ -143,33 +146,33 @@ export function mediaLoader(options: MediaLoaderOptions): Loader {
           let offset = batchSize
           while (offset < data.total) {
             const nextUrl = `${apiBaseUrl}/api/public/media?limit=${batchSize}&offset=${offset}&type=image`
-            const nextResponse = await fetchWithRetry(nextUrl, {
-              headers: {
-                'Accept': 'application/json',
-                'User-Agent': 'AstroBlog/1.0 (Build Process)',
-              },
-            })
+            const nextData = await fetchJsonWithRetry<CMSMediaResponse>(
+              nextUrl,
+              {
+                headers: {
+                  'Accept': 'application/json',
+                  'User-Agent': 'AstroBlog/1.0 (Build Process)',
+                },
+              }
+            )
 
-            if (nextResponse.ok) {
-              const nextData: CMSMediaResponse = await nextResponse.json()
-              for (const item of nextData.photos) {
-                try {
-                  const entry = {
+            for (const item of nextData.photos) {
+              try {
+                const entry = {
+                  id: item.url,
+                  data: {
                     id: item.url,
-                    data: {
-                      id: item.url,
-                      desc: item.name.replace(/\.[^/.]+$/, ''),
-                    },
-                  }
-                  const parsedData = await parseData({
-                    id: entry.id,
-                    data: entry.data,
-                  })
-                  store.set({ id: entry.id, data: parsedData })
-                  totalFetched++
-                } catch (err) {
-                  logger.error(`Error processing media ${item.id}: ${err}`)
+                    desc: item.name.replace(/\.[^/.]+$/, ''),
+                  },
                 }
+                const parsedData = await parseData({
+                  id: entry.id,
+                  data: entry.data,
+                })
+                store.set({ id: entry.id, data: parsedData })
+                totalFetched++
+              } catch (err) {
+                logger.error(`Error processing media ${item.id}: ${err}`)
               }
             }
             offset += batchSize
