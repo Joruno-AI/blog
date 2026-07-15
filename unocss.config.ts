@@ -199,6 +199,11 @@ export default defineConfig<PresetWind3Theme>({
     'i-ri-list-unordered',
     'i-ri-hand-coin-line',
     'i-ri-sound-module-line',
+    /* 移动端迷你播放器（play/pause 图标由 JS 动态切换，必须列入 safelist）*/
+    'i-ri-play-fill',
+    'i-ri-pause-fill',
+    'i-ri-skip-back-fill',
+    'i-ri-skip-forward-fill',
 
     /* btn-* shortcuts - 添加常用的颜色组合到 safelist */
     'hover:text-primary',

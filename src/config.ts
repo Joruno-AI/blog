@@ -4,7 +4,7 @@ export const SITE: Site = {
   website: 'https://wangshengliang.cn/',
   base: '/',
   title: 'wangshengliang',
-  description: "wangshengliang's blog",
+  description: '王胜亮的个人博客，记录前端开发、Web 技术与编程实践中的踩坑与思考。',
   author: 'wangshengliang',
   lang: 'zh-Hans',
   ogLocale: 'zh_CN',
@@ -178,7 +178,7 @@ export const FEATURES: Features = {
     },
   ],
   giscus: [
-    true,
+    false,
     {
       'data-repo': 'wangshengliang-wsl/blog',
       'data-repo-id': 'R_kgDOP4yOiQ',

@@ -4,8 +4,14 @@
   --c-scrollbar-hover: #bbb;
   --c-text: #000;
   --c-text-soft: #555;
+  --c-text-muted: #6f6f6f;
+  --c-text-faint: #767676;
   --c-surface-soft: rgba(0, 0, 0, 0.04);
+  --c-surface-hover: rgba(0, 0, 0, 0.055);
+  --c-surface-active: rgba(0, 0, 0, 0.075);
   --c-border-soft: rgba(0, 0, 0, 0.1);
+  --c-border-strong: rgba(0, 0, 0, 0.18);
+  --c-focus-ring: rgba(0, 0, 0, 0.28);
 }
 
 :root.dark {
@@ -14,8 +20,14 @@
   --c-scrollbar-hover: #444;
   --c-text: #fff;
   --c-text-soft: #b8b8b8;
+  --c-text-muted: #9c9c9c;
+  --c-text-faint: #777;
   --c-surface-soft: rgba(255, 255, 255, 0.08);
+  --c-surface-hover: rgba(255, 255, 255, 0.1);
+  --c-surface-active: rgba(255, 255, 255, 0.13);
   --c-border-soft: rgba(255, 255, 255, 0.14);
+  --c-border-strong: rgba(255, 255, 255, 0.24);
+  --c-focus-ring: rgba(255, 255, 255, 0.34);
 }
 
 /* 导航栏磨砂玻璃效果 */
@@ -74,7 +86,7 @@ body {
   outline-offset: 2px;
   box-shadow:
     0 0 0 2px var(--c-bg),
-    0 0 0 5px #8884,
+    0 0 0 5px var(--c-focus-ring),
     var(--un-shadow, 0 0 #0000);
 }
 

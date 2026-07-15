@@ -426,11 +426,14 @@ const treeDataForJS = JSON.stringify(
     font-size: 1rem;
     border-radius: 50%;
     transition:
+      background-color 0.2s ease,
       opacity 0.2s ease,
       transform 0.2s ease;
   }
 
-  .search-trigger:hover {
+  .search-trigger:hover,
+  .search-trigger:focus-visible {
+    background: var(--c-surface-hover);
     opacity: 1;
   }
 
@@ -485,8 +488,10 @@ const treeDataForJS = JSON.stringify(
     cursor: pointer;
     opacity: 0;
     font-size: 0.75rem;
+    border-radius: 50%;
     transform: scale(0.8);
     transition:
+      background-color 0.2s ease,
       opacity 0.2s ease,
       transform 0.2s ease;
   }
@@ -496,7 +501,9 @@ const treeDataForJS = JSON.stringify(
     transform: scale(1);
   }
 
-  .search-clear:hover {
+  .search-clear:hover,
+  .search-clear:focus-visible {
+    background: var(--c-surface-hover);
     opacity: 1 !important;
   }
 
@@ -545,7 +552,7 @@ const treeDataForJS = JSON.stringify(
     overflow-y: auto;
     max-height: calc(100vh - 10rem);
     scrollbar-width: thin;
-    scrollbar-color: rgba(125, 125, 125, 0.3) transparent;
+    scrollbar-color: var(--c-border-strong) transparent;
   }
 
   /* Webkit 滚动条样式 */
@@ -588,38 +595,42 @@ const treeDataForJS = JSON.stringify(
     min-height: 2rem;
     padding: 0.375rem 0.5rem;
     background: none;
-    border: none;
+    border: 1px solid transparent;
     border-radius: 6px;
     cursor: pointer;
     font-size: 0.875rem;
-    color: inherit;
-    opacity: 0.9;
+    color: var(--c-text-soft);
+    opacity: 1;
     transition:
       background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease,
       opacity 0.2s ease;
     text-align: left;
   }
 
-  .category-header:hover {
-    background: rgba(125, 125, 125, 0.08);
-    opacity: 1;
+  .category-header:hover,
+  .category-header:focus-visible {
+    background: var(--c-surface-hover);
+    color: var(--c-text);
   }
 
   .category-header.active {
-    background: rgba(125, 125, 125, 0.1);
-    opacity: 1;
+    background: var(--c-surface-active);
+    border-color: var(--c-border-soft);
+    color: var(--c-text);
     font-weight: 600;
   }
 
-  :global(.dark) .category-header:hover,
-  :global(.dark) .category-header.active {
-    background: rgba(255, 255, 255, 0.1);
+  .category-header.active .expand-icon {
+    opacity: 0.9;
   }
 
   .expand-icon {
     transition: transform 0.2s;
     font-size: 1rem;
     flex-shrink: 0;
+    opacity: 0.72;
   }
 
   .category-header.expanded .expand-icon {
@@ -634,7 +645,8 @@ const treeDataForJS = JSON.stringify(
   }
 
   .category-count {
-    opacity: 0.78;
+    color: var(--c-text-faint);
+    opacity: 1;
     font-size: 0.75rem;
     flex-shrink: 0;
     padding-right: 0.5rem;
@@ -661,12 +673,14 @@ const treeDataForJS = JSON.stringify(
 
   .category-posts .post-link {
     font-size: 0.8125rem;
-    opacity: 0.82;
+    color: var(--c-text-muted);
+    opacity: 1;
     transition:
       background-color 0.2s ease,
+      color 0.2s ease,
       opacity 0.2s ease;
     display: block;
-    padding: 0.125rem 0.25rem;
+    padding: 0.175rem 0.35rem;
     border-radius: 4px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -676,9 +690,10 @@ const treeDataForJS = JSON.stringify(
     border-bottom: none !important;
   }
 
-  .category-posts .post-link:hover {
-    background: rgba(125, 125, 125, 0.08);
-    opacity: 1;
+  .category-posts .post-link:hover,
+  .category-posts .post-link:focus-visible {
+    background: var(--c-surface-hover);
+    color: var(--c-text);
   }
 
   /* 移动端抽屉触发按钮 */
@@ -692,14 +707,15 @@ const treeDataForJS = JSON.stringify(
     border-radius: 50%;
     background: var(--c-bg);
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
-    border: 1px solid rgba(125, 125, 125, 0.2);
+    border: 1px solid var(--c-border-soft);
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s;
   }
 
-  .category-drawer-trigger:hover {
+  .category-drawer-trigger:hover,
+  .category-drawer-trigger:focus-visible {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
     transform: scale(1.05);
   }
@@ -746,15 +762,11 @@ const treeDataForJS = JSON.stringify(
     align-items: center;
     justify-content: space-between;
     padding: 1rem;
-    border-bottom: 1px solid rgba(125, 125, 125, 0.2);
+    border-bottom: 1px solid var(--c-border-soft);
     flex-shrink: 0;
-    background: rgba(255, 255, 255, 0.3);
+    background: color-mix(in srgb, var(--c-bg) 82%, transparent);
     backdrop-filter: saturate(180%) blur(12px);
     -webkit-backdrop-filter: saturate(180%) blur(12px);
-  }
-
-  :global(.dark) .drawer-header {
-    background: rgba(5, 5, 5, 0.3);
   }
 
   .mobile-nav {
@@ -768,11 +780,16 @@ const treeDataForJS = JSON.stringify(
     border: none;
     cursor: pointer;
     opacity: 0.6;
-    transition: opacity 0.2s;
+    border-radius: 0.375rem;
+    transition:
+      background-color 0.2s ease,
+      opacity 0.2s;
     padding: 0.25rem;
   }
 
-  .drawer-close:hover {
+  .drawer-close:hover,
+  .drawer-close:focus-visible {
+    background: var(--c-surface-hover);
     opacity: 1;
   }
 
@@ -806,6 +823,7 @@ const treeDataForJS = JSON.stringify(
     private expandedCategories: Set<string> = new Set<string>()
     private searchTimeout: ReturnType<typeof setTimeout> | null = null
     private readonly DEBOUNCE_DELAY = 300
+    private readonly CATEGORY_PARAM = 'category'
 
     connectedCallback() {
       this.categories = JSON.parse(this.dataset.categories || '[]')
@@ -816,8 +834,9 @@ const treeDataForJS = JSON.stringify(
       this.setupCategoryHeaders()
       this.setupDrawer()
       this.setupSearch()
-      this.restoreCategoryFromStorage()
+      this.restoreCategoryState()
       this.restoreExpandedFromStorage()
+      this.setupUrlState()
     }
 
     // 防抖函数
@@ -1021,7 +1040,9 @@ const treeDataForJS = JSON.stringify(
 
       // 如果有搜索关键词，重置分类筛选到"全部"
       if (keyword) {
+        this.updateActiveCategory('all')
         localStorage.setItem('blog-filter-category', 'all')
+        this.syncCategoryToUrl('all')
       }
     }
 
@@ -1038,9 +1059,7 @@ const treeDataForJS = JSON.stringify(
             this.toggleCategoryExpand(category, header as HTMLElement)
           }
 
-          // 筛选文章
-          this.filterByCategory(category)
-          this.updateActiveCategory(category)
+          this.setCategory(category)
         })
       })
     }
@@ -1095,18 +1114,55 @@ const treeDataForJS = JSON.stringify(
       })
     }
 
-    private restoreCategoryFromStorage() {
-      const savedCategory = localStorage.getItem('blog-filter-category')
-      const categoryToRestore =
-        savedCategory &&
-        (savedCategory === 'all' || this.categories.includes(savedCategory))
-          ? savedCategory
-          : 'all'
+    private setupUrlState() {
+      window.addEventListener('popstate', () => {
+        this.setCategory(this.getCategoryFromUrl() || 'all', false)
+      })
+    }
 
-      if (categoryToRestore !== 'all') {
-        this.filterByCategory(categoryToRestore)
+    private isValidCategory(category: string | null | undefined) {
+      return (
+        !!category && (category === 'all' || this.categories.includes(category))
+      )
+    }
+
+    private getCategoryFromUrl() {
+      const url = new URL(window.location.href)
+      const category = url.searchParams.get(this.CATEGORY_PARAM)
+      return this.isValidCategory(category) ? category! : undefined
+    }
+
+    private syncCategoryToUrl(category: string) {
+      const url = new URL(window.location.href)
+      if (category === 'all') {
+        url.searchParams.delete(this.CATEGORY_PARAM)
+      } else {
+        url.searchParams.set(this.CATEGORY_PARAM, category)
       }
-      this.updateActiveCategory(categoryToRestore)
+
+      const nextUrl = `${url.pathname}${url.search}${url.hash}`
+      const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`
+      if (nextUrl !== currentUrl) {
+        window.history.replaceState({}, '', nextUrl)
+      }
+    }
+
+    private setCategory(category: string, shouldSyncUrl = true) {
+      const nextCategory = this.isValidCategory(category) ? category : 'all'
+      this.filterByCategory(nextCategory)
+      this.updateActiveCategory(nextCategory)
+      localStorage.setItem('blog-filter-category', nextCategory)
+      if (shouldSyncUrl) {
+        this.syncCategoryToUrl(nextCategory)
+      }
+    }
+
+    private restoreCategoryState() {
+      const urlCategory = this.getCategoryFromUrl()
+      const savedCategory = localStorage.getItem('blog-filter-category')
+      const categoryToRestore = urlCategory || savedCategory || 'all'
+
+      this.setCategory(categoryToRestore, !urlCategory)
     }
 
     private restoreExpandedFromStorage() {
@@ -1143,8 +1199,6 @@ const treeDataForJS = JSON.stringify(
     }
 
     private filterByCategory(category: string) {
-      // 保存到 localStorage
-      localStorage.setItem('blog-filter-category', category)
       const postItems = this.querySelectorAll('.post-item')
 
       // 用于追踪每个分类的第一篇文章

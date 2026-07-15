@@ -1,6 +1,6 @@
 @import 'viewerjs/dist/viewer.css';
 @import 'rehype-callouts/theme/vitepress';
-@import url('https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css');
+@import 'katex/dist/katex.min.css';
 
 /* Prose Complement */
 .prose {

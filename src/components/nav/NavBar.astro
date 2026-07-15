@@ -146,6 +146,35 @@ for (const item of new Set(left)) {
     overflow: hidden;
   }
 
+  /* Even hover/current highlight around each nav icon.
+     Padding is uniform on all sides; the grid gap is tightened and the
+     row is pulled out with negative margin so icons keep their original
+     visual positions while gaining a rounded-square hit area. */
+  .main-nav :global(.grid-flow-col) {
+    gap: 0.25rem;
+    margin-inline: -0.5rem;
+  }
+
+  .main-nav :global(.grid-flow-col > a),
+  .main-nav :global(.grid-flow-col > button) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    transition:
+      background-color 0.2s ease,
+      opacity 0.2s ease;
+  }
+
+  .main-nav :global(.grid-flow-col > a:hover),
+  .main-nav :global(.grid-flow-col > a:focus-visible),
+  .main-nav :global(.grid-flow-col > button:hover),
+  .main-nav :global(.grid-flow-col > button:focus-visible),
+  .main-nav :global(.grid-flow-col > a[aria-current='page']) {
+    background: var(--c-surface-hover);
+  }
+
   @media (max-width: 380px) {
     .logo-wrapper {
       width: 0;

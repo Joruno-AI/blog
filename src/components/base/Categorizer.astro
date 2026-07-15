@@ -24,7 +24,11 @@ const { maxGroupColumns } = UI.groupView
     !wide ? (
       <span
         class="absolute left--12 top--4
-          op-10 text-6em text-stroke-2 text-stroke-hex-aaa font-bold color-transparent"
+          lt-lg:text-5em
+          lt-md:(left-0 top-1/2 translate-y--1/2 text-3.2em)
+          op-10 dark:op-8 text-6em
+          text-stroke-2 text-stroke-hex-aaa font-bold color-transparent
+          leading-1em whitespace-nowrap"
       >
         {text}
       </span>

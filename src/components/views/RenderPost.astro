@@ -12,7 +12,14 @@ import ShareLink from '~/components/widgets/ShareLink.astro'
 import Giscus from '~/components/widgets/Giscus.astro'
 import ImageViewer from '~/components/widgets/ImageViewer.astro'
 
-import { getMinutesRead } from '~/utils/data'
+import {
+  buildNestedCategoryTree,
+  getFilteredPosts,
+  getLastCategorySegment,
+  getMinutesRead,
+  type CategoryTreeNode,
+} from '~/utils/data'
+import { withBasePath } from '~/utils/path'
 import { FEATURES } from '~/config'
 
 import type { CollectionEntry } from 'astro:content'
@@ -67,6 +74,45 @@ const searchFilter =
 const WARNING = `This is a draft post that will not be published
 in production. Set the post's <code>draft</code> property in
 frontmatter to <code>false</code> or remove it to publish the post.`
+
+function collectPostsFromTree(
+  nodes: CategoryTreeNode[]
+): CollectionEntry<'blog' | 'changelog'>[] {
+  const posts: CollectionEntry<'blog' | 'changelog'>[] = []
+
+  const collect = (node: CategoryTreeNode) => {
+    posts.push(...node.posts)
+    node.children.forEach(collect)
+  }
+
+  nodes.forEach(collect)
+  return posts
+}
+
+let previousBlogPost: CollectionEntry<'blog'> | undefined
+let nextBlogPost: CollectionEntry<'blog'> | undefined
+let currentCategoryLabel: string | undefined
+
+if (collectionType === 'blog') {
+  const blogPosts = await getFilteredPosts('blog')
+  const orderedBlogPosts = collectPostsFromTree(
+    buildNestedCategoryTree(blogPosts)
+  ).filter(
+    (item): item is CollectionEntry<'blog'> => item.collection === 'blog'
+  )
+  const currentPostIndex = orderedBlogPosts.findIndex(
+    (item) => item.id === post.id
+  )
+
+  if (currentPostIndex >= 0) {
+    previousBlogPost = orderedBlogPosts[currentPostIndex - 1]
+    nextBlogPost = orderedBlogPosts[currentPostIndex + 1]
+  }
+
+  if (category) {
+    currentCategoryLabel = getLastCategorySegment(category)
+  }
+}
 ---
 
 <BaseLayout
@@ -79,13 +125,7 @@ frontmatter to <code>false</code> or remove it to publish the post.`
   {tags}
   {category}
 >
-  <StandardLayout
-    {title}
-    {titleIcon}
-    {subtitle}
-    {isSearchable}
-    {searchFilter}
-  >
+  <StandardLayout {title} {titleIcon} {subtitle} {isSearchable} {searchFilter}>
     <Fragment slot="head">
       <PostMeta {pubDate} {lastModDate} {minutesRead} {tags} />
     </Fragment>
@@ -101,6 +141,60 @@ frontmatter to <code>false</code> or remove it to publish the post.`
       }
       <PostCover {cover} {coverAlt} />
       <Content />
+      {
+        collectionType === 'blog' && (
+          <nav class="post-neighbor-nav" aria-label="文章导航">
+            <a class="post-neighbor-back" href={withBasePath('/blog/')}>
+              <span class="i-ri-arrow-left-line" aria-hidden="true" />
+              <span>返回 Blog</span>
+              {currentCategoryLabel && (
+                <span class="post-neighbor-category">
+                  {currentCategoryLabel}
+                </span>
+              )}
+            </a>
+            <div class="post-neighbor-links">
+              {previousBlogPost ? (
+                <a
+                  class="post-neighbor-link"
+                  href={withBasePath(`/blog/${previousBlogPost.id}/`)}
+                  rel="prev"
+                >
+                  <span class="post-neighbor-label">上一篇</span>
+                  <span class="post-neighbor-title">
+                    {previousBlogPost.data.title}
+                  </span>
+                </a>
+              ) : (
+                <span class="post-neighbor-link is-disabled" aria-hidden="true">
+                  <span class="post-neighbor-label">上一篇</span>
+                  <span class="post-neighbor-title">已经是第一篇</span>
+                </span>
+              )}
+              {nextBlogPost ? (
+                <a
+                  class="post-neighbor-link align-right"
+                  href={withBasePath(`/blog/${nextBlogPost.id}/`)}
+                  rel="next"
+                >
+                  <span class="post-neighbor-label">下一篇</span>
+                  <span class="post-neighbor-title">
+                    {nextBlogPost.data.title}
+                  </span>
+                </a>
+              ) : (
+                <span
+                  class="post-neighbor-link align-right is-disabled"
+                  aria-hidden="true"
+                >
+                  <span class="post-neighbor-label">下一篇</span>
+                  <span class="post-neighbor-title">已经是最后一篇</span>
+                </span>
+              )}
+            </div>
+          </nav>
+        )
+      }
     </Fragment>
   </StandardLayout>
   <Fragment slot="share">
@@ -116,3 +210,111 @@ frontmatter to <code>false</code> or remove it to publish the post.`
   }
   <ImageViewer selector="article" options={{ title: 0, navbar: 0 }} />
 </BaseLayout>
+
+<style>
+  .post-neighbor-nav {
+    margin-top: 3.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--c-border-soft);
+  }
+
+  .post-neighbor-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.5rem;
+    margin-left: -0.5rem;
+    border-radius: 0.375rem;
+    color: var(--c-text-muted);
+    font-size: 0.875rem;
+    text-decoration: none;
+    border-bottom: none !important;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
+  }
+
+  .post-neighbor-back:hover,
+  .post-neighbor-back:focus-visible {
+    background: var(--c-surface-hover);
+    color: var(--c-text);
+  }
+
+  .post-neighbor-category {
+    color: var(--c-text-faint);
+  }
+
+  .post-neighbor-category::before {
+    content: '/';
+    margin-right: 0.4rem;
+    color: var(--c-border-strong);
+  }
+
+  .post-neighbor-links {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  .post-neighbor-link {
+    display: flex;
+    min-width: 0;
+    min-height: 5rem;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.35rem;
+    padding: 0.875rem 1rem;
+    border: 1px solid var(--c-border-soft) !important;
+    border-radius: 0.5rem;
+    color: var(--c-text-soft);
+    text-decoration: none;
+    background: transparent;
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .post-neighbor-link:hover,
+  .post-neighbor-link:focus-visible {
+    background: var(--c-surface-hover);
+    border-color: var(--c-border-strong) !important;
+    color: var(--c-text);
+    transform: translateY(-1px);
+  }
+
+  .post-neighbor-link.align-right {
+    text-align: right;
+  }
+
+  .post-neighbor-link.is-disabled {
+    color: var(--c-text-faint);
+    opacity: 0.52;
+    pointer-events: none;
+  }
+
+  .post-neighbor-label {
+    color: var(--c-text-faint);
+    font-size: 0.75rem;
+  }
+
+  .post-neighbor-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+
+  @media (max-width: 640px) {
+    .post-neighbor-links {
+      grid-template-columns: 1fr;
+    }
+
+    .post-neighbor-link.align-right {
+      text-align: left;
+    }
+  }
+</style>

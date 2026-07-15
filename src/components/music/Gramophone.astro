@@ -36,7 +36,7 @@ import '~/styles/music.css'
 </style>
 
 <script>
-  import * as THREE from 'three'
+  import type * as THREE_NS from 'three'
 
   interface Song {
     id: string
@@ -54,7 +54,7 @@ import '~/styles/music.css'
     songs: Song[]
   }
 
-  document.addEventListener('astro:page-load', () => {
+  document.addEventListener('astro:page-load', async () => {
     const container = document.getElementById('gramophone-canvas')
 
     if (!container) return
@@ -62,6 +62,12 @@ import '~/styles/music.css'
     // Check if already initialized
     if (container.dataset.initialized === 'true') return
     container.dataset.initialized = 'true'
+
+    // Dynamically load three.js only on the music page (where the canvas
+    // exists). This keeps the ~138KB gzip vendor-three chunk out of every
+    // other page's dependency graph. The early `container` guard above runs
+    // synchronously before this await, so non-music pages never fetch it.
+    const THREE = (await import('three')) as typeof THREE_NS
 
     // Get container size
     const getContainerSize = () => {
@@ -214,13 +220,33 @@ import '~/styles/music.css'
       return texture
     }
 
+    const createStageShadowTexture = () => {
+      const canvas = document.createElement('canvas')
+      canvas.width = 1024
+      canvas.height = 1024
+      const ctx = canvas.getContext('2d')
+      if (!ctx) return null
+
+      const gradient = ctx.createRadialGradient(512, 512, 50, 512, 512, 500)
+      gradient.addColorStop(0, 'rgba(0, 0, 0, 0.58)')
+      gradient.addColorStop(0.42, 'rgba(0, 0, 0, 0.26)')
+      gradient.addColorStop(1, 'rgba(0, 0, 0, 0)')
+      ctx.fillStyle = gradient
+      ctx.fillRect(0, 0, 1024, 1024)
+
+      const texture = new THREE.CanvasTexture(canvas)
+      texture.colorSpace = THREE.SRGBColorSpace
+      return texture
+    }
+
     // Scene setup
     const scene = new THREE.Scene()
     scene.background = null // 透明背景
+    scene.fog = new THREE.FogExp2(0x0f0e0d, 0.026)
 
-    // Camera - top-down 45 degree view
+    // Camera - cinematic three-quarter view
     const camera = new THREE.PerspectiveCamera(
-      45,
+      38,
       initialSize.width / initialSize.height,
       0.1,
       1000
@@ -230,6 +256,7 @@ import '~/styles/music.css'
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
       alpha: true, // 启用透明背景
+      powerPreference: 'high-performance',
     })
     renderer.setClearColor(0x000000, 0) // 透明背景
     renderer.setSize(initialSize.width, initialSize.height)
@@ -237,22 +264,22 @@ import '~/styles/music.css'
     renderer.shadowMap.enabled = true
     renderer.shadowMap.type = THREE.PCFSoftShadowMap
     renderer.toneMapping = THREE.ACESFilmicToneMapping
-    renderer.toneMappingExposure = 1.4
+    renderer.toneMappingExposure = 0.98
     renderer.outputColorSpace = THREE.SRGBColorSpace
     container.appendChild(renderer.domElement)
 
     // ==================== Lighting ====================
-    // Ambient light - general illumination
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.3)
+    // Neutral gallery fill keeps the model aligned with the blog theme.
+    const ambientLight = new THREE.HemisphereLight(0xe8dfcf, 0x11100f, 0.48)
     scene.add(ambientLight)
 
-    // Main spotlight from above (creates vinyl reflection)
-    const spotLight = new THREE.SpotLight(0xffffff, 80)
-    spotLight.position.set(0, 12, 0)
-    spotLight.angle = Math.PI / 4
-    spotLight.penumbra = 0.5
-    spotLight.decay = 1.2
-    spotLight.distance = 30
+    // Main spotlight from the audience side.
+    const spotLight = new THREE.SpotLight(0xe8d4b2, 58)
+    spotLight.position.set(-2.6, 8.6, 4.8)
+    spotLight.angle = Math.PI / 5
+    spotLight.penumbra = 0.62
+    spotLight.decay = 1.35
+    spotLight.distance = 34
     spotLight.castShadow = true
     spotLight.shadow.mapSize.width = 2048
     spotLight.shadow.mapSize.height = 2048
@@ -260,25 +287,35 @@ import '~/styles/music.css'
     scene.add(spotLight)
     scene.add(spotLight.target)
 
-    // Warm highlight light
-    const warmLight = new THREE.PointLight(0xffaa00, 20, 20)
-    warmLight.position.set(-3, 2, 3)
+    // Soft material bloom on the horn and platter.
+    const warmLight = new THREE.PointLight(0xd7b37c, 10, 22)
+    warmLight.position.set(-3.2, 2.4, 3.2)
     scene.add(warmLight)
 
-    // Cool highlight light
-    const coolLight = new THREE.PointLight(0x00aaff, 20, 20)
-    coolLight.position.set(3, 2, -3)
+    // Restrained neutral rim light, only for edge separation.
+    const coolLight = new THREE.PointLight(0xd7d4c8, 4.8, 18)
+    coolLight.position.set(3.8, 2.7, -4.2)
     scene.add(coolLight)
 
     // Rim light for metallic edges
-    const rimLight = new THREE.DirectionalLight(0xffffff, 1.5)
-    rimLight.position.set(0, 5, -10)
+    const rimLight = new THREE.DirectionalLight(0xfff1d4, 1.35)
+    rimLight.position.set(1.5, 5.2, -8)
     scene.add(rimLight)
+
+    const hornKeyLight = new THREE.SpotLight(0xd8c09a, 48)
+    hornKeyLight.position.set(2.8, 4.2, 2.5)
+    hornKeyLight.angle = Math.PI / 7
+    hornKeyLight.penumbra = 0.7
+    hornKeyLight.distance = 14
+    scene.add(hornKeyLight)
+    scene.add(hornKeyLight.target)
 
     // ==================== Materials ====================
     const vinylTexture = createVinylTexture()
     const brushedMetalTexture = createBrushedMetalTexture()
+    const brushedBrassTexture = createBrushedMetalTexture('#b88748')
     const woodTexture = createWoodTexture()
+    const stageShadowTexture = createStageShadowTexture()
 
     // Matte black material for mechanical parts
     const matteBlackMaterial = new THREE.MeshStandardMaterial({
@@ -288,26 +325,75 @@ import '~/styles/music.css'
     })
 
     // Wood material for turntable body
-    const woodMaterial = new THREE.MeshStandardMaterial({
+    const woodMaterial = new THREE.MeshPhysicalMaterial({
       map: woodTexture,
-      color: 0x8d6e63, // Tint to warm it up
-      roughness: 0.3,
+      color: 0x24100a,
+      roughness: 0.42,
       metalness: 0.1,
+      clearcoat: 0.28,
+      clearcoatRoughness: 0.3,
     })
 
     // Brushed aluminum material
     const aluminumMaterial = new THREE.MeshStandardMaterial({
-      color: 0xffffff,
+      color: 0xd9d0bf,
       map: brushedMetalTexture,
-      roughness: 0.25,
-      metalness: 0.8,
+      roughness: 0.38,
+      metalness: 0.66,
+    })
+
+    const platterMetalMaterial = new THREE.MeshPhysicalMaterial({
+      color: 0x17130f,
+      roughness: 0.34,
+      metalness: 0.78,
+      clearcoat: 0.36,
+      clearcoatRoughness: 0.2,
+    })
+
+    const platterRimMaterial = new THREE.MeshPhysicalMaterial({
+      color: 0x8f6739,
+      roughness: 0.28,
+      metalness: 0.88,
+      clearcoat: 0.38,
+      clearcoatRoughness: 0.18,
     })
 
     // Gold material for accents
     const goldMaterial = new THREE.MeshStandardMaterial({
-      color: 0xffd700,
-      roughness: 0.15,
+      color: 0xc6aa72,
+      roughness: 0.2,
       metalness: 1.0,
+    })
+
+    const brassMaterial = new THREE.MeshPhysicalMaterial({
+      color: 0xb67b33,
+      map: brushedBrassTexture,
+      roughness: 0.26,
+      metalness: 1,
+      clearcoat: 0.42,
+      clearcoatRoughness: 0.18,
+      emissive: 0x1a0f07,
+      emissiveIntensity: 0.1,
+      side: THREE.DoubleSide,
+    })
+
+    const darkBrassMaterial = new THREE.MeshPhysicalMaterial({
+      color: 0x6d3a18,
+      roughness: 0.34,
+      metalness: 0.86,
+      clearcoat: 0.25,
+      clearcoatRoughness: 0.22,
+    })
+
+    const hornInteriorMaterial = new THREE.MeshPhysicalMaterial({
+      color: 0x8d5528,
+      roughness: 0.31,
+      metalness: 0.92,
+      clearcoat: 0.35,
+      clearcoatRoughness: 0.18,
+      emissive: 0x1d1006,
+      emissiveIntensity: 0.14,
+      side: THREE.DoubleSide,
     })
 
     // Chrome/polished metal material
@@ -319,19 +405,19 @@ import '~/styles/music.css'
 
     // Rubber mat material
     const rubberMaterial = new THREE.MeshStandardMaterial({
-      color: 0x202020,
-      roughness: 0.9,
+      color: 0x080706,
+      roughness: 0.86,
       metalness: 0.05,
     })
 
     // Vinyl material with texture
     const vinylMaterial = new THREE.MeshStandardMaterial({
-      color: 0x080808,
+      color: 0x010101,
       map: vinylTexture,
       bumpMap: vinylTexture,
-      bumpScale: 0.02,
-      roughness: 0.4,
-      metalness: 0.6,
+      bumpScale: 0.035,
+      roughness: 0.34,
+      metalness: 0.2,
     })
 
     // Red LED indicator
@@ -421,7 +507,7 @@ import '~/styles/music.css'
     // ==================== Platter ====================
     // Platter base ring
     const platterRingGeometry = new THREE.TorusGeometry(2.1, 0.08, 16, 64)
-    const platterRing = new THREE.Mesh(platterRingGeometry, aluminumMaterial)
+    const platterRing = new THREE.Mesh(platterRingGeometry, platterRimMaterial)
     platterRing.rotation.x = Math.PI / 2
     platterRing.position.set(-0.3, 0.5, 0)
     turntableGroup.add(platterRing)
@@ -432,7 +518,7 @@ import '~/styles/music.css'
 
     // Platter disc
     const platterGeometry = new THREE.CylinderGeometry(2, 2, 0.1, 64)
-    const platter = new THREE.Mesh(platterGeometry, aluminumMaterial)
+    const platter = new THREE.Mesh(platterGeometry, platterMetalMaterial)
     platter.castShadow = true
     platter.receiveShadow = true
     platterGroup.add(platter)
@@ -451,11 +537,15 @@ import '~/styles/music.css'
 
     // Strobe dots around platter edge
     const strobeDotCount = 60
+    const strobeDotMaterial = new THREE.MeshBasicMaterial({
+      color: 0xe9bd78,
+      transparent: true,
+      opacity: 0.78,
+    })
     for (let i = 0; i < strobeDotCount; i++) {
       const angle = (i / strobeDotCount) * Math.PI * 2
       const dotGeometry = new THREE.CircleGeometry(0.02, 8)
-      const dotMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff })
-      const dot = new THREE.Mesh(dotGeometry, dotMaterial)
+      const dot = new THREE.Mesh(dotGeometry, strobeDotMaterial)
       dot.rotation.x = -Math.PI / 2
       dot.position.set(Math.cos(angle) * 1.95, 0.06, Math.sin(angle) * 1.95)
       platterGroup.add(dot)
@@ -466,7 +556,7 @@ import '~/styles/music.css'
     // ==================== Vinyl Record ====================
     const vinylGroup = new THREE.Group()
     vinylGroup.position.set(-0.3, 0.65, 0)
-    vinylGroup.visible = false
+    vinylGroup.visible = true
 
     // Main vinyl disc
     const vinylGeometry = new THREE.CylinderGeometry(1.75, 1.75, 0.025, 128)
@@ -482,10 +572,11 @@ import '~/styles/music.css'
     const coverGeometry = new THREE.CircleGeometry(1.72, 128)
     const coverMaterial = new THREE.MeshStandardMaterial({
       color: 0xffffff,
-      roughness: 0.3,
-      metalness: 0.1,
+      roughness: 0.62,
+      metalness: 0,
       transparent: true,
-      opacity: 1,
+      opacity: 0,
+      depthWrite: false,
     })
     const coverMesh = new THREE.Mesh(coverGeometry, coverMaterial)
     coverMesh.rotation.x = -Math.PI / 2
@@ -511,6 +602,8 @@ import '~/styles/music.css'
         (texture) => {
           texture.colorSpace = THREE.SRGBColorSpace
           coverMaterial.map = texture
+          coverMaterial.opacity = 1
+          coverMaterial.depthWrite = true
           coverMaterial.needsUpdate = true
         },
         undefined,
@@ -518,6 +611,8 @@ import '~/styles/music.css'
           // Error loading texture - use fallback color
           coverMaterial.map = null
           coverMaterial.color.setHex(0xcd853f)
+          coverMaterial.opacity = 0.86
+          coverMaterial.depthWrite = true
           coverMaterial.needsUpdate = true
         }
       )
@@ -783,6 +878,135 @@ import '~/styles/music.css'
     logo.position.set(-2.4, 0.41, 1.8)
     turntableGroup.add(logo)
 
+    // ==================== Gramophone Horn ====================
+    const hornGroup = new THREE.Group()
+    hornGroup.position.set(1.38, 1.55, -1.72)
+    hornGroup.rotation.x = 0.34
+    hornGroup.rotation.z = -0.52
+
+    const hornProfile = [
+      new THREE.Vector2(0.16, -1.0),
+      new THREE.Vector2(0.18, -0.72),
+      new THREE.Vector2(0.26, -0.38),
+      new THREE.Vector2(0.46, -0.04),
+      new THREE.Vector2(0.78, 0.32),
+      new THREE.Vector2(1.08, 0.66),
+      new THREE.Vector2(1.28, 0.92),
+    ]
+    const hornGeometry = new THREE.LatheGeometry(hornProfile, 96)
+    const hornMesh = new THREE.Mesh(hornGeometry, brassMaterial)
+    hornMesh.castShadow = true
+    hornMesh.receiveShadow = true
+    hornGroup.add(hornMesh)
+
+    const hornInteriorGeometry = new THREE.LatheGeometry(
+      [
+        new THREE.Vector2(0.08, -0.96),
+        new THREE.Vector2(0.18, -0.6),
+        new THREE.Vector2(0.4, -0.16),
+        new THREE.Vector2(0.9, 0.48),
+        new THREE.Vector2(1.18, 0.86),
+      ],
+      96
+    )
+    const hornInterior = new THREE.Mesh(
+      hornInteriorGeometry,
+      hornInteriorMaterial
+    )
+    hornInterior.scale.set(0.92, 0.95, 0.92)
+    hornInterior.position.y = -0.02
+    hornGroup.add(hornInterior)
+
+    const hornRim = new THREE.Mesh(
+      new THREE.TorusGeometry(1.28, 0.055, 18, 128),
+      brassMaterial
+    )
+    hornRim.rotation.x = Math.PI / 2
+    hornRim.position.y = 0.92
+    hornRim.castShadow = true
+    hornGroup.add(hornRim)
+
+    const hornThroat = new THREE.Mesh(
+      new THREE.TorusGeometry(0.18, 0.024, 12, 48),
+      darkBrassMaterial
+    )
+    hornThroat.rotation.x = Math.PI / 2
+    hornThroat.position.y = -1.0
+    hornGroup.add(hornThroat)
+
+    const hornRibPositions = [
+      { y: -0.54, r: 0.24 },
+      { y: -0.16, r: 0.4 },
+      { y: 0.24, r: 0.7 },
+      { y: 0.58, r: 1.0 },
+    ]
+    hornRibPositions.forEach(({ y, r }) => {
+      const rib = new THREE.Mesh(
+        new THREE.TorusGeometry(r, 0.018, 10, 96),
+        darkBrassMaterial
+      )
+      rib.rotation.x = Math.PI / 2
+      rib.position.y = y
+      hornGroup.add(rib)
+    })
+
+    turntableGroup.add(hornGroup)
+
+    const soundboxGeometry = new THREE.CylinderGeometry(0.25, 0.25, 0.18, 40)
+    const soundbox = new THREE.Mesh(soundboxGeometry, brassMaterial)
+    soundbox.position.set(1.15, 0.84, -1.08)
+    soundbox.rotation.x = Math.PI / 2
+    soundbox.castShadow = true
+    turntableGroup.add(soundbox)
+
+    const hornTubeCurve = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(1.18, 0.86, -1.08),
+      new THREE.Vector3(1.25, 1.04, -1.28),
+      new THREE.Vector3(1.38, 1.22, -1.48),
+      new THREE.Vector3(1.48, 1.38, -1.68),
+    ])
+    const hornTube = new THREE.Mesh(
+      new THREE.TubeGeometry(hornTubeCurve, 36, 0.055, 18, false),
+      brassMaterial
+    )
+    hornTube.castShadow = true
+    turntableGroup.add(hornTube)
+
+    const crankGroup = new THREE.Group()
+    crankGroup.position.set(2.92, 0.2, 0.48)
+    crankGroup.rotation.z = Math.PI / 2
+    const crankStem = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.035, 0.035, 0.72, 18),
+      brassMaterial
+    )
+    crankStem.rotation.x = Math.PI / 2
+    crankGroup.add(crankStem)
+    const crankHandle = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.055, 0.055, 0.3, 18),
+      darkBrassMaterial
+    )
+    crankHandle.position.z = 0.44
+    crankHandle.rotation.x = Math.PI / 2
+    crankGroup.add(crankHandle)
+    turntableGroup.add(crankGroup)
+
+    if (stageShadowTexture) {
+      const stageShadow = new THREE.Mesh(
+        new THREE.PlaneGeometry(9.2, 7.2),
+        new THREE.MeshBasicMaterial({
+          map: stageShadowTexture,
+          transparent: true,
+          opacity: 0.82,
+          depthWrite: false,
+        })
+      )
+      stageShadow.rotation.x = -Math.PI / 2
+      stageShadow.position.set(0.1, -0.28, 0.15)
+      scene.add(stageShadow)
+    }
+
+    hornKeyLight.target = hornGroup
+    spotLight.target = turntableGroup
     scene.add(turntableGroup)
 
     // ==================== State Management ====================
@@ -811,11 +1035,11 @@ import '~/styles/music.css'
     // 3D view dragging
     let isDraggingScene = false
     let previousMousePosition = { x: 0, y: 0 }
-    let cameraTheta = 0 // Horizontal angle - start facing front
-    let cameraPhi = Math.PI / 4 // Vertical angle - 45 degrees from above
-    let cameraRadius = 12
-    const minZoom = 8
-    const maxZoom = 20
+    let cameraTheta = -0.42 // Horizontal angle - start from a front corner
+    let cameraPhi = initialSize.width < 640 ? 0.54 : 0.48
+    let cameraRadius = initialSize.width < 640 ? 11.4 : 9.4
+    const minZoom = 6.6
+    const maxZoom = 15.5
 
     // ==================== Volume Knob Interaction ====================
     const raycaster = new THREE.Raycaster()
@@ -844,10 +1068,10 @@ import '~/styles/music.css'
     function updateCameraPosition() {
       camera.position.x =
         cameraRadius * Math.sin(cameraTheta) * Math.cos(cameraPhi)
-      camera.position.y = cameraRadius * Math.sin(cameraPhi) + 1
+      camera.position.y = cameraRadius * Math.sin(cameraPhi) + 0.9
       camera.position.z =
         cameraRadius * Math.cos(cameraTheta) * Math.cos(cameraPhi)
-      camera.lookAt(0, 0.3, 0)
+      camera.lookAt(0, 1.0, 0)
     }
 
     // Initialize camera position
@@ -1043,6 +1267,36 @@ import '~/styles/music.css'
       }
 
       playSong(index)
+    }) as EventListener)
+
+    // 播放/暂停切换（移动端迷你控制条复用留声机的唱臂逻辑）
+    window.addEventListener('toggle-play', (() => {
+      if (!currentAlbum) return
+      toggleTonearm()
+    }) as EventListener)
+
+    // 上一首
+    window.addEventListener('prev-song', (() => {
+      if (!currentAlbum) return
+      if (!isTonearmDown) {
+        isTonearmDown = true
+        animateTonearm(tonearmPlayAngle)
+      }
+      const count = currentAlbum.songs.length
+      const prevIndex = (currentSongIndex - 1 + count) % count
+      playSong(prevIndex)
+    }) as EventListener)
+
+    // 下一首
+    window.addEventListener('next-song', (() => {
+      if (!currentAlbum) return
+      if (!isTonearmDown) {
+        isTonearmDown = true
+        animateTonearm(tonearmPlayAngle)
+      }
+      const count = currentAlbum.songs.length
+      const nextIndex = (currentSongIndex + 1) % count
+      playSong(nextIndex)
     }) as EventListener)
 
     window.addEventListener('seek-to', ((e: CustomEvent) => {
@@ -1364,25 +1618,15 @@ import '~/styles/music.css'
 
     // ==================== Theme Adaptation ====================
     const updateThemeColors = () => {
-      const isDark = document.documentElement.classList.contains('dark')
-
-      // 背景保持透明，不更新
-      // scene.background = null
-
-      // Adjust lighting based on theme
-      if (isDark) {
-        // Dark theme: brighter lights for contrast
-        ambientLight.intensity = 0.4
-        spotLight.intensity = 60
-        rimLight.intensity = 1.5
-        renderer.toneMappingExposure = 1.4
-      } else {
-        // Light theme: softer lights to avoid overexposure
-        ambientLight.intensity = 0.5
-        spotLight.intensity = 40
-        rimLight.intensity = 1.2
-        renderer.toneMappingExposure = 1.1
-      }
+      // 音乐页在站点亮/暗主题下都保持固定的暖色暗舞台（见 music-polish.css），
+      // 因此 3D 灯光使用统一的舞台预设，不再随站点主题切换，避免亮色主题下灯光偏弱。
+      ambientLight.intensity = 0.54
+      spotLight.intensity = 82
+      warmLight.intensity = 18
+      coolLight.intensity = 9
+      rimLight.intensity = 1.8
+      hornKeyLight.intensity = 68
+      renderer.toneMappingExposure = 1.06
     }
 
     // Listen for theme changes

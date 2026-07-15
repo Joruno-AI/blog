@@ -21,6 +21,22 @@ import type { RemarkPlugins, RehypePlugins } from 'astro'
 import type { PropertiesFromTextDirective } from 'remark-directive-sugar'
 import type { CreateProperties } from 'rehype-external-links'
 
+// Add native lazy-loading + async decoding to content images that don't
+// already specify them. Only fills missing attributes so any explicit
+// values (e.g. from remark-imgattr) are preserved.
+function rehypeImgLazy() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (tree: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    visit(tree, 'element', (node: any) => {
+      if (node.tagName !== 'img') return
+      node.properties = node.properties || {}
+      if (node.properties.loading == null) node.properties.loading = 'lazy'
+      if (node.properties.decoding == null) node.properties.decoding = 'async'
+    })
+  }
+}
+
 // https://docs.astro.build/en/recipes/reading-time/
 function remarkReadingTime() {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -77,6 +93,8 @@ export const remarkPlugins: RemarkPlugins = [
 export const rehypePlugins: RehypePlugins = [
   // https://docs.astro.build/en/guides/markdown-content/#heading-ids-and-plugins
   rehypeHeadingIds,
+  // Native lazy-loading + async decoding for content images
+  rehypeImgLazy,
   // https://github.com/remarkjs/remark-math/tree/main/packages/rehype-katex
   [
     rehypeKatex,

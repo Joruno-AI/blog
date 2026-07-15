@@ -23,9 +23,11 @@ const { type, item, mergeOnMobile, mobileItemType } = Astro.props
 const href = type == 'internal' ? resolvePath(item.path) : item.link
 const rel = type === 'internal' ? undefined : 'me'
 const external = type === 'internal' ? false : true
+// Normalize trailing slashes so `/blog` and `/blog/` are treated as equal.
+const stripTrailing = (p: string) => (p.length > 1 ? p.replace(/\/+$/, '') : p)
 const ariaCurrent =
   type === 'internal'
-    ? Astro.url.pathname === resolvePath(item.path)
+    ? stripTrailing(Astro.url.pathname) === stripTrailing(resolvePath(item.path))
       ? 'page'
       : false
     : undefined

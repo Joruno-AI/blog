@@ -1,4 +1,4 @@
-# 你好，我是 wsl
+# Joruno Jobāna
 
 一个喜欢琢磨代码的前端工程师，目前在做 Web 开发相关的工作。
 
@@ -25,4 +25,4 @@
 如果你也对技术感兴趣，或者想聊点什么，随时欢迎来找我：
 
 - 邮箱：wsl1710642275@gmail.com
-- GitHub：[wangshengliang-wsl](https://github.com/wangshengliang-wsl)
+- GitHub：[Joruno-AI](https://github.com/Joruno-AI)

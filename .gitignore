@@ -35,6 +35,8 @@ pnpm-debug.log*
 .windsurf/
 .codex/
 .claude/
+.playwright-mcp/
+.omo/
 
 # local archive
 .local/

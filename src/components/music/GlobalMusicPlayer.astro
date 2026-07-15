@@ -74,6 +74,42 @@ const albumsData = localAlbumsData
           ))
         }
       </div>
+      <!-- 迷你播放器（播放选中专辑后显示）-->
+      <div class="mobile-mini-player hidden" id="mobile-mini-player">
+        <div class="mini-progress" id="mini-progress">
+          <div class="mini-progress-fill" id="mini-progress-fill"></div>
+        </div>
+        <div class="mini-player-row">
+          <div class="mini-track">
+            <span class="mini-track-title" id="mini-track-title">未在播放</span>
+            <span class="mini-track-time" id="mini-track-time">0:00 / 0:00</span>
+          </div>
+          <div class="mini-controls">
+            <button
+              id="mini-prev"
+              class="mini-ctrl-btn"
+              aria-label="上一首"
+            >
+              <span class="i-ri-skip-back-fill"></span>
+            </button>
+            <button
+              id="mini-play"
+              class="mini-ctrl-btn mini-play-btn"
+              aria-label="播放/暂停"
+            >
+              <span class="i-ri-play-fill" id="mini-play-icon"></span>
+            </button>
+            <button
+              id="mini-next"
+              class="mini-ctrl-btn"
+              aria-label="下一首"
+            >
+              <span class="i-ri-skip-forward-fill"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- 控制按钮行 -->
       <div class="mobile-btn-row">
         <button
@@ -332,7 +368,129 @@ const albumsData = localAlbumsData
   .mobile-btn span {
     font-size: 1.5rem;
     opacity: 0.8;
-    color: #8b4513;
+    color: var(--music-brass, #cba86a);
+  }
+
+  /* 迷你播放器 */
+  .mobile-mini-player {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--music-hud-line, rgba(232, 205, 146, 0.14));
+  }
+
+  .mobile-mini-player.hidden {
+    display: none;
+  }
+
+  .mini-progress {
+    position: relative;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--c-surface-active, rgba(244, 239, 230, 0.14));
+    cursor: pointer;
+    overflow: hidden;
+  }
+
+  .mini-progress-fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 0%;
+    border-radius: 2px;
+    background: linear-gradient(
+      90deg,
+      var(--music-copper, #b07d4e),
+      var(--music-brass-hot, #e8cd92)
+    );
+    transition: width 0.15s linear;
+  }
+
+  .mini-player-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .mini-track {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .mini-track-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--c-text, #f4efe6);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .mini-track-time {
+    font-size: 0.6875rem;
+    color: var(--c-text-muted, rgba(244, 239, 230, 0.6));
+    font-variant-numeric: tabular-nums;
+  }
+
+  .mini-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .mini-ctrl-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--c-text-soft, rgba(244, 239, 230, 0.74));
+    transition: all 0.2s ease;
+  }
+
+  .mini-ctrl-btn span {
+    font-size: 1.25rem;
+  }
+
+  .mini-ctrl-btn:hover,
+  .mini-ctrl-btn:active {
+    color: var(--c-text, #f4efe6);
+    background: var(--c-surface-soft, rgba(244, 239, 230, 0.06));
+  }
+
+  .mini-play-btn {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(
+      145deg,
+      var(--music-brass, #cba86a),
+      var(--music-copper, #b07d4e)
+    );
+    color: #1a140f;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  }
+
+  .mini-play-btn span {
+    font-size: 1.5rem;
+  }
+
+  .mini-play-btn:hover,
+  .mini-play-btn:active {
+    color: #1a140f;
+    background: linear-gradient(
+      145deg,
+      var(--music-brass-hot, #e8cd92),
+      var(--music-brass, #cba86a)
+    );
+    transform: scale(1.05);
   }
 
   /* Floating Button Styles */
@@ -493,10 +651,17 @@ const albumsData = localAlbumsData
 </style>
 
 <script>
+  interface MiniSong {
+    name: string
+  }
+
   interface MusicPlayerState {
     isPlaying: boolean
     isInitialized: boolean
     clickListenerAttached?: boolean
+    miniPlayerAttached?: boolean
+    currentSongs?: MiniSong[]
+    currentSongIndex?: number
   }
 
   declare global {
@@ -558,11 +723,71 @@ const albumsData = localAlbumsData
   // Update on resize
   window.addEventListener('resize', updateMobileNavVisibility)
 
+  // ==================== 迷你播放器（移动端）====================
+  function formatMiniTime(seconds: number): string {
+    if (!Number.isFinite(seconds) || seconds < 0) return '0:00'
+    const m = Math.floor(seconds / 60)
+    const s = Math.floor(seconds % 60)
+    return `${m}:${s.toString().padStart(2, '0')}`
+  }
+
+  function updateMiniTrackTitle() {
+    const titleEl = document.getElementById('mini-track-title')
+    const miniPlayer = document.getElementById('mobile-mini-player')
+    const state = window.MusicPlayerState
+    if (!titleEl || !miniPlayer) return
+
+    const songs = state.currentSongs
+    const index = state.currentSongIndex ?? 0
+    if (songs && songs.length > 0 && songs[index]) {
+      titleEl.textContent = songs[index].name
+      miniPlayer.classList.remove('hidden')
+    }
+  }
+
+  function setMiniPlayIcon(isPlaying: boolean) {
+    const icon = document.getElementById('mini-play-icon')
+    if (!icon) return
+    icon.className = isPlaying ? 'i-ri-pause-fill' : 'i-ri-play-fill'
+  }
+
   // Listen for playback state changes to toggle floating button
   window.addEventListener('playback-state', ((e: CustomEvent) => {
-    const { isPlaying } = e.detail
+    const { isPlaying, songIndex } = e.detail
     window.MusicPlayerState.isPlaying = isPlaying
+    if (typeof songIndex === 'number') {
+      window.MusicPlayerState.currentSongIndex = songIndex
+    }
+    setMiniPlayIcon(isPlaying)
+    updateMiniTrackTitle()
     updatePlayerVisibility()
+  }) as EventListener)
+
+  // 捕获当前专辑的歌曲名，供迷你播放器展示
+  window.addEventListener('album-selected', ((e: CustomEvent) => {
+    const album = e.detail
+    if (album && Array.isArray(album.songs)) {
+      window.MusicPlayerState.currentSongs = album.songs.map(
+        (s: { name: string }) => ({ name: s.name })
+      )
+      window.MusicPlayerState.currentSongIndex = 0
+    }
+  }) as EventListener)
+
+  // 进度更新：驱动迷你进度条与时间、当前曲目
+  window.addEventListener('playback-progress', ((e: CustomEvent) => {
+    const { currentTime, duration, songIndex } = e.detail
+    if (typeof songIndex === 'number') {
+      window.MusicPlayerState.currentSongIndex = songIndex
+    }
+    const fill = document.getElementById('mini-progress-fill')
+    const timeEl = document.getElementById('mini-track-time')
+    const percent = duration > 0 ? (currentTime / duration) * 100 : 0
+    if (fill) fill.style.width = `${percent}%`
+    if (timeEl) {
+      timeEl.textContent = `${formatMiniTime(currentTime)} / ${formatMiniTime(duration)}`
+    }
+    updateMiniTrackTitle()
   }) as EventListener)
 
   // Setup event listeners on page load
@@ -632,6 +857,38 @@ const albumsData = localAlbumsData
       })
       mobileControls.dataset.hasListener = 'true'
     }
+
+    // 迷你播放器控制按钮
+    const miniPlayer = document.getElementById('mobile-mini-player')
+    if (miniPlayer && !miniPlayer.dataset.hasListener) {
+      document.getElementById('mini-play')?.addEventListener('click', () => {
+        window.dispatchEvent(new CustomEvent('toggle-play'))
+      })
+      document.getElementById('mini-prev')?.addEventListener('click', () => {
+        window.dispatchEvent(new CustomEvent('prev-song'))
+      })
+      document.getElementById('mini-next')?.addEventListener('click', () => {
+        window.dispatchEvent(new CustomEvent('next-song'))
+      })
+
+      // 点击进度条跳转
+      const miniProgress = document.getElementById('mini-progress')
+      miniProgress?.addEventListener('click', (e) => {
+        const rect = miniProgress.getBoundingClientRect()
+        const percent = (e.clientX - rect.left) / rect.width
+        window.dispatchEvent(
+          new CustomEvent('seek-to', {
+            detail: Math.max(0, Math.min(1, percent)),
+          })
+        )
+      })
+
+      miniPlayer.dataset.hasListener = 'true'
+    }
+
+    // 恢复迷你播放器状态（含跨页面导航后 transition:persist 场景）
+    setMiniPlayIcon(window.MusicPlayerState.isPlaying)
+    updateMiniTrackTitle()
 
     // Click outside to close panels
     if (!window.MusicPlayerState.clickListenerAttached) {
