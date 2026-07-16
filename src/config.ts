@@ -44,14 +44,12 @@ export const UI: Ui = {
       displayMode: 'alwaysIcon',
       icon: 'i-ri-camera-ai-line',
     },
-    // Shorts is kept in the content model, but hidden from the public nav until
-    // there is real configured content behind it.
-    // {
-    //   path: '/shorts',
-    //   title: 'Shorts',
-    //   displayMode: 'alwaysIcon',
-    //   icon: 'i-meteor-icons-grid',
-    // },
+    {
+      path: '/shorts',
+      title: 'Shorts',
+      displayMode: 'alwaysIcon',
+      icon: 'i-ri-sticky-note-line',
+    },
     {
       path: '/music',
       title: 'Music Player',
