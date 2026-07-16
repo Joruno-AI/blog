@@ -1,7 +1,7 @@
 ---
 import LogoButton from '~/components/widgets/LogoButton.astro'
 import Divider from '~/components/base/Divider.astro'
-import SearchSwitch from '~/components/widgets/SearchSwitch.astro'
+import SearchButton from '~/components/widgets/SearchButton.astro'
 import ThemeSwitch from '~/components/widgets/ThemeSwitch.astro'
 import RssLink from '~/components/widgets/RssLink.astro'
 import NavItem from '~/components/nav/NavItem.astro'
@@ -41,7 +41,7 @@ for (const item of new Set(left)) {
             key === 'hr' ? (
               <Divider class={mergeOnMobile ? 'lt-md:hidden' : undefined} />
             ) : key === 'searchButton' ? (
-              <SearchSwitch />
+              <SearchButton />
             ) : key === 'themeButton' ? (
               <ThemeSwitch />
             ) : key === 'rssLink' ? (
@@ -70,7 +70,7 @@ for (const item of new Set(left)) {
             key === 'hr' ? (
               <Divider class={mergeOnMobile ? 'lt-md:hidden' : undefined} />
             ) : key === 'searchButton' ? (
-              <SearchSwitch />
+              <SearchButton />
             ) : key === 'themeButton' ? (
               <ThemeSwitch />
             ) : key === 'rssLink' ? (

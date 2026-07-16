@@ -55,6 +55,32 @@
   - Reviewed the final diff, working tree, and whitespace checks.
   - Confirmed the pnpm lockfile and generated build output are not part of the source diff.
 
+### Phase 6: Navbar Search Diagnosis
+- **Status:** complete
+- Actions taken:
+  - Removed the visible gray backdrop from navbar search while retaining transparent outside-click handling.
+  - Confirmed local development used two fixed mock results and never queried real posts.
+  - Started a production preview and verified Pagefind finds `Bun 完全指南` with correct article URLs.
+
+### Phase 7: Development Search Implementation
+- **Status:** complete
+- Actions taken:
+  - Added a generated JSON search index containing real blog and changelog titles, descriptions, tags, collections, and URLs.
+  - Replaced development-only mock results with filtered, scored, safely rendered real results.
+  - Kept production Pagefind behavior unchanged.
+
+### Phase 8: Search Verification
+- **Status:** complete
+- Test result:
+  - Development navbar search returned only `Bun 完全指南` for the exact query and linked to `/blog/包管理工具/bun/`.
+  - Mouse-clicked the real development result and successfully navigated to `/blog/包管理工具/bun/`.
+  - Confirmed the browser hit target is the result title at `z-index: 200`, above the transparent backdrop at `z-index: 150`.
+  - Empty-CMS Astro diagnostics passed with 104 files and 0 errors, warnings, or hints; targeted ESLint passed.
+- Error:
+  - The first final `pnpm check` attempt was aborted by the CMS loader timeout after remote batch requests; ESLint passed independently.
+  - The production retry loaded all 550 posts, then failed because the separate CMS media endpoint timed out.
+  - Mouse clicks on results were canceled because synchronous view reset removed the clicked anchor before default navigation.
+
 ## Test Results
 | Test | Input | Expected | Actual | Status |
 |------|-------|----------|--------|--------|
@@ -85,6 +111,10 @@
 | 2026-07-16 | Blog and music search shared the `search-clear` ID | 1 | Renamed blog search IDs and scoped the lookups to `BlogFilterView`. |
 | 2026-07-16 | Repository-wide format check found 10 pre-existing unformatted files | 1 | Left unrelated files untouched; all files modified for this task pass Prettier. |
 | 2026-07-16 | Focus-trap query included clipped links in collapsed categories | 1 | Limited the focus cycle to visible controls and links in expanded category lists. |
+| 2026-07-16 | Final type-check CMS sync timed out | 1 | Switched to an empty-CMS type diagnostic and a separate production build retry. |
+| 2026-07-16 | Production build CMS media sync timed out | 2 | Probe media endpoint health before the final retry. |
+| 2026-07-16 | Search results displayed but mouse clicks did not navigate | 1 | Deferred result cleanup with a zero-delay task so link handling completes first. |
+| 2026-07-16 | Transparent backdrop intercepted search-result pointer events | 2 | Moved the search panel out of the navbar stacking context and verified mouse navigation. |
 
 ## 5-Question Reboot Check
 | Question | Answer |

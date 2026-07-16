@@ -17,17 +17,6 @@ const batchSize = parseTuple(batchLoadSize, 'batchLoadSize')
 const maxItems = parseTuple(maxItemsPerPage, 'maxItemsPerPage')
 ---
 
-<!-- Search Switch -->
-<button
-  type="button"
-  id="search-switch"
-  class="op-60 hover:op-100 op-transition"
-  title="Search"
-  aria-label="Search"
->
-  <div u-i-grommet-icons-search></div>
-</button>
-
 <!-- Search Panel -->
 <search-panel
   role="dialog"
@@ -43,6 +32,7 @@ const maxItems = parseTuple(maxItemsPerPage, 'maxItemsPerPage')
   data-filter={filterEnabled}
   data-batch-size={batchSize}
   data-max-items={maxItems}
+  data-dev-index={withBasePath('/search-index.json')}
 >
   <div class="flex flex-col gap-2">
     <!-- Tab list -->
@@ -158,6 +148,12 @@ const maxItems = parseTuple(maxItemsPerPage, 'maxItemsPerPage')
   </footer>
 </search-panel>
 
+<style>
+  :global(body:has(#search-panel:not(.hidden)) #backdrop) {
+    background-color: transparent;
+  }
+</style>
+
 <script>
   import { toggleFadeEffect } from '~/utils/misc'
 
@@ -217,21 +213,13 @@ const maxItems = parseTuple(maxItemsPerPage, 'maxItemsPerPage')
     excerpt: string
   }
 
-  const fakeResults = [
-    {
-      meta: {
-        title: 'Simulated Search Result in Dev Env',
-      },
-      excerpt:
-        'Mock data is used to simulate pagefind search <mark>in development</mark>, where files required for indexing exist only in memory.',
-    },
-    {
-      meta: {
-        title: 'Testing Search Functionality in Prod Env',
-      },
-      excerpt: 'Try running <mark>pnpm build && pnpm preview</mark> instead.',
-    },
-  ]
+  interface DevSearchItem {
+    title: string
+    description: string
+    tags: string[]
+    collection: string
+    url: string
+  }
 
   class SearchPanel extends HTMLElement {
     #input: HTMLInputElement | null = null
@@ -243,6 +231,7 @@ const maxItems = parseTuple(maxItemsPerPage, 'maxItemsPerPage')
     #btnMore: HTMLButtonElement | null = null
     #btnAll: HTMLButtonElement | null = null
     #selectedItem: HTMLAnchorElement | null = null
+    #devIndexPromise: Promise<DevSearchItem[]> | null = null
 
     #filter = this.dataset.filter === 'true'
     #tabs: HTMLElement[] = []
@@ -371,36 +360,112 @@ const maxItems = parseTuple(maxItemsPerPage, 'maxItemsPerPage')
           this.#showOnlyError(requestId)
         }
       } else {
-        if (this.#content.innerHTML && value) return
-        if (!value) {
-          this.#content.innerHTML = ''
-          return
+        const requestId = ++this.#activeRequestId
+        this.#resetView()
+        if (value.length === 0) return
+
+        try {
+          this.#showLoading(requestId)
+          const index = await this.#loadDevIndex()
+          if (requestId !== this.#activeRequestId) return
+
+          const type =
+            this.#filter && this.#tabs[this.#currentTab]
+              ? this.#tabs[this.#currentTab].dataset.type
+              : undefined
+          const query = value.toLowerCase()
+          const terms = query.split(/\s+/).filter(Boolean)
+          const matches = index
+            .filter((item) => !type || item.collection === type)
+            .map((item) => {
+              const title = item.title.toLowerCase()
+              const haystack = [item.title, item.description, ...item.tags]
+                .join(' ')
+                .toLowerCase()
+              if (!terms.every((term) => haystack.includes(term))) return null
+
+              const score =
+                title === query
+                  ? 100
+                  : title.startsWith(query)
+                    ? 80
+                    : title.includes(query)
+                      ? 60
+                      : terms.filter((term) => title.includes(term)).length * 10
+
+              return { item, score }
+            })
+            .filter(
+              (match): match is { item: DevSearchItem; score: number } =>
+                match !== null
+            )
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 20)
+
+          if (matches.length === 0) {
+            this.#showOnlyNoResult(requestId)
+            return
+          }
+
+          const frag = document.createDocumentFragment()
+          matches.forEach(({ item }, index) => {
+            const link = document.createElement('a')
+            link.href = item.url
+            link.className = 'search-result-item'
+            link.setAttribute('role', 'option')
+            link.setAttribute('tabindex', '-1')
+            link.setAttribute('aria-selected', index === 0 ? 'true' : 'false')
+
+            const title = document.createElement('div')
+            title.className = 'search-result-title'
+            title.textContent = item.title
+
+            const excerpt = document.createElement('div')
+            excerpt.className = 'search-result-excerpt'
+            excerpt.textContent =
+              item.description || item.tags.join(', ') || item.collection
+
+            link.append(title, excerpt)
+            frag.appendChild(link)
+          })
+
+          this.#content.appendChild(frag)
+          this.#selectedItem = this.#content.querySelector('a')
+          this.#showFeedback('')
+        } catch (_err) {
+          this.#showOnlyError(requestId)
+        } finally {
+          this.#results?.removeAttribute('aria-busy')
         }
-        for (const result of fakeResults) {
-          this.#content.innerHTML += `
-            <a href="${this.#results?.dataset.base}" class="search-result-item">
-              <div class="search-result-title">${result.meta.title}</div>
-              <div class="search-result-excerpt">${result.excerpt}</div>
-            </a>`
-        }
-        this.#selectedItem = this.#content.querySelector('a')
-        this.#selectedItem?.setAttribute('aria-selected', 'true')
       }
+    }
+
+    #loadDevIndex = () => {
+      if (!this.#devIndexPromise) {
+        const indexUrl = this.dataset.devIndex || '/search-index.json'
+        this.#devIndexPromise = fetch(indexUrl).then(async (response) => {
+          if (!response.ok) throw new Error('Failed to load development search')
+          return (await response.json()) as DevSearchItem[]
+        })
+      }
+
+      return this.#devIndexPromise
     }
 
     #handleResultClick = (event: MouseEvent) => {
       if (!this.#getLink(event)) return
 
-      // Reset panel state before navigation
-      this.#resetView()
+      // Keep the clicked anchor in the DOM until the browser and Astro's
+      // client router have handled its default navigation behavior.
+      setTimeout(() => {
+        this.#resetView()
+        if (this.#results) this.#results.scrollTop = 0
 
-      // Reset scroll position
-      if (this.#results) this.#results.scrollTop = 0
-
-      if (!window.matchMedia('(prefers-reduced-motion)').matches)
-        this.classList.remove('fade-in')
-      this.classList.add('hidden')
-      toggleFadeEffect('backdrop', false, 'hidden')
+        if (!window.matchMedia('(prefers-reduced-motion)').matches)
+          this.classList.remove('fade-in')
+        this.classList.add('hidden')
+        toggleFadeEffect('backdrop', false, 'hidden')
+      }, 0)
     }
 
     #handleResultsPointerOver = (event: MouseEvent) => {

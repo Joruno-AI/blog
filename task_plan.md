@@ -41,6 +41,23 @@ Complete
 - [x] Summarize behavior, files, tests, and remaining risks
 - **Status:** complete
 
+### Phase 6: Navbar Search Diagnosis
+- [x] Reproduce the gray search backdrop
+- [x] Compare development and production search behavior
+- [x] Verify the production Pagefind index against a known article
+- **Status:** complete
+
+### Phase 7: Development Search Implementation
+- [x] Replace fixed development mock results with a real lightweight index
+- [x] Preserve production Pagefind behavior and filters
+- [x] Keep result rendering safe and keyboard-accessible
+- **Status:** complete
+
+### Phase 8: Search Verification
+- [x] Test known-title searches in development and production
+- [x] Run formatting, type checks, lint, and final diff review
+- **Status:** complete
+
 ## Key Questions
 1. How can the shared shell remain visually stable during Astro client navigation without losing direct-link support?
 2. How much of the 550-post catalog should be rendered on every article page?
@@ -71,6 +88,11 @@ Complete
 | Blog and music search shared the `search-clear` ID | 1 | Give blog search controls unique IDs and scope lookups to `BlogFilterView`. |
 | Repository-wide format check found 10 pre-existing unformatted files | 1 | Leave unrelated files untouched and verify every task-modified file separately. |
 | Focus-trap query included links clipped inside collapsed categories | 1 | Restrict the cycle to visible controls and links inside expanded category lists. |
+| Development navbar search always returned two fixed mock records | 1 | Replace the mock branch with a real title/description/tag index while keeping Pagefind in production. |
+| Final `pnpm check` CMS sync timed out after batch requests | 1 | Run code diagnostics without the remote CMS, then retry the Cloudflare build as a separate external-data check. |
+| Production retry loaded all posts but the CMS media endpoint timed out | 2 | Probe the media endpoint before one final build attempt; do not repeat while it is unhealthy. |
+| Search result click removed its anchor before default navigation | 1 | Defer panel cleanup until Astro and the browser have handled the link click. |
+| Transparent backdrop still intercepted result pointer events | 2 | Render the global search panel outside the navbar stacking context so its z-index can exceed the backdrop. |
 
 ## Notes
 - Reference layout: course tree on the left, article in the center, page TOC on the right.

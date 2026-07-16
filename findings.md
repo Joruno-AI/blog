@@ -25,12 +25,17 @@
 | Use responsive drawers below the three-column breakpoint | A three-column reader is not viable on tablets or phones. |
 | Reuse `BlogCatalog` in `filter` and `reader` modes | Filter mode keeps the current complete index tree; reader mode keeps all categories but expands only the active category. |
 | Add position/class overrides to `DesktopAside` | Blog posts need their page TOC on the right without changing TOC placement for other collections. |
+| Keep Pagefind as the production search engine | The built index correctly finds known blog articles and preserves ranking, filters, highlights, and heading sub-results. |
+| Add a lightweight JSON index for development search | Astro dev cannot query Pagefind's post-build files, but should still search real titles, descriptions, and tags instead of fixed mock records. |
 
 ## Issues Encountered
 | Issue | Resolution |
 |-------|------------|
 | Existing planning files described a completed Astro migration | Replaced their current contents for this task; prior history remains available in Git. |
 | First open-drawer screenshot looked only about 94px wide | Computed width was 319.8px; the screenshot was captured during the 250ms opening transition. Waiting 400ms confirmed the final panel at x=0. |
+| Navbar search could not find real posts in local development | `SearchSwitch` intentionally returned two hard-coded mock records whenever `import.meta.env.PROD` was false. |
+| Initial production assertion checked heading sub-results instead of Pagefind parent titles | Production search was healthy: parent results included `Bun 完全指南`, with valid article and heading URLs. |
+| Search results were visible but not mouse-clickable | The search panel lived inside the navbar's `z-50` stacking context, while the transparent global backdrop was `z-150`; moving the panel to `BaseLayout` restored the intended `z-200` hit target. |
 
 ## Resources
 - Reference: https://sitor.cc/courses/agent-fundamentals/2-chatbot-to-agent
