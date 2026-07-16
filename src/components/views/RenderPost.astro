@@ -5,6 +5,7 @@ import BaseLayout from '~/layouts/BaseLayout.astro'
 import StandardLayout from '~/layouts/StandardLayout.astro'
 import PostMeta from '~/components/base/PostMeta.astro'
 import Warning from '~/components/base/Warning.astro'
+import BlogCatalog from '~/components/blog/BlogCatalog.astro'
 import DesktopAside from '~/components/base/DesktopAside.astro'
 import MobileControl from '~/components/base/MobileControl.astro'
 import PostCover from '~/components/base/PostCover.astro'
@@ -78,12 +79,11 @@ const searchFilter =
   isSearchable && search[1].filter ? `collection:${collectionType}` : undefined
 
 // Post actions (Copy MD / Open in AI) — blog posts only.
-const showPostActions = collectionType === 'blog' && typeof post.body === 'string'
+const showPostActions =
+  collectionType === 'blog' && typeof post.body === 'string'
 const postActionsMarkdown = showPostActions ? (post.body as string) : ''
-const postActionsUrl = new URL(
-  withBasePath(`/blog/${post.id}/`),
-  SITE.website
-).href
+const postActionsUrl = new URL(withBasePath(`/blog/${post.id}/`), SITE.website)
+  .href
 
 const WARNING = `This is a draft post that will not be published
 in production. Set the post's <code>draft</code> property in
@@ -107,9 +107,11 @@ let previousBlogPost: CollectionEntry<'blog'> | undefined
 let nextBlogPost: CollectionEntry<'blog'> | undefined
 let currentCategoryLabel: string | undefined
 let relatedPosts: CollectionEntry<'blog'>[] = []
+let blogCatalogPosts: CollectionEntry<'blog'>[] = []
 
 if (collectionType === 'blog') {
   const blogPosts = await getFilteredPosts('blog')
+  blogCatalogPosts = blogPosts
   const orderedBlogPosts = collectPostsFromTree(
     buildNestedCategoryTree(blogPosts)
   ).filter(
@@ -145,9 +147,7 @@ if (collectionType === 'blog') {
       .filter(({ shared }) => shared > 0)
       .sort((a, b) => {
         if (b.shared !== a.shared) return b.shared - a.shared
-        return (
-          b.item.data.pubDate.valueOf() - a.item.data.pubDate.valueOf()
-        )
+        return b.item.data.pubDate.valueOf() - a.item.data.pubDate.valueOf()
       })
       .slice(0, 3)
       .map(({ item }) => item)
@@ -164,7 +164,17 @@ if (collectionType === 'blog') {
   {bgType}
   {tags}
   {category}
+  stableNavigation={collectionType === 'blog'}
 >
+  {
+    collectionType === 'blog' && (
+      <BlogCatalog
+        posts={blogCatalogPosts}
+        mode="reader"
+        activePostId={post.id}
+      />
+    )
+  }
   <StandardLayout {title} {titleIcon} {subtitle} {isSearchable} {searchFilter}>
     <Fragment slot="head">
       <PostMeta {pubDate} {lastModDate} {minutesRead} {tags} />
@@ -183,7 +193,11 @@ if (collectionType === 'blog') {
       {
         haveHeadings && (
           <>
-            <DesktopAside {headings} />
+            <DesktopAside
+              {headings}
+              position={collectionType === 'blog' ? 'right' : undefined}
+              context={collectionType === 'blog' ? 'blog' : undefined}
+            />
             <MobileControl {headings} />
           </>
         )
@@ -285,6 +299,17 @@ if (collectionType === 'blog') {
 </BaseLayout>
 
 <style>
+  @media (min-width: 1128px) and (max-width: 1279px) {
+    :global(#desktop-aside[data-context='blog']) {
+      display: none;
+    }
+
+    :global(body:has(#desktop-aside[data-context='blog']) #toc-open-button) {
+      opacity: 0.5 !important;
+      pointer-events: auto;
+    }
+  }
+
   .related-posts {
     margin-top: 3.25rem;
     padding-top: 1.25rem;
@@ -355,17 +380,26 @@ if (collectionType === 'blog') {
   }
 
   /* Dark mode: dim, desaturated tints instead of bright pastels. */
-  :global(html.dark) .related-posts-list li:nth-child(3n + 1) .related-post-link {
+  :global(html.dark)
+    .related-posts-list
+    li:nth-child(3n + 1)
+    .related-post-link {
     --related-card-bg: hsl(210 30% 12%);
     border-color: hsl(210 25% 22%);
   }
 
-  :global(html.dark) .related-posts-list li:nth-child(3n + 2) .related-post-link {
+  :global(html.dark)
+    .related-posts-list
+    li:nth-child(3n + 2)
+    .related-post-link {
     --related-card-bg: hsl(150 25% 11%);
     border-color: hsl(150 20% 20%);
   }
 
-  :global(html.dark) .related-posts-list li:nth-child(3n + 3) .related-post-link {
+  :global(html.dark)
+    .related-posts-list
+    li:nth-child(3n + 3)
+    .related-post-link {
     --related-card-bg: hsl(270 28% 13%);
     border-color: hsl(270 22% 23%);
   }

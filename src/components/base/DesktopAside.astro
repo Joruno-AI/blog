@@ -11,6 +11,8 @@ interface Props {
   anchors?: string[]
   headings?: MarkdownHeading[]
   tags?: string[][]
+  position?: 'left' | 'right'
+  context?: string
   style?: string
   tocStyle?: string
   tagStyle?: string
@@ -22,6 +24,8 @@ const {
   anchors = [],
   headings = [],
   tags = [],
+  position,
+  context,
   style,
   tagStyle,
   tocStyle,
@@ -30,7 +34,9 @@ const {
 } = Astro.props
 
 const { toc } = FEATURES
-const tocPosition = Array.isArray(toc) && toc[0] && toc[1].displayPosition
+const configuredTocPosition =
+  Array.isArray(toc) && toc[0] && toc[1].displayPosition
+const tocPosition = position ?? configuredTocPosition
 const tocDisplayMode = Array.isArray(toc) && toc[0] && toc[1].displayMode
 
 const { tag } = FEATURES
@@ -52,6 +58,7 @@ if (tocPosition === 'right' && tagPosition === 'right') asidePosition = 'right'
         data-[position=left]:(left-2rem right-auto)
         data-[position=right]:(left-[calc(100vw-15.625rem-3.2rem)] right-auto)"
       data-position={asidePosition}
+      data-context={context}
       {style}
     >
       <div role="tablist" class="flex items-center gap-4 mb-3">
@@ -120,6 +127,7 @@ if (tocPosition === 'right' && tagPosition === 'right') asidePosition = 'right'
             data-[position=right]:(left-[calc(100vw-15.625rem-3.2rem)] right-auto)
             flex flex-col gap-3"
           data-position={tocPosition}
+          data-context={context}
           {style}
         >
           <button
@@ -160,6 +168,7 @@ if (tocPosition === 'right' && tagPosition === 'right') asidePosition = 'right'
             data-[position=right]:(left-[calc(100vw-15.625rem-3.2rem)] right-auto)
             flex flex-col gap-3"
           data-position={tagPosition}
+          data-context={context}
           {style}
         >
           <button

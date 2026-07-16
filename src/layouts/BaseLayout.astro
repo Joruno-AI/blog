@@ -32,6 +32,7 @@ interface Props {
   lastModDate?: string
   tags?: string[]
   category?: string
+  stableNavigation?: boolean
 }
 
 const {
@@ -43,6 +44,7 @@ const {
   lastModDate,
   tags,
   category,
+  stableNavigation = false,
 } = Astro.props
 
 let style: Record<string, string> = {}
@@ -78,7 +80,7 @@ if (hasCustomCursor) style['--external-link-cursor'] = cursorType
     class="relative flex flex-col min-h-screen
       font-sans text-gray-700 dark:text-gray-200"
     style={Object.keys(style).length !== 0 ? style : undefined}
-    data-no-sliding={enableSlideEnterAnim ? undefined : ''}
+    data-no-sliding={stableNavigation || !enableSlideEnterAnim ? '' : undefined}
   >
     <!-- Background -->
     {bgType && <Background type={bgType} />}
@@ -148,10 +150,11 @@ if (hasCustomCursor) style['--external-link-cursor'] = cursorType
          list/other pages never inherit the widened layout. -->
     <script>
       function syncImmersiveState() {
-        const isReadingPage = !!document.querySelector('[data-immersive-toggle]')
+        const isReadingPage = !!document.querySelector(
+          '[data-immersive-toggle]'
+        )
         const enabled =
-          isReadingPage &&
-          localStorage.getItem('immersive-reading') === 'true'
+          isReadingPage && localStorage.getItem('immersive-reading') === 'true'
         document.documentElement.toggleAttribute('data-immersive', enabled)
       }
 

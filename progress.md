@@ -1,83 +1,96 @@
 # Progress Log
 
-## Session: 2026-07-14
+## Session: 2026-07-16
 
-### Phase 1: Requirements & Discovery
+### Phase 1: Requirements & Visual Audit
 - **Status:** complete
-- **Started:** 2026-07-14
 - Actions taken:
-  - Fetched `upstream` and `origin`.
-  - Compared `main...upstream/main`.
-  - Reviewed upstream changelog entries for `2.4.0` and `3.0.0`.
-  - Ran a simulated merge to identify conflict hotspots.
+  - Confirmed the user wants a single continuous blog reading experience.
+  - Inspected the current blog list and article detail code.
+  - Opened and captured the current pages and Sitor reference at a 1440x1000 viewport.
+  - Classified the work as a preserve-style editorial/blog redesign.
 - Files created/modified:
   - `task_plan.md`
   - `findings.md`
   - `progress.md`
 
-### Phase 2: Merge Strategy
+### Phase 2: Architecture & Interaction Design
 - **Status:** complete
 - Actions taken:
-  - Created integration branch `refactor/upstream-astro7-architecture`.
-  - Recorded keep/take rules for architecture vs custom content.
+  - Identified stable three-column geometry as the target desktop structure.
+  - Recorded performance constraints caused by the 550-post CMS catalog.
+  - Confirmed the global Astro `ClientRouter` already provides client-side navigation.
+  - Chose a shared catalog component with full filter mode and focused reader mode.
+  - Set the full three-column breakpoint to 1280px and retained drawers below it.
 - Files created/modified:
-  - Planning files only so far.
+  - Planning files only.
 
-### Phase 3: Architecture Integration
+### Phase 3: Implementation
 - **Status:** complete
 - Actions taken:
-  - Starting no-commit merge from `upstream/main`.
-  - Kept local content pages/data for home, blog index, projects page, and project data.
-  - Removed Vercel files and static OG fallback image per local deployment and upstream OG route architecture.
-  - Resolved `package.json`, `plugins.ts`, `astro.config.ts`, `src/content.config.ts`, and `src/schema.ts` by combining upstream Astro 7 architecture with local custom fields/scripts.
-  - Integrated upstream route-based OG images, Astro Fonts config, relocated schema, new `shorts` collection/routes, tag filter/sidebar components, and desktop/mobile aside controls.
-  - Preserved local Cloudflare deploy script, CMS/media loaders, music page/global player, reading progress, keyboard shortcuts, blog category filter, title icons, project data, and local navigation/site identity.
-  - Resolved remaining style conflicts by adopting upstream panel/TOC architecture and keeping local icon safelist/custom style needs.
+  - Added a shared `BlogCatalog` with filter and reader modes.
+  - Replaced the index sidebar/drawer markup with the shared component.
+  - Added reader catalog context to blog detail pages and moved their page TOC to the right.
+  - Disabled slide-in animation on blog routes for stable client navigation.
+  - Added the 1128-1279px fallback that keeps the TOC available through its floating panel button.
+  - Removed the obsolete catalog CSS left behind in `BlogFilterView` after extracting the shared component.
 - Files created/modified:
-  - `package.json`
-  - `plugins.ts`
-  - `astro.config.ts`
-  - `src/content.config.ts`
-  - `src/schema.ts`
+  - `src/components/blog/BlogCatalog.astro`
+  - `src/components/views/BlogFilterView.astro`
+  - `src/components/views/RenderPost.astro`
+  - `src/components/base/DesktopAside.astro`
+  - `src/layouts/BaseLayout.astro`
+  - `src/pages/blog/index.mdx`
 
 ### Phase 4: Verification
 - **Status:** complete
 - Actions taken:
-  - Ran `pnpm install` with Node `v24.11.0` and pnpm `10.26.2` to regenerate `pnpm-lock.yaml`.
-  - Fixed Astro 7/Rollup 5 type errors in `astro.config.ts`, `BlogFilterView.astro`, and `src/utils/data.ts`.
-  - Ran `pnpm check`.
-  - Ran `pnpm build`.
-- Notes:
-  - Build succeeded after processing 31 photos; first run spent roughly 3 minutes generating photo metadata/cache.
-  - Build logs mention empty optional collections (`blog`, `feeds`, `prs`, `releases`) because those loaders/content are currently empty or disabled.
+  - Re-ran Prettier on every task-modified file, Astro diagnostics, ESLint, browser regressions, and the Cloudflare-equivalent production build.
+  - Verified search, category URL state, mobile drawer inert state, focus trapping, and Escape focus restoration.
+  - Confirmed the final static output contains the accessible search labels and drawer behavior.
 
-### Phase 5: Handoff
+### Phase 5: Delivery
 - **Status:** complete
 - Actions taken:
-  - Completed merge commit on `refactor/upstream-astro7-architecture`.
-  - Confirmed the repository is no longer in merge state.
-  - Confirmed working tree is clean after removing a hook-generated `lefthook.yml` example file.
+  - Reviewed the final diff, working tree, and whitespace checks.
+  - Confirmed the pnpm lockfile and generated build output are not part of the source diff.
 
 ## Test Results
 | Test | Input | Expected | Actual | Status |
 |------|-------|----------|--------|--------|
-| Typecheck | `pnpm check` | 0 Astro/TS diagnostics | 0 errors, 0 warnings, 0 hints | Passed |
-| Production build | `pnpm build` | Static site builds and search index generates | 43 pages built; Pagefind indexed 31 pages | Passed |
+| Baseline production build | Previous committed state | Cloudflare-compatible static build | 578 pages built; Pagefind indexed 563 pages | Passed |
+| Type check | `pnpm check` | No Astro or TypeScript diagnostics | 102 files, 0 errors, 0 warnings, 0 hints | Passed |
+| Lint | `pnpm lint` | No lint errors | Completed successfully | Passed |
+| Desktop visual QA | 1440x1000, light and dark | Stable three-part reader with readable hierarchy | Passed in both themes | Passed |
+| Medium visual QA | 1200x900 | Left catalog plus article, page TOC available as panel | Passed without overlap | Passed |
+| Mobile visual QA | 390x844, index/detail, light/dark | Single-column reading with catalog and TOC access | Passed | Passed |
+| Mobile catalog interaction | 390x844 | Opens to a readable panel, active post shown, Escape closes | 319.8px panel at x=0; open/close passed | Passed |
+| Client navigation | Blog index to first packaging article | URL updates without a full reload | Window marker persisted; reader state loaded | Passed |
+| Blog search and category regression | 550-post index | Search narrows and clears; category selection filters and updates URL | Search 550→1→550; category filtered to 8 with `?category=` | Passed |
+| Mobile keyboard regression | 390x844 drawer | Closed drawer is inert; focus stays inside; Escape closes and restores focus | All assertions passed | Passed |
+| Task-file formatting | All files modified for this task | Prettier clean | All matched files use Prettier code style | Passed |
+| Final production build | Cloudflare CMS URL and 16 GB Node heap | Static output and search index complete | 578 pages built; Pagefind indexed 563 pages | Passed |
 
 ## Error Log
 | Timestamp | Error | Attempt | Resolution |
 |-----------|-------|---------|------------|
-| 2026-07-14 | `git add` failed for deleted paths | 1 | Switch to `git add -u` for deleted paths. |
-| 2026-07-14 | `astro check` failed on Rollup manualChunks type | 1 | Converted object `manualChunks` to a Rollup 5-compatible function. |
-| 2026-07-14 | `astro check` failed because `getFilteredPosts('blog')` widened to include `shorts` | 1 | Made `getFilteredPosts` generic so callers retain the requested collection type. |
-| 2026-07-14 | `astro check` failed because `minutesRead` can be boolean or number | 1 | Used upstream `getMinutesRead` helper in `BlogFilterView.astro`. |
-| 2026-07-14 | `astro check` failed on Bluesky embed fields after dependency upgrade | 1 | Added local minimal Bluesky data types and explicit runtime-guarded casts. |
+| 2026-07-16 | Existing planning files belonged to an older completed task | 1 | Reinitialized them for the unified blog reader task. |
+| 2026-07-16 | pnpm 11 rewrote lockfile metadata during formatting | 1 | Restored the unrelated `pnpm-lock.yaml` change. |
+| 2026-07-16 | Playwright iPhone preset required missing WebKit | 1 | Switched to installed Chromium with an explicit mobile viewport. |
+| 2026-07-16 | Interaction test URL glob matched `/blog/` before navigation finished | 1 | Changed the synchronization point to the reader-mode catalog element. |
+| 2026-07-16 | Planning patch context did not match Prettier table spacing | 1 | Read exact context and used a narrower patch. |
+| 2026-07-16 | Drawer screenshot captured mid-transition and looked too narrow | 1 | Waited 400ms and verified a 319.8px panel at x=0. |
+| 2026-07-16 | Phase-status patch omitted the Markdown list marker | 1 | Read the exact file and applied a narrower patch with the list marker included. |
+| 2026-07-16 | Search regression found a stale `.flex-grow` title selector | 1 | Updated it to the current `.list-item-title` element and scheduled a rerun. |
+| 2026-07-16 | Blog and music search shared the `search-clear` ID | 1 | Renamed blog search IDs and scoped the lookups to `BlogFilterView`. |
+| 2026-07-16 | Repository-wide format check found 10 pre-existing unformatted files | 1 | Left unrelated files untouched; all files modified for this task pass Prettier. |
+| 2026-07-16 | Focus-trap query included clipped links in collapsed categories | 1 | Limited the focus cycle to visible controls and links in expanded category lists. |
 
 ## 5-Question Reboot Check
 | Question | Answer |
 |----------|--------|
-| Where am I? | Phase 5: handoff. |
-| Where am I going? | Summarize the completed integration and remaining risks. |
-| What's the goal? | Upgrade architecture from upstream without overwriting custom content. |
-| What have I learned? | Upstream Astro 7 architecture can coexist with local CMS/music/blog customizations after targeted type and config adaptation. |
-| What have I done? | Merged upstream architecture, preserved local custom content/features, regenerated dependencies, and verified typecheck/build. |
+| Where am I? | Complete. |
+| Where am I going? | Ready for user review and an optional commit/deploy. |
+| What's the goal? | Make blog index/detail navigation feel continuous while preserving URLs and deployment. |
+| What have I learned? | The missing persistent blog hierarchy and unstable column geometry create the current fragmentation. |
+| What have I done? | Implemented and visually verified the shared blog reader shell across desktop and mobile. |
