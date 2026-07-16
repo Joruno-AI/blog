@@ -252,10 +252,16 @@ const postsWithReadTime: PostWithReadTime[] = await processPostsInBatches(
         }
 
         const collapse = () => {
-          if (!input.value) {
+          if (!input.value && document.activeElement !== input) {
             box.classList.remove('expanded')
           }
         }
+
+        box.addEventListener('click', (event) => {
+          const target = event.target as HTMLElement
+          if (target.closest('.search-clear')) return
+          expand()
+        })
 
         trigger?.addEventListener('click', (e) => {
           e.stopPropagation()
@@ -339,7 +345,6 @@ const postsWithReadTime: PostWithReadTime[] = await processPostsInBatches(
           header?.querySelector('.category-name')?.textContent || ''
         const postLinks = group.querySelectorAll('.post-link')
         let hasMatch = false
-        let matchCount = 0
 
         // 检查分类名是否匹配
         if (categoryName.toLowerCase().includes(keyword)) {
@@ -353,7 +358,6 @@ const postsWithReadTime: PostWithReadTime[] = await processPostsInBatches(
             ;(link as HTMLElement).parentElement?.classList.remove(
               'search-no-match'
             )
-            if (keyword) matchCount++
             hasMatch = true
           } else {
             ;(link as HTMLElement).parentElement?.classList.add(
@@ -365,14 +369,6 @@ const postsWithReadTime: PostWithReadTime[] = await processPostsInBatches(
         // 显示/隐藏分类组
         if (!keyword || hasMatch) {
           group.classList.remove('search-no-match')
-          // 如果有搜索关键词且有匹配，自动展开
-          if (keyword && matchCount > 0) {
-            const postsContainer = header?.nextElementSibling as HTMLElement
-            if (postsContainer?.classList.contains('category-posts')) {
-              postsContainer.classList.add('expanded')
-              header?.classList.add('expanded')
-            }
-          }
         } else {
           group.classList.add('search-no-match')
         }

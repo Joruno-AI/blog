@@ -442,6 +442,7 @@ const isActiveBranch = (path: string) =>
     align-items: center;
     height: 2rem;
     margin-bottom: 0.75rem;
+    cursor: text;
   }
 
   .search-box::after {
@@ -525,6 +526,12 @@ const isActiveBranch = (path: string) =>
   .search-input::placeholder {
     color: inherit;
     opacity: 0.5;
+  }
+
+  .search-input::-webkit-search-cancel-button,
+  .search-input::-webkit-search-decoration {
+    -webkit-appearance: none;
+    appearance: none;
   }
 
   .search-clear {
