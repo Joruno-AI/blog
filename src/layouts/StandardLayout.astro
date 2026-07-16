@@ -6,6 +6,7 @@ interface Props {
   isCentered?: boolean
   isSearchable?: boolean
   searchFilter?: string
+  titleClass?: string
   class?: string
 }
 
@@ -16,6 +17,7 @@ const {
   isCentered = false,
   isSearchable,
   searchFilter,
+  titleClass,
   class: className,
 } = Astro.props
 
@@ -37,7 +39,7 @@ const iconClass =
 >
   {
     title && (
-      <h1>
+      <h1 class={titleClass}>
         {titleIcon &&
           (isImageUrl ? (
             <img

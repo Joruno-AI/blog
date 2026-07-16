@@ -30,6 +30,18 @@ const monoFallbacks = [
   'monospace',
 ]
 
+const articleTitleFallbacks = [
+  'ui-serif',
+  'Songti SC',
+  'STSong',
+  'SimSun',
+  'Georgia',
+  'Cambria',
+  'Times New Roman',
+  'Times',
+  'serif',
+]
+
 // https://docs.astro.build/en/reference/configuration-reference/
 export default defineConfig({
   site: SITE.website,
@@ -81,6 +93,16 @@ export default defineConfig({
       subsets: ['latin'],
       formats: ['woff2'],
       fallbacks: sansFallbacks,
+    },
+    {
+      provider: fontProviders.fontsource(),
+      name: 'Playfair Display',
+      cssVariable: '--font-article-title',
+      weights: [400],
+      styles: ['italic'],
+      subsets: ['latin'],
+      formats: ['woff2'],
+      fallbacks: articleTitleFallbacks,
     },
     {
       provider: fontProviders.google(),

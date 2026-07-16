@@ -175,7 +175,14 @@ if (collectionType === 'blog') {
       />
     )
   }
-  <StandardLayout {title} {titleIcon} {subtitle} {isSearchable} {searchFilter}>
+  <StandardLayout
+    {title}
+    {titleIcon}
+    {subtitle}
+    {isSearchable}
+    {searchFilter}
+    titleClass={collectionType === 'blog' ? 'blog-article-title' : undefined}
+  >
     <Fragment slot="head">
       <PostMeta {pubDate} {lastModDate} {minutesRead} {tags} />
       {
@@ -299,6 +306,14 @@ if (collectionType === 'blog') {
 </BaseLayout>
 
 <style>
+  :global(.prose h1.blog-article-title) {
+    padding-bottom: 0.08em;
+    font-family: var(--font-article-title);
+    font-weight: 400;
+    font-style: italic;
+    line-height: 1.15;
+  }
+
   @media (min-width: 1128px) and (max-width: 1279px) {
     :global(#desktop-aside[data-context='blog']) {
       display: none;
