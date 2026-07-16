@@ -160,13 +160,13 @@ export const FEATURES: Features = {
       minHeadingLevel: 2,
       maxHeadingLevel: 4,
       displayPosition: 'left',
-      displayMode: 'content',
+      displayMode: 'always',
     },
   ],
   share: [
     true,
     {
-      twitter: false,
+      twitter: true,
       bluesky: false,
       mastodon: false,
       facebook: false,

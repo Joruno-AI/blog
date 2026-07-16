@@ -140,5 +140,24 @@ if (hasCustomCursor) style['--external-link-cursor'] = cursorType
         nprogress.done()
       })
     </script>
+
+    <!-- Immersive reading state (global).
+         The `data-immersive` attribute lives on <html>, which persists across
+         SPA navigations. Only apply it on pages that actually offer immersive
+         reading (i.e. that render the toggle); otherwise always clear it so
+         list/other pages never inherit the widened layout. -->
+    <script>
+      function syncImmersiveState() {
+        const isReadingPage = !!document.querySelector('[data-immersive-toggle]')
+        const enabled =
+          isReadingPage &&
+          localStorage.getItem('immersive-reading') === 'true'
+        document.documentElement.toggleAttribute('data-immersive', enabled)
+      }
+
+      // Run on first load and after every SPA swap.
+      syncImmersiveState()
+      document.addEventListener('astro:page-load', syncImmersiveState)
+    </script>
   </body>
 </html>

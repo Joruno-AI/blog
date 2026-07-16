@@ -9,6 +9,7 @@ import DesktopAside from '~/components/base/DesktopAside.astro'
 import MobileControl from '~/components/base/MobileControl.astro'
 import PostCover from '~/components/base/PostCover.astro'
 import ShareLink from '~/components/widgets/ShareLink.astro'
+import PostActions from '~/components/widgets/PostActions.astro'
 import Giscus from '~/components/widgets/Giscus.astro'
 import ImageViewer from '~/components/widgets/ImageViewer.astro'
 
@@ -20,7 +21,7 @@ import {
   type CategoryTreeNode,
 } from '~/utils/data'
 import { withBasePath } from '~/utils/path'
-import { FEATURES } from '~/config'
+import { FEATURES, SITE } from '~/config'
 
 import type { CollectionEntry } from 'astro:content'
 
@@ -58,7 +59,12 @@ const coverAlt = frontmatter.coverAlt
 
 const tocEnabled = Array.isArray(toc) && toc[0] && frontmatter.toc && pageToc
 const haveHeadings = tocEnabled && headings.length > 0
-const shareEnabled = Array.isArray(share) && share[0] && frontmatter.share
+const hasEnabledShareTarget =
+  Array.isArray(share) &&
+  share[1] != null &&
+  Object.values(share[1]).some(Boolean)
+const shareEnabled =
+  Array.isArray(share) && share[0] && frontmatter.share && hasEnabledShareTarget
 const giscusEnabled =
   isCommentable && Array.isArray(giscus) && giscus[0] && frontmatter.giscus
 
@@ -70,6 +76,14 @@ const isSearchable =
   frontmatter.search
 const searchFilter =
   isSearchable && search[1].filter ? `collection:${collectionType}` : undefined
+
+// Post actions (Copy MD / Open in AI) — blog posts only.
+const showPostActions = collectionType === 'blog' && typeof post.body === 'string'
+const postActionsMarkdown = showPostActions ? (post.body as string) : ''
+const postActionsUrl = new URL(
+  withBasePath(`/blog/${post.id}/`),
+  SITE.website
+).href
 
 const WARNING = `This is a draft post that will not be published
 in production. Set the post's <code>draft</code> property in
@@ -92,6 +106,7 @@ function collectPostsFromTree(
 let previousBlogPost: CollectionEntry<'blog'> | undefined
 let nextBlogPost: CollectionEntry<'blog'> | undefined
 let currentCategoryLabel: string | undefined
+let relatedPosts: CollectionEntry<'blog'>[] = []
 
 if (collectionType === 'blog') {
   const blogPosts = await getFilteredPosts('blog')
@@ -112,6 +127,31 @@ if (collectionType === 'blog') {
   if (category) {
     currentCategoryLabel = getLastCategorySegment(category)
   }
+
+  // Related posts: rank other blog posts by shared-tag count, then recency.
+  const currentTags = new Set(tags ?? [])
+  if (currentTags.size > 0) {
+    relatedPosts = blogPosts
+      .filter(
+        (item): item is CollectionEntry<'blog'> =>
+          item.collection === 'blog' && item.id !== post.id
+      )
+      .map((item) => {
+        const shared = (item.data.tags ?? []).filter((t) =>
+          currentTags.has(t)
+        ).length
+        return { item, shared }
+      })
+      .filter(({ shared }) => shared > 0)
+      .sort((a, b) => {
+        if (b.shared !== a.shared) return b.shared - a.shared
+        return (
+          b.item.data.pubDate.valueOf() - a.item.data.pubDate.valueOf()
+        )
+      })
+      .slice(0, 3)
+      .map(({ item }) => item)
+  }
 }
 ---
 
@@ -128,6 +168,15 @@ if (collectionType === 'blog') {
   <StandardLayout {title} {titleIcon} {subtitle} {isSearchable} {searchFilter}>
     <Fragment slot="head">
       <PostMeta {pubDate} {lastModDate} {minutesRead} {tags} />
+      {
+        showPostActions && (
+          <PostActions
+            markdown={postActionsMarkdown}
+            postUrl={postActionsUrl}
+            {title}
+          />
+        )
+      }
     </Fragment>
     <Fragment slot="article">
       {isDraft && <Warning html={WARNING} />}
@@ -141,6 +190,30 @@ if (collectionType === 'blog') {
       }
       <PostCover {cover} {coverAlt} />
       <Content />
+      {
+        relatedPosts.length > 0 && (
+          <section class="related-posts" aria-label="相关文章">
+            <h2 class="related-posts-title">相关文章</h2>
+            <ul class="related-posts-list">
+              {relatedPosts.map((item) => (
+                <li>
+                  <a
+                    class="related-post-link"
+                    href={withBasePath(`/blog/${item.id}/`)}
+                  >
+                    <span class="related-post-name">{item.data.title}</span>
+                    {item.data.description && (
+                      <span class="related-post-desc">
+                        {item.data.description}
+                      </span>
+                    )}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
       {
         collectionType === 'blog' && (
           <nav class="post-neighbor-nav" aria-label="文章导航">
@@ -212,6 +285,104 @@ if (collectionType === 'blog') {
 </BaseLayout>
 
 <style>
+  .related-posts {
+    margin-top: 3.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--c-border-soft);
+  }
+
+  .related-posts-title {
+    margin: 0 0 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--c-text);
+  }
+
+  .related-posts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* Kill the global prose list bullet (::before dot) and its indent so
+     cards align flush with the section title. */
+  .related-posts-list li {
+    padding-left: 0 !important;
+  }
+
+  .related-posts-list li::before {
+    display: none !important;
+  }
+
+  .related-post-link {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid var(--c-border-soft);
+    border-radius: 0.6rem;
+    text-decoration: none;
+    background: var(--related-card-bg, transparent);
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  /* Soft tinted cards, low-saturation so they sit well with the minimal
+     black/white theme. Each card gets a distinct hue. */
+  .related-posts-list li:nth-child(3n + 1) .related-post-link {
+    --related-card-bg: hsl(210 60% 97%);
+    border-color: hsl(210 45% 88%);
+  }
+
+  .related-posts-list li:nth-child(3n + 2) .related-post-link {
+    --related-card-bg: hsl(150 45% 96%);
+    border-color: hsl(150 35% 86%);
+  }
+
+  .related-posts-list li:nth-child(3n + 3) .related-post-link {
+    --related-card-bg: hsl(270 50% 97%);
+    border-color: hsl(270 35% 89%);
+  }
+
+  .related-post-link:hover {
+    transform: translateY(-1px);
+    filter: brightness(0.98);
+  }
+
+  /* Dark mode: dim, desaturated tints instead of bright pastels. */
+  :global(html.dark) .related-posts-list li:nth-child(3n + 1) .related-post-link {
+    --related-card-bg: hsl(210 30% 12%);
+    border-color: hsl(210 25% 22%);
+  }
+
+  :global(html.dark) .related-posts-list li:nth-child(3n + 2) .related-post-link {
+    --related-card-bg: hsl(150 25% 11%);
+    border-color: hsl(150 20% 20%);
+  }
+
+  :global(html.dark) .related-posts-list li:nth-child(3n + 3) .related-post-link {
+    --related-card-bg: hsl(270 28% 13%);
+    border-color: hsl(270 22% 23%);
+  }
+
+  .related-post-name {
+    font-weight: 500;
+    color: var(--c-text);
+  }
+
+  .related-post-desc {
+    font-size: 0.85rem;
+    color: var(--c-text-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   .post-neighbor-nav {
     margin-top: 3.25rem;
     padding-top: 1.25rem;
