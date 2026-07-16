@@ -22,14 +22,14 @@
   },
   {
     "id": "ui-comp-cli",
-    "link": "https://github.com/wangshengliang-wsl/ui-comp-cli",
+    "link": "https://github.com/Joruno-AI/ui-comp-cli",
     "desc": "ui-comp-cli - 用于创建 UI 组件或模板的命令行工具",
     "icon": "i-ph-squares-four-duotone",
     "category": "npm"
   },
   {
     "id": "ai-tool-navigation-website",
-    "link": "https://github.com/wangshengliang-wsl/ai-tool-navigation-website",
+    "link": "https://github.com/Joruno-AI/ai-tool-navigation-website",
     "desc": "ai-tool-navigation-website - AI 工具导航网站",
     "icon": "i-ph-compass-rose-duotone",
     "category": "导航站"
@@ -50,98 +50,98 @@
   },
   {
     "id": "midjourney-supabase-app",
-    "link": "https://github.com/wangshengliang-wsl/midjourney-supabase-app",
+    "link": "https://github.com/Joruno-AI/midjourney-supabase-app",
     "desc": "midjourney-supabase-app - Midjourney 图片生成应用",
     "icon": "i-ph-sparkle-duotone",
     "category": "工具站"
   },
   {
     "id": "chrome-extension-zhihu",
-    "link": "https://github.com/wangshengliang-wsl/chrome-extension-zhihu",
+    "link": "https://github.com/Joruno-AI/chrome-extension-zhihu",
     "desc": "chrome-extension-zhihu - 知乎浏览器扩展插件",
     "icon": "i-ph-puzzle-piece-duotone",
     "category": "浏览器插件"
   },
   {
     "id": "ai-gallery",
-    "link": "https://github.com/wangshengliang-wsl/ai-gallery",
+    "link": "https://github.com/Joruno-AI/ai-gallery",
     "desc": "ai-gallery - AI 图片画廊小程序",
     "icon": "i-ph-images-duotone",
     "category": "小程序"
   },
   {
     "id": "todo-supabase-app",
-    "link": "https://github.com/wangshengliang-wsl/todo-supabase-app",
+    "link": "https://github.com/Joruno-AI/todo-supabase-app",
     "desc": "todo-supabase-app - 待办事项管理应用",
     "icon": "i-ph-check-circle-duotone",
     "category": "工具站"
   },
   {
     "id": "vscode-git-user-config",
-    "link": "https://github.com/wangshengliang-wsl/vscode-git-user-config",
+    "link": "https://github.com/Joruno-AI/vscode-git-user-config",
     "desc": "vscode-git-user-config - Git 用户配置管理的 VSCode 插件",
     "icon": "i-skill-icons-vscode-dark",
     "category": "vscode插件"
   },
   {
     "id": "weather-ootd",
-    "link": "https://github.com/wangshengliang-wsl/weather-ootd",
+    "link": "https://github.com/Joruno-AI/weather-ootd",
     "desc": "weather-ootd - 天气穿搭推荐小程序",
     "icon": "i-ph-rainbow-cloud-duotone",
     "category": "小程序"
   },
   {
     "id": "happyaicoding",
-    "link": "https://github.com/wangshengliang-wsl/happyaicoding-template",
+    "link": "https://github.com/Joruno-AI/happyaicoding-template",
     "desc": "happyaicoding - AI 编程学习网站",
     "icon": "i-ph-code-block-duotone",
     "category": "工具站"
   },
   {
     "id": "deps-cli",
-    "link": "https://github.com/wangshengliang-wsl/deps-cli",
+    "link": "https://github.com/Joruno-AI/deps-cli",
     "desc": "deps-cli - 依赖管理命令行工具",
     "icon": "i-ph-package-duotone",
     "category": "npm"
   },
   {
     "id": "vistoso",
-    "link": "https://github.com/wangshengliang-wsl/vistoso",
+    "link": "https://github.com/Joruno-AI/vistoso",
     "desc": "vistoso - 颜色查询命令行工具",
     "icon": "i-ph-paint-bucket-duotone",
     "category": "npm"
   },
   {
     "id": "use-fns",
-    "link": "https://github.com/wangshengliang-wsl/use-fns",
+    "link": "https://github.com/Joruno-AI/use-fns",
     "desc": "use-fns - Hooks 函数集合库",
     "icon": "i-ph-webhooks-logo-duotone",
     "category": "npm"
   },
   {
     "id": "locale-pkg",
-    "link": "https://github.com/wangshengliang-wsl/locale-pkg",
+    "link": "https://github.com/Joruno-AI/locale-pkg",
     "desc": "locale-pkg - 显示本地包信息的工具",
     "icon": "i-ph-globe-hemisphere-east-duotone",
     "category": "npm"
   },
   {
     "id": "pkg-installer",
-    "link": "https://github.com/wangshengliang-wsl/pkg-installer",
+    "link": "https://github.com/Joruno-AI/pkg-installer",
     "desc": "pkg-installer - 包安装器命令行工具",
     "icon": "i-ph-terminal-window-duotone",
     "category": "npm"
   },
   {
     "id": "VoiceAccountClient",
-    "link": "https://github.com/wangshengliang-wsl/VoiceAccountClient",
+    "link": "https://github.com/Joruno-AI/VoiceAccountClient",
     "desc": "VoiceAccountClient - 语音记账 iOS 客户端",
     "icon": "i-ph-waveform-duotone",
     "category": "iOS"
   },
   {
     "id": "VoiceAccountServer",
-    "link": "https://github.com/wangshengliang-wsl/VoiceAccountServer",
+    "link": "https://github.com/Joruno-AI/VoiceAccountServer",
     "desc": "VoiceAccountServer - 语音记账服务端",
     "icon": "i-ph-coins-duotone",
     "category": "iOS"
