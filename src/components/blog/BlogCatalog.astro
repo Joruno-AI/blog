@@ -38,15 +38,13 @@ const activeNode = findPostNode(categoryTree, activePostId)
 const activeCategoryPath = activeNode?.path
 const categoryHref = (path: string) =>
   `${blogHref}?category=${encodeURIComponent(path)}`
-const shouldShowPosts = (node: CategoryTreeNode) =>
-  node.posts.length > 0 &&
-  (mode === 'filter' || node.path === activeCategoryPath)
+const shouldShowPosts = (node: CategoryTreeNode) => node.posts.length > 0
 const isActiveBranch = (path: string) =>
   !!activeCategoryPath &&
   (activeCategoryPath === path || activeCategoryPath.startsWith(`${path}/`))
 ---
 
-<blog-catalog data-mode={mode}>
+<blog-catalog data-mode={mode} data-active-category={activeCategoryPath}>
   <aside class="category-sidebar lt-lgp:hidden">
     <nav
       class="toc-desktop toc-desktop-content blog-catalog-nav"
@@ -64,36 +62,32 @@ const isActiveBranch = (path: string) =>
         </a>
       </div>
 
-      {
-        mode === 'filter' && (
-          <div class="search-box" id="blog-catalog-search-box">
-            <button
-              type="button"
-              class="search-trigger"
-              id="blog-catalog-search-trigger"
-              aria-label="搜索目录"
-            >
-              <span class="i-ri-search-line" aria-hidden="true" />
-            </button>
-            <input
-              type="search"
-              class="search-input"
-              id="blog-catalog-search-input"
-              aria-label="搜索博客文章"
-              placeholder="搜索文章"
-              autocomplete="off"
-            />
-            <button
-              type="button"
-              class="search-clear hidden"
-              id="blog-catalog-search-clear"
-              aria-label="清除搜索"
-            >
-              <span class="i-ri-close-line" aria-hidden="true" />
-            </button>
-          </div>
-        )
-      }
+      <div class="search-box" id="blog-catalog-search-box">
+        <button
+          type="button"
+          class="search-trigger"
+          id="blog-catalog-search-trigger"
+          aria-label="搜索目录"
+        >
+          <span class="i-ri-search-line" aria-hidden="true"></span>
+        </button>
+        <input
+          type="search"
+          class="search-input"
+          id="blog-catalog-search-input"
+          aria-label="搜索博客文章"
+          placeholder="搜索文章"
+          autocomplete="off"
+        />
+        <button
+          type="button"
+          class="search-clear hidden"
+          id="blog-catalog-search-clear"
+          aria-label="清除搜索"
+        >
+          <span class="i-ri-close-line" aria-hidden="true"></span>
+        </button>
+      </div>
 
       <ul id="blog-filter-toc-list" class="category-nav">
         <li class="category-group" data-depth="0">
@@ -175,7 +169,7 @@ const isActiveBranch = (path: string) =>
                     <ul
                       class:list={[
                         'category-posts',
-                        { expanded: mode === 'reader' },
+                        { expanded: mode === 'reader' && isCurrent },
                       ]}
                       style={`padding-left: ${depth * 0.75 + 1.25}rem`}
                     >
@@ -235,45 +229,35 @@ const isActiveBranch = (path: string) =>
       aria-label="博客目录"
     >
       <div class="drawer-header">
-        {
-          mode === 'filter' ? (
-            <div
-              class="search-box mobile-search-box"
-              id="blog-catalog-mobile-search-box"
-            >
-              <button
-                type="button"
-                class="search-trigger"
-                id="blog-catalog-mobile-search-trigger"
-                aria-label="搜索目录"
-              >
-                <span class="i-ri-search-line" aria-hidden="true" />
-              </button>
-              <input
-                type="search"
-                class="search-input"
-                id="blog-catalog-mobile-search-input"
-                aria-label="搜索博客文章"
-                placeholder="搜索文章"
-                autocomplete="off"
-              />
-              <button
-                type="button"
-                class="search-clear hidden"
-                id="blog-catalog-mobile-search-clear"
-                aria-label="清除搜索"
-              >
-                <span class="i-ri-close-line" aria-hidden="true" />
-              </button>
-            </div>
-          ) : (
-            <a class="drawer-title" href={blogHref}>
-              <span class="i-ri-book-open-line" aria-hidden="true" />
-              <span>Blog</span>
-              <span class="catalog-total">{posts.length}</span>
-            </a>
-          )
-        }
+        <div
+          class="search-box mobile-search-box"
+          id="blog-catalog-mobile-search-box"
+        >
+          <button
+            type="button"
+            class="search-trigger"
+            id="blog-catalog-mobile-search-trigger"
+            aria-label="搜索目录"
+          >
+            <span class="i-ri-search-line" aria-hidden="true"></span>
+          </button>
+          <input
+            type="search"
+            class="search-input"
+            id="blog-catalog-mobile-search-input"
+            aria-label="搜索博客文章"
+            placeholder="搜索文章"
+            autocomplete="off"
+          />
+          <button
+            type="button"
+            class="search-clear hidden"
+            id="blog-catalog-mobile-search-clear"
+            aria-label="清除搜索"
+          >
+            <span class="i-ri-close-line" aria-hidden="true"></span>
+          </button>
+        </div>
         <button
           type="button"
           class="drawer-close"
@@ -365,7 +349,7 @@ const isActiveBranch = (path: string) =>
                     <ul
                       class:list={[
                         'category-posts',
-                        { expanded: mode === 'reader' },
+                        { expanded: mode === 'reader' && isCurrent },
                       ]}
                       style={`padding-left: ${depth * 0.75 + 1.25}rem`}
                     >
@@ -400,6 +384,7 @@ const isActiveBranch = (path: string) =>
 
 <style>
   .catalog-heading {
+    flex-shrink: 0;
     padding: 0 0.25rem 0.75rem;
     margin-bottom: 0.5rem;
     border-bottom: 1px solid var(--c-border-soft);
@@ -413,6 +398,7 @@ const isActiveBranch = (path: string) =>
     color: var(--c-text);
     font-size: 0.925rem;
     font-weight: 600;
+    line-height: 1.2;
     text-decoration: none;
     border-bottom: 0 !important;
   }
@@ -439,6 +425,7 @@ const isActiveBranch = (path: string) =>
   .search-box {
     position: relative;
     display: flex;
+    flex-shrink: 0;
     align-items: center;
     height: 2rem;
     margin-bottom: 0.75rem;
@@ -559,6 +546,9 @@ const isActiveBranch = (path: string) =>
     padding: 0 0.75rem 0 0;
     overflow-y: auto;
     list-style: none;
+    /* The shared desktop TOC fades its list until hover. The blog catalog is
+       persistent navigation, so keep its hierarchy crisp at all times. */
+    opacity: 1 !important;
     scrollbar-color: var(--c-border-strong) transparent;
     scrollbar-width: thin;
   }
@@ -598,6 +588,7 @@ const isActiveBranch = (path: string) =>
     text-align: left;
     text-decoration: none;
     cursor: pointer;
+    opacity: 1 !important;
     transition:
       background-color 0.2s ease,
       border-color 0.2s ease,
@@ -678,6 +669,7 @@ const isActiveBranch = (path: string) =>
     text-decoration: none;
     text-overflow: ellipsis;
     white-space: nowrap;
+    opacity: 1 !important;
     transition:
       background-color 0.2s ease,
       color 0.2s ease;
@@ -811,6 +803,9 @@ const isActiveBranch = (path: string) =>
 </style>
 
 <script>
+  let readerCatalogScrollState:
+    { category: string; positions: number[] } | undefined
+
   class BlogCatalogElement extends HTMLElement {
     private controller?: AbortController
 
@@ -818,6 +813,37 @@ const isActiveBranch = (path: string) =>
       this.controller?.abort()
       this.controller = new AbortController()
       const { signal } = this.controller
+      const categoryNavs = Array.from(
+        this.querySelectorAll<HTMLElement>('.category-nav')
+      )
+
+      if (
+        this.dataset.mode === 'reader' &&
+        this.dataset.activeCategory &&
+        readerCatalogScrollState?.category === this.dataset.activeCategory
+      ) {
+        categoryNavs.forEach((nav, index) => {
+          nav.scrollTop = readerCatalogScrollState?.positions[index] ?? 0
+        })
+      }
+
+      document.addEventListener(
+        'astro:before-swap',
+        () => {
+          if (this.dataset.mode !== 'reader') return
+
+          readerCatalogScrollState = {
+            category: this.dataset.activeCategory ?? '',
+            positions: categoryNavs.map((nav) => nav.scrollTop),
+          }
+        },
+        { signal }
+      )
+
+      if (this.dataset.mode === 'reader') {
+        this.setupReaderSearch(signal)
+      }
+
       const trigger = this.querySelector<HTMLButtonElement>(
         '[data-catalog-open]'
       )
@@ -880,6 +906,118 @@ const isActiveBranch = (path: string) =>
         },
         { signal }
       )
+    }
+
+    private setupReaderSearch(signal: AbortSignal) {
+      const searchBoxes = Array.from(
+        this.querySelectorAll<HTMLElement>('.search-box')
+      )
+      const searchInputs = searchBoxes
+        .map((box) => box.querySelector<HTMLInputElement>('.search-input'))
+        .filter((input): input is HTMLInputElement => !!input)
+      const clearButtons = searchBoxes
+        .map((box) => box.querySelector<HTMLButtonElement>('.search-clear'))
+        .filter((button): button is HTMLButtonElement => !!button)
+
+      const filterCatalog = (value: string) => {
+        const keyword = value.trim().toLowerCase()
+
+        this.querySelectorAll<HTMLElement>('.category-group').forEach(
+          (group) => {
+            const category = group.dataset.path
+            const header = group.querySelector<HTMLElement>('.category-header')
+            const posts = group.querySelector<HTMLElement>('.category-posts')
+
+            if (!category) {
+              group.classList.toggle('search-no-match', !!keyword)
+              return
+            }
+
+            const categoryName =
+              header?.querySelector('.category-name')?.textContent ?? ''
+            const categoryMatches = categoryName.toLowerCase().includes(keyword)
+            let hasMatchingPost = false
+
+            posts?.querySelectorAll<HTMLElement>('li').forEach((item) => {
+              const matches =
+                !keyword ||
+                categoryMatches ||
+                (item.textContent ?? '').toLowerCase().includes(keyword)
+              item.classList.toggle('search-no-match', !matches)
+              hasMatchingPost ||= matches
+            })
+
+            if (keyword) {
+              const matches = categoryMatches || hasMatchingPost
+              group.classList.toggle('search-no-match', !matches)
+              posts?.classList.toggle('expanded', matches)
+              header?.classList.toggle('expanded', matches)
+            } else {
+              const isActive = category === this.dataset.activeCategory
+              group.classList.remove('search-no-match')
+              posts?.classList.toggle('expanded', isActive)
+              header?.classList.remove('expanded')
+            }
+          }
+        )
+      }
+
+      const syncSearch = (value: string) => {
+        searchInputs.forEach((input) => {
+          input.value = value
+        })
+        clearButtons.forEach((button) => {
+          button.classList.toggle('hidden', !value)
+        })
+        filterCatalog(value)
+      }
+
+      searchBoxes.forEach((box) => {
+        const input = box.querySelector<HTMLInputElement>('.search-input')
+        const clearButton =
+          box.querySelector<HTMLButtonElement>('.search-clear')
+        if (!input) return
+
+        const expand = () => {
+          box.classList.add('expanded')
+          window.setTimeout(() => input.focus(), 50)
+        }
+
+        box.addEventListener(
+          'click',
+          (event) => {
+            if ((event.target as HTMLElement).closest('.search-clear')) return
+            expand()
+          },
+          { signal }
+        )
+        input.addEventListener('focus', expand, { signal })
+        input.addEventListener(
+          'blur',
+          () => {
+            window.setTimeout(() => {
+              if (!input.value && document.activeElement !== input) {
+                box.classList.remove('expanded')
+              }
+            }, 150)
+          },
+          { signal }
+        )
+        input.addEventListener('input', () => syncSearch(input.value), {
+          signal,
+        })
+        clearButton?.addEventListener(
+          'click',
+          (event) => {
+            event.stopPropagation()
+            syncSearch('')
+            searchBoxes.forEach((searchBox) => {
+              searchBox.classList.remove('expanded')
+            })
+          },
+          { signal }
+        )
+      })
     }
 
     disconnectedCallback() {

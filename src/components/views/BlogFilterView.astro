@@ -433,19 +433,40 @@ const postsWithReadTime: PostWithReadTime[] = await processPostsInBatches(
       const postsContainer = header.nextElementSibling as HTMLElement
       if (!postsContainer) return
 
-      const isExpanded = postsContainer.classList.contains('expanded')
+      const isExpanded = this.expandedCategories.has(category)
 
-      if (isExpanded) {
-        postsContainer.classList.remove('expanded')
-        header.classList.remove('expanded')
-        this.expandedCategories.delete(category)
-      } else {
-        postsContainer.classList.add('expanded')
-        header.classList.add('expanded')
+      this.collapseExpandedCategories()
+
+      if (!isExpanded) {
+        this.setCategoryExpanded(category, true)
         this.expandedCategories.add(category)
       }
 
       this.saveExpandedToStorage()
+    }
+
+    private collapseExpandedCategories() {
+      this.querySelectorAll('.category-header').forEach((header) => {
+        const postsContainer = header.nextElementSibling as HTMLElement | null
+        if (postsContainer?.classList.contains('category-posts')) {
+          postsContainer.classList.remove('expanded')
+          header.classList.remove('expanded')
+        }
+      })
+      this.expandedCategories.clear()
+    }
+
+    private setCategoryExpanded(category: string, expanded: boolean) {
+      this.querySelectorAll('.category-header').forEach((header) => {
+        const headerCategory = (header as HTMLElement).dataset.category
+        if (headerCategory !== category) return
+
+        const postsContainer = header.nextElementSibling as HTMLElement | null
+        if (postsContainer?.classList.contains('category-posts')) {
+          postsContainer.classList.toggle('expanded', expanded)
+          header.classList.toggle('expanded', expanded)
+        }
+      })
     }
 
     private updateActiveCategory(category: string) {
@@ -517,21 +538,16 @@ const postsWithReadTime: PostWithReadTime[] = await processPostsInBatches(
         const saved = localStorage.getItem('blog-filter-expanded')
         if (saved) {
           const expandedArray = JSON.parse(saved) as string[]
-          this.expandedCategories = new Set(expandedArray)
+          const category = [...expandedArray]
+            .reverse()
+            .find((item) => this.categories.includes(item))
 
-          // 恢复展开状态
-          expandedArray.forEach((category) => {
-            const headers = this.querySelectorAll(
-              `.category-header[data-category="${category}"]`
-            )
-            headers.forEach((header) => {
-              const postsContainer = header.nextElementSibling as HTMLElement
-              if (postsContainer?.classList.contains('category-posts')) {
-                postsContainer.classList.add('expanded')
-                header.classList.add('expanded')
-              }
-            })
-          })
+          this.collapseExpandedCategories()
+          if (category) {
+            this.setCategoryExpanded(category, true)
+            this.expandedCategories.add(category)
+            this.saveExpandedToStorage()
+          }
         }
       } catch {
         // ignore
