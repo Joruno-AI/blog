@@ -81,6 +81,26 @@
   - The production retry loaded all 550 posts, then failed because the separate CMS media endpoint timed out.
   - Mouse clicks on results were canceled because synchronous view reset removed the clicked anchor before default navigation.
 
+### Phase 9: Production Consistency Audit
+- **Status:** complete
+- Actions taken:
+  - Confirmed local `main` and `origin/main` both point to `55e4784` with no divergence.
+  - Confirmed the online site serves the latest hashed production assets.
+  - Reproduced the navbar discrepancy in Chromium: local computed blur was `saturate(1.8) blur(12px)`, online was `none`.
+  - Verified Lightning CSS collapses standard/prefixed aliases to the last declaration.
+  - Reordered the navbar declarations so production retains standard `backdrop-filter`.
+  - Found and fixed the same declaration-order issue on four music-player glass surfaces.
+  - Added Cloudflare `email_off` markers around the home-page address to eliminate the protected-text flash.
+  - Moved code-language labels to the bottom-right corner.
+  - Completed a production build: 578 pages built and 563 pages indexed by Pagefind.
+  - Verified production HTML contains one valid mail link inside the opt-out markers.
+  - Verified production CSS contains standard blur declarations and the language-label bottom/right offsets.
+- Files modified:
+  - `src/styles/main.css`
+  - `src/styles/music-polish.css`
+  - `src/styles/markdown.css`
+  - `src/content/home/index.md`
+
 ## Test Results
 | Test | Input | Expected | Actual | Status |
 |------|-------|----------|--------|--------|

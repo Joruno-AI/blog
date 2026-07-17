@@ -36,6 +36,9 @@
 | Navbar search could not find real posts in local development | `SearchSwitch` intentionally returned two hard-coded mock records whenever `import.meta.env.PROD` was false. |
 | Initial production assertion checked heading sub-results instead of Pagefind parent titles | Production search was healthy: parent results included `Bun 完全指南`, with valid article and heading URLs. |
 | Search results were visible but not mouse-clickable | The search panel lived inside the navbar's `z-50` stacking context, while the transparent global backdrop was `z-150`; moving the panel to `BaseLayout` restored the intended `z-200` hit target. |
+| Navbar blur worked locally but not online | Git was fully synchronized, but production Lightning CSS kept only the last alias declaration (`-webkit-backdrop-filter`). Chromium computed the online navbar as `backdrop-filter: none`. Placing the standard declaration last makes the minified output usable in Chromium. |
+| Four music-player glass surfaces had the same prefix-order hazard | Reordered each pair; production CSS now contains standard `backdrop-filter` values for 12px, 14px, and 16px blur. |
+| Cloudflare briefly displayed `[email protected]` before decoding | Wrapped the home-page mail link in Cloudflare's `email_off` markers. Production HTML retains one valid `mailto:` link and both markers. |
 
 ## Resources
 - Reference: https://sitor.cc/courses/agent-fundamentals/2-chatbot-to-agent
@@ -60,5 +63,6 @@
 - The fully opened mobile catalog is 319.8px wide at a 390px viewport, shows the active category and article clearly, and closes with Escape.
 - Automated filtering now confirms all 550 posts restore after search, a title query narrows the list correctly, and category selection updates both the visible posts and `?category=` URL state.
 - The old list-search selector targeted a removed `.flex-grow` wrapper; using `.list-item-title` restores main-list search behavior.
+- Production CSS places code-language badges at `bottom: .4rem; right: .4rem`, keeping the copy control unobstructed in the top-right corner.
 - Blog and music search controls previously shared the `search-clear` ID; blog search controls now use scoped, unique IDs.
 - The closed mobile catalog is now inert, opening moves focus into the dialog, Tab is trapped among visible controls, and Escape restores focus to the trigger.

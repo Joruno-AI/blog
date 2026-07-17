@@ -58,6 +58,20 @@ Complete
 - [x] Run formatting, type checks, lint, and final diff review
 - **Status:** complete
 
+### Phase 9: Production Consistency Audit
+- [x] Confirm local and remote Git synchronization
+- [x] Reproduce the navbar blur difference in a production browser
+- [x] Identify the CSS minifier behavior and apply the targeted fix
+- [x] Scan all source styles for prefixed-property ordering hazards
+- [x] Inspect the complete production build for warnings and malformed output
+- [x] Compare critical local production styles with browser computed values
+- **Status:** complete
+
+### Phase 10: Audit Verification & Delivery
+- [x] Run lint, Astro diagnostics, production build, and focused browser checks
+- [x] Review Git diff and report actionable findings by severity
+- **Status:** complete
+
 ## Key Questions
 1. How can the shared shell remain visually stable during Astro client navigation without losing direct-link support?
 2. How much of the 550-post catalog should be rendered on every article page?
@@ -93,6 +107,8 @@ Complete
 | Production retry loaded all posts but the CMS media endpoint timed out | 2 | Probe the media endpoint before one final build attempt; do not repeat while it is unhealthy. |
 | Search result click removed its anchor before default navigation | 1 | Defer panel cleanup until Astro and the browser have handled the link click. |
 | Transparent backdrop still intercepted result pointer events | 2 | Render the global search panel outside the navbar stacking context so its z-index can exceed the backdrop. |
+| Production CSS kept only `-webkit-backdrop-filter` for the navbar | 1 | Reverse the declaration order so Lightning CSS retains the standard property used by Chromium. |
+| Browser label check targeted a page without a JSON block | 1 | Use a confirmed code-block page and inspect the first supported language label instead. |
 
 ## Notes
 - Reference layout: course tree on the left, article in the center, page TOC on the right.
