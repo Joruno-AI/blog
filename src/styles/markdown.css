@@ -658,7 +658,7 @@ html.dark .rds-badge {
 }
 
 /* Code block language label.
-   Shows the language (ts / py / json ...) in the top-right corner of
+   Shows the language (ts / py / json ...) in the bottom-right corner of
    non-terminal code blocks that have no explicit filename title. Terminal
    frames already carry their own decoration, and titled frames show the
    filename, so both are excluded via :has(). */
@@ -673,11 +673,11 @@ html.dark .rds-badge {
   )::before {
   content: attr(data-language);
   position: absolute;
-  top: 0.4rem;
-  right: 3rem;
+  right: 0.4rem;
+  bottom: 0.4rem;
   z-index: 1;
   padding: 0.15rem 0.6rem;
-  border-bottom-left-radius: 0.4rem;
+  border-top-left-radius: 0.4rem;
   font-family: var(--font-mono);
   font-size: 0.72rem;
   line-height: 1.4;

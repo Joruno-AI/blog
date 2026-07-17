@@ -123,8 +123,8 @@
   border: 1px solid var(--c-border-soft) !important;
   border-radius: 14px !important;
   box-shadow: var(--music-panel-shadow) !important;
-  backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
 }
 
 #global-music-player .sidebar-header,
@@ -332,8 +332,8 @@
   background: color-mix(in srgb, var(--c-bg) 88%, transparent) !important;
   border-color: var(--c-border-soft) !important;
   box-shadow: var(--music-panel-shadow);
-  backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
 }
 
 #global-music-player .sidebar-toggle:hover {
@@ -350,8 +350,8 @@
   background: color-mix(in srgb, var(--c-bg) 88%, transparent) !important;
   border-color: var(--c-border-soft) !important;
   box-shadow: var(--music-panel-shadow) !important;
-  backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
 }
 
 body:has(#music-page-wrapper:not(.hidden)) footer {
@@ -417,8 +417,8 @@ body:has(#music-page-wrapper:not(.hidden)) {
     border: 1px solid var(--c-border-soft) !important;
     border-radius: 16px;
     box-shadow: var(--music-panel-shadow) !important;
-    backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
   }
 
   #global-music-player .mobile-nav-row {

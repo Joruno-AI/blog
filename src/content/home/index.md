@@ -24,5 +24,5 @@
 
 如果你也对技术感兴趣，或者想聊点什么，随时欢迎来找我：
 
-- 邮箱：wsl1710642275@gmail.com
+- 邮箱：<!--email_off-->[wsl1710642275@gmail.com](mailto:wsl1710642275@gmail.com)<!--/email_off-->
 - GitHub：[Joruno-AI](https://github.com/Joruno-AI)
