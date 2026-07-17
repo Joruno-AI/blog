@@ -145,24 +145,16 @@ if (hasCustomCursor) style['--external-link-cursor'] = cursorType
       })
     </script>
 
-    <!-- Immersive reading state (global).
-         The `data-immersive` attribute lives on <html>, which persists across
-         SPA navigations. Only apply it on pages that actually offer immersive
-         reading (i.e. that render the toggle); otherwise always clear it so
-         list/other pages never inherit the widened layout. -->
+    <!-- Immersive reading is scoped to the current article. Astro keeps the
+         <html> element across SPA navigations, so clear its state whenever the
+         page changes instead of carrying it into the next article. -->
     <script>
-      function syncImmersiveState() {
-        const isReadingPage = !!document.querySelector(
-          '[data-immersive-toggle]'
-        )
-        const enabled =
-          isReadingPage && localStorage.getItem('immersive-reading') === 'true'
-        document.documentElement.toggleAttribute('data-immersive', enabled)
+      function resetImmersiveState() {
+        document.documentElement.removeAttribute('data-immersive')
       }
 
-      // Run on first load and after every SPA swap.
-      syncImmersiveState()
-      document.addEventListener('astro:page-load', syncImmersiveState)
+      resetImmersiveState()
+      document.addEventListener('astro:before-swap', resetImmersiveState)
     </script>
   </body>
 </html>

@@ -19,9 +19,14 @@ const { markdown, postUrl, title } = Astro.props
   data-url={postUrl}
   data-title={title}
 >
-  <button type="button" class="post-action" data-copy-md aria-live="polite">
+  <button type="button" class="post-action" data-copy-md>
     <span class="i-ri-file-copy-line" aria-hidden="true"></span>
-    <span data-copy-label>复制 Markdown</span>
+    <span>复制 Markdown</span>
+    <span
+      class="copy-tooltip"
+      data-copy-tooltip
+      role="status"
+      aria-live="polite"></span>
   </button>
 
   <div class="post-action-menu" data-open-menu>
@@ -88,12 +93,14 @@ const { markdown, postUrl, title } = Astro.props
   }
 
   .post-action {
+    --post-action-hover-color: var(--c-text);
+
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
     padding: 0.35rem 0.7rem;
     border: 1px solid var(--c-border-soft);
-    border-radius: 0.5rem;
+    border-radius: 4px;
     background: transparent;
     color: var(--c-text-muted);
     font-size: 0.8rem;
@@ -101,16 +108,73 @@ const { markdown, postUrl, title } = Astro.props
     line-height: 1.2;
     cursor: pointer;
     transition:
-      background-color 0.2s ease,
-      border-color 0.2s ease,
-      color 0.2s ease;
+      color 0.2s ease,
+      border-color 0.2s ease;
   }
 
   .post-action:hover,
   .post-action:focus-visible {
-    background: var(--c-surface-hover);
-    border-color: var(--c-border-strong);
-    color: var(--c-text);
+    background: transparent;
+    color: var(--post-action-hover-color);
+    border-color: var(--post-action-hover-color);
+  }
+
+  .post-action[data-copy-md] {
+    --post-action-hover-color: rgb(251 113 133);
+
+    position: relative;
+  }
+
+  .post-action[data-open-trigger] {
+    --post-action-hover-color: rgb(250 204 21);
+  }
+
+  .post-action[data-immersive-toggle] {
+    --post-action-hover-color: rgb(163 230 53);
+  }
+
+  .post-action-menu[data-open] .post-action {
+    color: var(--post-action-hover-color);
+    border-color: var(--post-action-hover-color);
+  }
+
+  .copy-tooltip {
+    position: absolute;
+    bottom: calc(100% + 0.5rem);
+    left: 50%;
+    z-index: 30;
+    padding: 0.25rem 0.55rem;
+    border-radius: 0.35rem;
+    background: var(--c-text);
+    color: var(--c-bg);
+    font-size: 0.72rem;
+    font-weight: 500;
+    line-height: 1.3;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transform: translate(-50%, 0.25rem);
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease,
+      visibility 0.2s ease;
+  }
+
+  .copy-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    border: 0.3rem solid transparent;
+    border-top-color: var(--c-text);
+    transform: translateX(-50%);
+  }
+
+  .copy-tooltip[data-visible] {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0);
   }
 
   .post-action-caret {
@@ -186,18 +250,21 @@ const { markdown, postUrl, title } = Astro.props
 
     // --- Copy Markdown ---
     const copyBtn = root.querySelector<HTMLButtonElement>('[data-copy-md]')
-    const copyLabel = root.querySelector<HTMLElement>('[data-copy-label]')
-    if (copyBtn && copyLabel) {
-      const defaultText = copyLabel.textContent
+    const copyTooltip = root.querySelector<HTMLElement>('[data-copy-tooltip]')
+    if (copyBtn && copyTooltip) {
+      let feedbackTimer: number | undefined
       copyBtn.addEventListener('click', async () => {
+        window.clearTimeout(feedbackTimer)
         try {
           await navigator.clipboard.writeText(markdown)
-          copyLabel.textContent = '已复制'
+          copyTooltip.textContent = 'Copied'
         } catch {
-          copyLabel.textContent = '复制失败'
+          copyTooltip.textContent = 'Copy failed'
         }
-        setTimeout(() => {
-          copyLabel.textContent = defaultText
+        copyTooltip.toggleAttribute('data-visible', true)
+        feedbackTimer = window.setTimeout(() => {
+          copyTooltip.removeAttribute('data-visible')
+          copyTooltip.textContent = ''
         }, 1600)
       })
     }
@@ -257,12 +324,12 @@ const { markdown, postUrl, title } = Astro.props
       const apply = (on: boolean) => {
         document.documentElement.toggleAttribute('data-immersive', on)
         immersiveBtn.setAttribute('aria-pressed', String(on))
-        if (immersiveLabel) immersiveLabel.textContent = on ? '默认宽度' : '沉浸阅读'
+        if (immersiveLabel)
+          immersiveLabel.textContent = on ? '默认宽度' : '沉浸阅读'
       }
-      apply(localStorage.getItem('immersive-reading') === 'true')
+      apply(false)
       immersiveBtn.addEventListener('click', () => {
         const on = !document.documentElement.hasAttribute('data-immersive')
-        localStorage.setItem('immersive-reading', String(on))
         apply(on)
       })
     }
