@@ -1,14 +1,14 @@
 /*
  * 音乐页视觉：跟随站点主题的单色极简风，与博客保持一致。
  * 不再重定义 --c-bg / --c-text（那会造成与站点脱节的固定暗舞台），
- * 直接继承亮/暗主题的纯灰阶色板；仅保留一个低饱和黄铜强调色，
- * 用于播放态、进度条等关键点缀，呼应 3D 留声机的铜质号角。
+ * 直接继承亮/暗主题的纯灰阶色板；仅保留一个低饱和蓝灰强调色，
+ * 用于播放态、进度条等关键点缀，避免页面大面积发黄。
  */
 #global-music-player {
-  /* 亮色主题：偏深黄铜，白底上可见 */
-  --music-accent: #a06a2c;
-  --music-accent-soft: rgba(160, 106, 44, 0.1);
-  --music-accent-line: rgba(160, 106, 44, 0.32);
+  /* 亮色主题：蓝灰强调，白底上可见但不抢戏 */
+  --music-accent: #526a73;
+  --music-accent-soft: rgba(82, 106, 115, 0.1);
+  --music-accent-line: rgba(82, 106, 115, 0.28);
   /* 中性聚光 / 阴影：不带暖色，贴合博客的克制质感 */
   --music-spotlight: rgba(0, 0, 0, 0.1);
   --music-spotlight-edge: rgba(0, 0, 0, 0.03);
@@ -16,10 +16,10 @@
 }
 
 :root.dark #global-music-player {
-  /* 暗色主题：亮黄铜 */
-  --music-accent: #cba86a;
-  --music-accent-soft: rgba(203, 168, 106, 0.13);
-  --music-accent-line: rgba(203, 168, 106, 0.3);
+  /* 暗色主题：提亮蓝灰，保持对比 */
+  --music-accent: #91a8b1;
+  --music-accent-soft: rgba(145, 168, 177, 0.14);
+  --music-accent-line: rgba(145, 168, 177, 0.32);
   --music-spotlight: rgba(255, 255, 255, 0.07);
   --music-spotlight-edge: rgba(255, 255, 255, 0.02);
   --music-panel-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
@@ -63,25 +63,22 @@
 }
 
 #global-music-player .gramophone-section {
-  position: relative;
+  position: absolute;
+  inset: 0;
   z-index: 1;
-  padding: clamp(0.8rem, 2vh, 1.5rem) clamp(19rem, 23vw, 24rem);
+  padding: 0 !important;
+  overflow: hidden;
 }
 
-#global-music-player .gramophone-wrapper {
-  min-height: min(760px, calc(100dvh - 6rem));
-}
-
+#global-music-player .gramophone-wrapper,
 #global-music-player .gramophone-canvas {
-  min-height: min(760px, calc(100dvh - 6rem));
-  /* 底部渐隐：让留声机底座的硬边溶入背景，而非白→黑直切 */
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    #000 0%,
-    #000 80%,
-    transparent 97%
-  );
-  mask-image: linear-gradient(to bottom, #000 0%, #000 80%, transparent 97%);
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  border-radius: 0 !important;
+  overflow: visible !important;
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
 }
 
 #global-music-player .gramophone-canvas canvas {
@@ -105,11 +102,18 @@
 }
 
 #global-music-player .sidebar-wrapper.left.collapsed {
-  transform: translateX(calc(-100% - 2rem)) !important;
+  transform: translateX(calc(-100% + 16px)) !important;
 }
 
 #global-music-player .sidebar-wrapper.right.collapsed {
-  transform: translateX(calc(100% + 2rem)) !important;
+  transform: translateX(calc(100% - 16px)) !important;
+}
+
+#global-music-player .sidebar-wrapper.left.collapsed .vinyl-sidebar,
+#global-music-player .sidebar-wrapper.right.collapsed .song-list-container {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
 
 #global-music-player .vinyl-sidebar,
@@ -141,7 +145,7 @@
   letter-spacing: 0;
 }
 
-/* 关键点缀：播放态、曲目序号、正在播放标识用低饱和黄铜 */
+/* 关键点缀：播放态、曲目序号、正在播放标识用低饱和蓝灰 */
 #global-music-player .now-playing,
 #global-music-player .play-indicator,
 #global-music-player .song-item.current .song-index,
@@ -152,6 +156,8 @@
 
 #global-music-player .song-count {
   color: var(--c-text-muted) !important;
+  background: var(--c-surface-soft) !important;
+  border: 1px solid var(--c-border-soft) !important;
 }
 
 #global-music-player .sidebar-content {
@@ -161,6 +167,11 @@
 #global-music-player .vinyl-list,
 #global-music-player .song-list {
   scrollbar-color: var(--c-scrollbar) transparent;
+}
+
+#global-music-player .vinyl-list {
+  margin-top: -0.25rem;
+  padding-top: 0.25rem;
 }
 
 #global-music-player .vinyl-list::-webkit-scrollbar,
@@ -177,9 +188,10 @@
 #global-music-player .vinyl-search input {
   height: 42px;
   color: var(--c-text);
-  background: var(--c-surface-soft) !important;
+  background: color-mix(in srgb, var(--c-surface-soft) 92%, var(--c-bg)) !important;
   border-color: var(--c-border-soft) !important;
   border-radius: 999px !important;
+  box-shadow: inset 0 0 0 1px transparent !important;
 }
 
 #global-music-player .vinyl-search input::placeholder {
@@ -187,9 +199,12 @@
 }
 
 #global-music-player .vinyl-search input:focus {
-  background: var(--c-surface-hover) !important;
-  border-color: var(--c-border-strong) !important;
-  box-shadow: 0 0 0 3px var(--c-focus-ring) !important;
+  outline: none !important;
+  background: var(--c-surface-soft) !important;
+  border-color: var(--music-accent-line) !important;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--music-accent) 18%, transparent),
+    0 4px 14px rgba(0, 0, 0, 0.06) !important;
   transform: none !important;
 }
 
@@ -197,6 +212,11 @@
 #global-music-player .vinyl-search:focus-within .search-icon {
   color: var(--c-text-muted);
   opacity: 0.9;
+}
+
+#global-music-player .vinyl-search:focus-within .search-icon {
+  color: var(--music-accent);
+  opacity: 0.95;
 }
 
 #global-music-player .search-clear-btn {
@@ -214,13 +234,12 @@
   background: var(--c-surface-hover) !important;
   border-color: var(--c-border-strong) !important;
   box-shadow: var(--music-panel-shadow) !important;
-  transform: translateY(-2px) !important;
+  transform: none !important;
 }
 
 #global-music-player .vinyl-card.active {
   background: var(--music-accent-soft) !important;
   border-color: var(--music-accent-line) !important;
-  box-shadow: inset 3px 0 0 var(--music-accent) !important;
 }
 
 #global-music-player .vinyl-disc {
@@ -250,21 +269,34 @@
   border-color: var(--c-border-soft) !important;
 }
 
+#global-music-player .current-album-info {
+  gap: 0.6rem !important;
+  padding: 0.65rem 0.75rem !important;
+}
+
 #global-music-player .album-cover-mini {
   border: 1px solid var(--c-border-soft);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16) !important;
 }
 
 #global-music-player .song-list {
-  padding: 0.75rem !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.25rem !important;
+  padding: 0.5rem 0.65rem !important;
 }
 
 #global-music-player .song-item {
-  min-height: 48px;
+  min-height: 44px;
+  padding: 0.5rem 0.75rem !important;
   color: var(--c-text);
   background: transparent !important;
   border: 1px solid transparent !important;
   border-radius: 12px !important;
+}
+
+#global-music-player .playback-controls {
+  padding: 0.8rem 0.9rem !important;
 }
 
 #global-music-player .song-item:hover {
@@ -279,11 +311,14 @@
   border-color: var(--music-accent-line) !important;
 }
 
-#global-music-player .song-item.playing::before,
 #global-music-player .progress-current,
 #global-music-player .playing-indicator span,
 #global-music-player .volume-slider::-webkit-slider-thumb,
 #global-music-player .volume-slider::-moz-range-thumb {
+  background: var(--music-accent) !important;
+}
+
+#global-music-player .song-item.playing .playing-indicator span {
   background: var(--music-accent) !important;
 }
 
@@ -326,23 +361,51 @@
 }
 
 #global-music-player .sidebar-toggle {
-  width: 24px !important;
-  height: 54px !important;
-  color: var(--c-text-soft);
-  background: color-mix(in srgb, var(--c-bg) 88%, transparent) !important;
-  border-color: var(--c-border-soft) !important;
-  box-shadow: var(--music-panel-shadow);
+  width: 32px !important;
+  height: 32px !important;
+  color: var(--music-accent) !important;
+  background: color-mix(in srgb, var(--c-bg) 98%, transparent) !important;
+  border: 1px solid var(--c-border-soft) !important;
+  border-radius: 50% !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06) !important;
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
 }
 
 #global-music-player .sidebar-toggle:hover {
-  background: var(--c-surface-hover) !important;
-  border-color: var(--c-border-strong) !important;
+  background: color-mix(in srgb, var(--c-bg) 98%, transparent) !important;
+  border-color: var(--c-border-soft) !important;
 }
 
 #global-music-player .sidebar-toggle:hover span {
+  color: color-mix(in srgb, var(--music-accent) 70%, black) !important;
+}
+
+#global-music-player .sidebar-toggle span {
+  font-size: 0.95rem;
+  opacity: 0.85;
   color: var(--music-accent) !important;
+  transition:
+    color 0.2s ease,
+    transform 0.3s ease;
+}
+
+#global-music-player .left-toggle {
+  right: -16px !important;
+}
+
+#global-music-player .right-toggle {
+  left: -16px !important;
+}
+
+#global-music-player .sidebar-wrapper.left.collapsed .left-toggle span {
+  transform: rotate(180deg) translateX(-1px);
+  opacity: 1;
+}
+
+#global-music-player .sidebar-wrapper.right.collapsed .right-toggle span {
+  transform: rotate(180deg) translateX(1px);
+  opacity: 1;
 }
 
 #global-music-player .music-floating-btn {
@@ -366,18 +429,19 @@ body:has(#music-page-wrapper:not(.hidden)) {
 /* 响应式：平板/移动端 */
 @media (max-width: 1180px) {
   #global-music-player .gramophone-section {
-    padding-inline: clamp(14rem, 24vw, 19rem);
+    padding: 0 !important;
   }
 }
 
 @media (max-width: 1024px) {
   #global-music-player .gramophone-section {
-    padding: 0.75rem 1rem 6.5rem;
+    padding: 0 !important;
   }
 
   #global-music-player .gramophone-wrapper,
   #global-music-player .gramophone-canvas {
-    min-height: calc(100dvh - 10.5rem);
+    height: 100%;
+    min-height: 0;
   }
 
   #global-music-player .sidebar-wrapper.left,
@@ -446,12 +510,13 @@ body:has(#music-page-wrapper:not(.hidden)) {
   }
 
   #global-music-player .gramophone-section {
-    padding: 0.4rem 0.35rem 6.25rem;
+    padding: 0 !important;
   }
 
   #global-music-player .gramophone-wrapper,
   #global-music-player .gramophone-canvas {
-    min-height: calc(100dvh - 10.5rem);
+    height: 100%;
+    min-height: 0;
   }
 
   #global-music-player .sidebar-wrapper.left,

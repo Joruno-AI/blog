@@ -11,6 +11,7 @@ import '~/styles/music.css'
     position: relative;
     width: 100%;
     height: 100%;
+    overflow: visible;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -20,17 +21,17 @@ import '~/styles/music.css'
   .gramophone-canvas {
     width: 100%;
     height: 100%;
-    border-radius: 16px;
-    overflow: hidden;
+    border-radius: 0;
+    overflow: visible;
   }
 
   @media (max-width: 768px) {
     .gramophone-wrapper {
-      min-height: 400px;
+      min-height: 0;
     }
 
     .gramophone-canvas {
-      min-height: 350px;
+      min-height: 0;
     }
   }
 </style>
@@ -52,6 +53,17 @@ import '~/styles/music.css'
     cover: string
     color: string
     songs: Song[]
+  }
+
+  interface MusicPlayerState {
+  isPlaying: boolean
+  isInitialized: boolean
+  currentPlaybackRate?: number
+  currentVinylRotation?: number
+}
+
+  type MusicWindow = Window & {
+    MusicPlayerState?: MusicPlayerState
   }
 
   document.addEventListener('astro:page-load', async () => {
@@ -1025,6 +1037,23 @@ import '~/styles/music.css'
 
     // Animation variables
     let vinylRotation = 0
+    const musicWindow = window as MusicWindow
+
+    if (!musicWindow.MusicPlayerState) {
+      musicWindow.MusicPlayerState = {
+        isPlaying: false,
+        isInitialized: false,
+        currentPlaybackRate,
+        currentVinylRotation: vinylRotation,
+      }
+    } else {
+      if (musicWindow.MusicPlayerState.currentPlaybackRate == null) {
+        musicWindow.MusicPlayerState.currentPlaybackRate = currentPlaybackRate
+      }
+      if (musicWindow.MusicPlayerState.currentVinylRotation == null) {
+        musicWindow.MusicPlayerState.currentVinylRotation = vinylRotation
+      }
+    }
 
     // Knob state - FIXED: reversed direction
     let isDraggingKnob = false
@@ -1589,6 +1618,12 @@ import '~/styles/music.css'
         vinylRotation -= 0.02 * currentPlaybackRate
         vinylGroup.rotation.y = vinylRotation
         platterGroup.rotation.y = vinylRotation
+        musicWindow.MusicPlayerState!.currentVinylRotation = vinylRotation
+        window.dispatchEvent(
+          new CustomEvent('vinyl-rotation', {
+            detail: { rotation: vinylRotation },
+          })
+        )
       }
 
       // Subtle spotlight animation

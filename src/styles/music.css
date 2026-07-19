@@ -11,13 +11,13 @@
 }
 
 .vinyl-card:hover {
-  transform: translateY(-2px);
+  transform: none;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
 .vinyl-card.active {
   background: rgba(128, 128, 128, 0.15);
-  box-shadow: 0 0 0 2px rgba(139, 69, 19, 0.5);
+  box-shadow: 0 0 0 2px var(--music-accent-line, rgba(82, 106, 115, 0.28));
 }
 
 .vinyl-card .vinyl-disc {
@@ -97,7 +97,7 @@
 
 .vinyl-search input:focus {
   outline: none;
-  border-color: rgba(139, 69, 19, 0.5);
+  border-color: var(--music-accent-line, rgba(82, 106, 115, 0.28));
   background: rgba(128, 128, 128, 0.1);
 }
 
@@ -114,7 +114,7 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.75rem 1rem;
+  padding: 0.5rem 0.75rem;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -128,25 +128,14 @@
 
 /* 当前选中的歌曲（不一定在播放） */
 .song-item.current {
-  background: rgba(139, 69, 19, 0.08);
-  border-color: rgba(139, 69, 19, 0.2);
+  background: var(--music-accent-soft, rgba(82, 106, 115, 0.1));
+  border-color: var(--music-accent-line, rgba(82, 106, 115, 0.28));
 }
 
 /* 正在播放的歌曲 */
 .song-item.playing {
-  background: rgba(139, 69, 19, 0.15);
-  border-color: rgba(139, 69, 19, 0.4);
-}
-
-.song-item.playing::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background: linear-gradient(180deg, #8B4513, #CD853F);
-  border-radius: 2px 0 0 2px;
+  background: var(--music-accent-soft, rgba(82, 106, 115, 0.1));
+  border-color: var(--music-accent-line, rgba(82, 106, 115, 0.28));
 }
 
 .song-item .song-index {
@@ -159,7 +148,7 @@
 
 .song-item.current .song-index,
 .song-item.playing .song-index {
-  color: #8B4513;
+  color: var(--music-accent, #526a73);
   opacity: 1;
   font-weight: 600;
 }
@@ -178,7 +167,7 @@
 }
 
 .song-item.playing .song-name {
-  color: #8B4513;
+  color: var(--music-accent, #526a73);
   font-weight: 600;
 }
 
@@ -197,7 +186,7 @@
 
 .playing-indicator span {
   width: 3px;
-  background: #8B4513;
+  background: var(--music-accent, #526a73);
   border-radius: 1px;
   animation: soundbar 0.5s ease infinite alternate;
 }
@@ -219,7 +208,7 @@
 }
 
 .gramophone-drop-zone.drag-over {
-  box-shadow: 0 0 30px rgba(139, 69, 19, 0.5);
+  box-shadow: 0 0 30px var(--music-accent-line, rgba(82, 106, 115, 0.28));
 }
 
 /* 音量滑块 */
@@ -239,7 +228,7 @@
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: #8B4513;
+  background: var(--music-accent, #526a73);
   cursor: pointer;
   transition: transform 0.2s ease;
 }
@@ -252,7 +241,7 @@
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: #8B4513;
+  background: var(--music-accent, #526a73);
   cursor: pointer;
   border: none;
 }
@@ -347,22 +336,33 @@
 }
 
 .sidebar-wrapper.left.collapsed {
-  transform: translateX(-260px);
+  transform: translateX(calc(-100% + 16px));
 }
 
 .sidebar-wrapper.right.collapsed {
-  transform: translateX(260px);
+  transform: translateX(calc(100% - 16px));
+}
+
+.sidebar-wrapper.left.collapsed .vinyl-sidebar,
+.sidebar-wrapper.right.collapsed .song-list-container {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 /* 侧边栏折叠按钮 */
 .sidebar-toggle {
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 20px;
-  height: 48px;
-  background: rgba(128, 128, 128, 0.08);
-  border: 1px solid rgba(128, 128, 128, 0.15);
+  top: 1rem;
+  transform: none;
+  width: 32px;
+  height: 32px;
+  background: color-mix(in srgb, var(--c-bg) 98%, transparent);
+  border: 1px solid var(--c-border-soft);
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -372,39 +372,37 @@
 }
 
 .sidebar-toggle:hover {
-  background: rgba(139, 69, 19, 0.1);
-  border-color: rgba(139, 69, 19, 0.3);
+  background: color-mix(in srgb, var(--c-bg) 98%, transparent);
+  border-color: var(--c-border-soft);
 }
 
 .sidebar-toggle span {
-  font-size: 1rem;
-  opacity: 0.6;
-  transition: transform 0.3s ease;
+  font-size: 0.95rem;
+  opacity: 0.85;
+  color: var(--music-accent, #526a73);
+  transition:
+    color 0.2s ease,
+    transform 0.3s ease;
 }
 
 .sidebar-toggle:hover span {
-  opacity: 1;
-  color: #8b4513;
+  color: color-mix(in srgb, var(--music-accent, #526a73) 70%, black);
 }
 
 .left-toggle {
-  right: -20px;
-  border-radius: 0 6px 6px 0;
-  border-left: none;
+  right: -16px;
 }
 
 .right-toggle {
-  left: -20px;
-  border-radius: 6px 0 0 6px;
-  border-right: none;
+  left: -16px;
 }
 
 .sidebar-wrapper.left.collapsed .left-toggle span {
-  transform: rotate(180deg);
+  transform: rotate(180deg) translateX(-1px);
 }
 
 .sidebar-wrapper.right.collapsed .right-toggle span {
-  transform: rotate(180deg);
+  transform: rotate(180deg) translateX(1px);
 }
 
 .gramophone-section {
@@ -414,7 +412,7 @@
   height: 100%;
   width: 100%;
   overflow: hidden;
-  padding: 0.5rem;
+  padding: 0;
   background: transparent;
 }
 
@@ -442,23 +440,23 @@
   width: 52px;
   height: 52px;
   border-radius: 50%;
-  background: rgba(139, 69, 19, 0.1);
-  border: 2px solid rgba(139, 69, 19, 0.2);
+  background: var(--music-accent-soft, rgba(82, 106, 115, 0.1));
+  border: 2px solid var(--music-accent-line, rgba(82, 106, 115, 0.28));
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .mobile-btn:hover,
 .mobile-btn:active {
-  background: rgba(139, 69, 19, 0.2);
-  border-color: rgba(139, 69, 19, 0.4);
+  background: var(--music-accent-soft, rgba(82, 106, 115, 0.16));
+  border-color: var(--music-accent-line, rgba(82, 106, 115, 0.36));
   transform: scale(1.05);
 }
 
 .mobile-btn span {
   font-size: 1.5rem;
   opacity: 0.8;
-  color: #8b4513;
+  color: var(--music-accent, #526a73);
 }
 
 /* 浮动按钮 */
@@ -559,7 +557,7 @@
   }
 
   .gramophone-section {
-    padding: 0.25rem;
+    padding: 0;
   }
 
   .mobile-controls {
@@ -581,4 +579,3 @@
     max-width: 280px;
   }
 }
-

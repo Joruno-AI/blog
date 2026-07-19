@@ -114,8 +114,8 @@ import '~/styles/music.css'
   .song-count {
     font-size: 0.7rem;
     padding: 0.2rem 0.4rem;
-    background: rgba(139, 69, 19, 0.1);
-    color: rgba(111, 53, 18, 0.95);
+    background: var(--music-accent-soft, rgba(82, 106, 115, 0.1));
+    color: var(--music-accent, #526a73);
     border-radius: 10px;
     font-weight: 500;
     white-space: nowrap;
@@ -129,8 +129,9 @@ import '~/styles/music.css'
   .current-album-info {
     flex-shrink: 0;
     display: flex;
-    gap: 0.5rem;
-    padding: 0.75rem;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.65rem 0.75rem;
     background: rgba(128, 128, 128, 0.06);
     border-bottom: 1px solid rgba(128, 128, 128, 0.16);
   }
@@ -167,9 +168,12 @@ import '~/styles/music.css'
 
   .song-list {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
     overflow-y: auto;
     overscroll-behavior: contain;
-    padding: 0.5rem;
+    padding: 0.5rem 0.65rem;
     scrollbar-width: thin;
   }
 
@@ -193,7 +197,7 @@ import '~/styles/music.css'
   }
 
   .playback-controls {
-    padding: 1rem;
+    padding: 0.8rem 0.9rem;
     border-top: 1px solid rgba(128, 128, 128, 0.16);
     background: rgba(128, 128, 128, 0.06);
   }
@@ -202,8 +206,8 @@ import '~/styles/music.css'
     display: flex;
     align-items: center;
     font-size: 0.8125rem;
-    margin-bottom: 0.75rem;
-    color: rgba(139, 69, 19, 0.8);
+    margin-bottom: 0.6rem;
+    color: var(--music-accent, #526a73);
     font-weight: 500;
   }
 
@@ -229,7 +233,7 @@ import '~/styles/music.css'
   .progress-current {
     height: 100%;
     width: 0%;
-    background: linear-gradient(90deg, #8b4513, #cd853f);
+    background: var(--music-accent, #526a73);
     border-radius: 3px;
     transition: width 0.1s linear;
   }
@@ -241,7 +245,7 @@ import '~/styles/music.css'
     transform: translate(-50%, -50%) scale(0);
     width: 14px;
     height: 14px;
-    background: #8b4513;
+    background: var(--music-accent, #526a73);
     border-radius: 50%;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     transition: transform 0.2s ease;
@@ -263,8 +267,8 @@ import '~/styles/music.css'
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 0.75rem;
-    padding-top: 0.75rem;
+    margin-top: 0.65rem;
+    padding-top: 0.65rem;
     border-top: 1px solid rgba(128, 128, 128, 0.1);
   }
 
@@ -296,9 +300,9 @@ import '~/styles/music.css'
 
   .speed-btn.active {
     opacity: 1;
-    background: rgba(139, 69, 19, 0.1);
-    color: #8b4513;
-    border-color: rgba(139, 69, 19, 0.2);
+    background: var(--music-accent-soft, rgba(82, 106, 115, 0.1));
+    color: var(--music-accent, #526a73);
+    border-color: var(--music-accent-line, rgba(82, 106, 115, 0.28));
   }
 
   /* Album popup styles */
@@ -389,13 +393,29 @@ import '~/styles/music.css'
     }
 
     .album-popup {
+      position: static;
       display: none;
+      width: auto;
+      margin: 0 0.75rem 0.75rem;
+      pointer-events: auto;
+    }
+
+    .album-popup.visible {
+      display: flex;
     }
   }
 
   @media (max-width: 1200px) {
     .album-popup {
+      position: static;
       display: none;
+      width: auto;
+      margin: 0 0.75rem 0.75rem;
+      pointer-events: auto;
+    }
+
+    .album-popup.visible {
+      display: flex;
     }
   }
 </style>
@@ -444,8 +464,10 @@ import '~/styles/music.css'
     const albumPopupArtist = document.getElementById('album-popup-artist')
     const albumPopupDesc = document.getElementById('album-popup-desc')
     const albumPopupSongs = document.getElementById('album-popup-songs')
+    const popupInlineMode = window.matchMedia('(max-width: 1200px)')
 
     let currentAlbum: Album | null = null
+    let isAlbumPopupPinned = false
 
     // 监听唱片选择事件
     window.addEventListener('album-selected', ((e: CustomEvent) => {
@@ -484,6 +506,8 @@ import '~/styles/music.css'
         !playbackControls
       )
         return
+
+      hideAlbumPopup(true)
 
       currentAlbumName.textContent = album.name
 
@@ -637,7 +661,38 @@ import '~/styles/music.css'
     })
 
     // Album popup hover logic
-    function showAlbumPopup() {
+    function updateAlbumPopupPosition() {
+      if (!albumPopup) return
+      if (popupInlineMode.matches || !currentAlbumInfo) {
+        albumPopup.style.top = ''
+        albumPopup.style.left = ''
+        return
+      }
+
+      const rect = currentAlbumInfo.getBoundingClientRect()
+      const popupWidth = 220
+      const gap = 12
+
+      let top = rect.top
+      const minTop = 80
+      const maxTop = window.innerHeight - 320
+      top = Math.max(minTop, Math.min(maxTop, top))
+
+      albumPopup.style.top = `${top}px`
+      albumPopup.style.left = `${rect.left - popupWidth - gap}px`
+    }
+
+    function setAlbumPopupState(visible: boolean, pinned = false) {
+      if (!albumPopup) return
+
+      isAlbumPopupPinned = visible && pinned
+      albumPopup.classList.toggle('visible', visible)
+      albumPopup.setAttribute('aria-hidden', visible ? 'false' : 'true')
+
+      if (visible) updateAlbumPopupPosition()
+    }
+
+    function showAlbumPopup({ pinned = false } = {}) {
       if (!currentAlbum || !albumPopup) return
 
       // Update popup content
@@ -659,42 +714,46 @@ import '~/styles/music.css'
 
       // Position popup to the left of the sidebar, aligned with album info
       if (currentAlbumInfo) {
-        const rect = currentAlbumInfo.getBoundingClientRect()
-        const popupWidth = 220
-        const gap = 12
-
-        // Position at the same vertical level as album info
-        let top = rect.top
-
-        // Keep popup within viewport (minimum 80px from top to avoid header)
-        const minTop = 80
-        const maxTop = window.innerHeight - 320
-        top = Math.max(minTop, Math.min(maxTop, top))
-
-        albumPopup.style.top = `${top}px`
-        albumPopup.style.left = `${rect.left - popupWidth - gap}px`
+        updateAlbumPopupPosition()
       }
 
       // Trigger animation
       requestAnimationFrame(() => {
-        albumPopup.classList.add('visible')
+        setAlbumPopupState(true, pinned)
       })
     }
 
-    function hideAlbumPopup() {
-      if (albumPopup) {
-        albumPopup.classList.remove('visible')
-      }
+    function hideAlbumPopup(force = false) {
+      if (isAlbumPopupPinned && !force) return
+      if (!albumPopup) return
+      setAlbumPopupState(false, false)
     }
 
-    // Add hover listeners to album description
-    albumDescription?.addEventListener('mouseenter', showAlbumPopup)
-    albumDescription?.addEventListener('mouseleave', hideAlbumPopup)
+    // Keep the full description available on desktop without a persistent button.
+    currentAlbumInfo?.addEventListener('mouseenter', () => showAlbumPopup())
+    currentAlbumInfo?.addEventListener('mouseleave', () => hideAlbumPopup())
 
-    // Also trigger on album-details hover
-    const albumDetails = document.querySelector('.album-details')
-    albumDetails?.addEventListener('mouseenter', showAlbumPopup)
-    albumDetails?.addEventListener('mouseleave', hideAlbumPopup)
+    document.addEventListener('click', (event) => {
+      if (!isAlbumPopupPinned) return
+      const target = event.target
+      if (!(target instanceof Node)) return
+      if (currentAlbumInfo?.contains(target) || albumPopup?.contains(target)) {
+        return
+      }
+      hideAlbumPopup(true)
+    })
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        hideAlbumPopup(true)
+      }
+    })
+
+    window.addEventListener('resize', () => {
+      if (albumPopup?.classList.contains('visible')) {
+        updateAlbumPopupPosition()
+      }
+    })
 
     function highlightCurrentSong(index: number) {
       if (index === lastHighlightedIndex) return
