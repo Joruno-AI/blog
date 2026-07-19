@@ -600,16 +600,13 @@ import '~/styles/music.css'
         const indicator = item.querySelector(
           '.playing-indicator'
         ) as HTMLElement
-        const indexEl = item.querySelector('.song-index') as HTMLElement
 
         if (i === songIndex && isPlaying) {
           item.classList.add('playing')
           if (indicator) indicator.style.display = 'flex'
-          if (indexEl) indexEl.style.display = 'none'
         } else {
           item.classList.remove('playing')
           if (indicator) indicator.style.display = 'none'
-          if (indexEl) indexEl.style.display = ''
         }
       })
     }
