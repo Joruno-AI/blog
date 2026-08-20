@@ -208,7 +208,12 @@ const isActiveBranch = (path: string) =>
     aria-expanded="false"
     data-catalog-open
   >
-    <span class="i-ri-menu-fold-line text-xl" aria-hidden="true"></span>
+    <span
+      class="drawer-trigger-icon drawer-trigger-icon-collapsed i-lucide-panel-left-open"
+      aria-hidden="true"></span>
+    <span
+      class="drawer-trigger-icon drawer-trigger-icon-expanded i-lucide-panel-left-close"
+      aria-hidden="true"></span>
   </button>
 
   <div
@@ -688,8 +693,60 @@ const isActiveBranch = (path: string) =>
   }
 
   .category-drawer-trigger {
-    bottom: 6rem;
-    left: 1.25rem;
+    --blog-drawer-width: min(82vw, 20rem);
+
+    z-index: 202;
+    top: 50%;
+    bottom: auto;
+    left: -0.9375rem;
+    width: 1.875rem;
+    height: 1.875rem;
+    transform: translateY(-50%);
+    transition:
+      transform 300ms cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 160ms ease,
+      color 160ms ease,
+      box-shadow 160ms ease;
+    will-change: transform;
+  }
+
+  .drawer-trigger-icon {
+    position: absolute;
+    font-size: 1rem !important;
+    transition:
+      opacity 180ms ease,
+      transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .drawer-trigger-icon-collapsed {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .drawer-trigger-icon-expanded {
+    opacity: 0;
+    transform: scale(0.72);
+  }
+
+  .category-drawer-trigger[aria-expanded='true'] {
+    transform: translate(var(--blog-drawer-width), -50%);
+  }
+
+  .category-drawer-trigger[aria-expanded='true']
+    .drawer-trigger-icon-collapsed {
+    opacity: 0;
+    transform: scale(0.72);
+  }
+
+  .category-drawer-trigger[aria-expanded='true'] .drawer-trigger-icon-expanded {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .category-drawer-trigger:not([aria-expanded='true']):hover {
+      transform: translate(50%, -50%);
+    }
   }
 
   .drawer-overlay {
@@ -775,9 +832,11 @@ const isActiveBranch = (path: string) =>
   @media (prefers-reduced-motion: reduce) {
     .drawer-overlay,
     .drawer-content,
+    .category-drawer-trigger,
+    .drawer-trigger-icon,
     .category-posts,
     .expand-icon {
-      transition: none;
+      transition-duration: 1ms;
     }
   }
 </style>
@@ -836,6 +895,7 @@ const isActiveBranch = (path: string) =>
         drawer?.setAttribute('aria-hidden', 'true')
         drawer?.setAttribute('inert', '')
         trigger?.setAttribute('aria-expanded', 'false')
+        trigger?.setAttribute('aria-label', '打开博客目录')
         document.documentElement.style.removeProperty('overflow')
         if (restoreFocus) trigger?.focus()
       }
@@ -845,11 +905,16 @@ const isActiveBranch = (path: string) =>
         drawer?.setAttribute('aria-hidden', 'false')
         drawer?.removeAttribute('inert')
         trigger?.setAttribute('aria-expanded', 'true')
+        trigger?.setAttribute('aria-label', '关闭博客目录')
         document.documentElement.style.overflow = 'hidden'
         drawer?.querySelector<HTMLButtonElement>('.drawer-close')?.focus()
       }
 
-      trigger?.addEventListener('click', open, { signal })
+      trigger?.addEventListener(
+        'click',
+        () => (drawer?.classList.contains('open') ? close() : open()),
+        { signal }
+      )
       closeButtons.forEach((button) => {
         button.addEventListener('click', () => close(true), { signal })
       })

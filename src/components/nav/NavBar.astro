@@ -175,6 +175,66 @@ for (const item of new Set(left)) {
     background: var(--c-surface-hover);
   }
 
+  .main-nav :global(a[data-music-nav]) {
+    position: relative;
+    overflow: visible;
+  }
+
+  .main-nav :global(a[data-music-nav] > div) {
+    transform-origin: center;
+  }
+
+  .main-nav :global(a[data-music-nav][data-playing='true'] > div) {
+    animation: navbar-record-spin 3s linear infinite;
+  }
+
+  .main-nav :global(a[data-music-nav][data-playing='true'])::before,
+  .main-nav :global(a[data-music-nav][data-playing='true'])::after {
+    position: absolute;
+    z-index: 2;
+    left: 52%;
+    top: 40%;
+    color: var(--c-text-muted);
+    font-size: 0.72rem;
+    line-height: 1;
+    opacity: 0;
+    pointer-events: none;
+    text-shadow: 0 1px 8px color-mix(in srgb, var(--c-bg) 75%, transparent);
+  }
+
+  .main-nav :global(a[data-music-nav][data-playing='true'])::before {
+    content: '♪';
+    animation: navbar-music-note 2.4s ease-out infinite;
+  }
+
+  .main-nav :global(a[data-music-nav][data-playing='true'])::after {
+    content: '♫';
+    animation: navbar-music-note 2.4s 1.2s ease-out infinite;
+  }
+
+  @keyframes navbar-record-spin {
+    to {
+      transform: rotate(1turn);
+    }
+  }
+
+  @keyframes navbar-music-note {
+    0% {
+      opacity: 0;
+      transform: translate(-15%, 0) scale(0.72) rotate(-8deg);
+    }
+    18% {
+      opacity: 0.75;
+    }
+    75% {
+      opacity: 0.42;
+    }
+    100% {
+      opacity: 0;
+      transform: translate(0.85rem, -1.45rem) scale(1.08) rotate(9deg);
+    }
+  }
+
   @media (max-width: 767px) {
     :global(.nav-header:has(#nav-panel.visible)) {
       z-index: 200;
@@ -205,4 +265,48 @@ for (const item of new Set(left)) {
       gap: 0.25rem;
     }
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .main-nav :global(a[data-music-nav][data-playing='true'] > div) {
+      animation: none;
+    }
+
+    .main-nav :global(a[data-music-nav][data-playing='true'])::before,
+    .main-nav :global(a[data-music-nav][data-playing='true'])::after {
+      display: none;
+    }
+  }
 </style>
+
+<script>
+  type PlaybackStateEvent = CustomEvent<{ isPlaying?: boolean }>
+
+  function syncNavbarMusicState(isPlaying?: boolean) {
+    const musicState = (
+      window as typeof window & {
+        MusicPlayerState?: { isPlaying?: boolean }
+      }
+    ).MusicPlayerState
+    const playing = isPlaying ?? Boolean(musicState?.isPlaying)
+
+    document
+      .querySelectorAll<HTMLElement>('[data-music-nav]')
+      .forEach((link) => {
+        link.dataset.playing = String(playing)
+        link.setAttribute(
+          'aria-label',
+          playing
+            ? '音乐播放中，打开播放器'
+            : link.getAttribute('title') || '打开音乐'
+        )
+      })
+  }
+
+  window.addEventListener('playback-state', ((event: PlaybackStateEvent) => {
+    syncNavbarMusicState(Boolean(event.detail?.isPlaying))
+  }) as EventListener)
+
+  document.addEventListener('astro:page-load', () => {
+    syncNavbarMusicState()
+  })
+</script>

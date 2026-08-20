@@ -111,16 +111,6 @@ const albumsData = localAlbumsData
       </div>
     </div>
   </div>
-
-  <!-- 悬浮按钮 -->
-  <a
-    href="/music"
-    id="music-floating-btn"
-    class="music-floating-btn floating-tool-button"
-    aria-label="回到音乐"
-  >
-    <span class="i-ri-disc-line spin-animation"></span>
-  </a>
 </div>
 
 <style>
@@ -509,46 +499,6 @@ const albumsData = localAlbumsData
     transform: scale(1.05);
   }
 
-  /* Floating Button Styles */
-  .music-floating-btn {
-    bottom: 10rem;
-    right: 1.25rem;
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(0.35rem) scale(0.96);
-    visibility: hidden;
-  }
-
-  .music-floating-btn.visible {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateY(0) scale(1);
-    visibility: visible;
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    .music-floating-btn.visible:hover {
-      transform: translateY(-1px) scale(1);
-    }
-  }
-
-  .music-floating-btn.visible:active {
-    transform: translateY(0) scale(0.96);
-  }
-
-  .spin-animation {
-    animation: spin 3s linear infinite;
-  }
-
-  @keyframes spin {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-
   /* 平板适配 */
   @media (max-width: 1024px) {
     /* 默认隐藏侧边栏 */
@@ -703,25 +653,14 @@ const albumsData = localAlbumsData
 
   function updatePlayerVisibility() {
     const wrapper = document.getElementById('music-page-wrapper')
-    const floatingBtn = document.getElementById('music-floating-btn')
     const isMusicPage =
       window.location.pathname === '/music' ||
       window.location.pathname === '/music/'
 
     if (isMusicPage) {
       wrapper?.classList.remove('hidden')
-      floatingBtn?.classList.remove('visible')
     } else {
       wrapper?.classList.add('hidden')
-      // Show floating button if music is playing or if user has interacted
-      // For now, let's show it if we are not on music page
-      // Ideally check if playing.
-      // We can listen to a custom event 'playback-state' which SongList/Gramophone emits
-      if (window.MusicPlayerState.isPlaying) {
-        floatingBtn?.classList.add('visible')
-      } else {
-        floatingBtn?.classList.remove('visible')
-      }
     }
   }
 
@@ -767,7 +706,7 @@ const albumsData = localAlbumsData
       })
   }
 
-  // Listen for playback state changes to toggle floating button
+  // Keep the persistent player and navbar playback indicator in sync.
   window.addEventListener('playback-state', ((e: CustomEvent) => {
     const { isPlaying, songIndex } = e.detail
     window.MusicPlayerState.isPlaying = isPlaying
@@ -820,9 +759,6 @@ const albumsData = localAlbumsData
   // Setup event listeners on page load
   document.addEventListener('astro:page-load', () => {
     updatePlayerVisibility()
-
-    // Floating button is now an anchor tag, so no need for manual navigation logic
-    // Astro's View Transitions will handle it automatically.
 
     // Re-attach sidebar toggle listeners if needed, but since we use transition:persist,
     // the DOM elements are preserved. However, if we navigate away and back,

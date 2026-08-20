@@ -31,7 +31,12 @@ import PostActions from '~/components/widgets/PostActions.astro'
           <span></span>
         </aside>
 
-        <aside class="reader-course-panel" data-course-panel hidden>
+        <aside
+          id="reader-course-panel"
+          class="reader-course-panel"
+          data-course-panel
+          hidden
+        >
           <div class="reader-aside-heading">
             <span class="i-ri-book-open-line" aria-hidden="true"></span>
             <a data-course-panel-link href="/docs/">本课程</a>
@@ -93,7 +98,12 @@ import PostActions from '~/components/widgets/PostActions.astro'
           </nav>
         </div>
 
-        <aside class="reader-toc-panel" data-toc-panel hidden>
+        <aside
+          id="reader-toc-panel"
+          class="reader-toc-panel"
+          data-toc-panel
+          hidden
+        >
           <div class="reader-aside-heading">
             <span class="i-ri-menu-2-line" aria-hidden="true"></span>
             <span>本页目录</span>
@@ -112,6 +122,39 @@ import PostActions from '~/components/widgets/PostActions.astro'
           <span></span>
           <span></span>
         </aside>
+      </div>
+
+      <div class="reader-floating-controls" aria-label="阅读面板">
+        <button
+          type="button"
+          class="reader-panel-toggle reader-course-toggle"
+          data-reader-panel-toggle="course"
+          aria-label="打开课程目录"
+          aria-controls="reader-course-panel"
+          aria-expanded="false"
+        >
+          <span
+            class="reader-toggle-icon-collapsed i-lucide-panel-left-open"
+            aria-hidden="true"></span>
+          <span
+            class="reader-toggle-icon-expanded i-lucide-panel-left-close"
+            aria-hidden="true"></span>
+        </button>
+        <button
+          type="button"
+          class="reader-panel-toggle reader-toc-toggle"
+          data-reader-panel-toggle="toc"
+          aria-label="打开本页目录"
+          aria-controls="reader-toc-panel"
+          aria-expanded="false"
+        >
+          <span
+            class="reader-toggle-icon-collapsed i-lucide-panel-right-open"
+            aria-hidden="true"></span>
+          <span
+            class="reader-toggle-icon-expanded i-lucide-panel-right-close"
+            aria-hidden="true"></span>
+        </button>
       </div>
     </geektime-reader>
   </StandardLayout>
@@ -157,6 +200,10 @@ import PostActions from '~/components/widgets/PostActions.astro'
   .reader-course-panel,
   .reader-toc-panel,
   .reader-panel-skeleton {
+    display: none;
+  }
+
+  .reader-floating-controls {
     display: none;
   }
 
@@ -809,6 +856,350 @@ import PostActions from '~/components/widgets/PostActions.astro'
       text-align: left;
     }
   }
+
+  @media (max-width: 1127px) {
+    geektime-reader {
+      --reader-drawer-width: min(22rem, calc(100vw - 2rem));
+      --reader-toggle-open-offset: calc(var(--reader-drawer-width) + 1rem);
+      --reader-toggle-open-offset-negative: calc(
+        0px - var(--reader-toggle-open-offset)
+      );
+      --reader-drawer-duration: 300ms;
+      --reader-drawer-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .reader-floating-controls {
+      display: flex;
+      position: fixed;
+      z-index: 180;
+      inset-inline: -0.9375rem;
+      top: 50%;
+      align-items: center;
+      justify-content: space-between;
+      pointer-events: none;
+      transform: translateY(-50%);
+    }
+
+    .reader-panel-toggle {
+      display: inline-flex;
+      position: relative;
+      width: 1.875rem;
+      height: 1.875rem;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      background: color-mix(in srgb, var(--c-bg) 30%, transparent);
+      box-shadow:
+        0 3px 10px rgb(0 0 0 / 0.08),
+        inset 0 1px 0 rgb(255 255 255 / 0.12);
+      color: var(--c-text-muted);
+      cursor: pointer;
+      pointer-events: auto;
+      -webkit-backdrop-filter: saturate(150%) blur(14px);
+      backdrop-filter: saturate(150%) blur(14px);
+      transition:
+        transform var(--reader-drawer-duration) var(--reader-drawer-ease),
+        background-color 160ms ease,
+        color 160ms ease,
+        box-shadow 160ms ease;
+      will-change: transform;
+    }
+
+    .reader-panel-toggle > span {
+      position: absolute;
+      font-size: 1rem;
+      line-height: 1;
+      transition:
+        opacity 180ms ease,
+        transform var(--reader-drawer-duration) var(--reader-drawer-ease);
+    }
+
+    .reader-toggle-icon-collapsed {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .reader-toggle-icon-expanded {
+      opacity: 0;
+      transform: scale(0.72);
+    }
+
+    .reader-panel-toggle:hover {
+      background: var(--c-bg);
+      box-shadow:
+        0 5px 16px rgb(0 0 0 / 0.12),
+        inset 0 1px 0 rgb(255 255 255 / 0.14);
+      color: var(--c-text);
+    }
+
+    .reader-panel-toggle:focus-visible {
+      background: var(--c-bg);
+      color: var(--c-text);
+    }
+
+    .reader-panel-toggle[aria-expanded='true'] {
+      background: color-mix(in srgb, var(--c-bg) 38%, transparent);
+      box-shadow:
+        0 4px 14px rgb(0 0 0 / 0.1),
+        inset 0 1px 0 rgb(255 255 255 / 0.14);
+      color: var(--c-text);
+    }
+
+    .reader-course-toggle:not([aria-expanded='true']):is(
+        :hover,
+        :focus-visible
+      ) {
+      transform: translateX(0.9375rem);
+    }
+
+    .reader-toc-toggle:not([aria-expanded='true']):is(:hover, :focus-visible) {
+      transform: translateX(-0.9375rem);
+    }
+
+    .reader-course-toggle[aria-expanded='true'] {
+      transform: translateX(var(--reader-toggle-open-offset));
+    }
+
+    .reader-toc-toggle[aria-expanded='true'] {
+      transform: translateX(var(--reader-toggle-open-offset-negative));
+    }
+
+    .reader-panel-toggle[aria-expanded='true'] .reader-toggle-icon-collapsed {
+      opacity: 0;
+      transform: scale(0.72);
+    }
+
+    .reader-panel-toggle[aria-expanded='true'] .reader-toggle-icon-expanded {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .reader-course-panel[data-reader-panel-ready],
+    .reader-toc-panel[data-reader-panel-ready] {
+      position: fixed;
+      z-index: 170;
+      top: 5.5rem;
+      bottom: 1.5rem;
+      display: flex;
+      visibility: hidden;
+      width: var(--reader-drawer-width);
+      max-height: none;
+      flex-direction: column;
+      overflow: hidden;
+      padding: 1rem;
+      border: 1px solid var(--c-border-soft);
+      border-radius: 0.9rem;
+      background: color-mix(in srgb, var(--c-bg) 94%, transparent);
+      box-shadow: 0 18px 48px rgb(0 0 0 / 0.16);
+      -webkit-backdrop-filter: saturate(150%) blur(18px);
+      backdrop-filter: saturate(150%) blur(18px);
+      color: var(--c-text-muted);
+      opacity: 0;
+      pointer-events: none;
+      transition:
+        visibility 0s linear var(--reader-drawer-duration),
+        opacity 180ms ease,
+        transform var(--reader-drawer-duration) var(--reader-drawer-ease);
+      will-change: transform, opacity;
+    }
+
+    .reader-course-panel[data-reader-panel-ready] {
+      left: 1rem;
+      transform: translateX(calc(-100% - 1.5rem));
+    }
+
+    .reader-toc-panel[data-reader-panel-ready] {
+      right: 1rem;
+      transform: translateX(calc(100% + 1.5rem));
+    }
+
+    .reader-course-panel[data-reader-panel-open],
+    .reader-toc-panel[data-reader-panel-open] {
+      visibility: visible;
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0);
+      transition-delay: 0s;
+    }
+
+    .reader-course-panel[data-reader-panel-ready] .reader-aside-heading,
+    .reader-toc-panel[data-reader-panel-ready] .reader-aside-heading {
+      display: flex;
+      min-width: 0;
+      min-height: 2.5rem;
+      flex: none;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0 0.25rem 0.75rem;
+      border-bottom: 1px solid var(--reader-line);
+      color: var(--c-text);
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    .reader-course-panel[data-reader-panel-ready] .reader-aside-heading a {
+      min-width: 0;
+      overflow: hidden;
+      border: 0;
+      color: inherit;
+      text-decoration: none;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .reader-course-panel[data-reader-panel-ready] [data-course-count] {
+      flex: none;
+      margin-left: auto;
+      color: var(--c-text-faint);
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      font-weight: 400;
+      white-space: nowrap;
+    }
+
+    .reader-course-panel[data-reader-panel-ready] .reader-course-list,
+    .reader-toc-panel[data-reader-panel-ready] .reader-toc-list {
+      min-height: 0;
+      max-height: none;
+      flex: 1;
+      overflow-y: auto;
+      padding: 0.75rem 0.2rem 0.5rem;
+      margin: 0;
+      scrollbar-color: var(--c-border-strong) transparent;
+      scrollbar-width: thin;
+    }
+
+    :global(.reader-course-item) {
+      margin: 0;
+      list-style: none;
+    }
+
+    :global(.reader-course-item::before) {
+      display: none;
+    }
+
+    :global(.reader-course-link) {
+      display: grid;
+      grid-template-columns: 1.75rem minmax(0, 1fr);
+      gap: 0.4rem;
+      padding: 0.58rem 0.5rem;
+      border-radius: 0.45rem;
+      color: var(--c-text-muted);
+      font-size: 0.8rem;
+      line-height: 1.5;
+      text-decoration: none;
+    }
+
+    :global(.reader-course-link:hover),
+    :global(.reader-course-link:focus-visible) {
+      background: var(--c-surface-hover);
+      color: var(--c-text);
+    }
+
+    :global(.reader-course-link[aria-current='page']) {
+      background: var(--c-surface-active);
+      color: var(--c-text);
+      font-weight: 600;
+    }
+
+    :global(.reader-course-index) {
+      color: var(--c-text-faint);
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 400;
+      line-height: 1.85;
+    }
+
+    :global(.reader-toc-link) {
+      display: block;
+      padding: 0.55rem 0.6rem;
+      border-left: 1px solid transparent;
+      color: var(--c-text-muted);
+      font-size: 0.8rem;
+      line-height: 1.45;
+      text-decoration: none;
+    }
+
+    :global(.reader-toc-link[data-depth='3']) {
+      padding-left: 1.15rem;
+    }
+
+    :global(.reader-toc-link[data-depth='4']) {
+      padding-left: 1.7rem;
+    }
+
+    :global(.reader-toc-link:hover),
+    :global(.reader-toc-link:focus-visible),
+    :global(.reader-toc-link[aria-current='true']) {
+      border-left-color: var(--c-border-strong);
+      color: var(--c-text);
+    }
+  }
+
+  @media (max-width: 1127px) and (prefers-reduced-motion: reduce) {
+    .reader-panel-toggle,
+    .reader-panel-toggle > span,
+    .reader-course-panel[data-reader-panel-ready],
+    .reader-toc-panel[data-reader-panel-ready] {
+      transition-duration: 1ms;
+    }
+  }
+
+  @media (min-width: 1128px) {
+    :global(html[data-immersive]) .reader-floating-controls {
+      display: flex;
+      position: fixed;
+      z-index: 180;
+      inset-inline: -0.9375rem;
+      top: 50%;
+      align-items: center;
+      justify-content: space-between;
+      pointer-events: none;
+      transform: translateY(-50%);
+    }
+
+    :global(html[data-immersive]) .reader-panel-toggle {
+      display: inline-flex;
+      width: 1.875rem;
+      height: 1.875rem;
+      position: relative;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      border: 1px solid var(--c-border-soft);
+      border-radius: 50%;
+      background: color-mix(in srgb, var(--c-bg) 82%, transparent);
+      color: var(--c-text-muted);
+      pointer-events: auto;
+    }
+
+    :global(html[data-immersive]) .reader-panel-toggle > span {
+      position: absolute;
+      font-size: 1rem;
+    }
+
+    :global(html[data-immersive]) .reader-toggle-icon-collapsed {
+      opacity: 1;
+    }
+
+    :global(html[data-immersive]) .reader-toggle-icon-expanded {
+      opacity: 0;
+    }
+
+    :global(html[data-immersive])
+      .reader-panel-toggle[aria-expanded='true']
+      .reader-toggle-icon-collapsed {
+      opacity: 0;
+    }
+
+    :global(html[data-immersive])
+      .reader-panel-toggle[aria-expanded='true']
+      .reader-toggle-icon-expanded {
+      opacity: 1;
+    }
+  }
 </style>
 
 <script>
@@ -1013,6 +1404,7 @@ import PostActions from '~/components/widgets/PostActions.astro'
     connectedCallback() {
       this.addEventListener('click', this.handleReaderLink)
       this.addEventListener('click', this.handleCodeCopy)
+      this.addEventListener('click', this.handlePanelToggle)
       this.addEventListener('pointerover', this.prefetchReaderLink)
       window.addEventListener('popstate', this.handlePopState)
       document.addEventListener('astro:page-load', this.handlePageLoad)
@@ -1025,6 +1417,7 @@ import PostActions from '~/components/widgets/PostActions.astro'
     disconnectedCallback() {
       this.removeEventListener('click', this.handleReaderLink)
       this.removeEventListener('click', this.handleCodeCopy)
+      this.removeEventListener('click', this.handlePanelToggle)
       this.removeEventListener('pointerover', this.prefetchReaderLink)
       window.removeEventListener('popstate', this.handlePopState)
       document.removeEventListener('astro:page-load', this.handlePageLoad)
@@ -1118,7 +1511,14 @@ import PostActions from '~/components/widgets/PostActions.astro'
         content.replaceChildren(template.content)
         renderMathInElement(content, {
           delimiters: COURSE_MATH_DELIMITERS,
-          ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+          ignoredTags: [
+            'script',
+            'noscript',
+            'style',
+            'textarea',
+            'pre',
+            'code',
+          ],
           throwOnError: false,
           strict: false,
           trust: false,
@@ -1289,6 +1689,53 @@ import PostActions from '~/components/widgets/PostActions.astro'
         if (label) label.textContent = originalLabel
         delete button.dataset.copied
       }, 1400)
+    }
+
+    private handlePanelToggle = (event: MouseEvent) => {
+      if (!(event.target instanceof Element)) return
+      const button = event.target.closest<HTMLButtonElement>(
+        '[data-reader-panel-toggle]'
+      )
+      if (!button || !this.contains(button)) return
+
+      event.preventDefault()
+      event.stopPropagation()
+      const type = button.dataset.readerPanelToggle
+      const panel = this.querySelector<HTMLElement>(
+        type === 'course' ? '[data-course-panel]' : '[data-toc-panel]'
+      )
+      if (!panel || (panel.hidden && !panel.dataset.readerPanelReady)) return
+
+      const open = panel.hasAttribute('data-reader-panel-open')
+      const otherType = type === 'course' ? 'toc' : 'course'
+      const otherPanel = this.querySelector<HTMLElement>(
+        otherType === 'course' ? '[data-course-panel]' : '[data-toc-panel]'
+      )
+
+      otherPanel?.removeAttribute('data-reader-panel-open')
+      this.setPanelToggleState(otherType, false)
+      if (open) {
+        panel.removeAttribute('data-reader-panel-open')
+        this.setPanelToggleState(type, false)
+      } else {
+        document.documentElement.removeAttribute('data-immersive')
+        panel.hidden = false
+        panel.setAttribute('data-reader-panel-open', '')
+        this.setPanelToggleState(type, true)
+      }
+    }
+
+    private setPanelToggleState(type: string, open: boolean) {
+      const panelName = type === 'course' ? '课程目录' : '本页目录'
+      for (const toggle of this.querySelectorAll<HTMLButtonElement>(
+        `[data-reader-panel-toggle="${type}"]`
+      )) {
+        toggle.setAttribute('aria-expanded', String(open))
+        toggle.setAttribute(
+          'aria-label',
+          `${open ? '关闭' : '打开'}${panelName}`
+        )
+      }
     }
 
     private resolveArticleLocation() {
@@ -1589,6 +2036,7 @@ import PostActions from '~/components/widgets/PostActions.astro'
       }
 
       panel.hidden = false
+      panel.dataset.readerPanelReady = 'true'
       requestAnimationFrame(() => {
         activeLink?.scrollIntoView({ block: 'nearest' })
       })
@@ -1633,6 +2081,7 @@ import PostActions from '~/components/widgets/PostActions.astro'
 
       list.replaceChildren(fragment)
       panel.hidden = false
+      panel.dataset.readerPanelReady = 'true'
       this.headingObserver?.disconnect()
       this.headingObserver = new IntersectionObserver(
         (entries) => {
