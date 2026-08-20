@@ -5,13 +5,13 @@
 <button
   type="button"
   id="nav-open-button"
-  class="hidden lt-md:flex items-center justify-center min-w-11 min-h-11 op-60 hover:op-100 op-transition touch-target"
+  class="hidden lt-md:flex items-center justify-center op-60 hover:op-100 op-transition touch-target"
   title="打开导航菜单"
   aria-label="打开导航菜单"
   aria-expanded="false"
   aria-controls="nav-panel"
 >
-  <div u-i-ri-menu-line class="nav-toggle-icon text-xl"></div>
+  <div u-i-ri-menu-line class="nav-toggle-icon"></div>
 </button>
 
 <div
@@ -38,6 +38,14 @@
   }
 
   #nav-open-button {
+    box-sizing: border-box;
+    width: 2.2rem;
+    height: 2.2rem;
+    min-width: 0;
+    min-height: 0;
+    flex: 0 0 2.2rem;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
     transition:
       background-color 160ms ease,
       color 160ms ease,
@@ -52,6 +60,7 @@
   }
 
   .nav-toggle-icon {
+    font-size: 1.2rem;
     transition: transform 180ms cubic-bezier(0.23, 1, 0.32, 1);
   }
 

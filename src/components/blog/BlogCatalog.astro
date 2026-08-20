@@ -688,15 +688,8 @@ const isActiveBranch = (path: string) =>
   }
 
   .category-drawer-trigger {
-    display: none;
     bottom: 6rem;
     left: 1.25rem;
-  }
-
-  @media (max-width: 1127px) {
-    .category-drawer-trigger {
-      display: flex;
-    }
   }
 
   .drawer-overlay {
@@ -774,28 +767,9 @@ const isActiveBranch = (path: string) =>
     padding-bottom: 0.5rem;
   }
 
-  @media (min-width: 1128px) {
-    :global(html[data-immersive]) .category-sidebar {
-      opacity: 0;
-      pointer-events: none;
-    }
-  }
-
-  /* Between tablet-landscape and a comfortable desktop canvas, the fixed
-     catalog would compete with the centered article. Use the existing drawer
-     until all three columns have real room instead of allowing overlap. */
-  @media (min-width: 1128px) and (max-width: 1399px) {
-    .category-sidebar {
-      display: none !important;
-    }
-
-    .category-drawer-trigger {
-      display: flex !important;
-    }
-
-    .category-drawer {
-      display: block !important;
-    }
+  :global(html[data-immersive]) .category-sidebar {
+    opacity: 0;
+    pointer-events: none;
   }
 
   @media (prefers-reduced-motion: reduce) {

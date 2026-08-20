@@ -8,7 +8,6 @@
 /* 优化触摸目标大小（至少 44x44px） */
 @media (max-width: 768px) {
   /* 导航按钮 */
-  #nav-open-button,
   .nav-item-mobile {
     min-width: 44px;
     min-height: 44px;

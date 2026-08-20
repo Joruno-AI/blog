@@ -127,15 +127,17 @@ export function getGeektimeCourseUrl(courseId: string) {
   )?.course
   const firstArticle = course?.articles[0]
   return firstArticle && course
-    ? getGeektimeArticleUrl(firstArticle.path, course.sourceId)
+    ? getGeektimeArticleUrl(firstArticle.path, course.sourceId, course.id)
     : '/docs/'
 }
 
 export function getGeektimeArticleUrl(
   articlePath: string,
-  sourceId = 'geektime'
+  sourceId = 'geektime',
+  courseId?: string
 ) {
   const params = new URLSearchParams({ source: sourceId, path: articlePath })
+  if (courseId) params.set('course', courseId)
   return `/docs/read/?${params.toString()}`
 }
 

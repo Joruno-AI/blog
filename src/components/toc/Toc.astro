@@ -103,13 +103,41 @@ const { minHeadingLevel, maxHeadingLevel } = toc[1]
       }
       for (const tocLinkEl of newLinks) {
         tocLinkEl.setAttribute('aria-current', 'true')
-
-        // when toc is too long, scroll active toc link into viewport
-        tocLinkEl.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        this.#centerLinkInToc(tocLinkEl)
       }
 
       this.#currentActiveHeading = targetHeading
       this.#previousActiveLinks = newLinks
+    }
+
+    #centerLinkInToc = (link: HTMLAnchorElement) => {
+      // A heading can have both desktop and mobile TOC links. Calling
+      // scrollIntoView() on a hidden copy scrolls the document itself back
+      // toward the top. Only move the nearest visible TOC scroller instead.
+      if (link.getClientRects().length === 0) return
+
+      let container: HTMLElement | null = link.parentElement
+      while (container && container !== this) {
+        const { overflowY } = getComputedStyle(container)
+        const canScroll =
+          /auto|scroll/.test(overflowY) &&
+          container.scrollHeight > container.clientHeight
+        if (canScroll) break
+        container = container.parentElement
+      }
+      if (!container || container === this) return
+
+      const linkRect = link.getBoundingClientRect()
+      const containerRect = container.getBoundingClientRect()
+      const targetTop =
+        container.scrollTop +
+        linkRect.top -
+        containerRect.top -
+        (container.clientHeight - linkRect.height) / 2
+      container.scrollTo({
+        top: Math.max(0, targetTop),
+        behavior: 'smooth',
+      })
     }
 
     #getHeadingLevel = (level: string | undefined) => {

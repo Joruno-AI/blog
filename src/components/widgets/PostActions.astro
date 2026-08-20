@@ -21,7 +21,7 @@ const { markdown, postUrl, title } = Astro.props
 >
   <button type="button" class="post-action" data-copy-md>
     <span class="i-ri-file-copy-line" aria-hidden="true"></span>
-    <span>复制 Markdown</span>
+    <span>复制</span>
     <span
       class="copy-tooltip"
       data-copy-tooltip
@@ -86,7 +86,7 @@ const { markdown, postUrl, title } = Astro.props
 <style>
   .post-actions {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     align-items: center;
     gap: 0.5rem;
     margin-bottom: 1.5rem;
@@ -96,6 +96,7 @@ const { markdown, postUrl, title } = Astro.props
     --post-action-hover-color: var(--c-text);
 
     display: inline-flex;
+    flex: 0 0 auto;
     align-items: center;
     gap: 0.35rem;
     padding: 0.35rem 0.7rem;
@@ -106,6 +107,7 @@ const { markdown, postUrl, title } = Astro.props
     font-size: 0.8rem;
     font-weight: 500;
     line-height: 1.2;
+    white-space: nowrap;
     cursor: pointer;
     transition:
       color 0.2s ease,
@@ -242,6 +244,18 @@ const { markdown, postUrl, title } = Astro.props
     font-size: 0.9em;
     opacity: 0.5;
   }
+
+  @media (max-width: 400px) {
+    .post-actions {
+      gap: 0.25rem;
+    }
+
+    .post-action {
+      gap: 0.3rem;
+      padding-inline: 0.45rem;
+      font-size: 0.76rem;
+    }
+  }
 </style>
 <script>
   async function copyText(text: string) {
@@ -360,7 +374,7 @@ const { markdown, postUrl, title } = Astro.props
       const panelSelector =
         'blog-catalog .category-sidebar, #desktop-aside, .reader-course-panel, .reader-toc-panel'
       const surfaceSelector =
-        'geektime-reader .reader-main, #main > header.prose, #main > article.prose'
+        'geektime-reader .reader-main, .blog-reader-main > header.prose, .blog-reader-main > article.prose, #main > header.prose, #main > article.prose'
 
       const visibleElements = (selector: string) =>
         Array.from(document.querySelectorAll<HTMLElement>(selector)).filter(

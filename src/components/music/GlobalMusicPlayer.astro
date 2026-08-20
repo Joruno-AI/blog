@@ -2,15 +2,11 @@
 import VinylSidebar from '~/components/music/VinylSidebar.astro'
 import Gramophone from '~/components/music/Gramophone.astro'
 import SongList from '~/components/music/SongList.astro'
-import { UI } from '~/config'
-import { resolvePath } from '~/utils/path'
 // 注意：音乐功能已改为使用本地数据，CMS 音乐 API 暂时禁用
 // import { fetchMusic, isCMSEnabled, type CMSAlbum } from '~/utils/cms-api'
 
 // Fallback to local data if CMS is not configured
 import localAlbumsData from '~/content/music/data.json'
-
-const { internalNavs, socialLinks } = UI
 
 // 音乐功能强制使用本地数据
 // CMS R2 存储存在 CORS 问题，音乐资源托管在本地 public/ 目录
@@ -34,6 +30,10 @@ const albumsData = localAlbumsData
 
       <!-- 中央留声机 -->
       <div class="gramophone-section">
+        <div class="music-stage-intro" aria-hidden="true">
+          <span>VINYL ROOM</span>
+          <p>选择一张唱片，拖到唱片机上</p>
+        </div>
         <Gramophone />
       </div>
 
@@ -48,32 +48,17 @@ const albumsData = localAlbumsData
         </button>
         <SongList />
       </div>
+
+      <button
+        class="mobile-panel-backdrop"
+        id="mobile-panel-backdrop"
+        type="button"
+        aria-label="关闭音乐面板"
+        tabindex="-1"></button>
     </div>
 
     <!-- 移动端底部控制栏 -->
     <div class="mobile-controls">
-      <!-- 导航链接行（只在移动端显示） -->
-      <div class="mobile-nav-row" id="mobile-nav-row">
-        {
-          internalNavs.map((item) => (
-            <a href={resolvePath(item.path)} class="mobile-nav-link">
-              {'text' in item ? item.text : item.title}
-            </a>
-          ))
-        }
-        {
-          socialLinks.map((item) => (
-            <a
-              href={item.link}
-              class="mobile-nav-link"
-              rel="me"
-              target="_blank"
-            >
-              {'icon' in item ? <span class={item.icon} /> : item.title}
-            </a>
-          ))
-        }
-      </div>
       <!-- 迷你播放器（播放选中专辑后显示）-->
       <div class="mobile-mini-player hidden" id="mobile-mini-player">
         <div class="mini-progress" id="mini-progress">
@@ -109,15 +94,19 @@ const albumsData = localAlbumsData
           id="mobile-sidebar-toggle"
           class="mobile-btn"
           aria-label="唱片列表"
+          aria-expanded="false"
         >
           <span class="i-ri-album-line"></span>
+          <span class="mobile-btn-label">唱片</span>
         </button>
         <button
           id="mobile-songs-toggle"
           class="mobile-btn"
           aria-label="歌曲列表"
+          aria-expanded="false"
         >
           <span class="i-ri-list-unordered"></span>
+          <span class="mobile-btn-label">曲目</span>
         </button>
       </div>
     </div>
@@ -296,6 +285,36 @@ const albumsData = localAlbumsData
     padding: 0;
   }
 
+  .music-stage-intro {
+    position: absolute;
+    top: clamp(1.25rem, 3vh, 2rem);
+    left: 50%;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  .music-stage-intro span {
+    color: var(--c-text);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+  }
+
+  .music-stage-intro p {
+    margin: 0;
+    color: var(--c-text-muted);
+    font-size: 0.75rem;
+  }
+
+  .mobile-panel-backdrop {
+    display: none;
+  }
+
   .mobile-controls {
     display: none;
     flex-direction: column;
@@ -373,6 +392,11 @@ const albumsData = localAlbumsData
     font-size: 1.5rem;
     opacity: 0.8;
     color: var(--music-accent, #526a73);
+  }
+
+  .mobile-btn .mobile-btn-label {
+    font-size: 0.75rem;
+    font-weight: 600;
   }
 
   /* 迷你播放器 */
@@ -701,27 +725,6 @@ const albumsData = localAlbumsData
     }
   }
 
-  // Check if hamburger menu button is visible and show/hide mobile nav row
-  function updateMobileNavVisibility() {
-    const navOpenButton = document.getElementById('nav-open-button')
-    const mobileNavRow = document.getElementById('mobile-nav-row')
-
-    if (!navOpenButton || !mobileNavRow) return
-
-    // Check if hamburger menu button is visible (display: flex on mobile)
-    const isHamburgerVisible =
-      window.getComputedStyle(navOpenButton).display !== 'none'
-
-    if (isHamburgerVisible) {
-      mobileNavRow.classList.add('visible')
-    } else {
-      mobileNavRow.classList.remove('visible')
-    }
-  }
-
-  // Update on resize
-  window.addEventListener('resize', updateMobileNavVisibility)
-
   // ==================== 迷你播放器（移动端）====================
   function formatMiniTime(seconds: number): string {
     if (!Number.isFinite(seconds) || seconds < 0) return '0:00'
@@ -750,6 +753,20 @@ const albumsData = localAlbumsData
     icon.className = isPlaying ? 'i-ri-pause-fill' : 'i-ri-play-fill'
   }
 
+  function closeMobileMusicPanels() {
+    if (!window.matchMedia('(max-width: 1024px)').matches) return
+    document
+      .querySelectorAll('.sidebar-wrapper.active')
+      .forEach((panel) => panel.classList.remove('active'))
+    document.getElementById('mobile-panel-backdrop')?.classList.remove('active')
+    document
+      .querySelectorAll('.mobile-btn[aria-expanded]')
+      .forEach((button) => {
+        button.classList.remove('active')
+        button.setAttribute('aria-expanded', 'false')
+      })
+  }
+
   // Listen for playback state changes to toggle floating button
   window.addEventListener('playback-state', ((e: CustomEvent) => {
     const { isPlaying, songIndex } = e.detail
@@ -771,8 +788,11 @@ const albumsData = localAlbumsData
         (s: { name: string }) => ({ name: s.name })
       )
       window.MusicPlayerState.currentSongIndex = 0
+      closeMobileMusicPanels()
     }
   }) as EventListener)
+
+  window.addEventListener('song-selected', closeMobileMusicPanels)
 
   window.addEventListener('set-playback-rate', ((e: CustomEvent) => {
     const rate = Number(e.detail)
@@ -800,7 +820,6 @@ const albumsData = localAlbumsData
   // Setup event listeners on page load
   document.addEventListener('astro:page-load', () => {
     updatePlayerVisibility()
-    updateMobileNavVisibility()
 
     // Floating button is now an anchor tag, so no need for manual navigation logic
     // Astro's View Transitions will handle it automatically.
@@ -834,7 +853,29 @@ const albumsData = localAlbumsData
       rightSidebarToggle.dataset.hasListener = 'true'
     }
 
-    // Mobile sidebar toggles - use event delegation on the container
+    const leftWrapper = document.querySelector('.sidebar-wrapper.left')
+    const rightWrapper = document.querySelector('.sidebar-wrapper.right')
+    const leftMobileButton = document.getElementById('mobile-sidebar-toggle')
+    const rightMobileButton = document.getElementById('mobile-songs-toggle')
+    const panelBackdrop = document.getElementById('mobile-panel-backdrop')
+
+    const syncMobilePanels = () => {
+      const leftOpen = leftWrapper?.classList.contains('active') ?? false
+      const rightOpen = rightWrapper?.classList.contains('active') ?? false
+      leftMobileButton?.classList.toggle('active', leftOpen)
+      rightMobileButton?.classList.toggle('active', rightOpen)
+      leftMobileButton?.setAttribute('aria-expanded', String(leftOpen))
+      rightMobileButton?.setAttribute('aria-expanded', String(rightOpen))
+      panelBackdrop?.classList.toggle('active', leftOpen || rightOpen)
+    }
+
+    const closeMobilePanels = () => {
+      leftWrapper?.classList.remove('active')
+      rightWrapper?.classList.remove('active')
+      syncMobilePanels()
+    }
+
+    // Mobile panel toggles
     const mobileControls = document.querySelector(
       '.mobile-controls'
     ) as HTMLElement | null
@@ -845,25 +886,34 @@ const albumsData = localAlbumsData
         if (!button) return
 
         e.stopPropagation()
-        const leftWrapper = document.querySelector('.sidebar-wrapper.left')
-        const rightWrapper = document.querySelector('.sidebar-wrapper.right')
-
         if (
           button.id === 'mobile-sidebar-toggle' ||
           button.getAttribute('aria-label') === '唱片列表'
         ) {
+          const shouldOpen = !leftWrapper?.classList.contains('active')
           leftWrapper?.classList.toggle('active')
           rightWrapper?.classList.remove('active')
+          if (!shouldOpen) leftWrapper?.classList.remove('active')
         } else if (
           button.id === 'mobile-songs-toggle' ||
           button.getAttribute('aria-label') === '歌曲列表'
         ) {
+          const shouldOpen = !rightWrapper?.classList.contains('active')
           rightWrapper?.classList.toggle('active')
           leftWrapper?.classList.remove('active')
+          if (!shouldOpen) rightWrapper?.classList.remove('active')
         }
+        syncMobilePanels()
       })
       mobileControls.dataset.hasListener = 'true'
     }
+
+    if (panelBackdrop && !panelBackdrop.dataset.hasListener) {
+      panelBackdrop.addEventListener('click', closeMobilePanels)
+      panelBackdrop.dataset.hasListener = 'true'
+    }
+
+    syncMobilePanels()
 
     // 迷你播放器控制按钮
     const miniPlayer = document.getElementById('mobile-mini-player')
@@ -911,9 +961,37 @@ const albumsData = localAlbumsData
           document
             .querySelector('.sidebar-wrapper.right')
             ?.classList.remove('active')
+          document
+            .getElementById('mobile-panel-backdrop')
+            ?.classList.remove('active')
+          document
+            .querySelectorAll('.mobile-btn[aria-expanded]')
+            .forEach((button) => {
+              button.classList.remove('active')
+              button.setAttribute('aria-expanded', 'false')
+            })
         }
       })
       window.MusicPlayerState.clickListenerAttached = true
+    }
+
+    if (!document.body.dataset.musicEscapeListener) {
+      document.addEventListener('keydown', (event) => {
+        if (event.key !== 'Escape') return
+        document
+          .querySelectorAll('.sidebar-wrapper.active')
+          .forEach((panel) => panel.classList.remove('active'))
+        document
+          .getElementById('mobile-panel-backdrop')
+          ?.classList.remove('active')
+        document
+          .querySelectorAll('.mobile-btn[aria-expanded]')
+          .forEach((button) => {
+            button.classList.remove('active')
+            button.setAttribute('aria-expanded', 'false')
+          })
+      })
+      document.body.dataset.musicEscapeListener = 'true'
     }
   })
 </script>

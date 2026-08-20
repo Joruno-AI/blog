@@ -3,12 +3,7 @@ import BaseLayout from '~/layouts/BaseLayout.astro'
 import StandardLayout from '~/layouts/StandardLayout.astro'
 import { geektimeCatalog, getGeektimeCourseUrl } from '~/utils/geektime'
 
-const { categories, stats, sources } = geektimeCatalog
-const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-})
+const { categories, stats } = geektimeCatalog
 ---
 
 <BaseLayout
@@ -16,6 +11,7 @@ const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
   description="按课程整理的技术学习文档库"
   bgType="rose"
   stableNavigation={true}
+  hideFooter={true}
 >
   <StandardLayout
     class="geektime-shell max-w-[86rem]"
@@ -45,19 +41,31 @@ const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
           placeholder="搜索课程或章节，例如 React、Nest、分布式"
           autocomplete="off"
         />
-        <kbd>/</kbd>
+        <button
+          type="button"
+          class="geektime-search-clear"
+          aria-label="清空搜索"
+          title="清空搜索"
+          hidden
+        >
+          <span class="i-ri-close-line" aria-hidden="true"></span>
+        </button>
       </label>
       <div class="geektime-search-status" aria-live="polite"></div>
       <div class="geektime-search-results" hidden></div>
     </geektime-search>
 
-    <nav class="geektime-category-nav" aria-label="知识方向">
+    <geektime-category-nav
+      class="geektime-category-nav"
+      role="navigation"
+      aria-label="知识方向"
+    >
       {
         categories.map((category) => (
           <a href={`#${category.id}`}>{category.name}</a>
         ))
       }
-    </nav>
+    </geektime-category-nav>
 
     <div class="geektime-category-list">
       {
@@ -80,6 +88,7 @@ const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
                 <a
                   class="geektime-course-card"
                   href={getGeektimeCourseUrl(course.id)}
+                  data-astro-reload
                 >
                   <span class="geektime-course-name">{course.name}</span>
                   <span class="geektime-course-meta">
@@ -93,24 +102,6 @@ const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
         ))
       }
     </div>
-
-    <footer class="geektime-source-note" aria-label="资料来源">
-      {
-        sources.map((item) => (
-          <span class="geektime-source-item">
-            <span>{item.name}</span>
-            <span aria-hidden="true">·</span>
-            <span>{dateFormatter.format(new Date(item.generatedAt))}</span>
-            <span aria-hidden="true">·</span>
-            <a href={`${item.source}/commit/${item.commit}`}>
-              {item.commit.slice(0, 7)}
-            </a>
-            <span aria-hidden="true">·</span>
-            <a href={item.source}>源仓库</a>
-          </span>
-        ))
-      }
-    </footer>
   </StandardLayout>
 </BaseLayout>
 
@@ -176,11 +167,13 @@ const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
     z-index: 4;
     display: block;
     max-width: 65ch;
-    margin: 2.75rem auto 0;
+    margin: 2.25rem auto 0;
   }
 
   .geektime-search-box {
     display: flex;
+    box-sizing: border-box;
+    height: 3.25rem;
     align-items: center;
     gap: 0.7rem;
     padding: 0.72rem 0.8rem;
@@ -203,12 +196,16 @@ const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
 
   .geektime-search-box input {
     width: 100%;
+    min-width: 0;
+    height: 100%;
+    padding: 0;
     border: 0;
     outline: 0;
     background: transparent;
     color: var(--c-text);
     font: inherit;
     font-size: 0.875rem;
+    line-height: 1.2;
   }
 
   .geektime-search-box input::placeholder {
@@ -216,15 +213,53 @@ const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
     opacity: 1;
   }
 
-  .geektime-search-box kbd {
+  .geektime-search-box input::-webkit-search-cancel-button {
+    appearance: none;
+  }
+
+  .geektime-search-clear {
+    display: inline-flex;
     flex: none;
-    color: var(--c-text-faint);
-    font-family: var(--font-mono);
-    font-size: 0.68rem;
+    width: 1.85rem;
+    height: 1.85rem;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--c-text-muted);
+    cursor: pointer;
+    transition:
+      background-color 0.16s ease,
+      border-color 0.16s ease,
+      color 0.16s ease,
+      transform 0.16s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .geektime-search-clear[hidden] {
+    display: none;
+  }
+
+  .geektime-search-clear:hover,
+  .geektime-search-clear:focus-visible {
+    border-color: var(--c-border-soft);
+    background: var(--c-surface-hover);
+    color: var(--c-text);
+  }
+
+  .geektime-search-clear:active {
+    transform: scale(0.94);
+  }
+
+  .geektime-search-clear span {
+    font-size: 1rem;
   }
 
   .geektime-search-status {
-    min-height: 1.5rem;
+    box-sizing: border-box;
+    height: 1.5rem;
+    overflow: hidden;
     padding: 0.45rem 0.8rem 0;
     color: var(--c-text-faint);
     font-size: 0.7rem;
@@ -305,7 +340,7 @@ const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
     flex-wrap: wrap;
     justify-content: center;
     gap: 0.25rem 1.15rem;
-    margin: 2.75rem auto 4.5rem;
+    margin: 1.5rem auto 2.75rem;
   }
 
   .geektime-category-nav a {
@@ -331,7 +366,7 @@ const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
   }
 
   .geektime-category {
-    scroll-margin-top: 6rem;
+    scroll-margin-top: 1.5rem;
   }
 
   .geektime-category > header {
@@ -346,6 +381,7 @@ const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
     font-family: var(--font-mono);
     font-size: 0.68rem;
     font-variant-numeric: tabular-nums;
+    translate: 0.375rem 0;
   }
 
   .geektime-category h2 {
@@ -383,19 +419,17 @@ const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
     text-decoration: none;
     transition:
       background-color 0.2s ease,
-      color 0.2s ease,
-      transform 0.2s ease;
+      color 0.2s ease;
   }
 
   .geektime-course-card:hover,
   .geektime-course-card:focus-visible {
     background: var(--c-surface-hover);
     color: var(--c-text);
-    transform: translateX(2px);
   }
 
   .geektime-course-card:active {
-    transform: translateX(2px) scale(0.99);
+    background: var(--c-surface-active);
   }
 
   .geektime-course-name {
@@ -417,31 +451,6 @@ const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
     white-space: nowrap;
   }
 
-  .geektime-source-note {
-    display: grid;
-    justify-content: center;
-    gap: 0.4rem;
-    margin-top: 5rem;
-    color: var(--c-text-faint);
-    font-size: 0.7rem;
-  }
-
-  .geektime-source-item {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.4rem;
-  }
-
-  .geektime-source-note a {
-    color: inherit;
-    transition: color 0.2s ease;
-  }
-
-  .geektime-source-note a:hover {
-    color: var(--c-text);
-  }
-
   @media (max-width: 900px) {
     .geektime-course-grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -459,6 +468,10 @@ const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
   }
 
   @media (max-width: 600px) {
+    .geektime-category {
+      --category-copy-offset: 1.65rem;
+    }
+
     .geektime-overview {
       margin-top: 1.75rem;
     }
@@ -467,13 +480,10 @@ const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
       margin-inline: 0.65rem;
     }
 
-    .geektime-search-box kbd {
-      display: none;
-    }
-
     .geektime-category-nav {
       justify-content: flex-start;
-      margin-bottom: 3.5rem;
+      margin-top: 1.25rem;
+      margin-bottom: 2.5rem;
     }
 
     .geektime-category-list {
@@ -487,10 +497,11 @@ const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
     .geektime-course-grid {
       grid-template-columns: 1fr;
       gap: 0;
+      margin-inline-start: var(--category-copy-offset);
     }
 
     .geektime-course-card {
-      padding-inline: 0.35rem;
+      padding-inline: 0.75rem;
     }
   }
 </style>
@@ -519,6 +530,7 @@ const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
 
   class GeektimeSearch extends HTMLElement {
     private input: HTMLInputElement | null = null
+    private clearButton: HTMLButtonElement | null = null
     private results: HTMLElement | null = null
     private status: HTMLElement | null = null
     private catalogPromise: Promise<Catalog> | null = null
@@ -526,19 +538,37 @@ const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
 
     connectedCallback() {
       this.input = this.querySelector('input')
+      this.clearButton = this.querySelector('.geektime-search-clear')
       this.results = this.querySelector('.geektime-search-results')
       this.status = this.querySelector('.geektime-search-status')
 
-      this.input?.addEventListener('input', () => this.queueSearch())
+      this.input?.addEventListener('input', this.handleInput)
+      this.clearButton?.addEventListener('click', this.clearSearch)
       this.addEventListener('click', this.rememberArticlePath)
       document.addEventListener('keydown', this.handleShortcut)
       document.addEventListener('click', this.handleOutsideClick)
     }
 
     disconnectedCallback() {
+      this.input?.removeEventListener('input', this.handleInput)
+      this.clearButton?.removeEventListener('click', this.clearSearch)
       this.removeEventListener('click', this.rememberArticlePath)
       document.removeEventListener('keydown', this.handleShortcut)
       document.removeEventListener('click', this.handleOutsideClick)
+    }
+
+    private handleInput = () => {
+      if (this.clearButton) this.clearButton.hidden = !this.input?.value
+      this.queueSearch()
+    }
+
+    private clearSearch = () => {
+      if (!this.input) return
+      this.input.value = ''
+      if (this.clearButton) this.clearButton.hidden = true
+      if (this.status) this.status.textContent = ''
+      this.hideResults()
+      this.input.focus()
     }
 
     private handleShortcut = (event: KeyboardEvent) => {
@@ -561,10 +591,16 @@ const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
 
       const sourceId =
         new URL(link.href).searchParams.get('source') || 'geektime'
+      const courseId = new URL(link.href).searchParams.get('course')
 
       try {
         sessionStorage.setItem('geektime:last-article-path', articlePath)
         sessionStorage.setItem('geektime:last-source-id', sourceId)
+        if (courseId) {
+          sessionStorage.setItem('geektime:last-course-id', courseId)
+        } else {
+          sessionStorage.removeItem('geektime:last-course-id')
+        }
       } catch {
         // Search navigation still works when storage is unavailable.
       }
@@ -622,7 +658,8 @@ const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
                 href: firstArticle
                   ? this.getArticleUrl(
                       firstArticle.path,
-                      course.sourceId || 'geektime'
+                      course.sourceId || 'geektime',
+                      course.id
                     )
                   : '/docs/',
                 score: courseName.startsWith(query) ? 0 : 1,
@@ -638,7 +675,8 @@ const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
                 kind: '章节',
                 href: this.getArticleUrl(
                   article.path,
-                  course.sourceId || 'geektime'
+                  course.sourceId || 'geektime',
+                  course.id
                 ),
                 score: articleTitle.startsWith(query) ? 2 : 3,
               })
@@ -682,6 +720,7 @@ const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
         const link = document.createElement('a')
         link.className = 'geektime-search-result'
         link.href = match.href
+        link.dataset.astroReload = ''
 
         const copy = document.createElement('span')
         copy.className = 'geektime-search-result-copy'
@@ -707,13 +746,67 @@ const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
       if (this.results) this.results.hidden = true
     }
 
-    private getArticleUrl(path: string, sourceId: string) {
+    private getArticleUrl(path: string, sourceId: string, courseId: string) {
       const params = new URLSearchParams({ source: sourceId, path })
+      params.set('course', courseId)
       return `/docs/read/?${params.toString()}`
     }
   }
 
   if (!customElements.get('geektime-search')) {
     customElements.define('geektime-search', GeektimeSearch)
+  }
+
+  class GeektimeCategoryNav extends HTMLElement {
+    connectedCallback() {
+      this.addEventListener('click', this.handleCategoryClick)
+
+      if (window.location.hash) {
+        void document.fonts.ready.then(() => {
+          this.scrollToCategory(window.location.hash)
+        })
+      }
+    }
+
+    disconnectedCallback() {
+      this.removeEventListener('click', this.handleCategoryClick)
+    }
+
+    private handleCategoryClick = (event: MouseEvent) => {
+      if (!(event.target instanceof Element)) return
+      const link = event.target.closest<HTMLAnchorElement>('a[href^="#"]')
+      if (!link) return
+
+      event.preventDefault()
+      const hash = new URL(link.href).hash
+      window.history.pushState({}, '', hash)
+      this.scrollToCategory(hash)
+    }
+
+    private scrollToCategory(hash: string) {
+      const id = decodeURIComponent(hash.slice(1))
+      const target = document.getElementById(id)
+      if (!target) return
+
+      const navHeight =
+        document.querySelector('.nav-header')?.getBoundingClientRect().height ||
+        0
+      const top =
+        target.getBoundingClientRect().top + window.scrollY - navHeight - 24
+
+      // The global document uses smooth scrolling. Temporarily opt out here so
+      // repeated category clicks cannot leave the page between two sections.
+      const root = document.documentElement
+      const previousBehavior = root.style.scrollBehavior
+      root.style.scrollBehavior = 'auto'
+      window.scrollTo({ top: Math.max(0, top), behavior: 'auto' })
+      requestAnimationFrame(() => {
+        root.style.scrollBehavior = previousBehavior
+      })
+    }
+  }
+
+  if (!customElements.get('geektime-category-nav')) {
+    customElements.define('geektime-category-nav', GeektimeCategoryNav)
   }
 </script>

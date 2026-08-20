@@ -16,7 +16,6 @@ import ToTopButton from '~/components/widgets/ToTopButton.astro'
 import Backdrop from '~/components/base/Backdrop.astro'
 import SearchSwitch from '~/components/widgets/SearchSwitch.astro'
 import GlobalMusicPlayer from '~/components/music/GlobalMusicPlayer.astro'
-import ReadingProgress from '~/components/widgets/ReadingProgress.astro'
 import KeyboardShortcuts from '~/components/widgets/KeyboardShortcuts.astro'
 
 import { SITE, UI, FEATURES } from '~/config'
@@ -34,6 +33,7 @@ interface Props {
   tags?: string[]
   category?: string
   stableNavigation?: boolean
+  hideFooter?: boolean
 }
 
 const {
@@ -46,6 +46,7 @@ const {
   tags,
   category,
   stableNavigation = false,
+  hideFooter = false,
 } = Astro.props
 
 let style: Record<string, string> = {}
@@ -103,7 +104,7 @@ if (hasCustomCursor) style['--external-link-cursor'] = cursorType
       <slot />
       <!-- Share -->
       {
-        Astro.url.pathname !== withBasePath('/') && (
+        !hideFooter && Astro.url.pathname !== withBasePath('/') && (
           <footer class="slide-enter animate-delay-1000! prose mx-auto mt-8 print:hidden">
             <slot name="share" />
             <br />
@@ -116,7 +117,7 @@ if (hasCustomCursor) style['--external-link-cursor'] = cursorType
     </main>
 
     <!-- Footer -->
-    <Footer />
+    {!hideFooter && <Footer />}
     <ToTopButton />
 
     <!-- Panel Backdrop (on mobile) -->
@@ -126,23 +127,27 @@ if (hasCustomCursor) style['--external-link-cursor'] = cursorType
     <!-- Global Music Player -->
     <GlobalMusicPlayer />
 
-    <!-- Reading Progress Indicator -->
-    <ReadingProgress />
-
     <!-- Keyboard Shortcuts -->
     <KeyboardShortcuts />
 
-    <!-- Progress Bar -->
+    <!-- A single persistent progress bar survives Astro page swaps, preventing
+         old and new page snapshots from rendering competing indicators. -->
+    <div
+      id="site-progress"
+      role="progressbar"
+      aria-label="页面加载进度"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      aria-valuenow="0"
+      aria-hidden="true"
+      transition:persist="site-progress"
+    >
+    </div>
+
     <script>
-      import nprogress from 'nprogress'
+      import { bindNavigationProgress } from '~/scripts/progress'
 
-      document.addEventListener('astro:before-preparation', () => {
-        nprogress.start()
-      })
-
-      document.addEventListener('astro:page-load', () => {
-        nprogress.done()
-      })
+      bindNavigationProgress()
     </script>
 
     <!-- Immersive reading is scoped to the current article. Astro keeps the

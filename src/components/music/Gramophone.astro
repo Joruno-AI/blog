@@ -56,11 +56,11 @@ import '~/styles/music.css'
   }
 
   interface MusicPlayerState {
-  isPlaying: boolean
-  isInitialized: boolean
-  currentPlaybackRate?: number
-  currentVinylRotation?: number
-}
+    isPlaying: boolean
+    isInitialized: boolean
+    currentPlaybackRate?: number
+    currentVinylRotation?: number
+  }
 
   type MusicWindow = Window & {
     MusicPlayerState?: MusicPlayerState
@@ -89,10 +89,11 @@ import '~/styles/music.css'
     }
 
     const initialSize = getContainerSize()
+    const isCompactRenderer = initialSize.width < 768
 
     // Procedural Textures
     const createVinylTexture = () => {
-      const size = 2048
+      const size = isCompactRenderer ? 1024 : 2048
       const canvas = document.createElement('canvas')
       canvas.width = size
       canvas.height = size
@@ -109,13 +110,15 @@ import '~/styles/music.css'
       // Draw grooves
       // Simulating Fresnel/Anisotropic bands with gradients
       // More subtle gradients for realistic vinyl look
+      const labelRadius = size * 0.137
+      const outerRadius = size * 0.469
       const gradient = ctx.createRadialGradient(
         centerX,
         centerY,
-        280,
+        labelRadius,
         centerX,
         centerY,
-        960
+        outerRadius
       )
       gradient.addColorStop(0, '#020202')
       gradient.addColorStop(0.2, '#080808')
@@ -126,13 +129,13 @@ import '~/styles/music.css'
 
       ctx.fillStyle = gradient
       ctx.beginPath()
-      ctx.arc(centerX, centerY, 960, 0, Math.PI * 2)
-      ctx.arc(centerX, centerY, 280, 0, Math.PI * 2, true) // hole
+      ctx.arc(centerX, centerY, outerRadius, 0, Math.PI * 2)
+      ctx.arc(centerX, centerY, labelRadius, 0, Math.PI * 2, true) // hole
       ctx.fill()
 
       // Fine grooves - denser and more subtle
       ctx.globalAlpha = 0.15
-      for (let r = 280; r < 960; r += 0.8) {
+      for (let r = labelRadius; r < outerRadius; r += size / 2560) {
         // Track gaps
         if (Math.random() < 0.002) r += 8
 
@@ -149,7 +152,7 @@ import '~/styles/music.css'
       ctx.strokeStyle = '#111'
       ctx.lineWidth = 2
       ctx.beginPath()
-      ctx.arc(centerX, centerY, 280, 0, Math.PI * 2)
+      ctx.arc(centerX, centerY, labelRadius, 0, Math.PI * 2)
       ctx.stroke()
 
       const texture = new THREE.CanvasTexture(canvas)
@@ -161,18 +164,19 @@ import '~/styles/music.css'
 
     const createBrushedMetalTexture = (color = '#d0d0d0') => {
       const canvas = document.createElement('canvas')
-      canvas.width = 512
-      canvas.height = 512
+      const size = isCompactRenderer ? 256 : 512
+      canvas.width = size
+      canvas.height = size
       const ctx = canvas.getContext('2d')
       if (!ctx) return null
 
       ctx.fillStyle = color
-      ctx.fillRect(0, 0, 512, 512)
+      ctx.fillRect(0, 0, size, size)
 
       // Add noise/scratches
-      for (let i = 0; i < 20000; i++) {
-        const x = Math.random() * 512
-        const y = Math.random() * 512
+      for (let i = 0; i < (isCompactRenderer ? 6000 : 20000); i++) {
+        const x = Math.random() * size
+        const y = Math.random() * size
         const len = Math.random() * 40 + 10
         const opacity = Math.random() * 0.05
 
@@ -191,19 +195,20 @@ import '~/styles/music.css'
 
     const createWoodTexture = () => {
       const canvas = document.createElement('canvas')
-      canvas.width = 1024
-      canvas.height = 1024
+      const size = isCompactRenderer ? 512 : 1024
+      canvas.width = size
+      canvas.height = size
       const ctx = canvas.getContext('2d')
       if (!ctx) return null
 
       // Base color - Dark Walnut
       ctx.fillStyle = '#3e2723'
-      ctx.fillRect(0, 0, 1024, 1024)
+      ctx.fillRect(0, 0, size, size)
 
       // Wood grain
-      for (let i = 0; i < 600; i++) {
-        const x = Math.random() * 1024
-        const y = Math.random() * 1024
+      for (let i = 0; i < (isCompactRenderer ? 300 : 600); i++) {
+        const x = Math.random() * size
+        const y = Math.random() * size
         const w = Math.random() * 200 + 50
         const h = Math.random() * 4 + 1
         const opacity = Math.random() * 0.15 + 0.05
@@ -215,7 +220,7 @@ import '~/styles/music.css'
       }
 
       // Add some noise
-      const imageData = ctx.getImageData(0, 0, 1024, 1024)
+      const imageData = ctx.getImageData(0, 0, size, size)
       const data = imageData.data
       for (let i = 0; i < data.length; i += 4) {
         const noise = (Math.random() - 0.5) * 10
@@ -234,17 +239,26 @@ import '~/styles/music.css'
 
     const createStageShadowTexture = () => {
       const canvas = document.createElement('canvas')
-      canvas.width = 1024
-      canvas.height = 1024
+      const size = isCompactRenderer ? 512 : 1024
+      canvas.width = size
+      canvas.height = size
       const ctx = canvas.getContext('2d')
       if (!ctx) return null
 
-      const gradient = ctx.createRadialGradient(512, 512, 50, 512, 512, 500)
+      const center = size / 2
+      const gradient = ctx.createRadialGradient(
+        center,
+        center,
+        size * 0.05,
+        center,
+        center,
+        size * 0.49
+      )
       gradient.addColorStop(0, 'rgba(0, 0, 0, 0.58)')
       gradient.addColorStop(0.42, 'rgba(0, 0, 0, 0.26)')
       gradient.addColorStop(1, 'rgba(0, 0, 0, 0)')
       ctx.fillStyle = gradient
-      ctx.fillRect(0, 0, 1024, 1024)
+      ctx.fillRect(0, 0, size, size)
 
       const texture = new THREE.CanvasTexture(canvas)
       texture.colorSpace = THREE.SRGBColorSpace
@@ -272,7 +286,9 @@ import '~/styles/music.css'
     })
     renderer.setClearColor(0x000000, 0) // 透明背景
     renderer.setSize(initialSize.width, initialSize.height)
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    renderer.setPixelRatio(
+      Math.min(window.devicePixelRatio, isCompactRenderer ? 1.5 : 2)
+    )
     renderer.shadowMap.enabled = true
     renderer.shadowMap.type = THREE.PCFSoftShadowMap
     renderer.toneMapping = THREE.ACESFilmicToneMapping
@@ -293,8 +309,8 @@ import '~/styles/music.css'
     spotLight.decay = 1.35
     spotLight.distance = 34
     spotLight.castShadow = true
-    spotLight.shadow.mapSize.width = 2048
-    spotLight.shadow.mapSize.height = 2048
+    spotLight.shadow.mapSize.width = isCompactRenderer ? 1024 : 2048
+    spotLight.shadow.mapSize.height = isCompactRenderer ? 1024 : 2048
     spotLight.shadow.bias = -0.0001
     scene.add(spotLight)
     scene.add(spotLight.target)
@@ -1065,8 +1081,14 @@ import '~/styles/music.css'
     let isDraggingScene = false
     let previousMousePosition = { x: 0, y: 0 }
     let cameraTheta = -0.42 // Horizontal angle - start from a front corner
-    let cameraPhi = initialSize.width < 640 ? 0.54 : 0.48
-    let cameraRadius = initialSize.width < 640 ? 11.4 : 9.4
+    const isPortraitPhone =
+      initialSize.width < 640 && initialSize.width / initialSize.height < 0.9
+    let cameraPhi = isPortraitPhone ? 0.58 : 0.48
+    let cameraRadius = isPortraitPhone
+      ? 13.4
+      : initialSize.width < 1024
+        ? 10.8
+        : 10
     const minZoom = 6.6
     const maxZoom = 15.5
 
@@ -1222,6 +1244,7 @@ import '~/styles/music.css'
     // Touch pinch zoom
     let touchStartDistance = 0
     let initialPinchRadius = cameraRadius
+    let previousTouchPosition = { x: 0, y: 0 }
 
     renderer.domElement.addEventListener(
       'touchstart',
@@ -1231,6 +1254,11 @@ import '~/styles/music.css'
           const dy = e.touches[0].clientY - e.touches[1].clientY
           touchStartDistance = Math.sqrt(dx * dx + dy * dy)
           initialPinchRadius = cameraRadius
+        } else if (e.touches.length === 1) {
+          previousTouchPosition = {
+            x: e.touches[0].clientX,
+            y: e.touches[0].clientY,
+          }
         }
       },
       { passive: true }
@@ -1240,6 +1268,7 @@ import '~/styles/music.css'
       'touchmove',
       (e) => {
         if (e.touches.length === 2) {
+          e.preventDefault()
           const dx = e.touches[0].clientX - e.touches[1].clientX
           const dy = e.touches[0].clientY - e.touches[1].clientY
           const distance = Math.sqrt(dx * dx + dy * dy)
@@ -1249,9 +1278,19 @@ import '~/styles/music.css'
             Math.min(maxZoom, initialPinchRadius * scale)
           )
           updateCameraPosition()
+        } else if (e.touches.length === 1) {
+          e.preventDefault()
+          const touch = e.touches[0]
+          const deltaX = touch.clientX - previousTouchPosition.x
+          const deltaY = touch.clientY - previousTouchPosition.y
+          cameraTheta -= deltaX * 0.006
+          cameraPhi += deltaY * 0.006
+          cameraPhi = Math.max(0.2, Math.min(Math.PI / 2.2, cameraPhi))
+          previousTouchPosition = { x: touch.clientX, y: touch.clientY }
+          updateCameraPosition()
         }
       },
-      { passive: true }
+      { passive: false }
     )
 
     // ==================== Event Listeners ====================

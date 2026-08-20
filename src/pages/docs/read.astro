@@ -9,6 +9,7 @@ import PostActions from '~/components/widgets/PostActions.astro'
   description="技术课程文档阅读页"
   bgType="rose"
   stableNavigation={true}
+  hideFooter={true}
 >
   <StandardLayout class="reader-shell">
     <geektime-reader
@@ -50,7 +51,6 @@ import PostActions from '~/components/widgets/PostActions.astro'
 
           <header class="reader-header">
             <div class="reader-header-skeleton" aria-hidden="true">
-              <span class="reader-header-skeleton-meta"></span>
               <span class="reader-header-skeleton-title"></span>
               <span
                 class="reader-header-skeleton-title reader-header-skeleton-title-short"
@@ -58,7 +58,6 @@ import PostActions from '~/components/widgets/PostActions.astro'
               <span class="reader-header-skeleton-actions"></span>
             </div>
             <div class="reader-header-content">
-              <div class="reader-category" data-category></div>
               <h1 data-title><span class="sr-only">正在加载文档</span></h1>
               <div class="reader-actions" data-reader-actions hidden>
                 <PostActions markdown="" postUrl="" title="课程文档" />
@@ -92,11 +91,6 @@ import PostActions from '~/components/widgets/PostActions.astro'
               <strong></strong>
             </a>
           </nav>
-
-          <footer class="reader-source" hidden>
-            <span data-source-label>文档来自仓库快照</span>
-            <a data-source-link href="/docs/">查看源文件</a>
-          </footer>
         </div>
 
         <aside class="reader-toc-panel" data-toc-panel hidden>
@@ -124,12 +118,25 @@ import PostActions from '~/components/widgets/PostActions.astro'
 </BaseLayout>
 
 <style>
-  .reader-shell {
+  geektime-reader {
     --reader-line: var(--c-border-soft);
     --reader-muted: var(--c-text-muted);
-  }
-
-  geektime-reader {
+    --reader-math-accent: #b05c78;
+    --reader-math-ink: color-mix(
+      in srgb,
+      var(--c-text) 68%,
+      var(--reader-math-accent) 32%
+    );
+    --reader-math-line: color-mix(
+      in srgb,
+      var(--c-border-soft) 48%,
+      var(--reader-math-accent) 52%
+    );
+    --reader-math-surface: color-mix(
+      in srgb,
+      var(--c-bg) 95%,
+      var(--reader-math-accent) 5%
+    );
     display: block;
   }
 
@@ -163,7 +170,7 @@ import PostActions from '~/components/widgets/PostActions.astro'
     display: flex;
     align-items: center;
     gap: 0.45rem;
-    margin-bottom: 2.25rem;
+    margin-bottom: 1.75rem;
     color: var(--c-text-faint);
     font-size: 0.7rem;
   }
@@ -209,11 +216,6 @@ import PostActions from '~/components/widgets/PostActions.astro'
     animation: reader-pulse 1.4s ease-in-out infinite;
   }
 
-  .reader-header-skeleton-meta {
-    width: 4.5rem;
-    height: 0.6rem;
-  }
-
   .reader-header-skeleton-title {
     width: min(38rem, 88%);
     height: clamp(2rem, 5vw, 2.8rem);
@@ -233,37 +235,18 @@ import PostActions from '~/components/widgets/PostActions.astro'
     animation-delay: 180ms !important;
   }
 
-  .reader-main[data-switching] .reader-header::after {
-    position: absolute;
-    right: 0;
-    bottom: -1px;
-    left: 0;
-    height: 1px;
-    background: var(--c-text-muted);
-    content: '';
-    opacity: 0.45;
-    transform: scaleX(0.12);
-    transform-origin: left;
-    animation: reader-loading 0.8s cubic-bezier(0.23, 1, 0.32, 1) infinite;
-  }
-
-  .reader-category {
-    color: var(--c-text-faint);
-    font-family: var(--font-mono);
-    font-size: 0.68rem;
-  }
-
   .reader-header h1 {
     max-width: 100%;
-    margin: 0.65rem 0 0;
+    margin: 0;
     color: var(--c-text);
     font-family: var(--font-article-title);
-    font-size: clamp(2rem, 5vw, 3.25rem);
+    font-size: clamp(1.85rem, 3.4vw, 2.75rem);
     font-weight: 400;
     font-style: italic;
     line-height: 1.15;
     letter-spacing: -0.035em;
-    text-wrap: balance;
+    overflow-wrap: break-word;
+    text-wrap: wrap;
   }
 
   .reader-actions {
@@ -388,6 +371,25 @@ import PostActions from '~/components/widgets/PostActions.astro'
     border-radius: 0.5rem;
   }
 
+  .reader-content :global(.katex) {
+    color: var(--reader-math-ink);
+  }
+
+  .reader-content :global(.katex-display) {
+    max-width: 100%;
+    margin: 1.5rem 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: clamp(0.85rem, 2vw, 1.15rem) clamp(0.9rem, 2.4vw, 1.35rem);
+    border: 1px solid var(--reader-math-line);
+    border-left-width: 3px;
+    border-radius: 0.5rem;
+    background: var(--reader-math-surface);
+    scrollbar-color: var(--reader-math-line) transparent;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+  }
+
   .reader-content :global(pre) {
     overflow-x: auto;
     padding: 1rem;
@@ -400,6 +402,95 @@ import PostActions from '~/components/widgets/PostActions.astro'
     padding: 0;
     background: transparent;
     font-size: 0.82rem;
+  }
+
+  .reader-content :global(.reader-code-block) {
+    position: relative;
+    margin: 1em 0;
+    overflow: hidden;
+    border: 1px solid var(--reader-line);
+    border-radius: 0.4rem;
+    background: #fafafa;
+  }
+
+  .reader-content :global(.reader-code-toolbar) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 2rem;
+    padding: 0.25rem 0.5rem 0.25rem 0.85rem;
+    border-bottom: 1px solid var(--reader-line);
+    background: #fafafa;
+    color: var(--c-text-faint);
+    font-family: var(--font-mono);
+    font-size: 0.64rem;
+  }
+
+  .reader-content :global(.reader-code-language) {
+    text-transform: lowercase;
+  }
+
+  .reader-content :global(.reader-code-copy) {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.25rem 0.45rem;
+    border: 1px solid transparent;
+    border-radius: 0.35rem;
+    color: var(--c-text-muted);
+    font-family: var(--font-sans);
+    font-size: 0.68rem;
+    line-height: 1.2;
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease;
+  }
+
+  .reader-content :global(.reader-code-copy:hover),
+  .reader-content :global(.reader-code-copy:focus-visible),
+  .reader-content :global(.reader-code-copy[data-copied='true']) {
+    border-color: var(--c-border-soft);
+    background: var(--c-surface-hover);
+    color: var(--c-text);
+  }
+
+  .reader-content :global(.reader-code-block > pre) {
+    margin: 0;
+    padding: 0.8rem 1rem;
+    border: 0;
+    border-radius: 0;
+    background: #fafafa;
+  }
+
+  :global(.dark) .reader-content :global(.reader-code-block),
+  :global(.dark) .reader-content :global(.reader-code-toolbar),
+  :global(.dark) .reader-content :global(.reader-code-block > pre) {
+    background: #0e0e0e;
+  }
+
+  .reader-content :global(.reader-code-block .shiki) {
+    color: var(--shiki-light);
+  }
+
+  .reader-content :global(.reader-code-block .shiki span) {
+    color: var(--shiki-light);
+  }
+
+  :global(.dark) .reader-content :global(.reader-code-block .shiki),
+  :global(.dark) .reader-content :global(.reader-code-block .shiki span) {
+    color: var(--shiki-dark);
+  }
+
+  .reader-content :global(.reader-code-block .line) {
+    display: inline-block;
+    width: 100%;
+    min-height: 1.35em;
+  }
+
+  .reader-content :global(.reader-code-block code) {
+    font-size: 14.72px;
+    line-height: 1.4;
   }
 
   .reader-content :global(h2),
@@ -471,33 +562,6 @@ import PostActions from '~/components/widgets/PostActions.astro'
     white-space: nowrap;
   }
 
-  .reader-source {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 0.5rem;
-    margin-top: 1.25rem;
-    color: var(--c-text-faint);
-    font-size: 0.68rem;
-  }
-
-  .reader-source[hidden] {
-    display: none;
-  }
-
-  .reader-source a {
-    border-bottom: 1px solid transparent;
-    color: inherit;
-    transition:
-      border-color 0.2s ease,
-      color 0.2s ease;
-  }
-
-  .reader-source a:hover {
-    border-color: var(--c-border-strong);
-    color: var(--c-text);
-  }
-
   @keyframes reader-pulse {
     0%,
     100% {
@@ -508,34 +572,24 @@ import PostActions from '~/components/widgets/PostActions.astro'
     }
   }
 
-  @keyframes reader-loading {
-    0% {
-      transform: translateX(0) scaleX(0.12);
-    }
-    55% {
-      transform: translateX(28%) scaleX(0.58);
-    }
-    100% {
-      transform: translateX(88%) scaleX(0.12);
-    }
-  }
-
   @media (prefers-reduced-motion: reduce) {
     .reader-header-skeleton span,
     .reader-skeleton span,
-    .reader-panel-skeleton span,
-    .reader-main[data-switching] .reader-header::after {
+    .reader-panel-skeleton span {
       animation: none;
     }
   }
 
-  @media (min-width: 1400px) {
+  /* Keep the course directory and table of contents visible on normal
+     desktop monitors as well as wide screens. At smaller widths the reader
+     intentionally falls back to a single column so the content stays usable. */
+  @media (min-width: 1128px) {
     .reader-layout {
       display: grid;
       grid-template-columns:
-        minmax(13rem, 16rem) minmax(0, 54rem)
-        minmax(11rem, 14rem);
-      gap: clamp(1.5rem, 2.25vw, 3rem);
+        minmax(11rem, 15rem) minmax(0, 1fr)
+        minmax(10rem, 13rem);
+      gap: clamp(1rem, 1.8vw, 2rem);
       align-items: start;
     }
 
@@ -736,11 +790,11 @@ import PostActions from '~/components/widgets/PostActions.astro'
 
   @media (max-width: 640px) {
     .reader-breadcrumb {
-      margin-bottom: 1.75rem;
+      margin-bottom: 1.5rem;
     }
 
     .reader-header h1 {
-      font-size: clamp(1.9rem, 10vw, 2.6rem);
+      font-size: clamp(1.75rem, 8vw, 2.25rem);
     }
 
     .reader-header-skeleton-title {
@@ -759,8 +813,156 @@ import PostActions from '~/components/widgets/PostActions.astro'
 
 <script>
   import DOMPurify from 'dompurify'
+  import renderMathInElement from 'katex/contrib/auto-render'
   import { marked } from 'marked'
+  import {
+    bundledLanguages,
+    codeToHtml,
+    type BundledLanguage,
+  } from 'shiki/bundle/web'
   import imageFallbacks from '~/data/nuggets-image-fallbacks.json'
+  import { finishProgress, startProgress } from '~/scripts/progress'
+
+  const COURSE_PROGRESS_TASK = 'course-reader'
+  const COURSE_MATH_DELIMITERS = [
+    { left: '$$', right: '$$', display: true },
+    { left: '\\[', right: '\\]', display: true },
+    { left: '\\(', right: '\\)', display: false },
+    { left: '$', right: '$', display: false },
+  ] as const
+
+  const CODE_LANGUAGE_ALIASES: Record<string, BundledLanguage> = {
+    bash: 'shellscript',
+    c: 'c',
+    cjs: 'javascript',
+    cpp: 'cpp',
+    css: 'css',
+    graphql: 'graphql',
+    html: 'html',
+    http: 'http',
+    java: 'java',
+    javascript: 'javascript',
+    js: 'javascript',
+    json: 'json',
+    jsx: 'jsx',
+    md: 'markdown',
+    markdown: 'markdown',
+    mts: 'typescript',
+    mysql: 'sql',
+    php: 'php',
+    py: 'python',
+    python: 'python',
+    sh: 'shellscript',
+    shell: 'shellscript',
+    curl: 'shellscript',
+    sql: 'sql',
+    ts: 'typescript',
+    tsx: 'tsx',
+    typescript: 'typescript',
+    vue: 'vue',
+    xml: 'xml',
+    yaml: 'yaml',
+    yml: 'yaml',
+  }
+
+  const DIFF_LANGUAGE_TOKENS = new Set(['dif', 'diff', 'patch'])
+  const GENERIC_LANGUAGE_TOKENS = new Set(['plain', 'plaintext', 'text'])
+  const CODE_LANGUAGE_LABELS: Partial<Record<BundledLanguage, string>> = {
+    shellscript: 'bash',
+  }
+  const COURSE_COMMENTS_HEADING = /^精选留言(?:[（(]\d+[）)])?$/
+
+  const isCourseCommentsHeading = (value: string) => {
+    const normalized = value
+      .replace(/^\s{0,3}#{1,6}\s*/, '')
+      .replace(/^\s*>\s*/, '')
+      .replace(/<[^>]+>/g, '')
+      .replace(/\*\*|__/g, '')
+      .replace(/[\s\u200b\ufeff]/g, '')
+    return COURSE_COMMENTS_HEADING.test(normalized)
+  }
+
+  const stripCourseComments = (markdown: string) => {
+    const lines = markdown.split(/\r?\n/)
+    const commentsIndex = lines.findIndex(isCourseCommentsHeading)
+    return commentsIndex >= 0
+      ? lines.slice(0, commentsIndex).join('\n').trimEnd()
+      : markdown
+  }
+
+  const stripRenderedCourseComments = (root: DocumentFragment) => {
+    const marker = Array.from(
+      root.querySelectorAll<HTMLElement>(
+        'h1, h2, h3, h4, h5, h6, p, div, strong, b'
+      )
+    ).find((element) => isCourseCommentsHeading(element.textContent || ''))
+    if (!marker) return
+
+    let block: Element = marker
+    while (block.parentElement) block = block.parentElement
+    while (block.nextSibling) block.nextSibling.remove()
+    block.remove()
+  }
+
+  const hasDiffMarkers = (source: string) =>
+    /^(?:diff --git|index [\da-f]+|@@\s|---\s|\+\+\+\s|[+-](?![+-]))/im.test(
+      source
+    )
+
+  const inferCodeLanguage = (source: string): BundledLanguage | undefined => {
+    const code = source.trim()
+    if (!code) return undefined
+
+    if (code.startsWith('{') || code.startsWith('[')) {
+      try {
+        JSON.parse(code)
+        return 'json'
+      } catch {
+        // Continue with syntax-based detection.
+      }
+    }
+    if (/<template(?:\s|>)|<script\s+setup|defineComponent\s*\(/i.test(code))
+      return 'vue'
+    if (
+      /(?:^|\n)\s*(?:interface|type|enum|namespace)\s+\w+|:\s*(?:string|number|boolean|unknown|never)(?:\W|$)|\b(?:as const|satisfies)\b/m.test(
+        code
+      )
+    )
+      return 'typescript'
+    if (
+      /(?:^|\n)\s*(?:import|export)\b|\b(?:const|let|var)\s+[$\w]+|=>|\bfunction\s+[$\w]+|\b(?:window|document|console)\./m.test(
+        code
+      )
+    )
+      return 'javascript'
+    if (/<[a-z][\s\S]*>/i.test(code)) return 'html'
+    if (
+      /(?:^|\n)\s*(?:[.#][\w-]+|@media\b)[^{\n]*\{|\b(?:display|color|margin|padding|background):\s*/m.test(
+        code
+      )
+    )
+      return 'css'
+    if (
+      /(?:^|\n)\s*(?:[$#]\s+)?(?:sudo\s+)?(?:npm|pnpm|yarn|bun|curl|wget|git|cd|mkdir|docker|kubectl|mysql|psql|sqlite3|apt|apt-get|brew|echo|export|source|chmod|chown|rm|cp|mv|cat|grep|sed|awk|md5sum|sha256sum|groupadd|useradd|tar|ln|rpm|yum|dnf|service|systemctl|more|less|head|tail|make|cmake)\b|(?:^|\n)\s*\.\/(?:configure|[\w.-]+)|(?:^|\n)\s*(?:mysql|psql)>\s*|^#!\/.*(?:ba|z)?sh|(?:^|\n)\s*(?:if\s+\[|for\s+\w+\s+in\b|case\s+.+\s+in\b|[A-Z_][A-Z0-9_]*=)/m.test(
+        code
+      )
+    )
+      return 'shellscript'
+    if (
+      /(?:^|\n)\s*(?:def|class)\s+\w+|(?:^|\n)\s*from\s+[\w.]+\s+import\s+|(?:^|\n)\s*import\s+[\w.]+|\bprint\s*\(/m.test(
+        code
+      )
+    )
+      return 'python'
+    if (
+      /\b(?:SELECT|INSERT|UPDATE|DELETE|CREATE TABLE|ALTER TABLE)\b/i.test(code)
+    )
+      return 'sql'
+    if (/\bpublic\s+(?:static\s+)?(?:class|void)|\bSystem\.out\./m.test(code))
+      return 'java'
+
+    return undefined
+  }
 
   interface Article {
     title: string
@@ -806,20 +1008,29 @@ import PostActions from '~/components/widgets/PostActions.astro'
     private requestController?: AbortController
     private loadSequence = 0
     private markdownCache = new Map<string, string>()
+    private requestedLocationKey = ''
 
     connectedCallback() {
       this.addEventListener('click', this.handleReaderLink)
+      this.addEventListener('click', this.handleCodeCopy)
       this.addEventListener('pointerover', this.prefetchReaderLink)
       window.addEventListener('popstate', this.handlePopState)
-      this.load().catch((error) => this.showError(error))
+      document.addEventListener('astro:page-load', this.handlePageLoad)
+      startProgress(COURSE_PROGRESS_TASK)
+      this.load()
+        .catch((error) => this.showError(error))
+        .finally(() => finishProgress(COURSE_PROGRESS_TASK))
     }
 
     disconnectedCallback() {
       this.removeEventListener('click', this.handleReaderLink)
+      this.removeEventListener('click', this.handleCodeCopy)
       this.removeEventListener('pointerover', this.prefetchReaderLink)
       window.removeEventListener('popstate', this.handlePopState)
+      document.removeEventListener('astro:page-load', this.handlePageLoad)
       this.headingObserver?.disconnect()
       this.requestController?.abort()
+      finishProgress(COURSE_PROGRESS_TASK)
     }
 
     private async load() {
@@ -834,21 +1045,32 @@ import PostActions from '~/components/widgets/PostActions.astro'
       if (!catalogResponse.ok) throw new Error('无法加载文档目录。')
       this.catalog = (await catalogResponse.json()) as Catalog
 
-      await this.loadArticle(location.path, true, location.sourceId)
+      await this.loadArticle(
+        location.path,
+        true,
+        location.sourceId,
+        location.courseId
+      )
     }
 
     private async loadArticle(
       articlePath: string,
       initial = false,
-      sourceId = this.source?.id || 'geektime'
+      sourceId = this.source?.id || 'geektime',
+      courseId?: string
     ) {
-      const located = this.findArticle(articlePath, sourceId)
+      const locationKey = this.getLocationKey(articlePath, sourceId, courseId)
+      if (!initial && locationKey === this.requestedLocationKey) return
+      this.requestedLocationKey = locationKey
+
+      const located = this.findArticle(articlePath, sourceId, courseId)
       if (!located) throw new Error('没有在当前内容快照中找到这篇文档。')
 
       const sequence = ++this.loadSequence
       this.requestController?.abort()
       this.requestController = new AbortController()
       const readerMain = this.querySelector<HTMLElement>('.reader-main')
+      startProgress(COURSE_PROGRESS_TASK)
       if (!initial) {
         readerMain?.setAttribute('data-switching', '')
         readerMain?.setAttribute('aria-busy', 'true')
@@ -861,6 +1083,7 @@ import PostActions from '~/components/widgets/PostActions.astro'
           this.requestController.signal
         )
         if (sequence !== this.loadSequence) return
+        const articleMarkdown = stripCourseComments(markdown)
 
         ;({
           article: this.article,
@@ -869,9 +1092,11 @@ import PostActions from '~/components/widgets/PostActions.astro'
           source: this.source,
         } = located)
 
+        this.canonicalizeLocation()
+
         this.updateHeader()
         this.updateCoursePanel()
-        const rendered = marked.parse(markdown, {
+        const rendered = marked.parse(articleMarkdown, {
           gfm: true,
           breaks: false,
         })
@@ -881,23 +1106,31 @@ import PostActions from '~/components/widgets/PostActions.astro'
         const template = document.createElement('template')
         template.innerHTML = safeHtml
         template.content.querySelector('h1')?.remove()
+        stripRenderedCourseComments(template.content)
         this.rewriteResources(template.content)
         this.addHeadingAnchors(template.content)
+        await this.decorateCodeBlocks(template.content)
 
         const content = this.querySelector<HTMLElement>('[data-content]')
         const state = this.querySelector<HTMLElement>('[data-state]')
         if (!content || !state) return
 
         content.replaceChildren(template.content)
+        renderMathInElement(content, {
+          delimiters: COURSE_MATH_DELIMITERS,
+          ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+          throwOnError: false,
+          strict: false,
+          trust: false,
+        })
         content.hidden = false
         state.hidden = true
         state.classList.remove('is-error')
         this.removeAttribute('data-loading')
         this.removeAttribute('aria-busy')
-        this.updatePostActions(markdown)
+        this.updatePostActions(articleMarkdown)
         this.updateToc(content)
         this.updateNavigation()
-        this.updateSourceLink()
 
         if (!initial) {
           const header = this.querySelector<HTMLElement>('.reader-breadcrumb')
@@ -922,22 +1155,154 @@ import PostActions from '~/components/widgets/PostActions.astro'
         this.prefetchNeighbors()
       } catch (error) {
         if (error instanceof DOMException && error.name === 'AbortError') return
+        if (sequence === this.loadSequence) this.requestedLocationKey = ''
         throw error
       } finally {
         if (sequence === this.loadSequence) {
+          finishProgress(COURSE_PROGRESS_TASK)
           readerMain?.removeAttribute('data-switching')
           readerMain?.removeAttribute('aria-busy')
         }
       }
     }
 
+    private async decorateCodeBlocks(root: DocumentFragment) {
+      const blocks = Array.from(root.querySelectorAll('pre'))
+      await Promise.all(
+        blocks.map(async (pre) => {
+          const code = pre.querySelector('code')
+          if (!code) return
+
+          const source = code.textContent || ''
+          const languageClass = Array.from(code.classList).find((name) =>
+            name.startsWith('language-')
+          )
+          const languageToken = languageClass
+            ?.slice('language-'.length)
+            .toLowerCase()
+          const declaredLanguage = languageToken
+            ? CODE_LANGUAGE_ALIASES[languageToken] ||
+              (languageToken in bundledLanguages
+                ? (languageToken as BundledLanguage)
+                : undefined)
+            : undefined
+          const shouldInfer =
+            !languageToken ||
+            !declaredLanguage ||
+            GENERIC_LANGUAGE_TOKENS.has(languageToken) ||
+            (DIFF_LANGUAGE_TOKENS.has(languageToken) && !hasDiffMarkers(source))
+          const inferredLanguage = inferCodeLanguage(source)
+          const hasLanguageMismatch =
+            inferredLanguage === 'shellscript' &&
+            declaredLanguage !== 'shellscript'
+          const language = shouldInfer
+            ? inferredLanguage || declaredLanguage
+            : hasLanguageMismatch
+              ? inferredLanguage
+              : declaredLanguage
+
+          let highlightedPre: HTMLPreElement | null = null
+          if (language) {
+            try {
+              const highlighted = await codeToHtml(source, {
+                lang: language,
+                themes: {
+                  light: 'vitesse-light',
+                  dark: 'vitesse-dark',
+                },
+                defaultColor: false,
+              })
+              const highlightedTemplate = document.createElement('template')
+              highlightedTemplate.innerHTML = highlighted
+              highlightedPre = highlightedTemplate.content.querySelector('pre')
+            } catch {
+              // Keep the original Markdown code block when a language is not
+              // supported by the highlighter.
+            }
+          }
+
+          const wrapper = document.createElement('div')
+          wrapper.className = 'reader-code-block'
+          wrapper.dataset.code = source
+
+          const toolbar = document.createElement('div')
+          toolbar.className = 'reader-code-toolbar'
+
+          const languageLabel = document.createElement('span')
+          languageLabel.className = 'reader-code-language'
+          languageLabel.textContent =
+            (language && CODE_LANGUAGE_LABELS[language]) ||
+            language ||
+            languageToken ||
+            '代码'
+
+          const copyButton = document.createElement('button')
+          copyButton.type = 'button'
+          copyButton.className = 'reader-code-copy'
+          copyButton.dataset.copyCode = ''
+          copyButton.dataset.copyLabel = '复制'
+          copyButton.setAttribute('aria-label', '复制代码')
+          copyButton.innerHTML =
+            '<span class="i-ri-file-copy-line" aria-hidden="true"></span><span data-copy-label>复制</span>'
+
+          toolbar.append(languageLabel, copyButton)
+          wrapper.append(
+            toolbar,
+            highlightedPre || (pre.cloneNode(true) as HTMLPreElement)
+          )
+          pre.replaceWith(wrapper)
+        })
+      )
+    }
+
+    private handleCodeCopy = async (event: MouseEvent) => {
+      if (!(event.target instanceof Element)) return
+      const button = event.target.closest<HTMLButtonElement>('[data-copy-code]')
+      if (!button || !this.contains(button)) return
+
+      event.preventDefault()
+      event.stopPropagation()
+      const block = button.closest<HTMLElement>('.reader-code-block')
+      const source = block?.dataset.code
+      if (source === undefined) return
+
+      try {
+        await navigator.clipboard.writeText(source)
+      } catch {
+        const fallback = document.createElement('textarea')
+        fallback.value = source
+        fallback.setAttribute('readonly', '')
+        fallback.style.position = 'fixed'
+        fallback.style.opacity = '0'
+        document.body.append(fallback)
+        fallback.select()
+        document.execCommand('copy')
+        fallback.remove()
+      }
+
+      const label = button.querySelector<HTMLElement>('[data-copy-label]')
+      const originalLabel = button.dataset.copyLabel || '复制'
+      if (label) label.textContent = '已复制'
+      button.dataset.copied = 'true'
+      window.setTimeout(() => {
+        if (!button.isConnected) return
+        if (label) label.textContent = originalLabel
+        delete button.dataset.copied
+      }, 1400)
+    }
+
     private resolveArticleLocation() {
       const params = new URLSearchParams(window.location.search)
       const currentPath = params.get('path')
       const currentSourceId = params.get('source') || 'geektime'
+      const currentCourseId = params.get('course') || undefined
       if (currentPath) {
-        this.storeArticleLocation(currentPath, currentSourceId)
-        return { path: currentPath, sourceId: currentSourceId }
+        this.storeArticleLocation(currentPath, currentSourceId, currentCourseId)
+        return {
+          path: currentPath,
+          sourceId: currentSourceId,
+          courseId: currentCourseId,
+        }
       }
 
       try {
@@ -947,16 +1312,25 @@ import PostActions from '~/components/widgets/PostActions.astro'
         if (!rememberedPath) return null
         const rememberedSourceId =
           sessionStorage.getItem('geektime:last-source-id') || 'geektime'
+        const rememberedCourseId =
+          sessionStorage.getItem('geektime:last-course-id') || undefined
 
         const restoredUrl = new URL(window.location.href)
         restoredUrl.searchParams.set('path', rememberedPath)
         restoredUrl.searchParams.set('source', rememberedSourceId)
+        if (rememberedCourseId) {
+          restoredUrl.searchParams.set('course', rememberedCourseId)
+        }
         window.history.replaceState(
           window.history.state,
           '',
           restoredUrl.toString()
         )
-        return { path: rememberedPath, sourceId: rememberedSourceId }
+        return {
+          path: rememberedPath,
+          sourceId: rememberedSourceId,
+          courseId: rememberedCourseId,
+        }
       } catch {
         return null
       }
@@ -977,9 +1351,35 @@ import PostActions from '~/components/widgets/PostActions.astro'
       if (!link || link.target === '_blank' || link.hasAttribute('download'))
         return
 
+      const rawHref = link.getAttribute('href')
+      if (rawHref?.startsWith('#')) {
+        const headingId = decodeURIComponent(rawHref.slice(1))
+        const heading = this.querySelector<HTMLElement>(
+          `#${CSS.escape(headingId)}`
+        )
+        if (!heading) return
+
+        event.preventDefault()
+        const headingTop =
+          heading.getBoundingClientRect().top + window.scrollY - 88
+        window.scrollTo({
+          top: Math.max(0, headingTop),
+          behavior: window.matchMedia('(prefers-reduced-motion: reduce)')
+            .matches
+            ? 'auto'
+            : 'smooth',
+        })
+        const anchorUrl = new URL(window.location.href)
+        anchorUrl.hash = rawHref.slice(1)
+        window.history.pushState(window.history.state, '', anchorUrl)
+        this.setActiveToc(headingId)
+        return
+      }
+
       const url = new URL(link.href, window.location.href)
       const articlePath = url.searchParams.get('path')
       const sourceId = url.searchParams.get('source') || 'geektime'
+      const courseId = url.searchParams.get('course') || undefined
       if (
         !articlePath ||
         url.origin !== window.location.origin ||
@@ -988,11 +1388,15 @@ import PostActions from '~/components/widgets/PostActions.astro'
         return
 
       event.preventDefault()
-      if (articlePath === this.article?.path && sourceId === this.source?.id)
+      if (
+        articlePath === this.article?.path &&
+        sourceId === this.source?.id &&
+        (!courseId || courseId === this.course?.id)
+      )
         return
-      this.storeArticleLocation(articlePath, sourceId)
+      this.storeArticleLocation(articlePath, sourceId, courseId)
       window.history.pushState({}, '', url)
-      this.loadArticle(articlePath, false, sourceId).catch((error) =>
+      this.loadArticle(articlePath, false, sourceId, courseId).catch((error) =>
         this.showError(error)
       )
     }
@@ -1001,16 +1405,12 @@ import PostActions from '~/components/widgets/PostActions.astro'
       if (!(event.target instanceof Element) || !this.catalog) return
       const link = event.target.closest<HTMLAnchorElement>('a[href]')
       if (!link) return
-      const articlePath = new URL(
-        link.href,
-        window.location.href
-      ).searchParams.get('path')
-      const sourceId = new URL(
-        link.href,
-        window.location.href
-      ).searchParams.get('source')
+      const url = new URL(link.href, window.location.href)
+      const articlePath = url.searchParams.get('path')
+      const sourceId = url.searchParams.get('source')
+      const courseId = url.searchParams.get('course') || undefined
       if (!articlePath || !sourceId) return
-      const located = this.findArticle(articlePath, sourceId)
+      const located = this.findArticle(articlePath, sourceId, courseId)
       if (located)
         void this.fetchMarkdown(articlePath, located.source).catch(
           () => undefined
@@ -1021,21 +1421,45 @@ import PostActions from '~/components/widgets/PostActions.astro'
       const params = new URLSearchParams(window.location.search)
       const articlePath = params.get('path')
       const sourceId = params.get('source') || 'geektime'
+      const courseId = params.get('course') || undefined
       if (
         !articlePath ||
-        (articlePath === this.article?.path && sourceId === this.source?.id)
+        (articlePath === this.article?.path &&
+          sourceId === this.source?.id &&
+          (!courseId || courseId === this.course?.id))
       )
         return
-      this.storeArticleLocation(articlePath, sourceId)
-      this.loadArticle(articlePath, false, sourceId).catch((error) =>
+      this.storeArticleLocation(articlePath, sourceId, courseId)
+      this.loadArticle(articlePath, false, sourceId, courseId).catch((error) =>
         this.showError(error)
       )
     }
 
-    private storeArticleLocation(articlePath: string, sourceId: string) {
+    private handlePageLoad = () => {
+      if (!this.isConnected || !this.catalog) return
+      const location = this.resolveArticleLocation()
+      if (!location) return
+      this.loadArticle(
+        location.path,
+        false,
+        location.sourceId,
+        location.courseId
+      ).catch((error) => this.showError(error))
+    }
+
+    private storeArticleLocation(
+      articlePath: string,
+      sourceId: string,
+      courseId?: string
+    ) {
       try {
         sessionStorage.setItem('geektime:last-article-path', articlePath)
         sessionStorage.setItem('geektime:last-source-id', sourceId)
+        if (courseId) {
+          sessionStorage.setItem('geektime:last-course-id', courseId)
+        } else {
+          sessionStorage.removeItem('geektime:last-course-id')
+        }
       } catch {
         // Reading still works when storage is unavailable.
       }
@@ -1059,13 +1483,14 @@ import PostActions from '~/components/widgets/PostActions.astro'
       return markdown
     }
 
-    private findArticle(path: string, sourceId: string) {
+    private findArticle(path: string, sourceId: string, courseId?: string) {
       const source = this.getSources().find((item) => item.id === sourceId)
       if (!source) return null
 
       for (const category of this.catalog.categories) {
         for (const course of category.courses) {
           if ((course.sourceId || 'geektime') !== sourceId) continue
+          if (courseId && course.id !== courseId) continue
           const article = course.articles.find((item) => item.path === path)
           if (article) return { category, course, article, source }
         }
@@ -1090,7 +1515,6 @@ import PostActions from '~/components/widgets/PostActions.astro'
 
     private updateHeader() {
       const title = this.querySelector<HTMLElement>('[data-title]')
-      const category = this.querySelector<HTMLElement>('[data-category]')
       const courseLink =
         this.querySelector<HTMLAnchorElement>('[data-course-link]')
       const courseSeparator = this.querySelector<HTMLElement>(
@@ -1098,7 +1522,6 @@ import PostActions from '~/components/widgets/PostActions.astro'
       )
 
       if (title) title.textContent = this.article.title
-      if (category) category.textContent = this.category.name
       if (courseLink) {
         courseLink.textContent = this.course.name
         courseLink.href = `/docs/#${this.category.id}`
@@ -1126,7 +1549,8 @@ import PostActions from '~/components/widgets/PostActions.astro'
       }
       if (count) count.textContent = `${this.course.articles.length} 篇`
 
-      if (list.dataset.courseId !== this.course.id) {
+      const courseKey = `${this.source.id}:${this.course.id}`
+      if (list.dataset.courseId !== courseKey) {
         const fragment = document.createDocumentFragment()
         this.course.articles.forEach((article, index) => {
           const item = document.createElement('li')
@@ -1149,7 +1573,7 @@ import PostActions from '~/components/widgets/PostActions.astro'
         })
 
         list.replaceChildren(fragment)
-        list.dataset.courseId = this.course.id
+        list.dataset.courseId = courseKey
       }
 
       let activeLink: HTMLAnchorElement | undefined
@@ -1279,7 +1703,12 @@ import PostActions from '~/components/widgets/PostActions.astro'
 
         const resolved = this.resolvePath(href)
         if (resolved.endsWith('.md') && knownPaths.has(resolved)) {
-          link.href = this.getArticleUrl(resolved)
+          const located = this.findArticle(resolved, this.source.id)
+          link.href = this.getArticleUrl(
+            resolved,
+            this.source.id,
+            located?.course.id
+          )
         } else {
           link.href = this.getRawUrl(resolved)
           link.target = '_blank'
@@ -1328,9 +1757,42 @@ import PostActions from '~/components/widgets/PostActions.astro'
       return `https://cdn.jsdelivr.net/gh/${source.repository}@${source.commit}/${encodedPath}`
     }
 
-    private getArticleUrl(path: string, sourceId = this.source.id) {
+    private getArticleUrl(
+      path: string,
+      sourceId = this.source.id,
+      courseId = this.course.id
+    ) {
       const params = new URLSearchParams({ source: sourceId, path })
+      params.set('course', courseId)
       return `/docs/read/?${params.toString()}`
+    }
+
+    private getLocationKey(path: string, sourceId: string, courseId?: string) {
+      return `${sourceId}:${courseId || ''}:${path}`
+    }
+
+    private canonicalizeLocation() {
+      const url = new URL(window.location.href)
+      const urlPath = url.searchParams.get('path')
+      const urlSourceId = url.searchParams.get('source') || 'geektime'
+      // A previous request may finish while Astro is already navigating to a
+      // different course on the same pathname. Never let that stale response
+      // rewrite the new route back to the old course.
+      if (urlPath !== this.article.path || urlSourceId !== this.source.id)
+        return
+      if (url.searchParams.get('course') === this.course.id) return
+      url.searchParams.set('course', this.course.id)
+      window.history.replaceState(window.history.state, '', url)
+      this.requestedLocationKey = this.getLocationKey(
+        this.article.path,
+        this.source.id,
+        this.course.id
+      )
+      this.storeArticleLocation(
+        this.article.path,
+        this.source.id,
+        this.course.id
+      )
     }
 
     private updateNavigation() {
@@ -1376,21 +1838,6 @@ import PostActions from '~/components/widgets/PostActions.astro'
       element.dataset.articlePath = article.path
       const title = element.querySelector('strong')
       if (title) title.textContent = article.title
-    }
-
-    private updateSourceLink() {
-      const footer = this.querySelector<HTMLElement>('.reader-source')
-      const link = this.querySelector<HTMLAnchorElement>('[data-source-link]')
-      const label = this.querySelector<HTMLElement>('[data-source-label]')
-      if (link) {
-        const encodedPath = this.article.path
-          .split('/')
-          .map((segment) => encodeURIComponent(segment))
-          .join('/')
-        link.href = `${this.source.source}/blob/${this.source.commit}/${encodedPath}`
-      }
-      if (label) label.textContent = `文档来自 ${this.source.name} 仓库快照`
-      if (footer) footer.hidden = false
     }
 
     private showError(error: unknown) {

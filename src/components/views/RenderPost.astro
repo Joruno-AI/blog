@@ -166,131 +166,146 @@ if (collectionType === 'blog') {
   {category}
   stableNavigation={collectionType === 'blog'}
 >
-  {
-    collectionType === 'blog' && (
-      <BlogCatalog
-        posts={blogCatalogPosts}
-        mode="reader"
-        activePostId={post.id}
-      />
-    )
-  }
-  <StandardLayout
-    {title}
-    {titleIcon}
-    {subtitle}
-    {isSearchable}
-    {searchFilter}
-    titleClass={collectionType === 'blog' ? 'blog-article-title' : undefined}
+  <div
+    class:list={[
+      'post-reader-layout',
+      { 'blog-reader-layout': collectionType === 'blog' },
+    ]}
   >
-    <Fragment slot="head">
-      <PostMeta {pubDate} {lastModDate} {minutesRead} {tags} />
-      {
-        showPostActions && (
-          <PostActions
-            markdown={postActionsMarkdown}
-            postUrl={postActionsUrl}
-            {title}
-          />
-        )
-      }
-    </Fragment>
-    <Fragment slot="article">
-      {isDraft && <Warning html={WARNING} />}
-      {
-        haveHeadings && (
-          <>
-            <DesktopAside
-              {headings}
-              position={collectionType === 'blog' ? 'right' : undefined}
-              context={collectionType === 'blog' ? 'blog' : undefined}
-            />
-            <MobileControl {headings} />
-          </>
-        )
-      }
-      <PostCover {cover} {coverAlt} />
-      <Content />
-      {
-        relatedPosts.length > 0 && (
-          <section class="related-posts" aria-label="相关文章">
-            <h2 class="related-posts-title">相关文章</h2>
-            <ul class="related-posts-list">
-              {relatedPosts.map((item) => (
-                <li>
-                  <a
-                    class="related-post-link"
-                    href={withBasePath(`/blog/${item.id}/`)}
-                  >
-                    <span class="related-post-name">{item.data.title}</span>
-                    {item.data.description && (
-                      <span class="related-post-desc">
-                        {item.data.description}
+    {
+      collectionType === 'blog' && (
+        <BlogCatalog
+          posts={blogCatalogPosts}
+          mode="reader"
+          activePostId={post.id}
+        />
+      )
+    }
+    <div class:list={{ 'blog-reader-main': collectionType === 'blog' }}>
+      <StandardLayout
+        {title}
+        {titleIcon}
+        {subtitle}
+        {isSearchable}
+        {searchFilter}
+        titleClass={collectionType === 'blog'
+          ? 'blog-article-title'
+          : undefined}
+      >
+        <Fragment slot="head">
+          <PostMeta {pubDate} {lastModDate} {minutesRead} {tags} />
+          {
+            showPostActions && (
+              <PostActions
+                markdown={postActionsMarkdown}
+                postUrl={postActionsUrl}
+                {title}
+              />
+            )
+          }
+        </Fragment>
+        <Fragment slot="article">
+          {isDraft && <Warning html={WARNING} />}
+          {
+            haveHeadings && (
+              <>
+                {collectionType !== 'blog' && <DesktopAside {headings} />}
+                <MobileControl {headings} />
+              </>
+            )
+          }
+          <PostCover {cover} {coverAlt} />
+          <Content />
+          {
+            relatedPosts.length > 0 && (
+              <section class="related-posts" aria-label="相关文章">
+                <h2 class="related-posts-title">相关文章</h2>
+                <ul class="related-posts-list">
+                  {relatedPosts.map((item) => (
+                    <li>
+                      <a
+                        class="related-post-link"
+                        href={withBasePath(`/blog/${item.id}/`)}
+                      >
+                        <span class="related-post-name">{item.data.title}</span>
+                        {item.data.description && (
+                          <span class="related-post-desc">
+                            {item.data.description}
+                          </span>
+                        )}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )
+          }
+          {
+            collectionType === 'blog' && (
+              <nav class="post-neighbor-nav" aria-label="文章导航">
+                <a class="post-neighbor-back" href={withBasePath('/blog/')}>
+                  <span class="i-ri-arrow-left-line" aria-hidden="true" />
+                  <span>返回 Blog</span>
+                  {currentCategoryLabel && (
+                    <span class="post-neighbor-category">
+                      {currentCategoryLabel}
+                    </span>
+                  )}
+                </a>
+                <div class="post-neighbor-links">
+                  {previousBlogPost ? (
+                    <a
+                      class="post-neighbor-link"
+                      href={withBasePath(`/blog/${previousBlogPost.id}/`)}
+                      rel="prev"
+                    >
+                      <span class="post-neighbor-label">上一篇</span>
+                      <span class="post-neighbor-title">
+                        {previousBlogPost.data.title}
                       </span>
-                    )}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )
-      }
-      {
-        collectionType === 'blog' && (
-          <nav class="post-neighbor-nav" aria-label="文章导航">
-            <a class="post-neighbor-back" href={withBasePath('/blog/')}>
-              <span class="i-ri-arrow-left-line" aria-hidden="true" />
-              <span>返回 Blog</span>
-              {currentCategoryLabel && (
-                <span class="post-neighbor-category">
-                  {currentCategoryLabel}
-                </span>
-              )}
-            </a>
-            <div class="post-neighbor-links">
-              {previousBlogPost ? (
-                <a
-                  class="post-neighbor-link"
-                  href={withBasePath(`/blog/${previousBlogPost.id}/`)}
-                  rel="prev"
-                >
-                  <span class="post-neighbor-label">上一篇</span>
-                  <span class="post-neighbor-title">
-                    {previousBlogPost.data.title}
-                  </span>
-                </a>
-              ) : (
-                <span class="post-neighbor-link is-disabled" aria-hidden="true">
-                  <span class="post-neighbor-label">上一篇</span>
-                  <span class="post-neighbor-title">已经是第一篇</span>
-                </span>
-              )}
-              {nextBlogPost ? (
-                <a
-                  class="post-neighbor-link align-right"
-                  href={withBasePath(`/blog/${nextBlogPost.id}/`)}
-                  rel="next"
-                >
-                  <span class="post-neighbor-label">下一篇</span>
-                  <span class="post-neighbor-title">
-                    {nextBlogPost.data.title}
-                  </span>
-                </a>
-              ) : (
-                <span
-                  class="post-neighbor-link align-right is-disabled"
-                  aria-hidden="true"
-                >
-                  <span class="post-neighbor-label">下一篇</span>
-                  <span class="post-neighbor-title">已经是最后一篇</span>
-                </span>
-              )}
-            </div>
-          </nav>
-        )
-      }
-    </Fragment>
-  </StandardLayout>
+                    </a>
+                  ) : (
+                    <span
+                      class="post-neighbor-link is-disabled"
+                      aria-hidden="true"
+                    >
+                      <span class="post-neighbor-label">上一篇</span>
+                      <span class="post-neighbor-title">已经是第一篇</span>
+                    </span>
+                  )}
+                  {nextBlogPost ? (
+                    <a
+                      class="post-neighbor-link align-right"
+                      href={withBasePath(`/blog/${nextBlogPost.id}/`)}
+                      rel="next"
+                    >
+                      <span class="post-neighbor-label">下一篇</span>
+                      <span class="post-neighbor-title">
+                        {nextBlogPost.data.title}
+                      </span>
+                    </a>
+                  ) : (
+                    <span
+                      class="post-neighbor-link align-right is-disabled"
+                      aria-hidden="true"
+                    >
+                      <span class="post-neighbor-label">下一篇</span>
+                      <span class="post-neighbor-title">已经是最后一篇</span>
+                    </span>
+                  )}
+                </div>
+              </nav>
+            )
+          }
+        </Fragment>
+      </StandardLayout>
+    </div>
+    {
+      collectionType === 'blog' && haveHeadings && (
+        <DesktopAside headings={headings} position="right" context="blog" />
+      )
+    }
+  </div>
   <Fragment slot="share">
     {shareEnabled && <ShareLink config={share[1]} />}
   </Fragment>
@@ -314,42 +329,95 @@ if (collectionType === 'blog') {
     line-height: 1.15;
   }
 
-  /* Let the reading column grow gradually on wide screens without turning
-     paragraphs into full-viewport lines. The sidebars still retain clear
-     ownership of the outer columns. */
-  @media (min-width: 1280px) {
+  /* Blog articles use the same shared three-column layout as the course
+     reader. The catalog, article, and page TOC therefore negotiate width in
+     one grid instead of three fixed elements drifting into each other. */
+  @media (min-width: 1128px) {
+    .blog-reader-layout {
+      display: grid;
+      width: 100%;
+      max-width: 96rem;
+      grid-template-columns:
+        minmax(11rem, 15rem) minmax(0, 54rem)
+        minmax(10rem, 13rem);
+      gap: clamp(1rem, 1.8vw, 2rem);
+      align-items: start;
+      justify-content: center;
+      margin-inline: auto;
+    }
+
+    .blog-reader-main {
+      min-width: 0;
+      grid-column: 2;
+      grid-row: 1;
+    }
+
+    :global(.blog-reader-main > :is(header, article).prose) {
+      width: 100%;
+      max-width: none;
+      margin-inline: 0;
+    }
+
+    :global(.blog-reader-layout > blog-catalog[data-mode='reader']) {
+      position: sticky;
+      top: 5.5rem;
+      min-width: 0;
+      max-height: calc(100vh - 7rem);
+      grid-column: 1;
+      grid-row: 1;
+      align-self: start;
+    }
+
     :global(
-      html:not([data-immersive])
-        body:has(blog-catalog[data-mode='reader'])
-        #main
-        > :is(header, article).prose
+      .blog-reader-layout > blog-catalog[data-mode='reader'] .category-sidebar
     ) {
-      max-width: clamp(42rem, 50vw, 60rem);
-    }
-  }
-
-  @media (min-width: 1600px) {
-    :global(blog-catalog[data-mode='reader'] .blog-catalog-nav) {
-      left: max(2rem, calc(50vw - 49rem));
-      width: 17rem;
+      position: static;
+      display: block;
+      max-height: calc(100vh - 7rem);
+      overflow: hidden;
     }
 
-    :global(#desktop-aside[data-context='blog']) {
-      right: max(2rem, calc(50vw - 49rem));
+    :global(
+      .blog-reader-layout > blog-catalog[data-mode='reader'] .blog-catalog-nav
+    ) {
+      position: static;
+      width: 100%;
+      height: calc(100vh - 7rem);
+    }
+
+    :global(.blog-reader-layout > #desktop-aside[data-context='blog']) {
+      position: sticky !important;
+      top: 5.5rem;
+      right: auto !important;
       left: auto !important;
+      width: 100%;
+      max-height: calc(100vh - 7rem);
+      grid-column: 3;
+      grid-row: 1;
+      overflow: hidden;
     }
-  }
 
-  @media (min-width: 1128px) and (max-width: 1399px) {
-    :global(#desktop-aside[data-context='blog']) {
-      display: none;
+    :global(html[data-immersive]) .blog-reader-layout {
+      display: block;
+      max-width: 72rem;
     }
 
-    :global(body:has(#desktop-aside[data-context='blog']) #toc-open-button) {
-      opacity: 1 !important;
-      pointer-events: auto;
-      transform: translateY(0) scale(1);
-      visibility: visible;
+    :global(
+      html[data-immersive]
+        .blog-reader-layout
+        > blog-catalog[data-mode='reader']
+    ),
+    :global(
+      html[data-immersive]
+        .blog-reader-layout
+        > #desktop-aside[data-context='blog']
+    ) {
+      display: none !important;
+    }
+
+    :global(html[data-immersive]) .blog-reader-main {
+      max-width: 72rem;
+      margin-inline: auto;
     }
   }
 

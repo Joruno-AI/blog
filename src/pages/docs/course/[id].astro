@@ -11,7 +11,7 @@ export function getStaticPaths() {
 const { course } = Astro.props
 const firstArticle = course.articles[0]
 const target = firstArticle
-  ? getGeektimeArticleUrl(firstArticle.path)
+  ? getGeektimeArticleUrl(firstArticle.path, course.sourceId, course.id)
   : '/docs/'
 
 Astro.response.headers.set('Location', target)

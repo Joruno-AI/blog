@@ -173,7 +173,6 @@ export default defineConfig({
     },
     // Optimize MDX processing
     optimizeDeps: {
-      include: ['nprogress'],
       exclude: ['@astrojs/mdx'],
     },
   },
