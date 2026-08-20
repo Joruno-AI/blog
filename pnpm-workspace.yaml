@@ -1,6 +1,9 @@
 packages:
   - '.'
 
+# Disable pnpm 11's default 24-hour dependency release delay in CI.
+minimumReleaseAge: 0
+
 allowBuilds:
   esbuild: true
   simple-git-hooks: true
