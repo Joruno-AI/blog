@@ -452,68 +452,198 @@ import PostActions from '~/components/widgets/PostActions.astro'
   }
 
   .reader-content :global(.reader-code-block) {
+    --reader-code-bg: #fafafa;
+    --reader-code-header-bg: #fff;
+    --reader-code-border: #f7f7f7;
+    --reader-code-shadow: #00000028;
     position: relative;
     margin: 1em 0;
     overflow: hidden;
-    border: 1px solid var(--reader-line);
-    border-radius: 0.4rem;
-    background: #fafafa;
+    border: 1.5px solid var(--reader-code-border);
+    border-radius: 0.5rem;
+    background: var(--reader-code-bg);
+    box-shadow: 0 0.35rem 1.1rem var(--reader-code-shadow);
   }
 
   .reader-content :global(.reader-code-toolbar) {
+    position: relative;
+    z-index: 2;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    min-height: 2rem;
-    padding: 0.25rem 0.5rem 0.25rem 0.85rem;
-    border-bottom: 1px solid var(--reader-line);
-    background: #fafafa;
-    color: var(--c-text-faint);
-    font-family: var(--font-mono);
-    font-size: 0.64rem;
+    min-height: 3.6rem;
+    padding: 0.8rem 1rem;
+    border-bottom: 1.5px solid var(--reader-code-border);
+    background: var(--reader-code-header-bg);
+    color: var(--c-text-muted);
+    pointer-events: none;
+  }
+
+  .reader-content :global(.reader-code-window-controls) {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+  }
+
+  .reader-content :global(.reader-code-window-dot) {
+    display: inline-grid;
+    place-items: center;
+    width: 0.72rem;
+    height: 0.72rem;
+    border-radius: 50%;
+    color: #24313a99;
+    font-family: var(--font-sans);
+    font-size: 0.58rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .reader-content :global(.reader-code-window-dot.is-close) {
+    background: #ff5f57;
+  }
+
+  .reader-content :global(.reader-code-window-dot.is-close::before) {
+    content: '×';
+    transform: translateY(-0.02rem);
+  }
+
+  .reader-content :global(.reader-code-window-dot.is-minimize) {
+    background: #ffbd2e;
+  }
+
+  .reader-content :global(.reader-code-window-dot.is-minimize::before) {
+    content: '';
+    width: 0.34rem;
+    height: 0.075rem;
+    border-radius: 999px;
+    background: currentColor;
+  }
+
+  .reader-content :global(.reader-code-window-dot.is-maximize) {
+    background: #28c840;
+  }
+
+  .reader-content :global(.reader-code-window-dot.is-maximize::before) {
+    content: '↗';
+    font-size: 0.5rem;
+    transform: translate(-0.01rem, -0.01rem);
   }
 
   .reader-content :global(.reader-code-language) {
-    text-transform: lowercase;
+    position: absolute;
+    right: 0.65rem;
+    bottom: 0.45rem;
+    padding: 0.1rem 0.45rem;
+    border-radius: 0.25rem;
+    color: var(--c-text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.03em;
+    opacity: 0.72;
+    text-transform: uppercase;
+  }
+
+  .reader-content
+    :global(.reader-code-block[data-terminal='true'] .reader-code-language) {
+    display: none;
   }
 
   .reader-content :global(.reader-code-copy) {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.55rem;
+    z-index: 1;
     display: inline-flex;
     align-items: center;
-    gap: 0.3rem;
-    padding: 0.25rem 0.45rem;
-    border: 1px solid transparent;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border: 0;
     border-radius: 0.35rem;
     color: var(--c-text-muted);
-    font-family: var(--font-sans);
-    font-size: 0.68rem;
-    line-height: 1.2;
+    background: transparent;
+    opacity: 0;
+    pointer-events: auto;
     transition:
+      opacity 0.2s ease,
       background-color 0.2s ease,
-      border-color 0.2s ease,
       color 0.2s ease;
   }
 
+  .reader-content :global(.reader-code-block:hover .reader-code-copy),
+  .reader-content :global(.reader-code-block:focus-within .reader-code-copy),
   .reader-content :global(.reader-code-copy:hover),
   .reader-content :global(.reader-code-copy:focus-visible),
   .reader-content :global(.reader-code-copy[data-copied='true']) {
-    border-color: var(--c-border-soft);
     background: var(--c-surface-hover);
     color: var(--c-text);
+    opacity: 0.9;
+  }
+
+  .reader-content :global(.reader-code-copy-label) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .reader-content :global(.reader-code-copy-feedback) {
+    position: absolute;
+    top: 50%;
+    right: 3rem;
+    z-index: 2;
+    padding: 0.3rem 0.72rem;
+    border-radius: 0.28rem;
+    background: #4d9578;
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    line-height: 1.2;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(0.35rem, -50%);
+    transition:
+      opacity 0.2s ease-out,
+      transform 0.2s ease-out;
+  }
+
+  .reader-content :global(.reader-code-copy-feedback::after) {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: -0.38rem;
+    width: 0;
+    height: 0;
+    border-top: 0.38rem solid transparent;
+    border-bottom: 0.38rem solid transparent;
+    border-left: 0.42rem solid #4d9578;
+    transform: translateY(-50%);
+  }
+
+  .reader-content :global(.reader-code-copy-feedback[data-visible='true']) {
+    opacity: 1;
+    transform: translate(0, -50%);
   }
 
   .reader-content :global(.reader-code-block > pre) {
     margin: 0;
-    padding: 0.8rem 1rem;
+    padding: 1rem 1.15rem;
     border: 0;
     border-radius: 0;
-    background: #fafafa;
+    background: var(--reader-code-bg);
   }
 
-  :global(.dark) .reader-content :global(.reader-code-block),
-  :global(.dark) .reader-content :global(.reader-code-toolbar),
-  :global(.dark) .reader-content :global(.reader-code-block > pre) {
-    background: #0e0e0e;
+  :global(.dark) .reader-content :global(.reader-code-block) {
+    --reader-code-bg: #0e0e0e;
+    --reader-code-header-bg: #121212;
+    --reader-code-border: #181818;
+    --reader-code-shadow: #0000005b;
   }
 
   .reader-content :global(.reader-code-block .shiki) {
@@ -627,6 +757,10 @@ import PostActions from '~/components/widgets/PostActions.astro'
     .reader-skeleton span,
     .reader-panel-skeleton span {
       animation: none;
+    }
+
+    .reader-content :global(.reader-code-copy-feedback) {
+      transition: none;
     }
   }
 
@@ -1208,7 +1342,7 @@ import PostActions from '~/components/widgets/PostActions.astro'
 <script>
   import DOMPurify from 'dompurify'
   import renderMathInElement from 'katex/contrib/auto-render'
-  import { marked } from 'marked'
+  import { Marked, type TokenizerAndRendererExtension } from 'marked'
   import {
     bundledLanguages,
     codeToHtml,
@@ -1224,6 +1358,43 @@ import PostActions from '~/components/widgets/PostActions.astro'
     { left: '\\(', right: '\\)', display: false },
     { left: '$', right: '$', display: false },
   ] as const
+
+  const legacyStrongExtension: TokenizerAndRendererExtension = {
+    name: 'courseLegacyStrong',
+    level: 'inline',
+    start(source) {
+      return source.indexOf('**')
+    },
+    tokenizer(source) {
+      const match = /^\*\*(?!\*)([^\n]+?)(?<!\*)\*\*(?!\*)/.exec(source)
+      if (!match) return
+
+      const content = match[1]
+      const text = content.trim()
+      if (!text) return
+
+      return {
+        type: 'courseLegacyStrong',
+        raw: match[0],
+        leading: content.match(/^\s*/)?.[0] || '',
+        trailing: content.match(/\s*$/)?.[0] || '',
+        tokens: this.lexer.inlineTokens(text),
+      }
+    },
+    renderer(token) {
+      const leading = typeof token.leading === 'string' ? token.leading : ''
+      const trailing = typeof token.trailing === 'string' ? token.trailing : ''
+      const tokens = Array.isArray(token.tokens) ? token.tokens : []
+      return `${leading}<strong>${this.parser.parseInline(tokens)}</strong>${trailing}`
+    },
+    childTokens: ['tokens'],
+  }
+
+  const courseMarkdown = new Marked({
+    gfm: true,
+    breaks: false,
+  })
+  courseMarkdown.use({ extensions: [legacyStrongExtension] })
 
   const CODE_LANGUAGE_ALIASES: Record<string, BundledLanguage> = {
     bash: 'shellscript',
@@ -1505,10 +1676,7 @@ import PostActions from '~/components/widgets/PostActions.astro'
 
         this.updateHeader()
         this.updateCoursePanel()
-        const rendered = marked.parse(articleMarkdown, {
-          gfm: true,
-          breaks: false,
-        })
+        const rendered = courseMarkdown.parse(articleMarkdown)
         const safeHtml = DOMPurify.sanitize(rendered as string, {
           USE_PROFILES: { html: true },
         })
@@ -1644,9 +1812,19 @@ import PostActions from '~/components/widgets/PostActions.astro'
         const wrapper = document.createElement('div')
         wrapper.className = 'reader-code-block'
         wrapper.dataset.code = source
+        const isTerminal = resolvedLanguage === 'shellscript'
+        wrapper.dataset.terminal = String(isTerminal)
 
         const toolbar = document.createElement('div')
         toolbar.className = 'reader-code-toolbar'
+        toolbar.dataset.terminal = String(isTerminal)
+
+        const windowControls = document.createElement('span')
+        windowControls.className = 'reader-code-window-controls'
+        windowControls.setAttribute('aria-hidden', 'true')
+        windowControls.innerHTML =
+          '<span class="reader-code-window-dot is-close"></span><span class="reader-code-window-dot is-minimize"></span><span class="reader-code-window-dot is-maximize"></span>'
+        toolbar.append(windowControls)
 
         const languageLabel = document.createElement('span')
         languageLabel.className = 'reader-code-language'
@@ -1662,13 +1840,21 @@ import PostActions from '~/components/widgets/PostActions.astro'
         copyButton.dataset.copyCode = ''
         copyButton.dataset.copyLabel = '复制'
         copyButton.setAttribute('aria-label', '复制代码')
+        copyButton.title = '复制代码'
         copyButton.innerHTML =
-          '<span class="i-ri-file-copy-line" aria-hidden="true"></span><span data-copy-label>复制</span>'
+          '<span class="i-ri-file-copy-line" aria-hidden="true"></span><span class="reader-code-copy-label" data-copy-label>复制</span>'
 
-        toolbar.append(languageLabel, copyButton)
+        const copyFeedback = document.createElement('span')
+        copyFeedback.className = 'reader-code-copy-feedback'
+        copyFeedback.dataset.copyFeedback = ''
+        copyFeedback.setAttribute('role', 'status')
+        copyFeedback.setAttribute('aria-live', 'polite')
+
+        toolbar.append(copyFeedback, copyButton)
         wrapper.append(
           toolbar,
-          highlightedPre || (pre.cloneNode(true) as HTMLPreElement)
+          highlightedPre || (pre.cloneNode(true) as HTMLPreElement),
+          languageLabel
         )
         pre.replaceWith(wrapper)
       }
@@ -1700,12 +1886,21 @@ import PostActions from '~/components/widgets/PostActions.astro'
       }
 
       const label = button.querySelector<HTMLElement>('[data-copy-label]')
+      const feedback = block?.querySelector<HTMLElement>('[data-copy-feedback]')
       const originalLabel = button.dataset.copyLabel || '复制'
       if (label) label.textContent = '已复制'
+      if (feedback) {
+        feedback.textContent = 'Copied!'
+        feedback.dataset.visible = 'true'
+      }
       button.dataset.copied = 'true'
       window.setTimeout(() => {
         if (!button.isConnected) return
         if (label) label.textContent = originalLabel
+        if (feedback) {
+          feedback.textContent = ''
+          delete feedback.dataset.visible
+        }
         delete button.dataset.copied
       }, 1400)
     }
