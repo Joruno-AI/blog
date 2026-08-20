@@ -203,7 +203,7 @@ const isActiveBranch = (path: string) =>
 
   <button
     type="button"
-    class="category-drawer-trigger hidden lt-lgp:flex"
+    class="category-drawer-trigger floating-tool-button hidden lt-lgp:flex"
     aria-label="打开博客目录"
     aria-expanded="false"
     data-catalog-open
@@ -688,25 +688,15 @@ const isActiveBranch = (path: string) =>
   }
 
   .category-drawer-trigger {
-    position: fixed;
+    display: none;
     bottom: 6rem;
     left: 1.25rem;
-    z-index: 40;
-    width: 3rem;
-    height: 3rem;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid var(--c-border-soft);
-    border-radius: 50%;
-    background: var(--c-bg);
-    box-shadow: 0 2px 12px rgb(0 0 0 / 0.15);
-    color: var(--c-text);
-    cursor: pointer;
   }
 
-  .category-drawer-trigger:hover,
-  .category-drawer-trigger:focus-visible {
-    background: var(--c-surface-hover);
+  @media (max-width: 1127px) {
+    .category-drawer-trigger {
+      display: flex;
+    }
   }
 
   .drawer-overlay {
@@ -788,7 +778,23 @@ const isActiveBranch = (path: string) =>
     :global(html[data-immersive]) .category-sidebar {
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.3s ease;
+    }
+  }
+
+  /* Between tablet-landscape and a comfortable desktop canvas, the fixed
+     catalog would compete with the centered article. Use the existing drawer
+     until all three columns have real room instead of allowing overlap. */
+  @media (min-width: 1128px) and (max-width: 1399px) {
+    .category-sidebar {
+      display: none !important;
+    }
+
+    .category-drawer-trigger {
+      display: flex !important;
+    }
+
+    .category-drawer {
+      display: block !important;
     }
   }
 

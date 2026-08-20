@@ -188,7 +188,11 @@
 #global-music-player .vinyl-search input {
   height: 42px;
   color: var(--c-text);
-  background: color-mix(in srgb, var(--c-surface-soft) 92%, var(--c-bg)) !important;
+  background: color-mix(
+    in srgb,
+    var(--c-surface-soft) 92%,
+    var(--c-bg)
+  ) !important;
   border-color: var(--c-border-soft) !important;
   border-radius: 999px !important;
   box-shadow: inset 0 0 0 1px transparent !important;
@@ -406,15 +410,6 @@
 #global-music-player .sidebar-wrapper.right.collapsed .right-toggle span {
   transform: rotate(180deg) translateX(1px);
   opacity: 1;
-}
-
-#global-music-player .music-floating-btn {
-  color: var(--music-accent);
-  background: color-mix(in srgb, var(--c-bg) 88%, transparent) !important;
-  border-color: var(--c-border-soft) !important;
-  box-shadow: var(--music-panel-shadow) !important;
-  -webkit-backdrop-filter: blur(14px);
-  backdrop-filter: blur(14px);
 }
 
 body:has(#music-page-wrapper:not(.hidden)) footer {

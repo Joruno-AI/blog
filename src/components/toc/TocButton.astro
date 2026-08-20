@@ -4,16 +4,33 @@
 
 <button
   id="toc-open-button"
-  class="z-50 fixed right-5 bottom-18
-    w-10 h-10 rounded-full
-    op-0 bg-#8883 dark:bg-#8886 pointer-events-none op-transition
-    lt-lgp:(op-50 pointer-events-auto)
-    hover:op-100 print:hidden"
-  title="Open table of contents"
+  class="floating-tool-button"
+  type="button"
+  aria-label="展开文章目录"
+  title="展开文章目录"
 >
-  <div u-i-lucide-table-of-contents class="text-gray-700 dark:text-gray-200">
-  </div>
+  <span u-i-lucide-table-of-contents aria-hidden="true"></span>
 </button>
+
+<style>
+  #toc-open-button {
+    right: 1.25rem;
+    bottom: 2rem;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(0.35rem) scale(0.96);
+    visibility: hidden;
+  }
+
+  @media (max-width: 1127px) {
+    #toc-open-button {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0) scale(1);
+      visibility: visible;
+    }
+  }
+</style>
 
 <script>
   import { toggleFadeEffect } from '~/utils/misc'

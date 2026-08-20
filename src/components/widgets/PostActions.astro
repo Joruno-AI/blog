@@ -109,7 +109,8 @@ const { markdown, postUrl, title } = Astro.props
     cursor: pointer;
     transition:
       color 0.2s ease,
-      border-color 0.2s ease;
+      border-color 0.2s ease,
+      transform 0.14s cubic-bezier(0.23, 1, 0.32, 1);
   }
 
   .post-action:hover,
@@ -136,6 +137,10 @@ const { markdown, postUrl, title } = Astro.props
   .post-action-menu[data-open] .post-action {
     color: var(--post-action-hover-color);
     border-color: var(--post-action-hover-color);
+  }
+
+  .post-action:active {
+    transform: scale(0.97);
   }
 
   .copy-tooltip {
@@ -239,14 +244,31 @@ const { markdown, postUrl, title } = Astro.props
   }
 </style>
 <script>
+  async function copyText(text: string) {
+    try {
+      await navigator.clipboard.writeText(text)
+      return
+    } catch {
+      const textarea = document.createElement('textarea')
+      textarea.value = text
+      textarea.setAttribute('readonly', '')
+      textarea.style.position = 'fixed'
+      textarea.style.opacity = '0'
+      document.body.append(textarea)
+      textarea.select()
+      const legacyDocument = document as unknown as {
+        execCommand: (commandId: string) => boolean
+      }
+      const copied = legacyDocument.execCommand('copy')
+      textarea.remove()
+      if (!copied) throw new Error('Clipboard access denied')
+    }
+  }
+
   function initPostActions() {
     const root = document.querySelector<HTMLElement>('[data-post-actions]')
     if (!root || root.dataset.ready === 'true') return
     root.dataset.ready = 'true'
-
-    const markdown = root.dataset.markdown ?? ''
-    const url = root.dataset.url ?? ''
-    const title = root.dataset.title ?? ''
 
     // --- Copy Markdown ---
     const copyBtn = root.querySelector<HTMLButtonElement>('[data-copy-md]')
@@ -256,7 +278,7 @@ const { markdown, postUrl, title } = Astro.props
       copyBtn.addEventListener('click', async () => {
         window.clearTimeout(feedbackTimer)
         try {
-          await navigator.clipboard.writeText(markdown)
+          await copyText(root.dataset.markdown ?? '')
           copyTooltip.textContent = 'Copied'
         } catch {
           copyTooltip.textContent = 'Copy failed'
@@ -270,17 +292,22 @@ const { markdown, postUrl, title } = Astro.props
     }
 
     // --- AI chat deep links ---
-    const prompt = `请阅读这篇文章并帮我总结要点：《${title}》\n${url}`
     const aiLinks = root.querySelectorAll<HTMLAnchorElement>('[data-ai]')
-    aiLinks.forEach((link) => {
-      const provider = link.dataset.ai
+    const updateAiLinks = () => {
+      const title = root.dataset.title ?? ''
+      const url = root.dataset.url ?? window.location.href
+      const prompt = `请阅读这篇文章并帮我总结要点：《${title}》\n${url}`
       const q = encodeURIComponent(prompt)
-      if (provider === 'chatgpt') {
-        link.href = `https://chatgpt.com/?q=${q}`
-      } else if (provider === 'claude') {
-        link.href = `https://claude.ai/new?q=${q}`
-      }
-    })
+      aiLinks.forEach((link) => {
+        const provider = link.dataset.ai
+        if (provider === 'chatgpt') {
+          link.href = `https://chatgpt.com/?q=${q}`
+        } else if (provider === 'claude') {
+          link.href = `https://claude.ai/new?q=${q}`
+        }
+      })
+    }
+    updateAiLinks()
 
     // --- Dropdown toggle ---
     const menu = root.querySelector<HTMLElement>('[data-open-menu]')
@@ -299,6 +326,7 @@ const { markdown, postUrl, title } = Astro.props
       }
       trigger.addEventListener('click', (e) => {
         e.stopPropagation()
+        updateAiLinks()
         dropdown.hidden ? open() : close()
       })
       document.addEventListener('click', (e) => {
@@ -328,9 +356,143 @@ const { markdown, postUrl, title } = Astro.props
           immersiveLabel.textContent = on ? '默认宽度' : '沉浸阅读'
       }
       apply(false)
-      immersiveBtn.addEventListener('click', () => {
+      let isAnimating = false
+      const panelSelector =
+        'blog-catalog .category-sidebar, #desktop-aside, .reader-course-panel, .reader-toc-panel'
+      const surfaceSelector =
+        'geektime-reader .reader-main, #main > header.prose, #main > article.prose'
+
+      const visibleElements = (selector: string) =>
+        Array.from(document.querySelectorAll<HTMLElement>(selector)).filter(
+          (element) => getComputedStyle(element).display !== 'none'
+        )
+
+      const cancelLayoutAnimations = () => {
+        for (const element of document.querySelectorAll<HTMLElement>(
+          `${panelSelector}, ${surfaceSelector}`
+        )) {
+          element.getAnimations().forEach((animation) => animation.cancel())
+        }
+      }
+
+      const animateReadingSurface = (surface: HTMLElement, before: DOMRect) => {
+        const after = surface.getBoundingClientRect()
+        if (after.width === 0 || before.width === 0) return
+
+        const offsetX = before.left - after.left
+        const scaleX = before.width / after.width
+        const geometryChanged =
+          Math.abs(offsetX) > 0.5 || Math.abs(1 - scaleX) > 0.005
+
+        surface.animate(
+          geometryChanged
+            ? [
+                {
+                  opacity: 0.86,
+                  transform: `translate3d(${offsetX}px, 0, 0) scaleX(${scaleX})`,
+                  transformOrigin: 'top left',
+                },
+                {
+                  opacity: 1,
+                  transform: 'translate3d(0, 0, 0) scaleX(1)',
+                  transformOrigin: 'top left',
+                },
+              ]
+            : [{ opacity: 0.86 }, { opacity: 1 }],
+          {
+            duration: 220,
+            easing: 'cubic-bezier(0.23, 1, 0.32, 1)',
+          }
+        )
+      }
+
+      const setImmersive = async (on: boolean, allowMotion: boolean) => {
+        if (isAnimating) return
+        const reduceMotion =
+          !allowMotion ||
+          window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        cancelLayoutAnimations()
+        const panels = visibleElements(panelSelector)
+        const surfaces = visibleElements(surfaceSelector)
+        const surfaceRects = new Map(
+          surfaces.map((surface) => [surface, surface.getBoundingClientRect()])
+        )
+
+        isAnimating = true
+        immersiveBtn.disabled = true
+        try {
+          if (on && !reduceMotion) {
+            const exits = panels.map((panel) => {
+              const direction =
+                panel.getBoundingClientRect().left < window.innerWidth / 2
+                  ? -6
+                  : 6
+              return panel.animate(
+                [
+                  { opacity: 1, transform: 'translate3d(0, 0, 0)' },
+                  {
+                    opacity: 0,
+                    transform: `translate3d(${direction}px, 0, 0)`,
+                  },
+                ],
+                {
+                  duration: 80,
+                  easing: 'cubic-bezier(0.23, 1, 0.32, 1)',
+                  fill: 'forwards',
+                }
+              )
+            })
+            await Promise.all(
+              exits.map((animation) =>
+                animation.finished.catch(() => undefined)
+              )
+            )
+          }
+
+          apply(on)
+          // A filled exit animation must be removed after the layout switches.
+          // Otherwise its opacity: 0 can survive the next toggle and hide the
+          // course directory or the article anchors.
+          panels.forEach((panel) =>
+            panel.getAnimations().forEach((animation) => animation.cancel())
+          )
+
+          if (!reduceMotion) {
+            surfaceRects.forEach((before, surface) =>
+              animateReadingSurface(surface, before)
+            )
+
+            if (!on) {
+              visibleElements(panelSelector).forEach((panel) => {
+                const direction =
+                  panel.getBoundingClientRect().left < window.innerWidth / 2
+                    ? -6
+                    : 6
+                panel.animate(
+                  [
+                    {
+                      opacity: 0,
+                      transform: `translate3d(${direction}px, 0, 0)`,
+                    },
+                    { opacity: 1, transform: 'translate3d(0, 0, 0)' },
+                  ],
+                  {
+                    duration: 180,
+                    easing: 'cubic-bezier(0.23, 1, 0.32, 1)',
+                  }
+                )
+              })
+            }
+          }
+        } finally {
+          isAnimating = false
+          immersiveBtn.disabled = false
+        }
+      }
+
+      immersiveBtn.addEventListener('click', (event) => {
         const on = !document.documentElement.hasAttribute('data-immersive')
-        apply(on)
+        void setImmersive(on, event.detail > 0)
       })
     }
   }

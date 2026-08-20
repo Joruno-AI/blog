@@ -190,8 +190,7 @@
     // 关闭导航面板
     const navPanel = document.getElementById('nav-panel')
     if (navPanel && !navPanel.classList.contains('hidden!')) {
-      const backdrop = document.getElementById('backdrop')
-      backdrop?.click()
+      document.getElementById('nav-open-button')?.click()
     }
   }
 

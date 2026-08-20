@@ -3,124 +3,182 @@
 ---
 
 <button
+  type="button"
   id="nav-open-button"
   class="hidden lt-md:flex items-center justify-center min-w-11 min-h-11 op-60 hover:op-100 op-transition touch-target"
-  title="Navigation"
+  title="打开导航菜单"
   aria-label="打开导航菜单"
   aria-expanded="false"
   aria-controls="nav-panel"
 >
-  <div u-i-ri-menu-line class="text-xl"></div>
+  <div u-i-ri-menu-line class="nav-toggle-icon text-xl"></div>
 </button>
 
 <div
   id="nav-panel"
   class="hidden! fixed top-16
-    overflow-y-auto flex flex-col gap-5
-    w-[min(90vw,24rem)] max-h-[calc(100vh-5rem)] py-4 px-6 rounded-lg touch-scroll
-    bg-[var(--c-bg)] shadow-custom_0_0_10_0 text-[var(--c-text)]"
+    overflow-y-auto flex flex-col gap-4
+    max-h-[calc(100vh-5rem)] py-2 px-2 rounded-xl touch-scroll
+    text-[var(--c-text)]"
   style="left: 50%; view-transition-name: none;"
-  role="dialog"
-  aria-modal="true"
+  role="navigation"
   aria-label="导航菜单"
 >
-  <!-- 关闭按钮 -->
-  <button
-    id="nav-close-button"
-    class="absolute top-3 right-3 p-2 op-50 hover:op-100 op-transition rounded-full touch-target"
-    aria-label="关闭导航菜单"
-  >
-    <div u-i-ri-close-line class="text-lg"></div>
-  </button>
-
-  <ul class="mt-2">
+  <ul class="mobile-nav-text-list mt-2">
     <slot name="text" />
   </ul>
-  <div class="flex justify-center items-center gap-4 flex-wrap">
+  <div class="mobile-nav-icon-grid">
     <slot name="icon" />
   </div>
 </div>
 
-<script>
-  import { toggleFadeEffect } from '~/utils/misc'
+<style>
+  #nav-panel {
+    width: min(calc(100vw - 1rem), 30rem);
+  }
 
+  #nav-open-button {
+    transition:
+      background-color 160ms ease,
+      color 160ms ease,
+      opacity 160ms ease,
+      transform 140ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  #nav-open-button[aria-expanded='true'] {
+    background: var(--c-surface-active);
+    color: var(--c-text);
+    opacity: 1;
+  }
+
+  .nav-toggle-icon {
+    transition: transform 180ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  #nav-open-button[aria-expanded='true'] .nav-toggle-icon {
+    transform: scale(0.9);
+  }
+
+  .mobile-nav-text-list:empty {
+    display: none;
+  }
+
+  .mobile-nav-icon-grid {
+    --mobile-nav-item-size: clamp(1.75rem, 8vw, 2rem);
+    --mobile-nav-gap: clamp(0.16rem, 0.8vw, 0.25rem);
+
+    display: grid;
+    grid-template-columns: repeat(9, var(--mobile-nav-item-size));
+    gap: var(--mobile-nav-gap);
+    justify-content: center;
+    padding: 0.25rem 0;
+  }
+
+  .mobile-nav-icon-grid :global(a) {
+    display: inline-flex;
+    width: var(--mobile-nav-item-size);
+    height: var(--mobile-nav-item-size);
+    min-width: 0 !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+    border-radius: 0.45rem;
+    color: var(--c-text-muted);
+    opacity: 1 !important;
+    transition:
+      background-color 160ms ease,
+      border-color 160ms ease,
+      color 160ms ease,
+      transform 140ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .mobile-nav-icon-grid :global(a[aria-current='page']) {
+    border-color: var(--c-border-soft);
+    background: var(--c-surface-active);
+    color: var(--c-text);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .mobile-nav-icon-grid :global(a:hover),
+    .mobile-nav-icon-grid :global(a:focus-visible) {
+      border-color: var(--c-border-soft);
+      background: var(--c-surface-hover);
+      color: var(--c-text);
+    }
+  }
+
+  .mobile-nav-icon-grid :global(a:active) {
+    transform: scale(0.96);
+  }
+
+  .mobile-nav-icon-grid :global(a > div) {
+    font-size: clamp(1rem, 4.8vw, 1.15rem);
+  }
+</style>
+
+<script>
   document.addEventListener('astro:page-load', () => {
     const navPanel = document.getElementById('nav-panel')
     const navOpenButton = document.getElementById('nav-open-button')
-    const navCloseButton = document.getElementById('nav-close-button')
-    const backdrop = document.getElementById('backdrop')
-
-    /* 重置面板状态 */
-    const resetNavPanel = () => {
-      if (navPanel) {
-        // Ensure left: 50% is set for centering
-        navPanel.style.left = '50%'
-        // Don't remove transform - let CSS handle it completely
-        // CSS will apply transform: translateX(-50%) for centering
-      }
-    }
 
     /* 页面加载时重置面板状态 */
-    navPanel?.classList.remove('visible', 'fade-in', 'fade-out')
+    navPanel?.classList.remove('visible')
     navPanel?.classList.add('hidden!')
-    backdrop?.classList.remove('fade-in', 'fade-out')
-    backdrop?.classList.add('hidden')
     navOpenButton?.setAttribute('aria-expanded', 'false')
-    resetNavPanel()
-
-    /* 阻止点击事件冒泡到 backdrop */
-    const stopPropagation = (e: Event) => {
-      e.stopPropagation()
-    }
+    let closeTimer = 0
 
     /* 打开导航面板 */
-    const openNavPanel = () => {
-      // Reset position before opening - ensure left: 50% for centering
-      if (navPanel) {
-        navPanel.style.left = '50%'
-        // Don't touch transform - CSS handles it with translateX(-50%)
-        // 阻止点击事件冒泡，确保可以直接点击面板内容
-        navPanel.addEventListener('click', stopPropagation, true)
-      }
-
-      toggleFadeEffect('backdrop', true, 'hidden')
-      toggleFadeEffect('nav-panel', true, 'hidden!')
-
-      // Use double requestAnimationFrame to ensure CSS transition works
+    const openNavPanel = (allowMotion = true) => {
+      if (!navPanel) return
+      window.clearTimeout(closeTimer)
+      navPanel.classList.remove('hidden!')
+      navPanel.toggleAttribute('data-no-motion', !allowMotion)
       requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          navPanel?.classList.add('visible')
-        })
+        navPanel.classList.add('visible')
       })
       navOpenButton?.setAttribute('aria-expanded', 'true')
-
-      // 聚焦到关闭按钮（无障碍）
-      navCloseButton?.focus()
+      navOpenButton?.setAttribute('aria-label', '收起导航菜单')
+      navOpenButton?.setAttribute('title', '收起导航菜单')
     }
 
     /* 关闭导航面板 */
-    const closeNavPanel = () => {
-      // 移除事件监听器
-      if (navPanel) {
-        navPanel.removeEventListener('click', stopPropagation, true)
-      }
-
-      toggleFadeEffect('backdrop', false, 'hidden')
-      toggleFadeEffect('nav-panel', false, 'hidden!')
-      navPanel?.classList.remove('visible')
+    const closeNavPanel = (restoreFocus = true, allowMotion = true) => {
+      if (!navPanel || navPanel.classList.contains('hidden!')) return
+      window.clearTimeout(closeTimer)
+      navPanel.toggleAttribute('data-no-motion', !allowMotion)
+      navPanel.classList.remove('visible')
       navOpenButton?.setAttribute('aria-expanded', 'false')
-
-      // Reset position after animation completes
-      setTimeout(() => {
-        resetNavPanel()
-      }, 300) // Match animation duration
-
-      // 恢复焦点到打开按钮
-      navOpenButton?.focus()
+      navOpenButton?.setAttribute('aria-label', '打开导航菜单')
+      navOpenButton?.setAttribute('title', '打开导航菜单')
+      const finish = () => {
+        navPanel.classList.add('hidden!')
+        navPanel.removeAttribute('data-no-motion')
+      }
+      if (allowMotion) closeTimer = window.setTimeout(finish, 180)
+      else finish()
+      if (restoreFocus) navOpenButton?.focus()
     }
 
     /* 事件绑定 */
-    navOpenButton?.addEventListener('click', openNavPanel)
-    navCloseButton?.addEventListener('click', closeNavPanel)
+    navOpenButton?.addEventListener('click', (event) => {
+      const isOpen = navOpenButton.getAttribute('aria-expanded') === 'true'
+      if (isOpen) closeNavPanel(false, event.detail > 0)
+      else openNavPanel(event.detail > 0)
+    })
+    document.addEventListener('click', (event) => {
+      const target = event.target
+      if (
+        target instanceof Node &&
+        !navPanel?.contains(target) &&
+        !navOpenButton?.contains(target)
+      ) {
+        closeNavPanel(false)
+      }
+    })
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') closeNavPanel(true, false)
+    })
   })
 </script>

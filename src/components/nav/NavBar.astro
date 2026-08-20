@@ -175,15 +175,30 @@ for (const item of new Set(left)) {
     background: var(--c-surface-hover);
   }
 
-  @media (max-width: 380px) {
-    .logo-wrapper {
-      width: 0;
-      opacity: 0;
-      margin-right: 0 !important; /* Override utility classes */
+  @media (max-width: 767px) {
+    :global(.nav-header:has(#nav-panel.visible)) {
+      z-index: 200;
     }
 
-    .main-nav {
-      justify-content: center !important;
+    .logo-wrapper {
+      width: 4.25rem;
+      flex: 0 0 4.25rem;
+      margin-right: 0.5rem !important;
+    }
+
+    .logo-wrapper :global(.logo-svg) {
+      width: 4.25rem;
+    }
+
+    /* The desktop hit-area rule above sets display:inline-flex with higher
+       specificity than Uno's responsive utility. Reinstate the intended
+       mobile hiding so the icon row collapses into the menu button. */
+    .main-nav :global(.grid-flow-col > [class~='lt-md:hidden']) {
+      display: none !important;
+    }
+
+    .main-nav :global(.grid-flow-col) {
+      margin-inline: 0;
     }
   }
 </style>

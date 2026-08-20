@@ -4,7 +4,8 @@ export const SITE: Site = {
   website: 'https://wangshengliang.cn/',
   base: '/',
   title: 'wangshengliang',
-  description: '王胜亮的个人博客，记录前端开发、Web 技术与编程实践中的踩坑与思考。',
+  description:
+    '王胜亮的个人博客，记录前端开发、Web 技术与编程实践中的踩坑与思考。',
   author: 'wangshengliang',
   lang: 'zh-Hans',
   ogLocale: 'zh_CN',
@@ -24,6 +25,12 @@ export const UI: Ui = {
       title: 'Blog',
       displayMode: 'alwaysIcon',
       icon: 'i-ri-article-line',
+    },
+    {
+      path: '/docs',
+      title: 'Docs',
+      displayMode: 'alwaysIcon',
+      icon: 'i-ri-book-open-line',
     },
     {
       path: '/projects',
@@ -94,7 +101,7 @@ export const UI: Ui = {
       'themeButton',
       'rssLink',
     ],
-    mergeOnMobile: false,
+    mergeOnMobile: true,
   },
   tabbedLayoutTabs: [
     { title: 'Changelog', path: '/changelog' },

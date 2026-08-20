@@ -4,39 +4,61 @@
 
 <button
   id="to-top-button"
-  class="z-50 fixed right-5 bottom-24
-    w-12 h-12 rounded-full
-    op-0 pointer-events-none op-transition
-    lt-lgp:(op-50! bg-#8883 dark:bg-#8886 pointer-events-auto! bottom-24)
-    hover:(op-100! bg-#8883) print:hidden"
-  title="Scroll to top"
+  class="floating-tool-button"
+  type="button"
+  aria-label="回到页面顶部"
+  title="回到页面顶部"
 >
-  <div u-i-ri-arrow-up-line></div>
+  <span class="i-ri-arrow-up-line" aria-hidden="true"></span>
 </button>
 
-<script>
-  document.addEventListener('astro:page-load', () => {
-    const handleClick = () => {
-      window.scrollTo({ top: 0 })
-    }
-    const toTopButton = document.getElementById('to-top-button')
-    toTopButton?.addEventListener('click', handleClick)
-  })
-
-  const handleScroll = () => {
-    const scrollThreshold = 300
-    const toTopButton = document.getElementById('to-top-button')
-
-    if (toTopButton && window.matchMedia('(min-width: 1024px)').matches) {
-      const scrollY = window.scrollY || document.documentElement.scrollTop
-      if (scrollY <= scrollThreshold) {
-        toTopButton.style.opacity = '0'
-        toTopButton.style.pointerEvents = 'none'
-      } else {
-        toTopButton.style.opacity = '0.3'
-        toTopButton.style.pointerEvents = 'auto'
-      }
-    }
+<style>
+  #to-top-button {
+    right: 1.25rem;
+    bottom: 6rem;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(0.35rem) scale(0.96);
+    visibility: hidden;
   }
-  window.addEventListener('scroll', handleScroll)
+
+  #to-top-button[data-visible] {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+    visibility: visible;
+  }
+</style>
+
+<script>
+  function initToTopButton() {
+    const toTopButton = document.getElementById('to-top-button')
+    if (!toTopButton || toTopButton.dataset.ready === 'true') return
+    toTopButton.dataset.ready = 'true'
+
+    const updateVisibility = () => {
+      const scrollY = window.scrollY || document.documentElement.scrollTop
+      toTopButton.toggleAttribute('data-visible', scrollY > 300)
+    }
+
+    let scrollFrame = 0
+    const handleScroll = () => {
+      if (scrollFrame) return
+      scrollFrame = window.requestAnimationFrame(() => {
+        scrollFrame = 0
+        updateVisibility()
+      })
+    }
+
+    toTopButton.addEventListener('click', () => {
+      const reduceMotion = window.matchMedia(
+        '(prefers-reduced-motion: reduce)'
+      ).matches
+      window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' })
+    })
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    updateVisibility()
+  }
+
+  document.addEventListener('astro:page-load', initToTopButton)
 </script>

@@ -314,14 +314,42 @@ if (collectionType === 'blog') {
     line-height: 1.15;
   }
 
-  @media (min-width: 1128px) and (max-width: 1279px) {
+  /* Let the reading column grow gradually on wide screens without turning
+     paragraphs into full-viewport lines. The sidebars still retain clear
+     ownership of the outer columns. */
+  @media (min-width: 1280px) {
+    :global(
+      html:not([data-immersive])
+        body:has(blog-catalog[data-mode='reader'])
+        #main
+        > :is(header, article).prose
+    ) {
+      max-width: clamp(42rem, 50vw, 60rem);
+    }
+  }
+
+  @media (min-width: 1600px) {
+    :global(blog-catalog[data-mode='reader'] .blog-catalog-nav) {
+      left: max(2rem, calc(50vw - 49rem));
+      width: 17rem;
+    }
+
+    :global(#desktop-aside[data-context='blog']) {
+      right: max(2rem, calc(50vw - 49rem));
+      left: auto !important;
+    }
+  }
+
+  @media (min-width: 1128px) and (max-width: 1399px) {
     :global(#desktop-aside[data-context='blog']) {
       display: none;
     }
 
     :global(body:has(#desktop-aside[data-context='blog']) #toc-open-button) {
-      opacity: 0.5 !important;
+      opacity: 1 !important;
       pointer-events: auto;
+      transform: translateY(0) scale(1);
+      visibility: visible;
     }
   }
 

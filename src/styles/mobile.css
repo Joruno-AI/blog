@@ -49,22 +49,29 @@ html {
 /* ========== 导航面板优化 ========== */
 
 #nav-panel {
-  /* 添加滑动动画 */
   transition:
-    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    opacity 0.3s ease;
-  /* 确保居中：left: 50% 配合 translateX(-50%) */
+    transform 180ms cubic-bezier(0.23, 1, 0.32, 1),
+    opacity 160ms cubic-bezier(0.23, 1, 0.32, 1);
   left: 50% !important;
-  transform: translateX(-50%) translateY(-10px) !important;
+  border: 1px solid var(--c-border-soft);
+  background: var(--c-bg);
+  box-shadow: 0 16px 42px rgb(0 0 0 / 0.14);
+  opacity: 0;
+  pointer-events: none !important;
+  transform: translateX(-50%) translateY(-0.5rem) scale(0.98) !important;
+  transform-origin: calc(100% - 1.5rem) top;
   touch-action: pan-y;
-  /* 确保可以接收点击事件 */
-  pointer-events: auto !important;
-  /* 确保层级高于音乐播放器和 canvas (最高层) */
   z-index: 9999 !important;
 }
 
 #nav-panel.visible {
-  transform: translateX(-50%) translateY(0) !important;
+  opacity: 1;
+  pointer-events: auto !important;
+  transform: translateX(-50%) translateY(0) scale(1) !important;
+}
+
+#nav-panel[data-no-motion] {
+  transition: none;
 }
 
 /* 导航面板内的列表项 */
@@ -142,7 +149,8 @@ html {
   }
 
   #nav-panel {
-    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+    /* 顶部浮层不接触设备底部，无需预留底部安全区。 */
+    padding-bottom: 0.5rem;
   }
 }
 
@@ -221,4 +229,3 @@ html {
     padding: 0.75rem 1rem;
   }
 }
-

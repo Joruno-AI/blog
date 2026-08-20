@@ -1,0 +1,1430 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro'
+import StandardLayout from '~/layouts/StandardLayout.astro'
+import PostActions from '~/components/widgets/PostActions.astro'
+---
+
+<BaseLayout
+  title="课程文档"
+  description="技术课程文档阅读页"
+  bgType="rose"
+  stableNavigation={true}
+>
+  <StandardLayout class="reader-shell">
+    <geektime-reader
+      data-catalog-url="/docs/catalog.json?v=2"
+      data-loading
+      aria-busy="true"
+    >
+      <div class="reader-layout">
+        <aside
+          class="reader-panel-skeleton reader-panel-skeleton-course"
+          aria-hidden="true"
+        >
+          <span class="reader-panel-skeleton-heading"></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </aside>
+
+        <aside class="reader-course-panel" data-course-panel hidden>
+          <div class="reader-aside-heading">
+            <span class="i-ri-book-open-line" aria-hidden="true"></span>
+            <a data-course-panel-link href="/docs/">本课程</a>
+            <span data-course-count></span>
+          </div>
+          <ol class="reader-course-list" data-course-list></ol>
+        </aside>
+
+        <div class="reader-main">
+          <nav class="reader-breadcrumb" aria-label="面包屑">
+            <a href="/docs/">Docs</a>
+            <span data-course-separator aria-hidden="true" hidden>/</span>
+            <a data-course-link href="/docs/">
+              <span class="sr-only">课程</span>
+            </a>
+          </nav>
+
+          <header class="reader-header">
+            <div class="reader-header-skeleton" aria-hidden="true">
+              <span class="reader-header-skeleton-meta"></span>
+              <span class="reader-header-skeleton-title"></span>
+              <span
+                class="reader-header-skeleton-title reader-header-skeleton-title-short"
+              ></span>
+              <span class="reader-header-skeleton-actions"></span>
+            </div>
+            <div class="reader-header-content">
+              <div class="reader-category" data-category></div>
+              <h1 data-title><span class="sr-only">正在加载文档</span></h1>
+              <div class="reader-actions" data-reader-actions hidden>
+                <PostActions markdown="" postUrl="" title="课程文档" />
+              </div>
+            </div>
+          </header>
+
+          <div class="reader-state" data-state aria-live="polite">
+            <span class="sr-only">正在从内容快照加载正文</span>
+            <div class="reader-skeleton" aria-hidden="true">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span class="reader-skeleton-media"></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+
+          <article class="prose reader-content" data-content hidden></article>
+
+          <nav class="reader-neighbors" aria-label="章节导航" hidden>
+            <a data-previous href="/docs/">
+              <span>上一篇</span>
+              <strong></strong>
+            </a>
+            <a data-next href="/docs/">
+              <span>下一篇</span>
+              <strong></strong>
+            </a>
+          </nav>
+
+          <footer class="reader-source" hidden>
+            <span data-source-label>文档来自仓库快照</span>
+            <a data-source-link href="/docs/">查看源文件</a>
+          </footer>
+        </div>
+
+        <aside class="reader-toc-panel" data-toc-panel hidden>
+          <div class="reader-aside-heading">
+            <span class="i-ri-menu-2-line" aria-hidden="true"></span>
+            <span>本页目录</span>
+          </div>
+          <nav class="reader-toc-list" data-toc-list aria-label="本页目录">
+          </nav>
+        </aside>
+
+        <aside
+          class="reader-panel-skeleton reader-panel-skeleton-toc"
+          aria-hidden="true"
+        >
+          <span class="reader-panel-skeleton-heading"></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </aside>
+      </div>
+    </geektime-reader>
+  </StandardLayout>
+</BaseLayout>
+
+<style>
+  .reader-shell {
+    --reader-line: var(--c-border-soft);
+    --reader-muted: var(--c-text-muted);
+  }
+
+  geektime-reader {
+    display: block;
+  }
+
+  .reader-layout {
+    width: 100%;
+    max-width: 96rem;
+    margin-inline: auto;
+  }
+
+  .reader-main {
+    position: relative;
+    width: 100%;
+    max-width: 54rem;
+    min-width: 0;
+    margin-inline: auto;
+  }
+
+  .reader-course-panel,
+  .reader-toc-panel,
+  .reader-panel-skeleton {
+    display: none;
+  }
+
+  .reader-course-panel[hidden],
+  .reader-toc-panel[hidden],
+  .reader-actions[hidden] {
+    display: none;
+  }
+
+  .reader-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-bottom: 2.25rem;
+    color: var(--c-text-faint);
+    font-size: 0.7rem;
+  }
+
+  .reader-breadcrumb a {
+    border-bottom: 1px solid transparent;
+    color: inherit;
+    text-decoration: none;
+    transition:
+      border-color 0.2s ease,
+      color 0.2s ease;
+  }
+
+  .reader-breadcrumb a:hover,
+  .reader-breadcrumb a:focus-visible {
+    border-color: var(--c-border-strong);
+    color: var(--c-text);
+  }
+
+  .reader-header {
+    position: relative;
+    padding-bottom: 1.75rem;
+    border-bottom: 1px solid var(--reader-line);
+  }
+
+  .reader-header-skeleton {
+    display: none;
+  }
+
+  geektime-reader[data-loading] .reader-header-skeleton {
+    display: grid;
+    gap: 0.7rem;
+  }
+
+  geektime-reader[data-loading] .reader-header-content {
+    display: none;
+  }
+
+  .reader-header-skeleton span {
+    display: block;
+    border-radius: 0.25rem;
+    background: var(--c-surface-soft);
+    animation: reader-pulse 1.4s ease-in-out infinite;
+  }
+
+  .reader-header-skeleton-meta {
+    width: 4.5rem;
+    height: 0.6rem;
+  }
+
+  .reader-header-skeleton-title {
+    width: min(38rem, 88%);
+    height: clamp(2rem, 5vw, 2.8rem);
+    margin-top: 0.2rem;
+  }
+
+  .reader-header-skeleton-title-short {
+    width: min(25rem, 58%);
+    margin-top: -0.35rem;
+    animation-delay: 100ms !important;
+  }
+
+  .reader-header-skeleton-actions {
+    width: min(19rem, 72%);
+    height: 2rem;
+    margin-top: 0.65rem;
+    animation-delay: 180ms !important;
+  }
+
+  .reader-main[data-switching] .reader-header::after {
+    position: absolute;
+    right: 0;
+    bottom: -1px;
+    left: 0;
+    height: 1px;
+    background: var(--c-text-muted);
+    content: '';
+    opacity: 0.45;
+    transform: scaleX(0.12);
+    transform-origin: left;
+    animation: reader-loading 0.8s cubic-bezier(0.23, 1, 0.32, 1) infinite;
+  }
+
+  .reader-category {
+    color: var(--c-text-faint);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+  }
+
+  .reader-header h1 {
+    max-width: 100%;
+    margin: 0.65rem 0 0;
+    color: var(--c-text);
+    font-family: var(--font-article-title);
+    font-size: clamp(2rem, 5vw, 3.25rem);
+    font-weight: 400;
+    font-style: italic;
+    line-height: 1.15;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+
+  .reader-actions {
+    margin-top: 1.25rem;
+  }
+
+  .reader-actions :global(.post-actions) {
+    margin-bottom: 0;
+  }
+
+  .reader-state {
+    min-height: 20rem;
+    padding-top: 2.25rem;
+  }
+
+  .reader-state.is-error {
+    display: flex;
+    min-height: 16rem;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+    color: #dc2626;
+    font-size: 0.8rem;
+    text-align: center;
+  }
+
+  :global(.dark) .reader-state.is-error {
+    color: #f87171;
+  }
+
+  :global(.reader-error-back) {
+    margin-top: 0.35rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--reader-line);
+    border-radius: 0.375rem;
+    color: var(--c-text-muted);
+    text-decoration: none;
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease;
+  }
+
+  :global(.reader-error-back:hover),
+  :global(.reader-error-back:focus-visible) {
+    border-color: var(--c-border-strong);
+    background: var(--c-surface-hover);
+    color: var(--c-text);
+  }
+
+  .reader-state[hidden] {
+    display: none;
+  }
+
+  .reader-skeleton {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .reader-skeleton span {
+    display: block;
+    height: 0.82rem;
+    border-radius: 0.2rem;
+    background: var(--c-surface-soft);
+    animation: reader-pulse 1.5s ease-in-out infinite;
+  }
+
+  .reader-skeleton span:nth-child(1) {
+    width: 94%;
+  }
+
+  .reader-skeleton span:nth-child(2) {
+    width: 100%;
+    animation-delay: 80ms;
+  }
+
+  .reader-skeleton span:nth-child(3) {
+    width: 86%;
+    animation-delay: 160ms;
+  }
+
+  .reader-skeleton span:nth-child(4) {
+    width: 100%;
+    animation-delay: 240ms;
+  }
+
+  .reader-skeleton span:nth-child(5) {
+    width: 97%;
+    animation-delay: 320ms;
+  }
+
+  .reader-skeleton span:nth-child(6) {
+    width: 88%;
+    animation-delay: 400ms;
+  }
+
+  .reader-skeleton span:nth-child(7) {
+    width: 94%;
+    margin-top: 0.9rem;
+    animation-delay: 480ms;
+  }
+
+  .reader-skeleton span:nth-child(8) {
+    width: 72%;
+    animation-delay: 560ms;
+  }
+
+  .reader-skeleton .reader-skeleton-media {
+    height: clamp(10rem, 23vw, 15rem);
+    margin-block: 1rem 0.6rem;
+    border-radius: 0.5rem;
+  }
+
+  .reader-content {
+    max-width: none;
+    padding-top: 1.75rem;
+  }
+
+  .reader-content :global(img) {
+    height: auto;
+    border-radius: 0.5rem;
+  }
+
+  .reader-content :global(pre) {
+    overflow-x: auto;
+    padding: 1rem;
+    border: 1px solid var(--reader-line);
+    border-radius: 0.5rem;
+    background: var(--c-surface-soft);
+  }
+
+  .reader-content :global(pre code) {
+    padding: 0;
+    background: transparent;
+    font-size: 0.82rem;
+  }
+
+  .reader-content :global(h2),
+  .reader-content :global(h3),
+  .reader-content :global(h4) {
+    scroll-margin-top: 5rem;
+    text-wrap: pretty;
+  }
+
+  .reader-neighbors {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-top: 3.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--reader-line);
+  }
+
+  .reader-neighbors[hidden] {
+    display: none;
+  }
+
+  .reader-neighbors a {
+    display: flex;
+    min-width: 0;
+    min-height: 5rem;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.35rem;
+    padding: 0.875rem 1rem;
+    border: 1px solid var(--reader-line);
+    border-radius: 0.5rem;
+    background: transparent;
+    color: var(--c-text-soft);
+    text-decoration: none;
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .reader-neighbors a:hover,
+  .reader-neighbors a:focus-visible {
+    border-color: var(--c-border-strong);
+    background: var(--c-surface-hover);
+    color: var(--c-text);
+    transform: translateY(-1px);
+  }
+
+  .reader-neighbors a:last-child {
+    text-align: right;
+  }
+
+  .reader-neighbors a[hidden] {
+    visibility: hidden;
+  }
+
+  .reader-neighbors span {
+    color: var(--c-text-faint);
+    font-size: 0.7rem;
+  }
+
+  .reader-neighbors strong {
+    overflow: hidden;
+    font-size: 0.78rem;
+    font-weight: 500;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .reader-source {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+    color: var(--c-text-faint);
+    font-size: 0.68rem;
+  }
+
+  .reader-source[hidden] {
+    display: none;
+  }
+
+  .reader-source a {
+    border-bottom: 1px solid transparent;
+    color: inherit;
+    transition:
+      border-color 0.2s ease,
+      color 0.2s ease;
+  }
+
+  .reader-source a:hover {
+    border-color: var(--c-border-strong);
+    color: var(--c-text);
+  }
+
+  @keyframes reader-pulse {
+    0%,
+    100% {
+      opacity: 0.45;
+    }
+    50% {
+      opacity: 0.9;
+    }
+  }
+
+  @keyframes reader-loading {
+    0% {
+      transform: translateX(0) scaleX(0.12);
+    }
+    55% {
+      transform: translateX(28%) scaleX(0.58);
+    }
+    100% {
+      transform: translateX(88%) scaleX(0.12);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reader-header-skeleton span,
+    .reader-skeleton span,
+    .reader-panel-skeleton span,
+    .reader-main[data-switching] .reader-header::after {
+      animation: none;
+    }
+  }
+
+  @media (min-width: 1400px) {
+    .reader-layout {
+      display: grid;
+      grid-template-columns:
+        minmax(13rem, 16rem) minmax(0, 54rem)
+        minmax(11rem, 14rem);
+      gap: clamp(1.5rem, 2.25vw, 3rem);
+      align-items: start;
+    }
+
+    .reader-main {
+      grid-column: 2;
+      grid-row: 1;
+      max-width: none;
+      margin: 0;
+    }
+
+    .reader-course-panel,
+    .reader-panel-skeleton-course {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .reader-toc-panel,
+    .reader-panel-skeleton-toc {
+      grid-column: 3;
+      grid-row: 1;
+    }
+
+    geektime-reader[data-loading] .reader-panel-skeleton {
+      display: grid;
+      gap: 0.78rem;
+      align-content: start;
+      padding: 0.2rem 0.35rem;
+    }
+
+    .reader-panel-skeleton span {
+      display: block;
+      width: 86%;
+      height: 0.62rem;
+      border-radius: 0.2rem;
+      background: var(--c-surface-soft);
+      animation: reader-pulse 1.5s ease-in-out infinite;
+    }
+
+    .reader-panel-skeleton span:nth-child(3n) {
+      width: 68%;
+      animation-delay: 120ms;
+    }
+
+    .reader-panel-skeleton span:nth-child(3n + 2) {
+      width: 96%;
+      animation-delay: 220ms;
+    }
+
+    .reader-panel-skeleton .reader-panel-skeleton-heading {
+      width: 100%;
+      height: 1.55rem;
+      margin-bottom: 0.35rem;
+      border-radius: 0.3rem;
+    }
+
+    .reader-course-panel,
+    .reader-toc-panel {
+      position: sticky;
+      top: 5.5rem;
+      display: flex;
+      max-height: calc(100vh - 7rem);
+      flex-direction: column;
+      overflow: hidden;
+      color: var(--c-text-muted);
+    }
+
+    .reader-aside-heading {
+      display: flex;
+      flex: none;
+      align-items: center;
+      gap: 0.45rem;
+      min-height: 2.25rem;
+      padding: 0.2rem 0.35rem 0.65rem;
+      border-bottom: 1px solid var(--reader-line);
+      color: var(--c-text);
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .reader-aside-heading a {
+      min-width: 0;
+      overflow: hidden;
+      border: 0;
+      color: inherit;
+      text-decoration: none;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .reader-aside-heading [data-course-count] {
+      margin-left: auto;
+      color: var(--c-text-faint);
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      font-weight: 400;
+    }
+
+    .reader-course-list,
+    .reader-toc-list {
+      overflow-y: auto;
+      padding: 0.65rem 0.35rem 1rem;
+      margin: 0;
+      scrollbar-color: var(--c-border-strong) transparent;
+      scrollbar-width: thin;
+    }
+
+    :global(.reader-course-item) {
+      margin: 0;
+      list-style: none;
+    }
+
+    :global(.reader-course-item::before) {
+      display: none;
+    }
+
+    :global(.reader-course-link) {
+      display: grid;
+      grid-template-columns: 1.55rem minmax(0, 1fr);
+      gap: 0.35rem;
+      padding: 0.42rem 0.4rem;
+      border-radius: 0.35rem;
+      color: var(--c-text-muted);
+      font-size: 0.72rem;
+      line-height: 1.45;
+      text-decoration: none;
+      transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
+    }
+
+    :global(.reader-course-link:hover),
+    :global(.reader-course-link:focus-visible) {
+      background: var(--c-surface-hover);
+      color: var(--c-text);
+    }
+
+    :global(.reader-course-link[aria-current='page']) {
+      background: var(--c-surface-active);
+      color: var(--c-text);
+      font-weight: 600;
+    }
+
+    :global(.reader-course-index) {
+      color: var(--c-text-faint);
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      font-weight: 400;
+    }
+
+    :global(.reader-toc-link) {
+      display: block;
+      overflow: hidden;
+      padding: 0.38rem 0.45rem;
+      border-left: 1px solid transparent;
+      color: var(--c-text-muted);
+      font-size: 0.72rem;
+      line-height: 1.4;
+      text-decoration: none;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      transition:
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+    }
+
+    :global(.reader-toc-link[data-depth='3']) {
+      padding-left: 1rem;
+    }
+
+    :global(.reader-toc-link[data-depth='4']) {
+      padding-left: 1.55rem;
+    }
+
+    :global(.reader-toc-link:hover),
+    :global(.reader-toc-link:focus-visible),
+    :global(.reader-toc-link[aria-current='true']) {
+      border-left-color: var(--c-border-strong);
+      color: var(--c-text);
+      transform: translateX(2px);
+    }
+
+    :global(html[data-immersive]) .reader-layout {
+      display: block;
+      max-width: 72rem;
+    }
+
+    :global(html[data-immersive]) .reader-course-panel,
+    :global(html[data-immersive]) .reader-toc-panel {
+      display: none;
+    }
+
+    :global(html[data-immersive]) .reader-main {
+      max-width: 72rem;
+      margin-inline: auto;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .reader-breadcrumb {
+      margin-bottom: 1.75rem;
+    }
+
+    .reader-header h1 {
+      font-size: clamp(1.9rem, 10vw, 2.6rem);
+    }
+
+    .reader-header-skeleton-title {
+      height: 2.15rem;
+    }
+
+    .reader-neighbors {
+      grid-template-columns: 1fr;
+    }
+
+    .reader-neighbors a:last-child {
+      text-align: left;
+    }
+  }
+</style>
+
+<script>
+  import DOMPurify from 'dompurify'
+  import { marked } from 'marked'
+  import imageFallbacks from '~/data/nuggets-image-fallbacks.json'
+
+  interface Article {
+    title: string
+    path: string
+  }
+
+  interface Course {
+    id: string
+    sourceId?: string
+    name: string
+    path: string
+    articles: Article[]
+  }
+
+  interface Category {
+    id: string
+    name: string
+    courses: Course[]
+  }
+
+  interface Catalog {
+    sources?: Source[]
+    source?: string
+    commit?: string
+    categories: Category[]
+  }
+
+  interface Source {
+    id: string
+    name: string
+    source: string
+    repository: string
+    commit: string
+  }
+
+  class GeektimeReader extends HTMLElement {
+    private catalog!: Catalog
+    private article!: Article
+    private course!: Course
+    private category!: Category
+    private source!: Source
+    private headingObserver?: IntersectionObserver
+    private requestController?: AbortController
+    private loadSequence = 0
+    private markdownCache = new Map<string, string>()
+
+    connectedCallback() {
+      this.addEventListener('click', this.handleReaderLink)
+      this.addEventListener('pointerover', this.prefetchReaderLink)
+      window.addEventListener('popstate', this.handlePopState)
+      this.load().catch((error) => this.showError(error))
+    }
+
+    disconnectedCallback() {
+      this.removeEventListener('click', this.handleReaderLink)
+      this.removeEventListener('pointerover', this.prefetchReaderLink)
+      window.removeEventListener('popstate', this.handlePopState)
+      this.headingObserver?.disconnect()
+      this.requestController?.abort()
+    }
+
+    private async load() {
+      const location = this.resolveArticleLocation()
+      if (!location) {
+        window.location.replace('/docs/')
+        return
+      }
+
+      const catalogUrl = this.dataset.catalogUrl || '/docs/catalog.json'
+      const catalogResponse = await fetch(catalogUrl)
+      if (!catalogResponse.ok) throw new Error('无法加载文档目录。')
+      this.catalog = (await catalogResponse.json()) as Catalog
+
+      await this.loadArticle(location.path, true, location.sourceId)
+    }
+
+    private async loadArticle(
+      articlePath: string,
+      initial = false,
+      sourceId = this.source?.id || 'geektime'
+    ) {
+      const located = this.findArticle(articlePath, sourceId)
+      if (!located) throw new Error('没有在当前内容快照中找到这篇文档。')
+
+      const sequence = ++this.loadSequence
+      this.requestController?.abort()
+      this.requestController = new AbortController()
+      const readerMain = this.querySelector<HTMLElement>('.reader-main')
+      if (!initial) {
+        readerMain?.setAttribute('data-switching', '')
+        readerMain?.setAttribute('aria-busy', 'true')
+      }
+
+      try {
+        const markdown = await this.fetchMarkdown(
+          located.article.path,
+          located.source,
+          this.requestController.signal
+        )
+        if (sequence !== this.loadSequence) return
+
+        ;({
+          article: this.article,
+          course: this.course,
+          category: this.category,
+          source: this.source,
+        } = located)
+
+        this.updateHeader()
+        this.updateCoursePanel()
+        const rendered = marked.parse(markdown, {
+          gfm: true,
+          breaks: false,
+        })
+        const safeHtml = DOMPurify.sanitize(rendered as string, {
+          USE_PROFILES: { html: true },
+        })
+        const template = document.createElement('template')
+        template.innerHTML = safeHtml
+        template.content.querySelector('h1')?.remove()
+        this.rewriteResources(template.content)
+        this.addHeadingAnchors(template.content)
+
+        const content = this.querySelector<HTMLElement>('[data-content]')
+        const state = this.querySelector<HTMLElement>('[data-state]')
+        if (!content || !state) return
+
+        content.replaceChildren(template.content)
+        content.hidden = false
+        state.hidden = true
+        state.classList.remove('is-error')
+        this.removeAttribute('data-loading')
+        this.removeAttribute('aria-busy')
+        this.updatePostActions(markdown)
+        this.updateToc(content)
+        this.updateNavigation()
+        this.updateSourceLink()
+
+        if (!initial) {
+          const header = this.querySelector<HTMLElement>('.reader-breadcrumb')
+          const top = header
+            ? header.getBoundingClientRect().top + window.scrollY - 80
+            : 0
+          window.scrollTo({ top: Math.max(0, top), behavior: 'auto' })
+          if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            content.animate(
+              [
+                { opacity: 0.55, transform: 'translateY(6px)' },
+                { opacity: 1, transform: 'translateY(0)' },
+              ],
+              {
+                duration: 180,
+                easing: 'cubic-bezier(0.23, 1, 0.32, 1)',
+              }
+            )
+          }
+        }
+
+        this.prefetchNeighbors()
+      } catch (error) {
+        if (error instanceof DOMException && error.name === 'AbortError') return
+        throw error
+      } finally {
+        if (sequence === this.loadSequence) {
+          readerMain?.removeAttribute('data-switching')
+          readerMain?.removeAttribute('aria-busy')
+        }
+      }
+    }
+
+    private resolveArticleLocation() {
+      const params = new URLSearchParams(window.location.search)
+      const currentPath = params.get('path')
+      const currentSourceId = params.get('source') || 'geektime'
+      if (currentPath) {
+        this.storeArticleLocation(currentPath, currentSourceId)
+        return { path: currentPath, sourceId: currentSourceId }
+      }
+
+      try {
+        const rememberedPath = sessionStorage.getItem(
+          'geektime:last-article-path'
+        )
+        if (!rememberedPath) return null
+        const rememberedSourceId =
+          sessionStorage.getItem('geektime:last-source-id') || 'geektime'
+
+        const restoredUrl = new URL(window.location.href)
+        restoredUrl.searchParams.set('path', rememberedPath)
+        restoredUrl.searchParams.set('source', rememberedSourceId)
+        window.history.replaceState(
+          window.history.state,
+          '',
+          restoredUrl.toString()
+        )
+        return { path: rememberedPath, sourceId: rememberedSourceId }
+      } catch {
+        return null
+      }
+    }
+
+    private handleReaderLink = (event: MouseEvent) => {
+      if (
+        event.defaultPrevented ||
+        event.button !== 0 ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.shiftKey ||
+        event.altKey
+      )
+        return
+      if (!(event.target instanceof Element)) return
+      const link = event.target.closest<HTMLAnchorElement>('a[href]')
+      if (!link || link.target === '_blank' || link.hasAttribute('download'))
+        return
+
+      const url = new URL(link.href, window.location.href)
+      const articlePath = url.searchParams.get('path')
+      const sourceId = url.searchParams.get('source') || 'geektime'
+      if (
+        !articlePath ||
+        url.origin !== window.location.origin ||
+        url.pathname !== window.location.pathname
+      )
+        return
+
+      event.preventDefault()
+      if (articlePath === this.article?.path && sourceId === this.source?.id)
+        return
+      this.storeArticleLocation(articlePath, sourceId)
+      window.history.pushState({}, '', url)
+      this.loadArticle(articlePath, false, sourceId).catch((error) =>
+        this.showError(error)
+      )
+    }
+
+    private prefetchReaderLink = (event: PointerEvent) => {
+      if (!(event.target instanceof Element) || !this.catalog) return
+      const link = event.target.closest<HTMLAnchorElement>('a[href]')
+      if (!link) return
+      const articlePath = new URL(
+        link.href,
+        window.location.href
+      ).searchParams.get('path')
+      const sourceId = new URL(
+        link.href,
+        window.location.href
+      ).searchParams.get('source')
+      if (!articlePath || !sourceId) return
+      const located = this.findArticle(articlePath, sourceId)
+      if (located)
+        void this.fetchMarkdown(articlePath, located.source).catch(
+          () => undefined
+        )
+    }
+
+    private handlePopState = () => {
+      const params = new URLSearchParams(window.location.search)
+      const articlePath = params.get('path')
+      const sourceId = params.get('source') || 'geektime'
+      if (
+        !articlePath ||
+        (articlePath === this.article?.path && sourceId === this.source?.id)
+      )
+        return
+      this.storeArticleLocation(articlePath, sourceId)
+      this.loadArticle(articlePath, false, sourceId).catch((error) =>
+        this.showError(error)
+      )
+    }
+
+    private storeArticleLocation(articlePath: string, sourceId: string) {
+      try {
+        sessionStorage.setItem('geektime:last-article-path', articlePath)
+        sessionStorage.setItem('geektime:last-source-id', sourceId)
+      } catch {
+        // Reading still works when storage is unavailable.
+      }
+    }
+
+    private async fetchMarkdown(
+      path: string,
+      source: Source,
+      signal?: AbortSignal
+    ) {
+      const cacheKey = `${source.id}:${path}`
+      const cached = this.markdownCache.get(cacheKey)
+      if (cached !== undefined) return cached
+
+      const response = await fetch(this.getRawUrl(path, source), { signal })
+      if (!response.ok) {
+        throw new Error(`正文加载失败（HTTP ${response.status}）。`)
+      }
+      const markdown = await response.text()
+      this.markdownCache.set(cacheKey, markdown)
+      return markdown
+    }
+
+    private findArticle(path: string, sourceId: string) {
+      const source = this.getSources().find((item) => item.id === sourceId)
+      if (!source) return null
+
+      for (const category of this.catalog.categories) {
+        for (const course of category.courses) {
+          if ((course.sourceId || 'geektime') !== sourceId) continue
+          const article = course.articles.find((item) => item.path === path)
+          if (article) return { category, course, article, source }
+        }
+      }
+      return null
+    }
+
+    private getSources() {
+      if (this.catalog.sources?.length) return this.catalog.sources
+      if (!this.catalog.source || !this.catalog.commit) return []
+
+      return [
+        {
+          id: 'geektime',
+          name: '极客时间',
+          source: this.catalog.source,
+          repository: 'uaxe/geektime-docs',
+          commit: this.catalog.commit,
+        },
+      ]
+    }
+
+    private updateHeader() {
+      const title = this.querySelector<HTMLElement>('[data-title]')
+      const category = this.querySelector<HTMLElement>('[data-category]')
+      const courseLink =
+        this.querySelector<HTMLAnchorElement>('[data-course-link]')
+      const courseSeparator = this.querySelector<HTMLElement>(
+        '[data-course-separator]'
+      )
+
+      if (title) title.textContent = this.article.title
+      if (category) category.textContent = this.category.name
+      if (courseLink) {
+        courseLink.textContent = this.course.name
+        courseLink.href = `/docs/#${this.category.id}`
+      }
+      if (courseSeparator) courseSeparator.hidden = false
+
+      document.title = `${this.article.title} - wangshengliang`
+      document
+        .querySelector('meta[name="description"]')
+        ?.setAttribute('content', `${this.course.name}：${this.article.title}`)
+    }
+
+    private updateCoursePanel() {
+      const panel = this.querySelector<HTMLElement>('[data-course-panel]')
+      const list = this.querySelector<HTMLOListElement>('[data-course-list]')
+      const link = this.querySelector<HTMLAnchorElement>(
+        '[data-course-panel-link]'
+      )
+      const count = this.querySelector<HTMLElement>('[data-course-count]')
+      if (!panel || !list) return
+
+      if (link) {
+        link.textContent = this.course.name
+        link.href = `/docs/#${this.category.id}`
+      }
+      if (count) count.textContent = `${this.course.articles.length} 篇`
+
+      if (list.dataset.courseId !== this.course.id) {
+        const fragment = document.createDocumentFragment()
+        this.course.articles.forEach((article, index) => {
+          const item = document.createElement('li')
+          item.className = 'reader-course-item'
+
+          const articleLink = document.createElement('a')
+          articleLink.className = 'reader-course-link'
+          articleLink.href = this.getArticleUrl(article.path)
+          articleLink.dataset.articlePath = article.path
+
+          const number = document.createElement('span')
+          number.className = 'reader-course-index'
+          number.textContent = String(index + 1).padStart(2, '0')
+
+          const name = document.createElement('span')
+          name.textContent = article.title.replace(/^\d+\s*[-–—]\s*/, '')
+          articleLink.append(number, name)
+          item.append(articleLink)
+          fragment.append(item)
+        })
+
+        list.replaceChildren(fragment)
+        list.dataset.courseId = this.course.id
+      }
+
+      let activeLink: HTMLAnchorElement | undefined
+      for (const articleLink of list.querySelectorAll<HTMLAnchorElement>(
+        '.reader-course-link'
+      )) {
+        const isActive = articleLink.dataset.articlePath === this.article.path
+        articleLink.toggleAttribute('aria-current', isActive)
+        if (isActive) {
+          articleLink.setAttribute('aria-current', 'page')
+          activeLink = articleLink
+        }
+      }
+
+      panel.hidden = false
+      requestAnimationFrame(() => {
+        activeLink?.scrollIntoView({ block: 'nearest' })
+      })
+    }
+
+    private updatePostActions(markdown: string) {
+      const container = this.querySelector<HTMLElement>('[data-reader-actions]')
+      const actions = this.querySelector<HTMLElement>('[data-post-actions]')
+      if (!container || !actions) return
+
+      actions.dataset.markdown = markdown
+      actions.dataset.url = window.location.href
+      actions.dataset.title = this.article.title
+      container.hidden = false
+    }
+
+    private updateToc(content: HTMLElement) {
+      const panel = this.querySelector<HTMLElement>('[data-toc-panel]')
+      const list = this.querySelector<HTMLElement>('[data-toc-list]')
+      if (!panel || !list) return
+
+      const headings = Array.from(
+        content.querySelectorAll<HTMLElement>('h2, h3, h4')
+      )
+      if (headings.length === 0) {
+        list.replaceChildren()
+        panel.hidden = true
+        this.headingObserver?.disconnect()
+        return
+      }
+
+      const fragment = document.createDocumentFragment()
+      for (const heading of headings) {
+        const link = document.createElement('a')
+        link.className = 'reader-toc-link'
+        link.dataset.depth = heading.tagName.slice(1)
+        link.href = `#${encodeURIComponent(heading.id)}`
+        link.textContent = heading.textContent?.trim() || '未命名章节'
+        link.dataset.headingId = heading.id
+        fragment.append(link)
+      }
+
+      list.replaceChildren(fragment)
+      panel.hidden = false
+      this.headingObserver?.disconnect()
+      this.headingObserver = new IntersectionObserver(
+        (entries) => {
+          const visible = entries.find((entry) => entry.isIntersecting)
+          if (!(visible?.target instanceof HTMLElement)) return
+          this.setActiveToc(visible.target.id)
+        },
+        { rootMargin: '-12% 0px -72% 0px' }
+      )
+      headings.forEach((heading) => this.headingObserver?.observe(heading))
+      this.setActiveToc(headings[0].id)
+    }
+
+    private setActiveToc(headingId: string) {
+      for (const link of this.querySelectorAll<HTMLAnchorElement>(
+        '.reader-toc-link'
+      )) {
+        if (link.dataset.headingId === headingId) {
+          link.setAttribute('aria-current', 'true')
+        } else {
+          link.removeAttribute('aria-current')
+        }
+      }
+    }
+
+    private rewriteResources(root: DocumentFragment) {
+      const knownPaths = new Set(
+        this.catalog.categories.flatMap((category) =>
+          category.courses.flatMap((course) =>
+            (course.sourceId || 'geektime') === this.source.id
+              ? course.articles.map((article) => article.path)
+              : []
+          )
+        )
+      )
+
+      for (const image of root.querySelectorAll<HTMLImageElement>('img[src]')) {
+        const source = image.getAttribute('src')
+        if (!source) continue
+
+        // Geekbang's image host rejects requests carrying an external Referer.
+        // Apply this before the fragment enters the DOM so the first request
+        // is sent without the blog URL as its referrer.
+        image.referrerPolicy = 'no-referrer'
+        image.loading = 'lazy'
+        image.decoding = 'async'
+
+        const fallback = (imageFallbacks as Record<string, string>)[source]
+        if (fallback) {
+          image.src = fallback
+          continue
+        }
+
+        if (!this.isAbsoluteUrl(source)) {
+          image.src = this.getRawUrl(this.resolvePath(source))
+        }
+      }
+
+      for (const link of root.querySelectorAll<HTMLAnchorElement>('a[href]')) {
+        const href = link.getAttribute('href')
+        if (!href || href.startsWith('#')) continue
+
+        if (this.isAbsoluteUrl(href)) {
+          link.target = '_blank'
+          link.rel = 'noopener noreferrer'
+          continue
+        }
+
+        const resolved = this.resolvePath(href)
+        if (resolved.endsWith('.md') && knownPaths.has(resolved)) {
+          link.href = this.getArticleUrl(resolved)
+        } else {
+          link.href = this.getRawUrl(resolved)
+          link.target = '_blank'
+          link.rel = 'noopener noreferrer'
+        }
+      }
+    }
+
+    private addHeadingAnchors(root: DocumentFragment) {
+      const used = new Set<string>()
+      for (const heading of root.querySelectorAll<HTMLElement>(
+        'h2, h3, h4, h5, h6'
+      )) {
+        const base =
+          heading.textContent
+            ?.trim()
+            .toLocaleLowerCase('zh-CN')
+            .replace(/\s+/g, '-')
+            .replace(/[^\w\-\u4e00-\u9fff]/g, '') || 'section'
+        let id = base
+        let suffix = 2
+        while (used.has(id)) id = `${base}-${suffix++}`
+        used.add(id)
+        heading.id = id
+      }
+    }
+
+    private resolvePath(relativePath: string) {
+      const baseDirectory = this.article.path.split('/').slice(0, -1).join('/')
+      const resolved = new URL(
+        relativePath,
+        `https://content.local/${baseDirectory}/`
+      )
+      return decodeURIComponent(resolved.pathname.replace(/^\//, ''))
+    }
+
+    private isAbsoluteUrl(value: string) {
+      return /^(?:[a-z]+:)?\/\//i.test(value) || value.startsWith('data:')
+    }
+
+    private getRawUrl(path: string, source = this.source) {
+      const encodedPath = path
+        .split('/')
+        .map((segment) => encodeURIComponent(segment))
+        .join('/')
+      return `https://cdn.jsdelivr.net/gh/${source.repository}@${source.commit}/${encodedPath}`
+    }
+
+    private getArticleUrl(path: string, sourceId = this.source.id) {
+      const params = new URLSearchParams({ source: sourceId, path })
+      return `/docs/read/?${params.toString()}`
+    }
+
+    private updateNavigation() {
+      const navigation = this.querySelector<HTMLElement>('.reader-neighbors')
+      const previous = this.querySelector<HTMLAnchorElement>('[data-previous]')
+      const next = this.querySelector<HTMLAnchorElement>('[data-next]')
+      const index = this.course.articles.findIndex(
+        (article) => article.path === this.article.path
+      )
+
+      this.configureNeighbor(previous, this.course.articles[index - 1])
+      this.configureNeighbor(next, this.course.articles[index + 1])
+      if (navigation) navigation.hidden = false
+    }
+
+    private prefetchNeighbors() {
+      const index = this.course.articles.findIndex(
+        (article) => article.path === this.article.path
+      )
+      for (const article of [
+        this.course.articles[index - 1],
+        this.course.articles[index + 1],
+      ]) {
+        if (article) {
+          void this.fetchMarkdown(article.path, this.source).catch(
+            () => undefined
+          )
+        }
+      }
+    }
+
+    private configureNeighbor(
+      element: HTMLAnchorElement | null,
+      article: Article | undefined
+    ) {
+      if (!element) return
+      if (!article) {
+        element.hidden = true
+        return
+      }
+      element.hidden = false
+      element.href = this.getArticleUrl(article.path)
+      element.dataset.articlePath = article.path
+      const title = element.querySelector('strong')
+      if (title) title.textContent = article.title
+    }
+
+    private updateSourceLink() {
+      const footer = this.querySelector<HTMLElement>('.reader-source')
+      const link = this.querySelector<HTMLAnchorElement>('[data-source-link]')
+      const label = this.querySelector<HTMLElement>('[data-source-label]')
+      if (link) {
+        const encodedPath = this.article.path
+          .split('/')
+          .map((segment) => encodeURIComponent(segment))
+          .join('/')
+        link.href = `${this.source.source}/blob/${this.source.commit}/${encodedPath}`
+      }
+      if (label) label.textContent = `文档来自 ${this.source.name} 仓库快照`
+      if (footer) footer.hidden = false
+    }
+
+    private showError(error: unknown) {
+      const state = this.querySelector<HTMLElement>('[data-state]')
+      if (!state) return
+
+      this.removeAttribute('data-loading')
+      this.removeAttribute('aria-busy')
+
+      const title = this.querySelector<HTMLElement>('[data-title]')
+      const course = this.querySelector<HTMLElement>('[data-course]')
+      const content = this.querySelector<HTMLElement>('[data-content]')
+      if (title) title.textContent = '文档暂时无法打开'
+      if (course) course.textContent = '请返回 Docs 后重试'
+
+      state.hidden = false
+      state.classList.add('is-error')
+      state.replaceChildren()
+      if (content) content.hidden = true
+
+      const icon = document.createElement('span')
+      icon.className = 'i-ri-error-warning-line'
+      const message = document.createElement('span')
+      message.textContent =
+        error instanceof Error ? error.message : '文档加载失败，请稍后重试。'
+      const backLink = document.createElement('a')
+      backLink.className = 'reader-error-back'
+      backLink.href = '/docs/'
+      backLink.textContent = '返回 Docs'
+      state.append(icon, message, backLink)
+    }
+  }
+
+  if (!customElements.get('geektime-reader')) {
+    customElements.define('geektime-reader', GeektimeReader)
+  }
+</script>

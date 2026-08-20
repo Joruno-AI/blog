@@ -127,7 +127,7 @@ const albumsData = localAlbumsData
   <a
     href="/music"
     id="music-floating-btn"
-    class="music-floating-btn"
+    class="music-floating-btn floating-tool-button"
     aria-label="回到音乐"
   >
     <span class="i-ri-disc-line spin-animation"></span>
@@ -487,31 +487,29 @@ const albumsData = localAlbumsData
 
   /* Floating Button Styles */
   .music-floating-btn {
-    position: fixed;
     bottom: 10rem;
     right: 1.25rem;
-    width: 3rem;
-    height: 3rem;
-    border-radius: 50%;
-    background: var(--c-bg);
-    border: 1px solid rgba(128, 128, 128, 0.2);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    pointer-events: auto;
-    z-index: 101;
-    transition: all 0.3s ease;
     opacity: 0;
-    transform: scale(0.8);
     pointer-events: none;
+    transform: translateY(0.35rem) scale(0.96);
+    visibility: hidden;
   }
 
   .music-floating-btn.visible {
     opacity: 1;
-    transform: scale(1);
     pointer-events: auto;
+    transform: translateY(0) scale(1);
+    visibility: visible;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .music-floating-btn.visible:hover {
+      transform: translateY(-1px) scale(1);
+    }
+  }
+
+  .music-floating-btn.visible:active {
+    transform: translateY(0) scale(0.96);
   }
 
   .spin-animation {
