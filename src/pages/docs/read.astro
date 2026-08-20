@@ -536,8 +536,11 @@ import PostActions from '~/components/widgets/PostActions.astro'
   }
 
   .reader-content :global(.reader-code-block code) {
+    background: transparent !important;
+    border-radius: 0;
     font-size: 14.72px;
     line-height: 1.4;
+    user-select: text;
   }
 
   .reader-content :global(h2),
@@ -1210,7 +1213,7 @@ import PostActions from '~/components/widgets/PostActions.astro'
     bundledLanguages,
     codeToHtml,
     type BundledLanguage,
-  } from 'shiki/bundle/web'
+  } from 'shiki/bundle/full'
   import imageFallbacks from '~/data/nuggets-image-fallbacks.json'
   import { finishProgress, startProgress } from '~/scripts/progress'
 
@@ -1320,6 +1323,16 @@ import PostActions from '~/components/widgets/PostActions.astro'
       )
     )
       return 'typescript'
+    if (/^\s*export\s+[A-Z_][A-Z0-9_]*\s*=/m.test(code)) return 'shellscript'
+    if (
+      /(?:^|\n)\s*(?:from\s+[\w.]+\s+import\s+|import\s+(?:os|sys|json|re|math|pathlib|typing|openai|langchain)\b)/m.test(
+        code
+      ) ||
+      /\b(?:os\.environ|client\.(?:chat\.)?completions\.create|True|False|None)\b/.test(
+        code
+      )
+    )
+      return 'python'
     if (
       /(?:^|\n)\s*(?:import|export)\b|\b(?:const|let|var)\s+[$\w]+|=>|\bfunction\s+[$\w]+|\b(?:window|document|console)\./m.test(
         code
@@ -1334,13 +1347,13 @@ import PostActions from '~/components/widgets/PostActions.astro'
     )
       return 'css'
     if (
-      /(?:^|\n)\s*(?:[$#]\s+)?(?:sudo\s+)?(?:npm|pnpm|yarn|bun|curl|wget|git|cd|mkdir|docker|kubectl|mysql|psql|sqlite3|apt|apt-get|brew|echo|export|source|chmod|chown|rm|cp|mv|cat|grep|sed|awk|md5sum|sha256sum|groupadd|useradd|tar|ln|rpm|yum|dnf|service|systemctl|more|less|head|tail|make|cmake)\b|(?:^|\n)\s*\.\/(?:configure|[\w.-]+)|(?:^|\n)\s*(?:mysql|psql)>\s*|^#!\/.*(?:ba|z)?sh|(?:^|\n)\s*(?:if\s+\[|for\s+\w+\s+in\b|case\s+.+\s+in\b|[A-Z_][A-Z0-9_]*=)/m.test(
+      /(?:^|\n)\s*(?:[$#]\s+)?(?:sudo\s+)?(?:npm|pnpm|yarn|bun|pip|pip3|python|python3|uv|poetry|pipx|curl|wget|git|cd|mkdir|docker|kubectl|mysql|psql|sqlite3|apt|apt-get|brew|echo|export|source|chmod|chown|rm|cp|mv|cat|grep|sed|awk|md5sum|sha256sum|groupadd|useradd|tar|ln|rpm|yum|dnf|service|systemctl|more|less|head|tail|make|cmake)\b|(?:^|\n)\s*\.\/(?:configure|[\w.-]+)|(?:^|\n)\s*(?:mysql|psql)>\s*|^#!\/.*(?:ba|z)?sh|(?:^|\n)\s*(?:if\s+\[|for\s+\w+\s+in\b|case\s+.+\s+in\b|[A-Z_][A-Z0-9_]*=)/m.test(
         code
       )
     )
       return 'shellscript'
     if (
-      /(?:^|\n)\s*(?:def|class)\s+\w+|(?:^|\n)\s*from\s+[\w.]+\s+import\s+|(?:^|\n)\s*import\s+[\w.]+|\bprint\s*\(/m.test(
+      /(?:^|\n)\s*(?:def|class)\s+\w+|(?:^|\n)\s*from\s+[\w.]+\s+import\s+|(?:^|\n)\s*import\s+[\w.]+|\bprint\s*\(|\b(?:model|temperature|max_tokens|prompt|messages)\s*=|\b(?:client|response)\.[\w.]+\(/m.test(
         code
       )
     )
@@ -1351,6 +1364,9 @@ import PostActions from '~/components/widgets/PostActions.astro'
       return 'sql'
     if (/\bpublic\s+(?:static\s+)?(?:class|void)|\bSystem\.out\./m.test(code))
       return 'java'
+
+    if (!/[A-Za-z_$][\w$]*(?:\s*[=().:]|\s|$)/.test(code))
+      return 'text' as BundledLanguage
 
     return undefined
   }
@@ -1568,91 +1584,94 @@ import PostActions from '~/components/widgets/PostActions.astro'
 
     private async decorateCodeBlocks(root: DocumentFragment) {
       const blocks = Array.from(root.querySelectorAll('pre'))
-      await Promise.all(
-        blocks.map(async (pre) => {
-          const code = pre.querySelector('code')
-          if (!code) return
+      for (const pre of blocks) {
+        const code = pre.querySelector('code')
+        if (!code) return
 
-          const source = code.textContent || ''
-          const languageClass = Array.from(code.classList).find((name) =>
-            name.startsWith('language-')
-          )
-          const languageToken = languageClass
-            ?.slice('language-'.length)
-            .toLowerCase()
-          const declaredLanguage = languageToken
-            ? CODE_LANGUAGE_ALIASES[languageToken] ||
-              (languageToken in bundledLanguages
-                ? (languageToken as BundledLanguage)
-                : undefined)
-            : undefined
-          const shouldInfer =
-            !languageToken ||
-            !declaredLanguage ||
-            GENERIC_LANGUAGE_TOKENS.has(languageToken) ||
-            (DIFF_LANGUAGE_TOKENS.has(languageToken) && !hasDiffMarkers(source))
-          const inferredLanguage = inferCodeLanguage(source)
-          const hasLanguageMismatch =
-            inferredLanguage === 'shellscript' &&
-            declaredLanguage !== 'shellscript'
-          const language = shouldInfer
-            ? inferredLanguage || declaredLanguage
-            : hasLanguageMismatch
-              ? inferredLanguage
-              : declaredLanguage
+        const source = (code.textContent || '').replace(/\n+$/, '')
+        const languageClass = Array.from(code.classList).find((name) =>
+          name.startsWith('language-')
+        )
+        const languageToken = languageClass
+          ?.slice('language-'.length)
+          .toLowerCase()
+        const declaredLanguage = languageToken
+          ? CODE_LANGUAGE_ALIASES[languageToken] ||
+            (languageToken in bundledLanguages
+              ? (languageToken as BundledLanguage)
+              : undefined)
+          : undefined
+        const shouldInfer =
+          !languageToken ||
+          !declaredLanguage ||
+          GENERIC_LANGUAGE_TOKENS.has(languageToken) ||
+          (DIFF_LANGUAGE_TOKENS.has(languageToken) && !hasDiffMarkers(source))
+        const inferredLanguage = inferCodeLanguage(source)
+        const hasLanguageMismatch =
+          inferredLanguage &&
+          declaredLanguage &&
+          inferredLanguage !== declaredLanguage &&
+          (inferredLanguage === 'shellscript' ||
+            inferredLanguage === 'python' ||
+            inferredLanguage === ('text' as BundledLanguage))
+        const language = shouldInfer
+          ? inferredLanguage || declaredLanguage
+          : hasLanguageMismatch
+            ? inferredLanguage
+            : declaredLanguage
+        const resolvedLanguage = language || ('text' as BundledLanguage)
 
-          let highlightedPre: HTMLPreElement | null = null
-          if (language) {
-            try {
-              const highlighted = await codeToHtml(source, {
-                lang: language,
-                themes: {
-                  light: 'vitesse-light',
-                  dark: 'vitesse-dark',
-                },
-                defaultColor: false,
-              })
-              const highlightedTemplate = document.createElement('template')
-              highlightedTemplate.innerHTML = highlighted
-              highlightedPre = highlightedTemplate.content.querySelector('pre')
-            } catch {
-              // Keep the original Markdown code block when a language is not
-              // supported by the highlighter.
-            }
-          }
+        let highlightedPre: HTMLPreElement | null = null
+        try {
+          const highlighted = await codeToHtml(source, {
+            lang: resolvedLanguage,
+            themes: {
+              light: 'vitesse-light',
+              dark: 'vitesse-dark',
+            },
+            defaultColor: false,
+          })
+          const highlightedTemplate = document.createElement('template')
+          highlightedTemplate.innerHTML = highlighted
+          highlightedPre = highlightedTemplate.content.querySelector('pre')
+        } catch (error) {
+          console.warn('[course-reader] code highlighting failed', {
+            language: resolvedLanguage,
+            error,
+          })
+        }
 
-          const wrapper = document.createElement('div')
-          wrapper.className = 'reader-code-block'
-          wrapper.dataset.code = source
+        const wrapper = document.createElement('div')
+        wrapper.className = 'reader-code-block'
+        wrapper.dataset.code = source
 
-          const toolbar = document.createElement('div')
-          toolbar.className = 'reader-code-toolbar'
+        const toolbar = document.createElement('div')
+        toolbar.className = 'reader-code-toolbar'
 
-          const languageLabel = document.createElement('span')
-          languageLabel.className = 'reader-code-language'
-          languageLabel.textContent =
-            (language && CODE_LANGUAGE_LABELS[language]) ||
-            language ||
-            languageToken ||
-            '代码'
+        const languageLabel = document.createElement('span')
+        languageLabel.className = 'reader-code-language'
+        languageLabel.textContent =
+          CODE_LANGUAGE_LABELS[resolvedLanguage] ||
+          resolvedLanguage ||
+          languageToken ||
+          '代码'
 
-          const copyButton = document.createElement('button')
-          copyButton.type = 'button'
-          copyButton.className = 'reader-code-copy'
-          copyButton.dataset.copyCode = ''
-          copyButton.dataset.copyLabel = '复制'
-          copyButton.setAttribute('aria-label', '复制代码')
-          copyButton.innerHTML =
-            '<span class="i-ri-file-copy-line" aria-hidden="true"></span><span data-copy-label>复制</span>'
+        const copyButton = document.createElement('button')
+        copyButton.type = 'button'
+        copyButton.className = 'reader-code-copy'
+        copyButton.dataset.copyCode = ''
+        copyButton.dataset.copyLabel = '复制'
+        copyButton.setAttribute('aria-label', '复制代码')
+        copyButton.innerHTML =
+          '<span class="i-ri-file-copy-line" aria-hidden="true"></span><span data-copy-label>复制</span>'
 
-          toolbar.append(languageLabel, copyButton)
-          wrapper.append(
-            toolbar,
-            highlightedPre || (pre.cloneNode(true) as HTMLPreElement)
-          )
-          pre.replaceWith(wrapper)
-        })
-      )
+        toolbar.append(languageLabel, copyButton)
+        wrapper.append(
+          toolbar,
+          highlightedPre || (pre.cloneNode(true) as HTMLPreElement)
+        )
+        pre.replaceWith(wrapper)
+      }
     }
 
     private handleCodeCopy = async (event: MouseEvent) => {
