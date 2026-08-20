@@ -81,7 +81,9 @@ export async function generateOgImageBuffer(
   const satoriFontData = await getSatoriFontData(requestUrl)
   if (!satoriFontData) throw new Error('Failed to fetch OG font file')
 
-  const svg = await satori(node, {
+  // `satori-html` returns its own VNode shape, which is runtime-compatible
+  // with Satori but is not typed as ReactNode by Satori's declaration file.
+  const svg = await satori(node as unknown as Parameters<typeof satori>[0], {
     // debug: true,
     width: 1200,
     height: 630,

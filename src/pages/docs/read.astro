@@ -1701,6 +1701,7 @@ import PostActions from '~/components/widgets/PostActions.astro'
       event.preventDefault()
       event.stopPropagation()
       const type = button.dataset.readerPanelToggle
+      if (type !== 'course' && type !== 'toc') return
       const panel = this.querySelector<HTMLElement>(
         type === 'course' ? '[data-course-panel]' : '[data-toc-panel]'
       )
