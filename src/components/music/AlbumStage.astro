@@ -1,0 +1,846 @@
+---
+interface Song {
+  id: string
+  name: string
+  duration: string
+  url: string
+}
+
+interface Album {
+  id: string
+  name: string
+  description: string
+  artist: string
+  cover: string
+  color: string
+  songs: Song[]
+}
+
+interface Props {
+  albums: Album[]
+}
+
+const { albums } = Astro.props
+---
+
+<section class="album-stage" aria-labelledby="album-stage-title">
+  <div class="album-stage-heading">
+    <span class="album-stage-kicker">THE RECORD SHELF</span>
+    <h1 id="album-stage-title">挑一张今晚想听的唱片</h1>
+    <p>轻触封套，唱片会从架上取出并放入唱机。</p>
+  </div>
+
+  <div class="album-deck-shell">
+    <button
+      class="album-nav album-nav-prev"
+      id="album-nav-prev"
+      type="button"
+      aria-label="上一张专辑"
+    >
+      <span class="i-ri-arrow-left-s-line"></span>
+    </button>
+
+    <div
+      class="album-deck"
+      id="album-deck"
+      role="listbox"
+      aria-label="专辑列表"
+      data-count={albums.length}
+    >
+      {
+        albums.map((album, index) => (
+          <button
+            class="album-sleeve"
+            type="button"
+            role="option"
+            aria-selected={index === 0 ? 'true' : 'false'}
+            aria-label={`播放 ${album.artist} 的 ${album.name}`}
+            data-index={index}
+            data-album-id={album.id}
+            data-album={JSON.stringify(album)}
+            style={`--cover: url("${album.cover}"); --album-color: ${album.color};`}
+          >
+            <span class="album-record" aria-hidden="true">
+              <span class="album-record-label" />
+            </span>
+            <span class="album-cover">
+              <span class="album-cover-art" />
+              <span class="album-cover-gloss" aria-hidden="true" />
+              <span class="album-spine">
+                <strong>{album.name}</strong>
+                <span>{album.artist}</span>
+              </span>
+            </span>
+          </button>
+        ))
+      }
+    </div>
+
+    <button
+      class="album-nav album-nav-next"
+      id="album-nav-next"
+      type="button"
+      aria-label="下一张专辑"
+    >
+      <span class="i-ri-arrow-right-s-line"></span>
+    </button>
+  </div>
+
+  <div class="album-caption" aria-live="polite">
+    <div>
+      <strong id="album-caption-name">{albums[0]?.name ?? '暂无专辑'}</strong>
+      <span id="album-caption-artist">{albums[0]?.artist ?? ''}</span>
+    </div>
+    <span class="album-caption-count" id="album-caption-count">
+      {albums.length ? `${albums.length} 张专辑` : '暂无专辑'}
+    </span>
+  </div>
+</section>
+
+<style>
+  .album-stage {
+    position: relative;
+    z-index: 8;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    grid-template-columns: minmax(14rem, 0.72fr) minmax(0, 1.28fr);
+    column-gap: clamp(1.5rem, 4vw, 5rem);
+    min-width: 0;
+    height: 100%;
+    padding: clamp(1.1rem, 2.5vh, 2rem) clamp(1.25rem, 4vw, 4.5rem)
+      clamp(0.8rem, 2vh, 1.4rem);
+    color: #f7f2ea;
+  }
+
+  .album-stage-heading {
+    position: relative;
+    z-index: 3;
+    max-width: 34rem;
+    grid-row: 1 / 3;
+    align-self: center;
+  }
+
+  .album-stage-kicker {
+    display: block;
+    margin-bottom: 0.75rem;
+    color: color-mix(in srgb, var(--album-tint, #d6b57b) 72%, white);
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+  }
+
+  .album-stage-heading h1 {
+    max-width: 11ch;
+    margin: 0;
+    color: #fffaf2;
+    font-family: var(--font-serif, Georgia, serif);
+    font-size: clamp(2.15rem, 4vw, 4.7rem);
+    font-weight: 400;
+    letter-spacing: -0.045em;
+    line-height: 0.98;
+    text-wrap: balance;
+  }
+
+  .album-stage-heading p {
+    max-width: 26rem;
+    margin: 1rem 0 0;
+    color: rgba(247, 242, 234, 0.58);
+    font-size: clamp(0.78rem, 1vw, 0.9rem);
+    line-height: 1.65;
+  }
+
+  .album-deck-shell {
+    position: relative;
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr) 2.5rem;
+    grid-template-rows: minmax(0, 1fr);
+    place-items: center;
+    min-height: 0;
+    margin-top: 0;
+    overflow: clip;
+    contain: paint;
+  }
+
+  .album-deck {
+    position: relative;
+    width: min(100%, 34rem);
+    min-width: 0;
+    height: min(100%, 15rem);
+    min-height: 12rem;
+    cursor: grab;
+    perspective: 1050px;
+    perspective-origin: 50% 36%;
+    touch-action: none;
+    transform-style: preserve-3d;
+    transition: transform 220ms cubic-bezier(0.23, 1, 0.32, 1);
+    will-change: transform;
+  }
+
+  .album-deck.is-dragging {
+    cursor: grabbing;
+    transition: none;
+  }
+
+  .album-sleeve {
+    --deck-x: 0px;
+    --deck-y: 0px;
+    --deck-z: 0px;
+    --deck-rx: 0deg;
+    --deck-ry: 0deg;
+    --deck-scale: 1;
+    --deck-opacity: 1;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: var(--deck-order, 1);
+    width: min(18vw, 13.5rem);
+    min-width: 11rem;
+    aspect-ratio: 1;
+    padding: 0;
+    color: inherit;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    opacity: var(--deck-opacity);
+    transform: translate3d(
+        calc(-50% + var(--deck-x)),
+        calc(-50% + var(--deck-y)),
+        var(--deck-z)
+      )
+      rotateX(var(--deck-rx)) rotateY(var(--deck-ry)) scale(var(--deck-scale));
+    transform-style: preserve-3d;
+    transform-origin: 50% 100%;
+    transition:
+      transform 520ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 260ms ease;
+    will-change: transform, opacity;
+  }
+
+  .album-sleeve:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.88);
+    outline-offset: 8px;
+    border-radius: 3px;
+  }
+
+  .album-sleeve:not(.is-current) {
+    pointer-events: none;
+  }
+
+  .album-cover,
+  .album-record {
+    position: absolute;
+    inset: 0;
+    display: block;
+  }
+
+  .album-cover {
+    overflow: hidden;
+    background: #191714;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    box-shadow:
+      0 2.2rem 4.5rem rgba(0, 0, 0, 0.43),
+      0 0.2rem 0.45rem rgba(0, 0, 0, 0.5),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    transform: translateZ(12px);
+    transition:
+      transform 560ms cubic-bezier(0.22, 1, 0.36, 1),
+      filter 260ms ease;
+  }
+
+  .album-cover-art {
+    position: absolute;
+    inset: 0;
+    display: block;
+    background-image: var(--cover);
+    background-position: center;
+    background-size: cover;
+    filter: saturate(0.88) contrast(1.03);
+  }
+
+  .album-cover-gloss {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(
+        116deg,
+        rgba(255, 255, 255, 0.2),
+        transparent 18% 68%,
+        rgba(255, 255, 255, 0.08)
+      ),
+      linear-gradient(to top, rgba(0, 0, 0, 0.62), transparent 36%);
+    opacity: 0.52;
+    pointer-events: none;
+  }
+
+  .album-spine {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem 0.85rem;
+    color: white;
+    text-align: left;
+  }
+
+  .album-spine strong {
+    overflow: hidden;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .album-spine span {
+    flex: none;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.68rem;
+  }
+
+  .album-record {
+    inset: 3.5%;
+    border-radius: 50%;
+    background:
+      radial-gradient(
+        circle at 50% 50%,
+        transparent 0 2.2%,
+        #080808 2.5% 5%,
+        transparent 5.2%
+      ),
+      repeating-radial-gradient(
+        circle at 50% 50%,
+        transparent 0 2px,
+        rgba(255, 255, 255, 0.065) 2.5px 3px
+      ),
+      radial-gradient(circle at 36% 28%, #3c3c3c, #080808 38%, #020202 72%);
+    box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.55);
+    transform: translate3d(5%, -2%, 0) rotate(-8deg);
+    transition:
+      transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 90ms ease;
+  }
+
+  .album-record-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: block;
+    width: 31%;
+    aspect-ratio: 1;
+    background-image: var(--cover);
+    background-position: center;
+    background-size: cover;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .album-sleeve.is-current:not(.is-lifting):hover .album-cover {
+      filter: brightness(1.04);
+      transform: translate3d(0, -1%, 16px);
+    }
+
+    .album-sleeve.is-current:not(.is-lifting):hover .album-record {
+      transform: translate3d(17%, -2%, 2px) rotate(5deg);
+    }
+  }
+
+  .album-deck.is-selecting .album-sleeve:not(.is-lifting) {
+    opacity: 0.14;
+    pointer-events: none;
+  }
+
+  .album-sleeve.is-lifting {
+    z-index: 30;
+    opacity: 1;
+  }
+
+  .album-sleeve.is-lifting .album-record {
+    transform: translate3d(58%, -2%, 8px) rotate(12deg);
+  }
+
+  .album-sleeve.is-in-flight .album-record {
+    opacity: 0;
+  }
+
+  .album-nav {
+    position: relative;
+    z-index: 50;
+    display: grid;
+    width: 2.35rem;
+    height: 2.35rem;
+    padding: 0;
+    color: rgba(247, 242, 234, 0.68);
+    background: rgba(255, 255, 255, 0.055);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+    cursor: pointer;
+    place-items: center;
+    transition:
+      color 180ms ease,
+      background-color 180ms ease,
+      border-color 180ms ease,
+      transform 180ms ease;
+  }
+
+  .album-nav:not(:disabled):hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.24);
+    transform: translateY(-1px);
+  }
+
+  .album-nav:disabled {
+    opacity: 0.28;
+    cursor: default;
+  }
+
+  .album-caption {
+    display: flex;
+    grid-column: 2;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .album-caption > div {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .album-caption strong {
+    overflow: hidden;
+    color: #fffaf2;
+    font-size: 0.88rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .album-caption div span,
+  .album-caption-count {
+    color: rgba(247, 242, 234, 0.48);
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+  }
+
+  @media (max-width: 600px) {
+    .album-stage {
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      grid-template-columns: minmax(0, 1fr);
+      padding: 0.9rem 1rem 0.65rem;
+    }
+
+    .album-stage-heading {
+      grid-row: auto;
+      align-self: auto;
+    }
+
+    .album-stage-heading h1 {
+      max-width: 14ch;
+      font-size: clamp(1.65rem, 7vw, 2.4rem);
+    }
+
+    .album-stage-heading p {
+      margin-top: 0.35rem;
+      font-size: 0.68rem;
+      line-height: 1.5;
+    }
+
+    .album-deck-shell {
+      grid-template-columns: 2.25rem minmax(0, 1fr) 2.25rem;
+      grid-template-rows: 1fr;
+      margin-top: 0.35rem;
+    }
+
+    .album-deck {
+      width: min(60vw, 15rem);
+      min-width: 10rem;
+      height: min(100%, 12rem);
+      min-height: 9.25rem;
+    }
+
+    .album-sleeve {
+      width: min(38vw, 9.5rem);
+      min-width: 7.5rem;
+    }
+
+    .album-caption {
+      grid-column: auto;
+      padding-top: 0.55rem;
+    }
+  }
+
+  @media (max-height: 720px) and (min-width: 601px) {
+    .album-stage {
+      padding-top: 1.2rem;
+    }
+
+    .album-stage-heading h1 {
+      font-size: clamp(2rem, 4vw, 3.5rem);
+    }
+
+    .album-deck {
+      height: min(28vh, 13rem);
+    }
+
+    .album-sleeve {
+      width: min(17vw, 12rem);
+      min-width: 10rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .album-sleeve,
+    .album-cover,
+    .album-record,
+    .album-nav {
+      transition-duration: 1ms !important;
+    }
+  }
+</style>
+
+<script>
+  interface StageAlbum {
+    id: string
+    name: string
+    artist: string
+    cover: string
+    color: string
+    songs: { name: string; url: string }[]
+  }
+
+  type StageWindow = Window & {
+    __albumStageBound?: boolean
+    MusicPlayerState?: {
+      currentAlbumId?: string | null
+      isPlaying: boolean
+      isInitialized: boolean
+    }
+  }
+
+  function initialiseAlbumStage() {
+    const deck = document.getElementById('album-deck')
+    if (!deck || deck.dataset.bound === 'true') return
+    deck.dataset.bound = 'true'
+
+    const cards = Array.from(
+      deck.querySelectorAll<HTMLElement>('.album-sleeve')
+    )
+    if (!cards.length) return
+
+    const prev = document.getElementById('album-nav-prev') as HTMLButtonElement
+    const next = document.getElementById('album-nav-next') as HTMLButtonElement
+    const captionName = document.getElementById('album-caption-name')
+    const captionArtist = document.getElementById('album-caption-artist')
+    const captionCount = document.getElementById('album-caption-count')
+    const musicRoot = document.getElementById('music-page-wrapper')
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const compactStage = window.matchMedia('(max-width: 600px)')
+    let activeIndex = Math.max(
+      0,
+      cards.findIndex(
+        (card) =>
+          card.dataset.albumId ===
+          (window as StageWindow).MusicPlayerState?.currentAlbumId
+      )
+    )
+    let isAnimating = false
+    let activePointerId: number | null = null
+    let dragStartX = 0
+    let dragStartY = 0
+    let dragStartedAt = 0
+    let dragDistance = 0
+    let isDragging = false
+    let suppressClickUntil = 0
+
+    const getAlbum = (card: HTMLElement): StageAlbum | null => {
+      try {
+        return JSON.parse(card.dataset.album ?? '') as StageAlbum
+      } catch {
+        return null
+      }
+    }
+
+    const applyAlbumAtmosphere = (album: StageAlbum) => {
+      if (!musicRoot) return
+      musicRoot.style.setProperty('--album-color', album.color)
+      musicRoot.style.setProperty('--album-cover', `url("${album.cover}")`)
+      document.documentElement.style.setProperty(
+        '--music-album-color',
+        album.color
+      )
+      document.documentElement.style.setProperty(
+        '--music-album-cover',
+        `url("${album.cover}")`
+      )
+    }
+
+    const layoutCards = (focus = false) => {
+      cards.forEach((card, index) => {
+        const offset = index - activeIndex
+        const distance = Math.abs(offset)
+        card.style.setProperty(
+          '--deck-x',
+          `${offset * (compactStage.matches ? 68 : 104)}px`
+        )
+        card.style.setProperty('--deck-y', '0px')
+        card.style.setProperty('--deck-z', `${-distance * 72}px`)
+        card.style.setProperty('--deck-rx', '0deg')
+        card.style.setProperty(
+          '--deck-ry',
+          `${offset * (compactStage.matches ? 8 : 10)}deg`
+        )
+        card.style.setProperty(
+          '--deck-scale',
+          `${1 - Math.min(distance, 4) * 0.065}`
+        )
+        card.style.setProperty(
+          '--deck-opacity',
+          `${Math.max(0.18, 1 - distance * 0.18)}`
+        )
+        card.style.setProperty('--deck-order', String(cards.length - distance))
+        card.classList.toggle('is-current', index === activeIndex)
+        card.setAttribute('aria-selected', String(index === activeIndex))
+        card.tabIndex = index === activeIndex ? 0 : -1
+      })
+
+      const album = getAlbum(cards[activeIndex])
+      if (album) {
+        if (captionName) captionName.textContent = album.name
+        if (captionArtist) captionArtist.textContent = album.artist
+        if (captionCount) {
+          captionCount.textContent = `${cards.length} 张专辑`
+        }
+        applyAlbumAtmosphere(album)
+      }
+
+      if (prev) prev.disabled = cards.length < 2
+      if (next) next.disabled = cards.length < 2
+      if (focus) cards[activeIndex].focus({ preventScroll: true })
+    }
+
+    const moveSelection = (direction: number) => {
+      if (isAnimating || cards.length < 2) return
+      activeIndex = (activeIndex + direction + cards.length) % cards.length
+      layoutCards(true)
+    }
+
+    const resetDeckDrag = () => {
+      deck.classList.remove('is-dragging')
+      deck.style.transform = 'translate3d(0, 0, 0)'
+      activePointerId = null
+      isDragging = false
+    }
+
+    const finishDeckDrag = (event: PointerEvent) => {
+      if (event.pointerId !== activePointerId) return
+      if (!isDragging) {
+        resetDeckDrag()
+        return
+      }
+
+      const elapsed = Math.max(performance.now() - dragStartedAt, 1)
+      const velocity = Math.abs(dragDistance) / elapsed
+      const shouldMove = Math.abs(dragDistance) > 42 || velocity > 0.32
+
+      if (deck.hasPointerCapture(event.pointerId)) {
+        deck.releasePointerCapture(event.pointerId)
+      }
+      resetDeckDrag()
+
+      if (shouldMove) {
+        suppressClickUntil = performance.now() + 180
+        moveSelection(dragDistance < 0 ? 1 : -1)
+      }
+    }
+
+    const flyRecordToTurntable = async (
+      card: HTMLElement,
+      album: StageAlbum
+    ) => {
+      const record = card.querySelector<HTMLElement>('.album-record')
+      const target = document.getElementById('record-drop-target')
+      if (!record || !target || reduceMotion.matches) return
+
+      const start = record.getBoundingClientRect()
+      const end = target.getBoundingClientRect()
+      const clone = record.cloneNode(true) as HTMLElement
+      clone.className = 'album-record record-flight'
+      clone.style.setProperty('--cover', `url("${album.cover}")`)
+      Object.assign(clone.style, {
+        position: 'fixed',
+        inset: 'auto',
+        left: `${start.left}px`,
+        top: `${start.top}px`,
+        width: `${start.width}px`,
+        height: `${start.height}px`,
+        margin: '0',
+        zIndex: '260',
+        pointerEvents: 'none',
+        transition: 'none',
+      })
+      document.body.appendChild(clone)
+      await new Promise<void>((resolve) =>
+        requestAnimationFrame(() => resolve())
+      )
+      card.classList.add('is-in-flight')
+
+      const dx = end.left + end.width / 2 - (start.left + start.width / 2)
+      const dy = end.top + end.height / 2 - (start.top + start.height / 2)
+      const targetScale = Math.max(0.26, end.width / Math.max(start.width, 1))
+      const animation = clone.animate(
+        [
+          {
+            transform: 'translate3d(0, 0, 0) rotate(12deg) scale(1)',
+            opacity: 1,
+            offset: 0,
+          },
+          {
+            transform: `translate3d(${dx * 0.42}px, ${dy * 0.2 - 34}px, 0) rotate(82deg) scale(0.96)`,
+            opacity: 1,
+            offset: 0.42,
+          },
+          {
+            transform: `translate3d(${dx * 0.82}px, ${dy * 0.72 - 18}px, 0) rotate(174deg) scale(${Math.max(targetScale * 1.12, 0.36)})`,
+            opacity: 1,
+            offset: 0.82,
+          },
+          {
+            transform: `translate3d(${dx}px, ${dy}px, 0) rotate(204deg) scale(${targetScale})`,
+            opacity: 0.08,
+            offset: 1,
+          },
+        ],
+        {
+          duration: 920,
+          easing: 'cubic-bezier(0.65, 0, 0.35, 1)',
+          fill: 'forwards',
+        }
+      )
+      await animation.finished.catch(() => undefined)
+      clone.remove()
+      card.classList.remove('is-in-flight')
+    }
+
+    const selectAlbum = async (card: HTMLElement) => {
+      if (isAnimating) return
+      const album = getAlbum(card)
+      if (!album) return
+
+      activeIndex = cards.indexOf(card)
+      layoutCards()
+      isAnimating = true
+      deck.classList.add('is-selecting')
+      card.classList.add('is-lifting')
+      applyAlbumAtmosphere(album)
+
+      const state = (window as StageWindow).MusicPlayerState
+      if (state) {
+        state.currentAlbumId = album.id
+        state.isPlaying = false
+      }
+
+      if (reduceMotion.matches) {
+        window.dispatchEvent(
+          new CustomEvent('album-selected', { detail: album })
+        )
+        window.dispatchEvent(
+          new CustomEvent('record-landed', { detail: { album } })
+        )
+        window.dispatchEvent(
+          new CustomEvent('auto-play-album', { detail: { album } })
+        )
+      } else {
+        window.dispatchEvent(
+          new CustomEvent('album-selected', { detail: album })
+        )
+        await new Promise((resolve) => window.setTimeout(resolve, 420))
+        await flyRecordToTurntable(card, album)
+        window.dispatchEvent(
+          new CustomEvent('record-landed', { detail: { album } })
+        )
+        window.dispatchEvent(
+          new CustomEvent('auto-play-album', { detail: { album } })
+        )
+      }
+
+      card.classList.remove('is-lifting')
+      deck.classList.remove('is-selecting')
+      isAnimating = false
+      layoutCards()
+    }
+
+    cards.forEach((card, index) => {
+      card.addEventListener('click', () => {
+        if (performance.now() < suppressClickUntil) {
+          return
+        }
+        if (index !== activeIndex) {
+          activeIndex = index
+          layoutCards()
+        }
+        void selectAlbum(card)
+      })
+
+      card.addEventListener('keydown', (event) => {
+        if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') {
+          event.preventDefault()
+          moveSelection(-1)
+        } else if (event.key === 'ArrowDown' || event.key === 'ArrowRight') {
+          event.preventDefault()
+          moveSelection(1)
+        }
+      })
+    })
+
+    deck.addEventListener('pointerdown', (event) => {
+      if (isAnimating || activePointerId !== null || event.button > 0) return
+      activePointerId = event.pointerId
+      dragStartX = event.clientX
+      dragStartY = event.clientY
+      dragStartedAt = performance.now()
+      dragDistance = 0
+      isDragging = false
+    })
+
+    deck.addEventListener('pointermove', (event) => {
+      if (event.pointerId !== activePointerId) return
+      const deltaX = event.clientX - dragStartX
+      const deltaY = event.clientY - dragStartY
+
+      if (!isDragging) {
+        if (Math.hypot(deltaX, deltaY) < 7) return
+        isDragging = true
+        deck.classList.add('is-dragging')
+        deck.setPointerCapture(event.pointerId)
+      }
+
+      event.preventDefault()
+      dragDistance = deltaX
+      const dampedDistance = dragDistance * 0.58
+      deck.style.transform = `translate3d(${dampedDistance}px, 0, 0)`
+    })
+
+    deck.addEventListener('pointerup', finishDeckDrag)
+    deck.addEventListener('pointercancel', (event) => {
+      if (event.pointerId === activePointerId) resetDeckDrag()
+    })
+
+    prev?.addEventListener('click', () => moveSelection(-1))
+    next?.addEventListener('click', () => moveSelection(1))
+    compactStage.addEventListener('change', () => layoutCards())
+    layoutCards()
+  }
+
+  document.addEventListener('astro:page-load', initialiseAlbumStage)
+  initialiseAlbumStage()
+</script>

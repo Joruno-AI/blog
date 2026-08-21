@@ -23,6 +23,7 @@ import '~/styles/music.css'
     height: 100%;
     border-radius: 0;
     overflow: visible;
+    touch-action: none;
   }
 
   @media (max-width: 768px) {
@@ -201,8 +202,8 @@ import '~/styles/music.css'
       const ctx = canvas.getContext('2d')
       if (!ctx) return null
 
-      // Base color - Dark Walnut
-      ctx.fillStyle = '#3e2723'
+      // Warm walnut base with long, low-contrast grain.
+      ctx.fillStyle = '#7a4024'
       ctx.fillRect(0, 0, size, size)
 
       // Wood grain
@@ -213,7 +214,7 @@ import '~/styles/music.css'
         const h = Math.random() * 4 + 1
         const opacity = Math.random() * 0.15 + 0.05
 
-        ctx.fillStyle = `rgba(20, 10, 5, ${opacity})`
+        ctx.fillStyle = `rgba(38, 17, 8, ${opacity})`
         ctx.beginPath()
         ctx.ellipse(x, y, w, h, Math.random() * 0.1, 0, Math.PI * 2)
         ctx.fill()
@@ -330,18 +331,17 @@ import '~/styles/music.css'
     rimLight.position.set(1.5, 5.2, -8)
     scene.add(rimLight)
 
-    const hornKeyLight = new THREE.SpotLight(0xd8c09a, 48)
-    hornKeyLight.position.set(2.8, 4.2, 2.5)
-    hornKeyLight.angle = Math.PI / 7
-    hornKeyLight.penumbra = 0.7
-    hornKeyLight.distance = 14
-    scene.add(hornKeyLight)
-    scene.add(hornKeyLight.target)
+    const woodKeyLight = new THREE.SpotLight(0xe0b47d, 42)
+    woodKeyLight.position.set(3.8, 5.8, 4.5)
+    woodKeyLight.angle = Math.PI / 6
+    woodKeyLight.penumbra = 0.76
+    woodKeyLight.distance = 16
+    scene.add(woodKeyLight)
+    scene.add(woodKeyLight.target)
 
     // ==================== Materials ====================
     const vinylTexture = createVinylTexture()
     const brushedMetalTexture = createBrushedMetalTexture()
-    const brushedBrassTexture = createBrushedMetalTexture('#b88748')
     const woodTexture = createWoodTexture()
     const stageShadowTexture = createStageShadowTexture()
 
@@ -355,11 +355,11 @@ import '~/styles/music.css'
     // Wood material for turntable body
     const woodMaterial = new THREE.MeshPhysicalMaterial({
       map: woodTexture,
-      color: 0x24100a,
-      roughness: 0.42,
-      metalness: 0.1,
-      clearcoat: 0.28,
-      clearcoatRoughness: 0.3,
+      color: 0xffffff,
+      roughness: 0.4,
+      metalness: 0.02,
+      clearcoat: 0.5,
+      clearcoatRoughness: 0.24,
     })
 
     // Brushed aluminum material
@@ -384,44 +384,6 @@ import '~/styles/music.css'
       metalness: 0.88,
       clearcoat: 0.38,
       clearcoatRoughness: 0.18,
-    })
-
-    // Gold material for accents
-    const goldMaterial = new THREE.MeshStandardMaterial({
-      color: 0xc6aa72,
-      roughness: 0.2,
-      metalness: 1.0,
-    })
-
-    const brassMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0xb67b33,
-      map: brushedBrassTexture,
-      roughness: 0.26,
-      metalness: 1,
-      clearcoat: 0.42,
-      clearcoatRoughness: 0.18,
-      emissive: 0x1a0f07,
-      emissiveIntensity: 0.1,
-      side: THREE.DoubleSide,
-    })
-
-    const darkBrassMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0x6d3a18,
-      roughness: 0.34,
-      metalness: 0.86,
-      clearcoat: 0.25,
-      clearcoatRoughness: 0.22,
-    })
-
-    const hornInteriorMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0x8d5528,
-      roughness: 0.31,
-      metalness: 0.92,
-      clearcoat: 0.35,
-      clearcoatRoughness: 0.18,
-      emissive: 0x1d1006,
-      emissiveIntensity: 0.14,
-      side: THREE.DoubleSide,
     })
 
     // Chrome/polished metal material
@@ -459,13 +421,16 @@ import '~/styles/music.css'
 
     // Turntable group
     const turntableGroup = new THREE.Group()
+    const turntableScale =
+      initialSize.width < 640 ? 0.82 : initialSize.width < 1024 ? 0.88 : 0.93
+    turntableGroup.scale.setScalar(turntableScale)
 
     // ==================== Base/Plinth ====================
     // Main base - sleek rectangular with rounded edges
     const baseShape = new THREE.Shape()
-    const baseWidth = 6
-    const baseDepth = 5
-    const cornerRadius = 0.3
+    const baseWidth = 6.4
+    const baseDepth = 4.8
+    const cornerRadius = 0.16
 
     baseShape.moveTo(-baseWidth / 2 + cornerRadius, -baseDepth / 2)
     baseShape.lineTo(baseWidth / 2 - cornerRadius, -baseDepth / 2)
@@ -498,11 +463,11 @@ import '~/styles/music.css'
     )
 
     const baseExtrudeSettings = {
-      depth: 0.5, // Slightly thicker
+      depth: 0.38,
       bevelEnabled: true,
-      bevelThickness: 0.08, // More pronounced bevel
-      bevelSize: 0.08,
-      bevelSegments: 5, // Smoother bevel
+      bevelThickness: 0.055,
+      bevelSize: 0.055,
+      bevelSegments: 4,
     }
 
     const baseGeometry = new THREE.ExtrudeGeometry(
@@ -516,19 +481,18 @@ import '~/styles/music.css'
     baseMesh.castShadow = true
     turntableGroup.add(baseMesh)
 
-    // Feet (isolators) - Gold Spikes
-    const footGeometry = new THREE.ConeGeometry(0.25, 0.4, 32)
+    // Low rubber isolators keep the silhouette close to a modern hi-fi deck.
+    const footGeometry = new THREE.CylinderGeometry(0.22, 0.24, 0.16, 32)
     const footPositions = [
-      [-2.5, -0.2, -2],
-      [2.5, -0.2, -2],
-      [-2.5, -0.2, 2],
-      [2.5, -0.2, 2],
+      [-2.65, -0.15, -1.9],
+      [2.65, -0.15, -1.9],
+      [-2.65, -0.15, 1.9],
+      [2.65, -0.15, 1.9],
     ]
 
     footPositions.forEach((pos) => {
-      const foot = new THREE.Mesh(footGeometry, goldMaterial)
+      const foot = new THREE.Mesh(footGeometry, rubberMaterial)
       foot.position.set(pos[0], pos[1], pos[2])
-      foot.rotation.x = Math.PI // Point down
       turntableGroup.add(foot)
     })
 
@@ -584,7 +548,7 @@ import '~/styles/music.css'
     // ==================== Vinyl Record ====================
     const vinylGroup = new THREE.Group()
     vinylGroup.position.set(-0.3, 0.65, 0)
-    vinylGroup.visible = true
+    vinylGroup.visible = false
 
     // Main vinyl disc
     const vinylGeometry = new THREE.CylinderGeometry(1.75, 1.75, 0.025, 128)
@@ -596,12 +560,16 @@ import '~/styles/music.css'
     // Texture loader for album cover
     const textureLoader = new THREE.TextureLoader()
 
-    // Cover image - full size covering the entire vinyl
-    const coverGeometry = new THREE.CircleGeometry(1.72, 128)
+    // Extend the sleeve artwork across the playable surface. A narrow black
+    // rim, the vinyl bump map and restrained translucency keep it reading as
+    // a record instead of a flat picture disc.
+    const coverGeometry = new THREE.CircleGeometry(1.68, 128)
     const coverMaterial = new THREE.MeshStandardMaterial({
       color: 0xffffff,
-      roughness: 0.62,
-      metalness: 0,
+      bumpMap: vinylTexture,
+      bumpScale: 0.028,
+      roughness: 0.42,
+      metalness: 0.12,
       transparent: true,
       opacity: 0,
       depthWrite: false,
@@ -625,12 +593,14 @@ import '~/styles/music.css'
 
     // Function to update cover image
     function updateCoverImage(coverUrl: string) {
+      coverMaterial.opacity = 0
+      coverMaterial.depthWrite = false
       textureLoader.load(
         coverUrl,
         (texture) => {
           texture.colorSpace = THREE.SRGBColorSpace
           coverMaterial.map = texture
-          coverMaterial.opacity = 1
+          coverMaterial.opacity = 0.9
           coverMaterial.depthWrite = true
           coverMaterial.needsUpdate = true
         },
@@ -906,118 +876,6 @@ import '~/styles/music.css'
     logo.position.set(-2.4, 0.41, 1.8)
     turntableGroup.add(logo)
 
-    // ==================== Gramophone Horn ====================
-    const hornGroup = new THREE.Group()
-    hornGroup.position.set(1.38, 1.55, -1.72)
-    hornGroup.rotation.x = 0.34
-    hornGroup.rotation.z = -0.52
-
-    const hornProfile = [
-      new THREE.Vector2(0.16, -1.0),
-      new THREE.Vector2(0.18, -0.72),
-      new THREE.Vector2(0.26, -0.38),
-      new THREE.Vector2(0.46, -0.04),
-      new THREE.Vector2(0.78, 0.32),
-      new THREE.Vector2(1.08, 0.66),
-      new THREE.Vector2(1.28, 0.92),
-    ]
-    const hornGeometry = new THREE.LatheGeometry(hornProfile, 96)
-    const hornMesh = new THREE.Mesh(hornGeometry, brassMaterial)
-    hornMesh.castShadow = true
-    hornMesh.receiveShadow = true
-    hornGroup.add(hornMesh)
-
-    const hornInteriorGeometry = new THREE.LatheGeometry(
-      [
-        new THREE.Vector2(0.08, -0.96),
-        new THREE.Vector2(0.18, -0.6),
-        new THREE.Vector2(0.4, -0.16),
-        new THREE.Vector2(0.9, 0.48),
-        new THREE.Vector2(1.18, 0.86),
-      ],
-      96
-    )
-    const hornInterior = new THREE.Mesh(
-      hornInteriorGeometry,
-      hornInteriorMaterial
-    )
-    hornInterior.scale.set(0.92, 0.95, 0.92)
-    hornInterior.position.y = -0.02
-    hornGroup.add(hornInterior)
-
-    const hornRim = new THREE.Mesh(
-      new THREE.TorusGeometry(1.28, 0.055, 18, 128),
-      brassMaterial
-    )
-    hornRim.rotation.x = Math.PI / 2
-    hornRim.position.y = 0.92
-    hornRim.castShadow = true
-    hornGroup.add(hornRim)
-
-    const hornThroat = new THREE.Mesh(
-      new THREE.TorusGeometry(0.18, 0.024, 12, 48),
-      darkBrassMaterial
-    )
-    hornThroat.rotation.x = Math.PI / 2
-    hornThroat.position.y = -1.0
-    hornGroup.add(hornThroat)
-
-    const hornRibPositions = [
-      { y: -0.54, r: 0.24 },
-      { y: -0.16, r: 0.4 },
-      { y: 0.24, r: 0.7 },
-      { y: 0.58, r: 1.0 },
-    ]
-    hornRibPositions.forEach(({ y, r }) => {
-      const rib = new THREE.Mesh(
-        new THREE.TorusGeometry(r, 0.018, 10, 96),
-        darkBrassMaterial
-      )
-      rib.rotation.x = Math.PI / 2
-      rib.position.y = y
-      hornGroup.add(rib)
-    })
-
-    turntableGroup.add(hornGroup)
-
-    const soundboxGeometry = new THREE.CylinderGeometry(0.25, 0.25, 0.18, 40)
-    const soundbox = new THREE.Mesh(soundboxGeometry, brassMaterial)
-    soundbox.position.set(1.15, 0.84, -1.08)
-    soundbox.rotation.x = Math.PI / 2
-    soundbox.castShadow = true
-    turntableGroup.add(soundbox)
-
-    const hornTubeCurve = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(1.18, 0.86, -1.08),
-      new THREE.Vector3(1.25, 1.04, -1.28),
-      new THREE.Vector3(1.38, 1.22, -1.48),
-      new THREE.Vector3(1.48, 1.38, -1.68),
-    ])
-    const hornTube = new THREE.Mesh(
-      new THREE.TubeGeometry(hornTubeCurve, 36, 0.055, 18, false),
-      brassMaterial
-    )
-    hornTube.castShadow = true
-    turntableGroup.add(hornTube)
-
-    const crankGroup = new THREE.Group()
-    crankGroup.position.set(2.92, 0.2, 0.48)
-    crankGroup.rotation.z = Math.PI / 2
-    const crankStem = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.035, 0.035, 0.72, 18),
-      brassMaterial
-    )
-    crankStem.rotation.x = Math.PI / 2
-    crankGroup.add(crankStem)
-    const crankHandle = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.055, 0.055, 0.3, 18),
-      darkBrassMaterial
-    )
-    crankHandle.position.z = 0.44
-    crankHandle.rotation.x = Math.PI / 2
-    crankGroup.add(crankHandle)
-    turntableGroup.add(crankGroup)
-
     if (stageShadowTexture) {
       const stageShadow = new THREE.Mesh(
         new THREE.PlaneGeometry(9.2, 7.2),
@@ -1033,7 +891,7 @@ import '~/styles/music.css'
       scene.add(stageShadow)
     }
 
-    hornKeyLight.target = hornGroup
+    woodKeyLight.target = turntableGroup
     spotLight.target = turntableGroup
     scene.add(turntableGroup)
 
@@ -1077,25 +935,28 @@ import '~/styles/music.css'
     const knobMinRotation = -Math.PI // 0% volume (full left)
     const knobMaxRotation = 0 // 100% volume (full right)
 
-    // 3D view dragging
-    let isDraggingScene = false
-    let previousMousePosition = { x: 0, y: 0 }
-    let cameraTheta = -0.42 // Horizontal angle - start from a front corner
+    // Keep the camera radius and target fixed while allowing a restrained
+    // orbit around the deck. The turntable stays anchored in the layout, but
+    // users can inspect it from different angles with mouse or touch drag.
+    let cameraTheta = -0.34
     const isPortraitPhone =
       initialSize.width < 640 && initialSize.width / initialSize.height < 0.9
-    let cameraPhi = isPortraitPhone ? 0.58 : 0.48
-    let cameraRadius = isPortraitPhone
-      ? 13.4
-      : initialSize.width < 1024
-        ? 10.8
-        : 10
-    const minZoom = 6.6
-    const maxZoom = 15.5
+    let cameraPhi = isPortraitPhone ? 0.7 : 0.62
+    const getCameraRadius = (width: number, height: number) => {
+      const aspect = width / Math.max(height, 1)
+      if (width < 640 && aspect < 0.9) return 10.8
+      if (width < 1024 || aspect < 1.25) return 8.6
+      return 6.6
+    }
+    let cameraRadius = getCameraRadius(initialSize.width, initialSize.height)
 
     // ==================== Volume Knob Interaction ====================
     const raycaster = new THREE.Raycaster()
     const mouse = new THREE.Vector2()
-    let lastMouseX = 0
+    let lastPointerX = 0
+    let lastPointerY = 0
+    let activePointerId: number | null = null
+    let isRotatingDeck = false
 
     function updateVolumeFromKnob() {
       // Convert knob rotation to volume (0-1)
@@ -1128,7 +989,8 @@ import '~/styles/music.css'
     // Initialize camera position
     updateCameraPosition()
 
-    renderer.domElement.addEventListener('mousedown', (event) => {
+    renderer.domElement.addEventListener('pointerdown', (event) => {
+      if (activePointerId !== null || event.button > 0) return
       const rect = renderer.domElement.getBoundingClientRect()
       mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1
       mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1
@@ -1142,7 +1004,10 @@ import '~/styles/music.css'
       )
       if (knobIntersects.length > 0) {
         isDraggingKnob = true
-        lastMouseX = event.clientX
+        activePointerId = event.pointerId
+        lastPointerX = event.clientX
+        lastPointerY = event.clientY
+        renderer.domElement.setPointerCapture(event.pointerId)
         return
       }
 
@@ -1154,16 +1019,18 @@ import '~/styles/music.css'
         return
       }
 
-      // Start scene dragging
-      isDraggingScene = true
-      previousMousePosition = { x: event.clientX, y: event.clientY }
+      isRotatingDeck = true
+      activePointerId = event.pointerId
+      lastPointerX = event.clientX
+      lastPointerY = event.clientY
+      renderer.domElement.setPointerCapture(event.pointerId)
       renderer.domElement.style.cursor = 'grabbing'
     })
 
-    renderer.domElement.addEventListener('mousemove', (event) => {
+    renderer.domElement.addEventListener('pointermove', (event) => {
       // Drag volume knob
-      if (isDraggingKnob) {
-        const deltaX = event.clientX - lastMouseX
+      if (isDraggingKnob && event.pointerId === activePointerId) {
+        const deltaX = event.clientX - lastPointerX
         // FIXED: changed sign to fix reversed direction
         knobRotation += deltaX * 0.02
         knobRotation = Math.max(
@@ -1171,25 +1038,25 @@ import '~/styles/music.css'
           Math.min(knobMaxRotation, knobRotation)
         )
         updateVolumeFromKnob()
-        lastMouseX = event.clientX
+        lastPointerX = event.clientX
         return
       }
 
-      // Drag 3D scene
-      if (isDraggingScene) {
-        const deltaX = event.clientX - previousMousePosition.x
-        const deltaY = event.clientY - previousMousePosition.y
-
-        cameraTheta -= deltaX * 0.005
-        cameraPhi += deltaY * 0.005
-
-        // Limit vertical angle
-        cameraPhi = Math.max(0.2, Math.min(Math.PI / 2.2, cameraPhi))
-
+      if (isRotatingDeck && event.pointerId === activePointerId) {
+        const deltaX = event.clientX - lastPointerX
+        const deltaY = event.clientY - lastPointerY
+        cameraTheta = Math.max(
+          -1.02,
+          Math.min(0.58, cameraTheta - deltaX * 0.0052)
+        )
+        cameraPhi = Math.max(0.5, Math.min(0.78, cameraPhi + deltaY * 0.0036))
         updateCameraPosition()
-        previousMousePosition = { x: event.clientX, y: event.clientY }
+        lastPointerX = event.clientX
+        lastPointerY = event.clientY
         return
       }
+
+      if (event.pointerType !== 'mouse') return
 
       // Hover detection
       const rect = renderer.domElement.getBoundingClientRect()
@@ -1210,119 +1077,49 @@ import '~/styles/music.css'
       if (knobIntersects.length > 0 || armIntersects.length > 0) {
         renderer.domElement.style.cursor = 'pointer'
       } else {
-        renderer.domElement.style.cursor = 'grab'
+        renderer.domElement.style.cursor = 'default'
       }
     })
 
-    renderer.domElement.addEventListener('mouseup', () => {
+    const finishPointerInteraction = (event: PointerEvent) => {
+      if (event.pointerId !== activePointerId) return
+      if (renderer.domElement.hasPointerCapture(event.pointerId)) {
+        renderer.domElement.releasePointerCapture(event.pointerId)
+      }
       isDraggingKnob = false
-      isDraggingScene = false
-      renderer.domElement.style.cursor = 'grab'
+      isRotatingDeck = false
+      activePointerId = null
+      renderer.domElement.style.cursor = 'default'
+    }
+
+    renderer.domElement.addEventListener('pointerup', finishPointerInteraction)
+    renderer.domElement.addEventListener(
+      'pointercancel',
+      finishPointerInteraction
+    )
+    renderer.domElement.addEventListener('pointerleave', () => {
+      if (activePointerId === null) renderer.domElement.style.cursor = 'default'
     })
-
-    renderer.domElement.addEventListener('mouseleave', () => {
-      isDraggingKnob = false
-      isDraggingScene = false
-      renderer.domElement.style.cursor = 'grab'
-    })
-
-    // Scroll zoom
-    renderer.domElement.addEventListener(
-      'wheel',
-      (e) => {
-        e.preventDefault()
-        const delta = e.deltaY > 0 ? 1 : -1
-        cameraRadius = Math.max(
-          minZoom,
-          Math.min(maxZoom, cameraRadius + delta * 0.5)
-        )
-        updateCameraPosition()
-      },
-      { passive: false }
-    )
-
-    // Touch pinch zoom
-    let touchStartDistance = 0
-    let initialPinchRadius = cameraRadius
-    let previousTouchPosition = { x: 0, y: 0 }
-
-    renderer.domElement.addEventListener(
-      'touchstart',
-      (e) => {
-        if (e.touches.length === 2) {
-          const dx = e.touches[0].clientX - e.touches[1].clientX
-          const dy = e.touches[0].clientY - e.touches[1].clientY
-          touchStartDistance = Math.sqrt(dx * dx + dy * dy)
-          initialPinchRadius = cameraRadius
-        } else if (e.touches.length === 1) {
-          previousTouchPosition = {
-            x: e.touches[0].clientX,
-            y: e.touches[0].clientY,
-          }
-        }
-      },
-      { passive: true }
-    )
-
-    renderer.domElement.addEventListener(
-      'touchmove',
-      (e) => {
-        if (e.touches.length === 2) {
-          e.preventDefault()
-          const dx = e.touches[0].clientX - e.touches[1].clientX
-          const dy = e.touches[0].clientY - e.touches[1].clientY
-          const distance = Math.sqrt(dx * dx + dy * dy)
-          const scale = touchStartDistance / distance
-          cameraRadius = Math.max(
-            minZoom,
-            Math.min(maxZoom, initialPinchRadius * scale)
-          )
-          updateCameraPosition()
-        } else if (e.touches.length === 1) {
-          e.preventDefault()
-          const touch = e.touches[0]
-          const deltaX = touch.clientX - previousTouchPosition.x
-          const deltaY = touch.clientY - previousTouchPosition.y
-          cameraTheta -= deltaX * 0.006
-          cameraPhi += deltaY * 0.006
-          cameraPhi = Math.max(0.2, Math.min(Math.PI / 2.2, cameraPhi))
-          previousTouchPosition = { x: touch.clientX, y: touch.clientY }
-          updateCameraPosition()
-        }
-      },
-      { passive: false }
-    )
 
     // ==================== Event Listeners ====================
     window.addEventListener('album-selected', ((e: CustomEvent) => {
-      // Check if already playing before loading new album
-      const wasPlaying = isPlaying && isTonearmDown
       loadAlbum(e.detail)
-
-      // If was playing, auto-play the new album's first song after loading
-      if (wasPlaying) {
-        setTimeout(() => {
-          isTonearmDown = true
-          animateTonearm(tonearmPlayAngle)
-          // Play the first song of the new album
-          playSong(0)
-        }, 600)
-      }
     }) as EventListener)
 
-    // Auto-play album when clicked (first time)
+    window.addEventListener('record-landed', ((e: CustomEvent) => {
+      if (!currentAlbum || e.detail?.album?.id !== currentAlbum.id) return
+      vinylGroup.visible = true
+      animateVinylPlacement()
+    }) as EventListener)
+
     window.addEventListener('auto-play-album', (() => {
       if (!currentAlbum) return
 
-      // Wait for vinyl placement animation then auto-play
       setTimeout(() => {
-        if (!isTonearmDown) {
-          isTonearmDown = true
-          animateTonearm(tonearmPlayAngle)
-          // Play the first song
-          playSong(0)
-        }
-      }, 600)
+        isTonearmDown = true
+        animateTonearm(tonearmPlayAngle)
+        void playSong(0)
+      }, 180)
     }) as EventListener)
 
     window.addEventListener('song-selected', ((e: CustomEvent) => {
@@ -1377,7 +1174,9 @@ import '~/styles/music.css'
     function loadAlbum(album: Album) {
       currentAlbum = album
       currentSongIndex = 0
-      vinylGroup.visible = true
+      vinylGroup.visible = false
+      isTonearmDown = false
+      animateTonearm(tonearmRestAngle)
 
       // Load album cover image onto vinyl
       if (album.cover) {
@@ -1395,8 +1194,6 @@ import '~/styles/music.css'
         audioElement.currentTime = 0
         audioElement.src = ''
       }
-
-      animateVinylPlacement()
     }
 
     // Event Listeners for controls
@@ -1588,35 +1385,24 @@ import '~/styles/music.css'
 
     // ==================== Animations ====================
     function animateVinylPlacement() {
-      vinylGroup.position.y = 2.5
-      vinylGroup.scale.set(0.3, 0.3, 0.3)
-      vinylGroup.rotation.x = 0.2
+      const startY = 0.82
+      const targetY = 0.65
+      const startTime = performance.now()
+      const duration = 260
+      vinylGroup.position.y = startY
+      vinylGroup.scale.set(0.985, 0.985, 0.985)
+      vinylGroup.rotation.x = 0.025
 
-      const animate = () => {
-        const targetY = 0.65
-        const diff = vinylGroup.position.y - targetY
-
-        if (Math.abs(diff) > 0.01) {
-          vinylGroup.position.y -= diff * 0.1
-
-          const scale = vinylGroup.scale.x
-          if (scale < 1) {
-            const newScale = scale + (1 - scale) * 0.1
-            vinylGroup.scale.set(newScale, newScale, newScale)
-          }
-
-          if (vinylGroup.rotation.x > 0.01) {
-            vinylGroup.rotation.x *= 0.85
-          }
-
-          requestAnimationFrame(animate)
-        } else {
-          vinylGroup.position.y = targetY
-          vinylGroup.scale.set(1, 1, 1)
-          vinylGroup.rotation.x = 0
-        }
+      const animate = (time: number) => {
+        const progress = Math.min((time - startTime) / duration, 1)
+        const eased = 1 - Math.pow(1 - progress, 3)
+        vinylGroup.position.y = startY + (targetY - startY) * eased
+        const scale = 0.985 + 0.015 * eased
+        vinylGroup.scale.set(scale, scale, scale)
+        vinylGroup.rotation.x = 0.025 * (1 - eased)
+        if (progress < 1) requestAnimationFrame(animate)
       }
-      animate()
+      requestAnimationFrame(animate)
     }
 
     function animateTonearm(targetAngle: number) {
@@ -1680,9 +1466,11 @@ import '~/styles/music.css'
       if (!container) return
 
       const size = getContainerSize()
+      cameraRadius = getCameraRadius(size.width, size.height)
       camera.aspect = size.width / size.height
       camera.updateProjectionMatrix()
       renderer.setSize(size.width, size.height)
+      updateCameraPosition()
     }
 
     window.addEventListener('resize', handleResize)
@@ -1699,7 +1487,7 @@ import '~/styles/music.css'
       warmLight.intensity = 18
       coolLight.intensity = 9
       rimLight.intensity = 1.8
-      hornKeyLight.intensity = 68
+      woodKeyLight.intensity = 54
       renderer.toneMappingExposure = 1.06
     }
 

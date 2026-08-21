@@ -1,4 +1,4 @@
-import { defineEcConfig, setLuminance, setAlpha } from 'astro-expressive-code'
+import { defineEcConfig, setAlpha } from 'astro-expressive-code'
 import { pluginLineNumbers } from '@expressive-code/plugin-line-numbers'
 import { pluginCollapsibleSections } from '@expressive-code/plugin-collapsible-sections'
 
@@ -19,25 +19,34 @@ export default defineEcConfig({
 
   /* Styles */
   styleOverrides: {
+    borderRadius: '0.4rem',
+    borderWidth: '1px',
+    borderColor: 'var(--c-border-soft)',
     uiFontFamily: 'var(--font-mono)',
     uiFontSize: '1em',
     codeBackground: (context) =>
-      context.theme.name === 'vitesse-dark' ? '#0e0e0e' : '#fafafa',
+      context.theme.name === 'vitesse-dark' ? '#121212' : '#ffffff',
     codeFontFamily: 'var(--font-mono)',
-    codeFontSize: '14.72px',
-    codeLineHeight: '1.4',
-    codePaddingBlock: '0.8571429em',
-    codePaddingInline: '1.1428571em',
+    codeFontSize: '0.875rem',
+    codeLineHeight: '1.55',
+    codePaddingBlock: '0.85rem',
+    codePaddingInline: '1rem',
 
     /* Editor & Terminal Frames */
     frames: {
-      frameBoxShadowCssValue: 'none',
-      inlineButtonBackgroundActiveOpacity: '0.2',
-      inlineButtonBackgroundHoverOrFocusOpacity: '0.1',
+      frameBoxShadowCssValue: '0 1px 2px rgb(15 23 42 / 0.05)',
+      inlineButtonBackground: 'var(--c-text)',
+      inlineButtonBackgroundIdleOpacity: '0',
+      inlineButtonBackgroundActiveOpacity: '0.08',
+      inlineButtonBackgroundHoverOrFocusOpacity: '0.055',
+      inlineButtonForeground: 'var(--c-text-muted)',
+      terminalTitlebarBackground: ({ theme }) =>
+        theme.name === 'vitesse-dark' ? '#121212' : '#ffffff',
+      terminalTitlebarBorderBottomColor: 'var(--c-border-soft)',
       terminalBackground: ({ theme }) =>
-        theme.name === 'vitesse-dark' ? '#0e0e0e' : '#fafafa',
-      tooltipSuccessBackground: ({ theme }) =>
-        setLuminance(theme.colors['terminal.ansiGreen'] || '#0dbc79', 0.22),
+        theme.name === 'vitesse-dark' ? '#121212' : '#ffffff',
+      tooltipSuccessBackground: 'var(--c-text)',
+      tooltipSuccessForeground: 'var(--c-bg)',
     },
 
     /* Text & Line Markers */

@@ -5,7 +5,7 @@
     "description": "陶喆首张同名专辑，1997年发行，开启华语R&B新纪元",
     "artist": "陶喆",
     "cover": "/img/david-tao.png",
-    "color": "#1a1a2e",
+    "color": "#2d568d",
     "songs": [
       {
         "id": "david-tao-1",
@@ -66,6 +66,118 @@
         "name": "十七岁",
         "duration": "0:00",
         "url": "/music/david-tao/十七岁.mp3"
+      }
+    ]
+  },
+  {
+    "id": "mock-night-ferry",
+    "name": "Night Ferry",
+    "description": "多专辑切换视觉预览数据，音频复用现有本地曲目。",
+    "artist": "Layout Study · Mock",
+    "cover": "/img/music-night-ferry.svg",
+    "color": "#31485a",
+    "songs": [
+      {
+        "id": "night-ferry-1",
+        "name": "流沙",
+        "duration": "0:00",
+        "url": "/music/david-tao/流沙.mp3"
+      },
+      {
+        "id": "night-ferry-2",
+        "name": "沙滩",
+        "duration": "0:00",
+        "url": "/music/david-tao/沙滩.mp3"
+      },
+      {
+        "id": "night-ferry-3",
+        "name": "心乱飞",
+        "duration": "0:00",
+        "url": "/music/david-tao/心乱飞.mp3"
+      }
+    ]
+  },
+  {
+    "id": "mock-after-rain",
+    "name": "After Rain",
+    "description": "多专辑切换视觉预览数据，音频复用现有本地曲目。",
+    "artist": "Layout Study · Mock",
+    "cover": "/img/music-after-rain.svg",
+    "color": "#6d7668",
+    "songs": [
+      {
+        "id": "after-rain-1",
+        "name": "爱，很简单",
+        "duration": "0:00",
+        "url": "/music/david-tao/爱很简单.mp3"
+      },
+      {
+        "id": "after-rain-2",
+        "name": "望春风",
+        "duration": "0:00",
+        "url": "/music/david-tao/望春风.mp3"
+      },
+      {
+        "id": "after-rain-3",
+        "name": "十七岁",
+        "duration": "0:00",
+        "url": "/music/david-tao/十七岁.mp3"
+      }
+    ]
+  },
+  {
+    "id": "mock-blue-hour",
+    "name": "Blue Hour",
+    "description": "多专辑切换视觉预览数据，音频复用现有本地曲目。",
+    "artist": "Layout Study · Mock",
+    "cover": "/img/music-blue-hour.svg",
+    "color": "#334666",
+    "songs": [
+      {
+        "id": "blue-hour-1",
+        "name": "飞机场的十点半",
+        "duration": "0:00",
+        "url": "/music/david-tao/飞机场的十点半.mp3"
+      },
+      {
+        "id": "blue-hour-2",
+        "name": "是是非非",
+        "duration": "0:00",
+        "url": "/music/david-tao/是是非非.mp3"
+      },
+      {
+        "id": "blue-hour-3",
+        "name": "再见以前先说再见",
+        "duration": "0:00",
+        "url": "/music/david-tao/再见以前先说再见.mp3"
+      }
+    ]
+  },
+  {
+    "id": "mock-late-letters",
+    "name": "Late Letters",
+    "description": "多专辑切换视觉预览数据，音频复用现有本地曲目。",
+    "artist": "Layout Study · Mock",
+    "cover": "/img/music-late-letters.svg",
+    "color": "#783e33",
+    "songs": [
+      {
+        "id": "late-letters-1",
+        "name": "王八蛋",
+        "duration": "0:00",
+        "url": "/music/david-tao/王八蛋.mp3"
+      },
+      {
+        "id": "late-letters-2",
+        "name": "心乱飞",
+        "duration": "0:00",
+        "url": "/music/david-tao/心乱飞.mp3"
+      },
+      {
+        "id": "late-letters-3",
+        "name": "流沙",
+        "duration": "0:00",
+        "url": "/music/david-tao/流沙.mp3"
       }
     ]
   }

@@ -1,114 +1,166 @@
 ---
-import VinylSidebar from '~/components/music/VinylSidebar.astro'
+import AlbumStage from '~/components/music/AlbumStage.astro'
 import Gramophone from '~/components/music/Gramophone.astro'
 import SongList from '~/components/music/SongList.astro'
-// 注意：音乐功能已改为使用本地数据，CMS 音乐 API 暂时禁用
-// import { fetchMusic, isCMSEnabled, type CMSAlbum } from '~/utils/cms-api'
-
-// Fallback to local data if CMS is not configured
 import localAlbumsData from '~/content/music/data.json'
 
-// 音乐功能强制使用本地数据
-// CMS R2 存储存在 CORS 问题，音乐资源托管在本地 public/ 目录
 const albumsData = localAlbumsData
+const firstAlbum = albumsData[0]
 ---
 
 <div id="global-music-player" transition:persist="music-player">
-  <div class="music-page-wrapper hidden" id="music-page-wrapper">
-    <div class="music-player-container">
-      <!-- 左侧唱片列表侧边栏 -->
-      <div class="sidebar-wrapper left">
-        <VinylSidebar albums={albumsData} />
-        <button
-          class="sidebar-toggle left-toggle"
-          id="left-sidebar-toggle"
-          aria-label="折叠唱片库"
-        >
-          <span class="i-ri-arrow-left-s-line"></span>
-        </button>
-      </div>
-
-      <!-- 中央留声机 -->
-      <div class="gramophone-section">
-        <div class="music-stage-intro" aria-hidden="true">
-          <span>VINYL ROOM</span>
-          <p>选择一张唱片，拖到唱片机上</p>
-        </div>
-        <Gramophone />
-      </div>
-
-      <!-- 右侧歌曲列表 -->
-      <div class="sidebar-wrapper right">
-        <button
-          class="sidebar-toggle right-toggle"
-          id="right-sidebar-toggle"
-          aria-label="折叠播放列表"
-        >
-          <span class="i-ri-arrow-right-s-line"></span>
-        </button>
-        <SongList />
-      </div>
-
-      <button
-        class="mobile-panel-backdrop"
-        id="mobile-panel-backdrop"
-        type="button"
-        aria-label="关闭音乐面板"
-        tabindex="-1"></button>
+  <div
+    class="music-page-wrapper hidden"
+    id="music-page-wrapper"
+    style={`--album-color: ${firstAlbum?.color ?? '#7d503d'}; --album-cover: url("${firstAlbum?.cover ?? ''}");`}
+  >
+    <div class="music-ambient" aria-hidden="true">
+      <div class="music-ambient-cover"></div>
+      <div class="music-ambient-light"></div>
+      <div class="music-ambient-noise"></div>
     </div>
 
-    <!-- 移动端底部控制栏 -->
-    <div class="mobile-controls">
-      <!-- 迷你播放器（播放选中专辑后显示）-->
-      <div class="mobile-mini-player hidden" id="mobile-mini-player">
-        <div class="mini-progress" id="mini-progress">
-          <div class="mini-progress-fill" id="mini-progress-fill"></div>
-        </div>
-        <div class="mini-player-row">
+    <div class="music-player-container">
+      <div class="listening-stage">
+        <AlbumStage albums={albumsData} />
+
+        <section class="gramophone-section" aria-label="唱片机">
+          <div class="gramophone-label" aria-hidden="true">
+            <span>WOOD DECK · ORBIT VIEW</span>
+            <i></i>
+          </div>
+          <div
+            id="record-drop-target"
+            class="record-drop-target"
+            aria-hidden="true"
+          >
+          </div>
+          <Gramophone />
+          <p class="gramophone-hint">拖动旋转唱机 · 点击唱臂播放或暂停</p>
+        </section>
+      </div>
+
+      <section class="playback-hub" id="playback-hub" aria-label="音乐播放控制">
+        <aside class="playback-queue" id="playlist-drawer" aria-hidden="true">
+          <SongList />
+        </aside>
+
+        <div class="now-playing-dock" id="mobile-mini-player">
           <div class="mini-track">
-            <span class="mini-track-title" id="mini-track-title">未在播放</span>
+            <span class="mini-track-eyebrow" id="mini-track-eyebrow"
+              >等待落针</span
+            >
+            <span class="mini-track-title" id="mini-track-title"
+              >请选择一张唱片</span
+            >
             <span class="mini-track-time" id="mini-track-time">0:00 / 0:00</span
             >
           </div>
+
+          <div
+            class="mini-progress"
+            id="mini-progress"
+            role="progressbar"
+            aria-label="播放进度"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow="0"
+          >
+            <div class="mini-progress-fill" id="mini-progress-fill"></div>
+          </div>
+
           <div class="mini-controls">
-            <button id="mini-prev" class="mini-ctrl-btn" aria-label="上一首">
+            <button
+              id="mini-prev"
+              class="mini-ctrl-btn"
+              type="button"
+              aria-label="上一首"
+              disabled
+            >
               <span class="i-ri-skip-back-fill"></span>
             </button>
             <button
               id="mini-play"
               class="mini-ctrl-btn mini-play-btn"
-              aria-label="播放/暂停"
+              type="button"
+              aria-label="播放或暂停"
+              disabled
             >
               <span class="i-ri-play-fill" id="mini-play-icon"></span>
             </button>
-            <button id="mini-next" class="mini-ctrl-btn" aria-label="下一首">
+            <button
+              id="mini-next"
+              class="mini-ctrl-btn"
+              type="button"
+              aria-label="下一首"
+              disabled
+            >
               <span class="i-ri-skip-forward-fill"></span>
             </button>
           </div>
-        </div>
-      </div>
 
-      <!-- 控制按钮行 -->
-      <div class="mobile-btn-row">
-        <button
-          id="mobile-sidebar-toggle"
-          class="mobile-btn"
-          aria-label="唱片列表"
-          aria-expanded="false"
-        >
-          <span class="i-ri-album-line"></span>
-          <span class="mobile-btn-label">唱片</span>
-        </button>
-        <button
-          id="mobile-songs-toggle"
-          class="mobile-btn"
-          aria-label="歌曲列表"
-          aria-expanded="false"
-        >
-          <span class="i-ri-list-unordered"></span>
-          <span class="mobile-btn-label">曲目</span>
-        </button>
-      </div>
+          <div class="dock-speed-options" role="group" aria-label="播放速度">
+            <button class="dock-speed-btn" type="button" data-rate="0.5"
+              >.5×</button
+            >
+            <button class="dock-speed-btn active" type="button" data-rate="1"
+              >1×</button
+            >
+            <button class="dock-speed-btn" type="button" data-rate="1.5"
+              >1.5×</button
+            >
+            <button class="dock-speed-btn" type="button" data-rate="2"
+              >2×</button
+            >
+          </div>
+
+          <button
+            class="queue-toggle"
+            id="playlist-trigger"
+            type="button"
+            aria-label="展开曲目"
+            aria-expanded="false"
+            aria-controls="playlist-drawer"
+          >
+            <span class="i-ri-play-list-2-line"></span>
+            <span class="queue-toggle-label">曲目</span>
+            <i id="playlist-trigger-count">0</i>
+            <span class="queue-chevron i-ri-arrow-up-s-line"></span>
+          </button>
+
+          <button
+            class="dock-collapse-toggle"
+            id="player-collapse-trigger"
+            type="button"
+            aria-label="收起播放条"
+          >
+            <span class="i-ri-arrow-down-s-line"></span>
+          </button>
+        </div>
+
+        <div class="compact-player-dock" aria-hidden="true">
+          <span class="compact-track-title" id="compact-track-title"
+            >请选择一张唱片</span
+          >
+          <button
+            class="compact-play-btn"
+            id="compact-play"
+            type="button"
+            aria-label="播放或暂停"
+            disabled
+          >
+            <span class="i-ri-play-fill" id="compact-play-icon"></span>
+          </button>
+          <button
+            class="compact-expand-btn"
+            id="player-expand-trigger"
+            type="button"
+            aria-label="展开播放条"
+          >
+            <span class="i-ri-arrow-up-s-line"></span>
+          </button>
+        </div>
+      </section>
     </div>
   </div>
 </div>
@@ -116,500 +168,536 @@ const albumsData = localAlbumsData
 <style>
   #global-music-player {
     position: fixed;
-    inset: 0;
     z-index: 100;
+    inset: 0;
     pointer-events: none;
   }
-
   .music-page-wrapper {
     position: fixed;
-    inset: 0;
-    top: 4rem;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
     overflow: hidden;
-    display: flex;
-    flex-direction: column;
+    color: #f7f2ea;
+    background: var(--music-room-surface, #0c0d0f);
     pointer-events: auto;
     transition:
-      transform 0.3s ease,
-      opacity 0.3s ease;
+      opacity 220ms ease,
+      transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
   }
-
   .music-page-wrapper.hidden {
-    transform: translateY(100%);
     opacity: 0;
     pointer-events: none;
+    transform: translateY(1.25rem);
   }
-
-  .music-player-container {
-    flex: 1;
+  .music-player-container,
+  .listening-stage {
+    position: relative;
     width: 100%;
     height: 100%;
-    margin: 0;
-    padding: 0;
+  }
+  .music-player-container {
+    /* `overflow: hidden` creates a programmatically scrollable container.
+       Focusing the queue toggle could therefore scroll the whole listening
+       stage upward. `clip` keeps the crop without creating that scrollport. */
+    overflow: clip;
+  }
+  .listening-stage {
+    z-index: 2;
+    display: grid;
+    grid-template-rows: minmax(12rem, 0.44fr) minmax(13rem, 0.56fr);
+    grid-template-columns: minmax(0, 1fr);
+    padding-top: 4rem;
+    padding-bottom: 4.1rem;
+  }
+  .gramophone-section {
     position: relative;
-    overflow: hidden;
-  }
-
-  /* 侧边栏包裹器 - 使用固定定位，不影响布局 */
-  .sidebar-wrapper {
-    position: absolute; /* Changed from fixed to absolute to stay within wrapper */
-    top: 0;
-    bottom: 0;
-    height: 100%;
-    z-index: 50;
-    transition: transform 0.3s ease;
-  }
-
-  .sidebar-wrapper.left {
-    left: 0;
-    width: 260px;
-  }
-
-  .sidebar-wrapper.right {
-    right: 0;
-    width: 260px;
     display: flex;
-    justify-content: flex-end;
+    min-width: 0;
+    min-height: 0;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-top: 1px solid rgb(255 255 255 / 5%);
+  }
+  .gramophone-label {
+    position: absolute;
+    top: clamp(0.85rem, 2vh, 1.5rem);
+    right: clamp(1.5rem, 4vw, 4.25rem);
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: rgba(247, 242, 234, 0.48);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    pointer-events: none;
+  }
+  .gramophone-label i {
+    width: 2.5rem;
+    height: 1px;
+    background: rgba(247, 242, 234, 0.24);
+  }
+  .record-drop-target {
+    position: absolute;
+    top: 53%;
+    left: 50%;
+    z-index: 6;
+    width: clamp(5rem, 9vw, 8.5rem);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+  }
+  .gramophone-hint {
+    position: absolute;
+    right: 50%;
+    bottom: 1rem;
+    z-index: 4;
+    margin: 0;
+    color: rgba(247, 242, 234, 0.38);
+    font-size: 0.64rem;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    pointer-events: none;
+    transform: translateX(50%);
   }
 
-  .sidebar-wrapper.left.collapsed {
-    transform: translateX(calc(-100% + 16px));
+  .playback-hub {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 90;
+    width: 100%;
+    padding-inline: clamp(0.75rem, 4vw, 4.5rem);
+    background: transparent;
+    border-top: 0;
+    box-shadow: none;
+    transition:
+      background-color 680ms cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 420ms ease;
   }
-
-  .sidebar-wrapper.right.collapsed {
-    transform: translateX(calc(100% - 16px));
-  }
-
-  .sidebar-wrapper.left.collapsed :global(.vinyl-sidebar),
-  .sidebar-wrapper.right.collapsed :global(.song-list-container) {
+  .playback-queue {
+    position: absolute;
+    right: max(0.75rem, calc((100vw - 70rem) / 2));
+    bottom: 100%;
+    left: max(0.75rem, calc((100vw - 70rem) / 2));
+    height: min(57vh, 34rem);
+    overflow: hidden;
+    color: #f7f2ea;
+    background: color-mix(
+      in srgb,
+      var(--album-color, #28303a) 28%,
+      rgb(10 11 13 / 95%)
+    );
+    border: 1px solid
+      color-mix(in srgb, var(--album-color, #6f7885) 28%, white 12%);
+    border-radius: 1rem 1rem 0 0;
+    box-shadow: 0 -1.5rem 5rem rgb(5 6 8 / 32%);
+    backdrop-filter: blur(24px) saturate(1.08);
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-  }
-
-  /* 折叠按钮 */
-  .sidebar-toggle {
-    position: absolute;
-    top: 1rem;
-    transform: none;
-    width: 32px;
-    height: 32px;
-    background: color-mix(in srgb, var(--c-bg) 98%, transparent);
-    border: 1px solid var(--c-border-soft);
-    border-radius: 50%;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-    z-index: 10;
-  }
-
-  .sidebar-toggle:hover {
-    background: color-mix(in srgb, var(--c-bg) 98%, transparent);
-    border-color: var(--c-border-soft);
-  }
-
-  .sidebar-toggle span {
-    font-size: 0.95rem;
-    opacity: 0.85;
-    color: var(--music-accent);
+    transform: translate3d(0, 0.8rem, 0) scale(0.992);
+    transform-origin: bottom center;
     transition:
-      color 0.2s ease,
-      transform 0.3s ease;
+      transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 170ms ease,
+      visibility 260ms ease;
+    will-change: transform, opacity;
   }
-
-  .sidebar-toggle:hover span {
-    color: color-mix(in srgb, var(--music-accent) 70%, black);
-  }
-
-  .left-toggle {
-    right: -16px;
-  }
-
-  .right-toggle {
-    left: -16px;
-  }
-
-  /* 折叠状态下的按钮图标翻转 */
-  .sidebar-wrapper.left.collapsed .left-toggle span {
-    transform: rotate(180deg) translateX(-1px);
-  }
-
-  .sidebar-wrapper.right.collapsed .right-toggle span {
-    transform: rotate(180deg) translateX(1px);
-  }
-
-  .music-player-container :global(.vinyl-sidebar) {
-    width: 260px;
-    height: 100%;
-    margin: 0;
-    padding: 0 0.75rem;
-    border-radius: 0;
-    background: var(--c-bg);
-    border-right: 1px solid rgba(128, 128, 128, 0.1);
-  }
-
-  .music-player-container :global(.song-list-container) {
-    width: 260px;
-    height: 100%;
-    margin: 0;
-    padding: 0 0.75rem;
-    border-radius: 0;
-    background: var(--c-bg);
-    border-left: 1px solid rgba(128, 128, 128, 0.1);
-  }
-
-  .gramophone-section {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
-    padding: 0;
-  }
-
-  .music-stage-intro {
-    position: absolute;
-    top: clamp(1.25rem, 3vh, 2rem);
-    left: 50%;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.2rem;
-    transform: translateX(-50%);
-    pointer-events: none;
-  }
-
-  .music-stage-intro span {
-    color: var(--c-text);
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.2em;
-  }
-
-  .music-stage-intro p {
-    margin: 0;
-    color: var(--c-text-muted);
-    font-size: 0.75rem;
-  }
-
-  .mobile-panel-backdrop {
-    display: none;
-  }
-
-  .mobile-controls {
-    display: none;
-    flex-direction: column;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: var(--c-bg);
-    border-top: 1px solid rgba(128, 128, 128, 0.2);
-    padding: 0.5rem 1rem;
-    padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));
-    gap: 0.5rem;
-    z-index: 200;
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
-  }
-
-  /* 导航链接行 */
-  .mobile-nav-row {
-    display: none;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap: 1.5rem;
-    padding: 0.5rem 0;
-    border-bottom: 1px solid rgba(128, 128, 128, 0.1);
-  }
-
-  .mobile-nav-link {
-    font-size: 0.875rem;
-    color: inherit;
-    opacity: 0.7;
-    text-decoration: none;
-    transition: opacity 0.2s ease;
-    white-space: nowrap;
-  }
-
-  .mobile-nav-link:hover {
+  .playback-queue.active {
     opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translate3d(0, 0, 0) scale(1);
   }
-
-  .mobile-nav-link span {
-    font-size: 1.1rem;
-  }
-
-  /* 控制按钮行 */
-  .mobile-btn-row {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap: 3rem;
-  }
-
-  .mobile-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    background: var(--music-accent-soft, rgba(82, 106, 115, 0.1));
-    border: 2px solid var(--music-accent-line, rgba(82, 106, 115, 0.24));
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-
-  .mobile-btn:hover,
-  .mobile-btn:active {
-    background: var(--music-accent-soft, rgba(82, 106, 115, 0.16));
-    border-color: var(--music-accent-line, rgba(82, 106, 115, 0.36));
-    transform: scale(1.05);
-  }
-
-  .mobile-btn span {
-    font-size: 1.5rem;
-    opacity: 0.8;
-    color: var(--music-accent, #526a73);
-  }
-
-  .mobile-btn .mobile-btn-label {
-    font-size: 0.75rem;
-    font-weight: 600;
-  }
-
-  /* 迷你播放器 */
-  .mobile-mini-player {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--music-hud-line, rgba(232, 205, 146, 0.14));
-  }
-
-  .mobile-mini-player.hidden {
-    display: none;
-  }
-
-  .mini-progress {
+  .now-playing-dock {
     position: relative;
-    height: 4px;
-    border-radius: 2px;
-    background: var(--c-surface-active, rgba(244, 239, 230, 0.14));
-    cursor: pointer;
-    overflow: hidden;
-  }
-
-  .mini-progress-fill {
-    position: absolute;
-    inset: 0 auto 0 0;
-    width: 0%;
-    border-radius: 2px;
-    background: var(--music-accent, #526a73);
-    transition: width 0.15s linear;
-  }
-
-  .mini-player-row {
-    display: flex;
+    z-index: 2;
+    display: grid;
+    grid-template-columns:
+      minmax(9rem, 1fr) minmax(8rem, 1.2fr) auto auto auto
+      auto;
+    min-height: 3.85rem;
+    width: min(70rem, 100%);
     align-items: center;
-    justify-content: space-between;
     gap: 0.75rem;
+    margin-inline: auto;
+    padding: 0.52rem 0.6rem 0.52rem 0.9rem;
+    color: #f7f2ea;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+    transition:
+      transform 220ms cubic-bezier(0.23, 1, 0.32, 1),
+      opacity 160ms ease,
+      background-color 280ms ease,
+      border-color 280ms ease,
+      visibility 220ms ease;
+    will-change: transform, opacity;
   }
-
   .mini-track {
-    display: flex;
-    flex-direction: column;
+    display: grid;
     min-width: 0;
-    flex: 1;
+    grid-template-columns: 1fr auto;
+    gap: 0.08rem 0.55rem;
   }
-
+  .mini-track-eyebrow {
+    grid-column: 1/-1;
+    color: color-mix(in srgb, var(--album-tint, #d6b57b) 76%, white);
+    font-size: 0.54rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+  }
   .mini-track-title {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--c-text, #f4efe6);
-    white-space: nowrap;
     overflow: hidden;
+    font-size: 0.72rem;
+    font-weight: 650;
     text-overflow: ellipsis;
+    white-space: nowrap;
   }
-
   .mini-track-time {
-    font-size: 0.6875rem;
-    color: var(--c-text-muted, rgba(244, 239, 230, 0.6));
+    color: rgba(247, 242, 234, 0.42);
+    font-size: 0.56rem;
     font-variant-numeric: tabular-nums;
   }
-
-  .mini-controls {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex-shrink: 0;
-  }
-
-  .mini-ctrl-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: transparent;
-    border: none;
+  .mini-progress {
+    position: relative;
+    height: 3px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.13);
+    border-radius: 999px;
     cursor: pointer;
-    color: var(--c-text-soft, rgba(244, 239, 230, 0.74));
-    transition: all 0.2s ease;
   }
-
-  .mini-ctrl-btn span {
-    font-size: 1.25rem;
+  .mini-progress-fill {
+    position: absolute;
+    width: 0;
+    background: color-mix(in srgb, var(--album-tint, #d6b57b) 78%, white);
+    border-radius: inherit;
+    inset: 0 auto 0 0;
   }
-
-  .mini-ctrl-btn:hover,
-  .mini-ctrl-btn:active {
-    color: var(--c-text, #f4efe6);
-    background: var(--c-surface-soft, rgba(244, 239, 230, 0.06));
+  .mini-controls,
+  .dock-speed-options {
+    display: flex;
+    align-items: center;
   }
-
+  .mini-controls {
+    gap: 0.12rem;
+  }
+  .mini-ctrl-btn {
+    display: grid;
+    width: 2.15rem;
+    height: 2.15rem;
+    padding: 0;
+    color: rgba(247, 242, 234, 0.67);
+    background: transparent;
+    border: 0;
+    border-radius: 999px;
+    cursor: pointer;
+    place-items: center;
+    transition:
+      color 150ms ease,
+      background-color 150ms ease,
+      transform 150ms ease;
+  }
+  .mini-ctrl-btn:disabled {
+    opacity: 0.28;
+    cursor: default;
+  }
   .mini-play-btn {
-    width: 48px;
-    height: 48px;
-    background: var(--music-accent, #526a73);
-    color: var(--c-bg);
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+    color: #111214;
+    background: #f3eee5;
+  }
+  .mini-play-btn:disabled {
+    color: #111214;
+    background: rgba(243, 238, 229, 0.5);
+  }
+  .dock-speed-options {
+    gap: 0.1rem;
+    padding: 0.15rem;
+    background: rgba(255, 255, 255, 0.055);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 0.65rem;
+  }
+  .dock-speed-btn {
+    min-width: 1.85rem;
+    height: 1.75rem;
+    padding: 0 0.28rem;
+    color: rgba(247, 242, 234, 0.43);
+    background: transparent;
+    border: 0;
+    border-radius: 0.48rem;
+    font-size: 0.58rem;
+    cursor: pointer;
+    transition:
+      color 150ms ease,
+      background-color 150ms ease,
+      transform 150ms ease;
+  }
+  .dock-speed-btn.active {
+    color: #111214;
+    background: #eee8de;
+  }
+  .queue-toggle {
+    display: flex;
+    min-height: 2.4rem;
+    align-items: center;
+    gap: 0.42rem;
+    padding: 0.38rem 0.48rem 0.38rem 0.62rem;
+    color: rgba(247, 242, 234, 0.76);
+    background: rgba(255, 255, 255, 0.055);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 0.72rem;
+    cursor: pointer;
+    transition:
+      color 150ms ease,
+      background-color 150ms ease,
+      border-color 150ms ease,
+      transform 150ms ease;
+  }
+  .dock-collapse-toggle,
+  .compact-expand-btn,
+  .compact-play-btn {
+    display: grid;
+    width: 2.4rem;
+    height: 2.4rem;
+    padding: 0;
+    color: rgba(247, 242, 234, 0.76);
+    background: rgba(255, 255, 255, 0.055);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 0.72rem;
+    cursor: pointer;
+    place-items: center;
+    transition:
+      color 150ms ease,
+      background-color 150ms ease,
+      border-color 150ms ease,
+      transform 150ms ease;
+  }
+  .compact-player-dock {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    z-index: 3;
+    display: grid;
+    width: min(22rem, calc(100vw - 1.2rem));
+    min-height: 3.35rem;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.42rem 0.48rem 0.42rem 0.85rem;
+    color: #f7f2ea;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translate3d(-50%, 0.5rem, 0) scale(0.965);
+    transition:
+      transform 220ms cubic-bezier(0.23, 1, 0.32, 1),
+      opacity 150ms ease,
+      background-color 280ms ease,
+      border-color 280ms ease,
+      visibility 220ms ease;
+    will-change: transform, opacity;
+  }
+  .compact-track-title {
+    overflow: hidden;
+    font-size: 0.72rem;
+    font-weight: 650;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .compact-play-btn {
+    color: #111214;
+    background: #f3eee5;
+    border-color: transparent;
+    border-radius: 999px;
+  }
+  .compact-play-btn:disabled {
+    opacity: 0.42;
+  }
+  .playback-hub.is-collapsed .now-playing-dock {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translate3d(0, 0.5rem, 0) scale(0.985);
+  }
+  .playback-hub.is-collapsed .compact-player-dock {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translate3d(-50%, 0, 0) scale(1);
+  }
+  .queue-toggle-label {
+    font-size: 0.66rem;
+    font-weight: 650;
+  }
+  .queue-toggle i {
+    display: grid;
+    min-width: 1.25rem;
+    height: 1.25rem;
+    color: rgba(247, 242, 234, 0.56);
+    background: rgba(255, 255, 255, 0.07);
+    border-radius: 999px;
+    font-size: 0.54rem;
+    font-style: normal;
+    place-items: center;
+  }
+  .queue-chevron {
+    font-size: 0.86rem;
+    transition: transform 210ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .queue-toggle[aria-expanded='true'] .queue-chevron {
+    transform: rotate(180deg);
+  }
+  .queue-toggle[aria-expanded='true'] {
+    color: #fffaf2;
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.17);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .mini-ctrl-btn:not(:disabled):hover,
+    .dock-speed-btn:hover,
+    .queue-toggle:hover,
+    .dock-collapse-toggle:hover,
+    .compact-expand-btn:hover {
+      color: #fffaf2;
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    .mini-play-btn:not(:disabled):hover {
+      color: #111214;
+      background: #fffaf2;
+      transform: scale(1.035);
+    }
+  }
+  .mini-ctrl-btn:not(:disabled):active,
+  .dock-speed-btn:active,
+  .queue-toggle:active,
+  .dock-collapse-toggle:active,
+  .compact-expand-btn:active,
+  .compact-play-btn:active {
+    transform: scale(0.97);
   }
 
-  .mini-play-btn span {
-    font-size: 1.5rem;
-  }
-
-  .mini-play-btn:hover,
-  .mini-play-btn:active {
-    color: var(--c-bg);
-    background: color-mix(in srgb, var(--music-accent, #526a73) 88%, white);
-    transform: scale(1.05);
-  }
-
-  /* 平板适配 */
   @media (max-width: 1024px) {
-    /* 默认隐藏侧边栏 */
-    .sidebar-wrapper.left {
-      width: 200px;
-      transform: translateX(-200px);
-      z-index: 150;
-    }
-
-    .sidebar-wrapper.left.active {
-      transform: translateX(0);
-    }
-
-    .sidebar-wrapper.right {
-      width: 260px;
-      transform: translateX(260px);
-      z-index: 150;
-    }
-
-    .sidebar-wrapper.right.active {
-      transform: translateX(0);
-    }
-
-    .sidebar-toggle {
+    .gramophone-hint {
       display: none;
     }
-
-    .music-player-container :global(.vinyl-sidebar) {
-      width: 200px;
-      box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
-    }
-
-    .music-player-container :global(.song-list-container) {
-      width: 260px;
-      box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
-    }
-
-    .mobile-controls {
-      display: flex;
-    }
-
-    /* 在平板端检测到汉堡菜单按钮时显示导航行 */
-    .mobile-nav-row.visible {
-      display: flex;
+    .now-playing-dock {
+      grid-template-columns:
+        minmax(8rem, 1fr) minmax(6rem, 0.9fr)
+        auto auto auto auto;
+      gap: 0.5rem;
     }
   }
-
-  /* 移动端适配 */
-  @media (max-width: 768px) {
+  @media (max-width: 820px) {
     .music-page-wrapper {
-      bottom: 4.5rem;
+      top: 0;
     }
-
-    .sidebar-wrapper.left {
-      width: 260px;
-      bottom: 4.5rem;
-      transform: translateX(-260px);
-      z-index: 150;
+    .listening-stage {
+      grid-template-rows: minmax(13rem, 0.52fr) minmax(12rem, 0.48fr);
+      grid-template-columns: 1fr;
+      padding-top: 3.75rem;
+      padding-bottom: 6rem;
     }
-
-    .sidebar-wrapper.right {
-      width: 260px;
-      bottom: 4.5rem;
-      transform: translateX(260px);
-      z-index: 150;
+    .gramophone-label {
+      top: 0.8rem;
+      right: 1rem;
     }
-
-    .music-player-container :global(.vinyl-sidebar) {
-      width: 260px;
-      box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+    .record-drop-target {
+      top: 54%;
+      left: 50%;
+      width: 4rem;
     }
-
-    .music-player-container :global(.vinyl-sidebar.active) {
-      transform: translateX(0);
+    .playback-hub {
+      bottom: 0;
+      width: 100%;
+      padding-inline: 0.55rem;
     }
-
-    .sidebar-wrapper.left.active {
-      transform: translateX(0);
+    .playback-queue {
+      height: min(54vh, 32rem);
+      border-radius: 1rem;
     }
-
-    .music-player-container :global(.song-list-container) {
-      width: 260px;
-      box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
+    .now-playing-dock {
+      grid-template-areas:
+        'track controls queue collapse'
+        'progress speed speed speed';
+      grid-template-columns: minmax(0, 1fr) auto auto auto;
+      gap: 0.42rem 0.55rem;
+      min-height: 5.7rem;
+      padding: 0.48rem 0.52rem 0.55rem 0.72rem;
+      border-radius: 0;
     }
-
-    .sidebar-wrapper.right.active {
-      transform: translateX(0);
+    .mini-track {
+      grid-area: track;
     }
-
-    .gramophone-section {
-      padding: 0;
+    .mini-progress {
+      grid-area: progress;
     }
-
-    .mobile-controls {
-      padding: 0.6rem 1rem;
-      padding-bottom: calc(0.6rem + env(safe-area-inset-bottom, 0px));
+    .mini-controls {
+      grid-area: controls;
     }
-
-    .mobile-btn {
-      width: 48px;
-      height: 48px;
+    .dock-speed-options {
+      grid-area: speed;
+      justify-self: end;
+    }
+    .queue-toggle {
+      grid-area: queue;
+    }
+    .dock-collapse-toggle {
+      grid-area: collapse;
+    }
+    .mini-track-time,
+    .mini-track-eyebrow {
+      display: none;
+    }
+    .mini-track {
+      display: block;
     }
   }
-
-  /* 小屏幕手机适配 */
   @media (max-width: 480px) {
-    .music-player-container :global(.vinyl-sidebar),
-    .music-player-container :global(.song-list-container) {
-      width: 85%;
-      max-width: 280px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    .listening-stage {
+      grid-template-rows: minmax(19.5rem, 0.57fr) minmax(11rem, 0.43fr);
+    }
+    .gramophone-label {
+      display: none;
+    }
+    .queue-toggle-label {
+      display: none;
+    }
+    .queue-toggle {
+      gap: 0.28rem;
+      padding-inline: 0.48rem;
+    }
+    .dock-speed-btn {
+      min-width: 1.7rem;
+      padding-inline: 0.2rem;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .music-page-wrapper,
+    .playback-queue,
+    .now-playing-dock,
+    .compact-player-dock,
+    .queue-chevron,
+    .mini-ctrl-btn,
+    .dock-speed-btn,
+    .queue-toggle,
+    .dock-collapse-toggle,
+    .compact-expand-btn,
+    .compact-play-btn {
+      transition-duration: 1ms !important;
     }
   }
 </style>
@@ -618,26 +706,23 @@ const albumsData = localAlbumsData
   interface MiniSong {
     name: string
   }
-
   interface MusicPlayerState {
     isPlaying: boolean
     isInitialized: boolean
-    clickListenerAttached?: boolean
-    miniPlayerAttached?: boolean
     currentSongs?: MiniSong[]
     currentSongIndex?: number
     currentAlbumId?: string | null
     currentPlaybackRate?: number
     currentVinylRotation?: number
+    shellEventsBound?: boolean
+    playerCollapsed?: boolean
   }
-
   declare global {
     interface Window {
       MusicPlayerState: MusicPlayerState
     }
   }
 
-  // Initialize global state for music player if not exists
   if (!window.MusicPlayerState) {
     window.MusicPlayerState = {
       isPlaying: false,
@@ -647,287 +732,209 @@ const albumsData = localAlbumsData
     }
   }
 
-  if (window.MusicPlayerState.currentVinylRotation == null) {
-    window.MusicPlayerState.currentVinylRotation = 0
+  function isMusicPage() {
+    return /^\/music\/?$/.test(window.location.pathname)
   }
-
   function updatePlayerVisibility() {
-    const wrapper = document.getElementById('music-page-wrapper')
-    const isMusicPage =
-      window.location.pathname === '/music' ||
-      window.location.pathname === '/music/'
-
-    if (isMusicPage) {
-      wrapper?.classList.remove('hidden')
-    } else {
-      wrapper?.classList.add('hidden')
-    }
+    document
+      .getElementById('music-page-wrapper')
+      ?.classList.toggle('hidden', !isMusicPage())
   }
-
-  // ==================== 迷你播放器（移动端）====================
-  function formatMiniTime(seconds: number): string {
+  function formatTime(seconds: number) {
     if (!Number.isFinite(seconds) || seconds < 0) return '0:00'
-    const m = Math.floor(seconds / 60)
-    const s = Math.floor(seconds % 60)
-    return `${m}:${s.toString().padStart(2, '0')}`
+    return `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`
   }
-
-  function updateMiniTrackTitle() {
-    const titleEl = document.getElementById('mini-track-title')
-    const miniPlayer = document.getElementById('mobile-mini-player')
-    const state = window.MusicPlayerState
-    if (!titleEl || !miniPlayer) return
-
-    const songs = state.currentSongs
-    const index = state.currentSongIndex ?? 0
-    if (songs && songs.length > 0 && songs[index]) {
-      titleEl.textContent = songs[index].name
-      miniPlayer.classList.remove('hidden')
-    }
-  }
-
-  function setMiniPlayIcon(isPlaying: boolean) {
-    const icon = document.getElementById('mini-play-icon')
-    if (!icon) return
-    icon.className = isPlaying ? 'i-ri-pause-fill' : 'i-ri-play-fill'
-  }
-
-  function closeMobileMusicPanels() {
-    if (!window.matchMedia('(max-width: 1024px)').matches) return
+  function setControlsEnabled(enabled: boolean) {
     document
-      .querySelectorAll('.sidebar-wrapper.active')
-      .forEach((panel) => panel.classList.remove('active'))
-    document.getElementById('mobile-panel-backdrop')?.classList.remove('active')
-    document
-      .querySelectorAll('.mobile-btn[aria-expanded]')
+      .querySelectorAll<HTMLButtonElement>(
+        '#mini-prev, #mini-play, #mini-next, #compact-play'
+      )
       .forEach((button) => {
-        button.classList.remove('active')
-        button.setAttribute('aria-expanded', 'false')
+        button.disabled = !enabled
       })
   }
-
-  // Keep the persistent player and navbar playback indicator in sync.
-  window.addEventListener('playback-state', ((e: CustomEvent) => {
-    const { isPlaying, songIndex } = e.detail
-    window.MusicPlayerState.isPlaying = isPlaying
-    if (typeof songIndex === 'number') {
-      window.MusicPlayerState.currentSongIndex = songIndex
-    }
-    setMiniPlayIcon(isPlaying)
-    updateMiniTrackTitle()
-    updatePlayerVisibility()
-  }) as EventListener)
-
-  // 捕获当前专辑的歌曲名，供迷你播放器展示
-  window.addEventListener('album-selected', ((e: CustomEvent) => {
-    const album = e.detail
-    if (album && Array.isArray(album.songs)) {
+  function updateMiniTrack() {
+    const state = window.MusicPlayerState
+    const song = state.currentSongs?.[state.currentSongIndex ?? 0]
+    const title = document.getElementById('mini-track-title')
+    const compactTitle = document.getElementById('compact-track-title')
+    const eyebrow = document.getElementById('mini-track-eyebrow')
+    if (title) title.textContent = song?.name ?? '请选择一张唱片'
+    if (compactTitle) compactTitle.textContent = song?.name ?? '请选择一张唱片'
+    if (eyebrow)
+      eyebrow.textContent = song
+        ? state.isPlaying
+          ? '正在播放'
+          : '已就绪'
+        : '等待落针'
+    setControlsEnabled(Boolean(song))
+  }
+  function updatePlayIcon(isPlaying: boolean) {
+    const icon = document.getElementById('mini-play-icon')
+    const compactIcon = document.getElementById('compact-play-icon')
+    if (icon) icon.className = isPlaying ? 'i-ri-pause-fill' : 'i-ri-play-fill'
+    if (compactIcon)
+      compactIcon.className = isPlaying ? 'i-ri-pause-fill' : 'i-ri-play-fill'
+  }
+  function setPlaylistOpen(open: boolean) {
+    const playerContainer = document.querySelector<HTMLElement>(
+      '.music-player-container'
+    )
+    if (playerContainer) playerContainer.scrollTop = 0
+    const drawer = document.getElementById('playlist-drawer')
+    const trigger = document.getElementById('playlist-trigger')
+    drawer?.classList.toggle('active', open)
+    drawer?.setAttribute('aria-hidden', String(!open))
+    trigger?.setAttribute('aria-expanded', String(open))
+    trigger?.setAttribute('aria-label', open ? '收起曲目' : '展开曲目')
+  }
+  function setPlayerCollapsed(collapsed: boolean) {
+    const hub = document.getElementById('playback-hub')
+    const fullDock = document.getElementById('mobile-mini-player')
+    const compactDock = hub?.querySelector<HTMLElement>('.compact-player-dock')
+    window.MusicPlayerState.playerCollapsed = collapsed
+    hub?.classList.toggle('is-collapsed', collapsed)
+    fullDock?.setAttribute('aria-hidden', String(collapsed))
+    compactDock?.setAttribute('aria-hidden', String(!collapsed))
+    if (collapsed) setPlaylistOpen(false)
+  }
+  function syncSpeed(rate: number) {
+    window.MusicPlayerState.currentPlaybackRate = rate
+    document
+      .querySelectorAll<HTMLButtonElement>('.dock-speed-btn')
+      .forEach((button) => {
+        button.classList.toggle('active', Number(button.dataset.rate) === rate)
+      })
+  }
+  function bindGlobalMusicEvents() {
+    if (window.MusicPlayerState.shellEventsBound) return
+    window.MusicPlayerState.shellEventsBound = true
+    window.addEventListener('album-selected', ((event: CustomEvent) => {
+      const album = event.detail
+      if (!album || !Array.isArray(album.songs)) return
       window.MusicPlayerState.currentAlbumId = album.id ?? null
       window.MusicPlayerState.currentSongs = album.songs.map(
-        (s: { name: string }) => ({ name: s.name })
+        (song: { name: string }) => ({ name: song.name })
       )
       window.MusicPlayerState.currentSongIndex = 0
-      closeMobileMusicPanels()
-    }
-  }) as EventListener)
-
-  window.addEventListener('song-selected', closeMobileMusicPanels)
-
-  window.addEventListener('set-playback-rate', ((e: CustomEvent) => {
-    const rate = Number(e.detail)
-    if (Number.isFinite(rate) && rate > 0) {
-      window.MusicPlayerState.currentPlaybackRate = rate
-    }
-  }) as EventListener)
-
-  // 进度更新：驱动迷你进度条与时间、当前曲目
-  window.addEventListener('playback-progress', ((e: CustomEvent) => {
-    const { currentTime, duration, songIndex } = e.detail
-    if (typeof songIndex === 'number') {
-      window.MusicPlayerState.currentSongIndex = songIndex
-    }
-    const fill = document.getElementById('mini-progress-fill')
-    const timeEl = document.getElementById('mini-track-time')
-    const percent = duration > 0 ? (currentTime / duration) * 100 : 0
-    if (fill) fill.style.width = `${percent}%`
-    if (timeEl) {
-      timeEl.textContent = `${formatMiniTime(currentTime)} / ${formatMiniTime(duration)}`
-    }
-    updateMiniTrackTitle()
-  }) as EventListener)
-
-  // Setup event listeners on page load
-  document.addEventListener('astro:page-load', () => {
+      window.MusicPlayerState.isPlaying = false
+      const count = document.getElementById('playlist-trigger-count')
+      if (count) count.textContent = String(album.songs.length)
+      const fill = document.getElementById('mini-progress-fill')
+      const progress = document.getElementById('mini-progress')
+      const time = document.getElementById('mini-track-time')
+      if (fill) fill.style.width = '0%'
+      progress?.setAttribute('aria-valuenow', '0')
+      if (time) time.textContent = '0:00 / 0:00'
+      updateMiniTrack()
+      updatePlayIcon(false)
+    }) as EventListener)
+    window.addEventListener('playback-state', ((event: CustomEvent) => {
+      const { isPlaying, songIndex } = event.detail
+      window.MusicPlayerState.isPlaying = Boolean(isPlaying)
+      if (typeof songIndex === 'number')
+        window.MusicPlayerState.currentSongIndex = songIndex
+      updateMiniTrack()
+      updatePlayIcon(Boolean(isPlaying))
+    }) as EventListener)
+    window.addEventListener('playback-progress', ((event: CustomEvent) => {
+      const { currentTime, duration, songIndex } = event.detail
+      if (typeof songIndex === 'number')
+        window.MusicPlayerState.currentSongIndex = songIndex
+      const percent =
+        duration > 0 ? Math.min(100, (currentTime / duration) * 100) : 0
+      const fill = document.getElementById('mini-progress-fill')
+      const progress = document.getElementById('mini-progress')
+      const time = document.getElementById('mini-track-time')
+      if (fill) fill.style.width = `${percent}%`
+      progress?.setAttribute('aria-valuenow', String(Math.round(percent)))
+      if (time)
+        time.textContent = `${formatTime(currentTime)} / ${formatTime(duration)}`
+      updateMiniTrack()
+    }) as EventListener)
+    window.addEventListener('set-playback-rate', ((event: CustomEvent) =>
+      syncSpeed(Number(event.detail) || 1)) as EventListener)
+  }
+  function initialiseMusicShell() {
+    bindGlobalMusicEvents()
     updatePlayerVisibility()
-
-    // Re-attach sidebar toggle listeners if needed, but since we use transition:persist,
-    // the DOM elements are preserved. However, if we navigate away and back,
-    // we might need to check if listeners are still active.
-    // Actually, the script in index.astro (now here) handles sidebar toggles.
-    // We need to include that logic here too, but ensure it doesn't duplicate.
-
-    // Sidebar logic - use event delegation for reliable handling
-    const leftSidebarToggle = document.getElementById('left-sidebar-toggle')
-    const rightSidebarToggle = document.getElementById('right-sidebar-toggle')
-
-    // Desktop sidebar toggles
-    if (leftSidebarToggle && !leftSidebarToggle.dataset.hasListener) {
-      leftSidebarToggle.addEventListener('click', () => {
-        document
-          .querySelector('.sidebar-wrapper.left')
-          ?.classList.toggle('collapsed')
-      })
-      leftSidebarToggle.dataset.hasListener = 'true'
-    }
-
-    if (rightSidebarToggle && !rightSidebarToggle.dataset.hasListener) {
-      rightSidebarToggle.addEventListener('click', () => {
-        document
-          .querySelector('.sidebar-wrapper.right')
-          ?.classList.toggle('collapsed')
-      })
-      rightSidebarToggle.dataset.hasListener = 'true'
-    }
-
-    const leftWrapper = document.querySelector('.sidebar-wrapper.left')
-    const rightWrapper = document.querySelector('.sidebar-wrapper.right')
-    const leftMobileButton = document.getElementById('mobile-sidebar-toggle')
-    const rightMobileButton = document.getElementById('mobile-songs-toggle')
-    const panelBackdrop = document.getElementById('mobile-panel-backdrop')
-
-    const syncMobilePanels = () => {
-      const leftOpen = leftWrapper?.classList.contains('active') ?? false
-      const rightOpen = rightWrapper?.classList.contains('active') ?? false
-      leftMobileButton?.classList.toggle('active', leftOpen)
-      rightMobileButton?.classList.toggle('active', rightOpen)
-      leftMobileButton?.setAttribute('aria-expanded', String(leftOpen))
-      rightMobileButton?.setAttribute('aria-expanded', String(rightOpen))
-      panelBackdrop?.classList.toggle('active', leftOpen || rightOpen)
-    }
-
-    const closeMobilePanels = () => {
-      leftWrapper?.classList.remove('active')
-      rightWrapper?.classList.remove('active')
-      syncMobilePanels()
-    }
-
-    // Mobile panel toggles
-    const mobileControls = document.querySelector(
-      '.mobile-controls'
-    ) as HTMLElement | null
-    if (mobileControls && !mobileControls.dataset.hasListener) {
-      mobileControls.addEventListener('click', (e) => {
-        const target = e.target as HTMLElement
-        const button = target.closest('button')
-        if (!button) return
-
-        e.stopPropagation()
-        if (
-          button.id === 'mobile-sidebar-toggle' ||
-          button.getAttribute('aria-label') === '唱片列表'
-        ) {
-          const shouldOpen = !leftWrapper?.classList.contains('active')
-          leftWrapper?.classList.toggle('active')
-          rightWrapper?.classList.remove('active')
-          if (!shouldOpen) leftWrapper?.classList.remove('active')
-        } else if (
-          button.id === 'mobile-songs-toggle' ||
-          button.getAttribute('aria-label') === '歌曲列表'
-        ) {
-          const shouldOpen = !rightWrapper?.classList.contains('active')
-          rightWrapper?.classList.toggle('active')
-          leftWrapper?.classList.remove('active')
-          if (!shouldOpen) rightWrapper?.classList.remove('active')
-        }
-        syncMobilePanels()
-      })
-      mobileControls.dataset.hasListener = 'true'
-    }
-
-    if (panelBackdrop && !panelBackdrop.dataset.hasListener) {
-      panelBackdrop.addEventListener('click', closeMobilePanels)
-      panelBackdrop.dataset.hasListener = 'true'
-    }
-
-    syncMobilePanels()
-
-    // 迷你播放器控制按钮
-    const miniPlayer = document.getElementById('mobile-mini-player')
-    if (miniPlayer && !miniPlayer.dataset.hasListener) {
-      document.getElementById('mini-play')?.addEventListener('click', () => {
+    const root = document.getElementById('music-page-wrapper')
+    if (!root || root.dataset.shellBound === 'true') return
+    root.dataset.shellBound = 'true'
+    document
+      .getElementById('playlist-trigger')
+      ?.addEventListener('click', () =>
+        setPlaylistOpen(
+          !document
+            .getElementById('playlist-drawer')
+            ?.classList.contains('active')
+        )
+      )
+    document
+      .getElementById('mini-play')
+      ?.addEventListener('click', () =>
         window.dispatchEvent(new CustomEvent('toggle-play'))
-      })
-      document.getElementById('mini-prev')?.addEventListener('click', () => {
+      )
+    document
+      .getElementById('compact-play')
+      ?.addEventListener('click', () =>
+        window.dispatchEvent(new CustomEvent('toggle-play'))
+      )
+    document
+      .getElementById('mini-prev')
+      ?.addEventListener('click', () =>
         window.dispatchEvent(new CustomEvent('prev-song'))
-      })
-      document.getElementById('mini-next')?.addEventListener('click', () => {
+      )
+    document
+      .getElementById('mini-next')
+      ?.addEventListener('click', () =>
         window.dispatchEvent(new CustomEvent('next-song'))
-      })
-
-      // 点击进度条跳转
-      const miniProgress = document.getElementById('mini-progress')
-      miniProgress?.addEventListener('click', (e) => {
-        const rect = miniProgress.getBoundingClientRect()
-        const percent = (e.clientX - rect.left) / rect.width
+      )
+    document
+      .getElementById('mini-progress')
+      ?.addEventListener('click', (event) => {
+        const bar = event.currentTarget as HTMLElement
+        const rect = bar.getBoundingClientRect()
         window.dispatchEvent(
           new CustomEvent('seek-to', {
-            detail: Math.max(0, Math.min(1, percent)),
+            detail: Math.max(
+              0,
+              Math.min(1, (event.clientX - rect.left) / rect.width)
+            ),
           })
         )
       })
-
-      miniPlayer.dataset.hasListener = 'true'
-    }
-
-    // 恢复迷你播放器状态（含跨页面导航后 transition:persist 场景）
-    setMiniPlayIcon(window.MusicPlayerState.isPlaying)
-    updateMiniTrackTitle()
-
-    // Click outside to close panels
-    if (!window.MusicPlayerState.clickListenerAttached) {
-      document.addEventListener('click', (e) => {
-        const target = e.target as HTMLElement
-        if (
-          !target.closest('.sidebar-wrapper') &&
-          !target.closest('.mobile-controls')
-        ) {
-          document
-            .querySelector('.sidebar-wrapper.left')
-            ?.classList.remove('active')
-          document
-            .querySelector('.sidebar-wrapper.right')
-            ?.classList.remove('active')
-          document
-            .getElementById('mobile-panel-backdrop')
-            ?.classList.remove('active')
-          document
-            .querySelectorAll('.mobile-btn[aria-expanded]')
-            .forEach((button) => {
-              button.classList.remove('active')
-              button.setAttribute('aria-expanded', 'false')
-            })
-        }
+    document
+      .getElementById('player-collapse-trigger')
+      ?.addEventListener('click', () => setPlayerCollapsed(true))
+    document
+      .getElementById('player-expand-trigger')
+      ?.addEventListener('click', () => setPlayerCollapsed(false))
+    document
+      .querySelectorAll<HTMLButtonElement>('.dock-speed-btn')
+      .forEach((button) => {
+        button.addEventListener('click', () => {
+          const rate = Number(button.dataset.rate)
+          if (!Number.isFinite(rate)) return
+          syncSpeed(rate)
+          window.dispatchEvent(
+            new CustomEvent('set-playback-rate', { detail: rate })
+          )
+        })
       })
-      window.MusicPlayerState.clickListenerAttached = true
-    }
-
-    if (!document.body.dataset.musicEscapeListener) {
-      document.addEventListener('keydown', (event) => {
-        if (event.key !== 'Escape') return
-        document
-          .querySelectorAll('.sidebar-wrapper.active')
-          .forEach((panel) => panel.classList.remove('active'))
-        document
-          .getElementById('mobile-panel-backdrop')
-          ?.classList.remove('active')
-        document
-          .querySelectorAll('.mobile-btn[aria-expanded]')
-          .forEach((button) => {
-            button.classList.remove('active')
-            button.setAttribute('aria-expanded', 'false')
-          })
-      })
-      document.body.dataset.musicEscapeListener = 'true'
-    }
-  })
+    document.addEventListener('click', (event) => {
+      const target = event.target as Node
+      const hub = document.getElementById('playback-hub')
+      if (hub && !hub.contains(target)) setPlaylistOpen(false)
+    })
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && isMusicPage()) setPlaylistOpen(false)
+    })
+    syncSpeed(window.MusicPlayerState.currentPlaybackRate ?? 1)
+    setPlayerCollapsed(Boolean(window.MusicPlayerState.playerCollapsed))
+    updateMiniTrack()
+    updatePlayIcon(window.MusicPlayerState.isPlaying)
+  }
+  document.addEventListener('astro:page-load', initialiseMusicShell)
+  initialiseMusicShell()
 </script>
