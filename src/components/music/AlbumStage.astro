@@ -23,13 +23,7 @@ interface Props {
 const { albums } = Astro.props
 ---
 
-<section class="album-stage" aria-labelledby="album-stage-title">
-  <div class="album-stage-heading">
-    <span class="album-stage-kicker">THE RECORD SHELF</span>
-    <h1 id="album-stage-title">挑一张今晚想听的唱片</h1>
-    <p>轻触封套，唱片会从架上取出并放入唱机。</p>
-  </div>
-
+<section class="album-stage" aria-label="唱片架">
   <div class="album-deck-shell">
     <button
       class="album-nav album-nav-prev"
@@ -87,13 +81,23 @@ const { albums } = Astro.props
   </div>
 
   <div class="album-caption" aria-live="polite">
-    <div>
-      <strong id="album-caption-name">{albums[0]?.name ?? '暂无专辑'}</strong>
-      <span id="album-caption-artist">{albums[0]?.artist ?? ''}</span>
+    <div class="album-caption-copy">
+      <div class="album-caption-title">
+        <strong id="album-caption-name">{albums[0]?.name ?? '暂无唱片'}</strong>
+        <span id="album-caption-artist">{albums[0]?.artist ?? ''}</span>
+      </div>
+      <p id="album-caption-description">
+        {albums[0]?.description ?? '挑一张唱片开始播放。'}
+      </p>
     </div>
-    <span class="album-caption-count" id="album-caption-count">
-      {albums.length ? `${albums.length} 张专辑` : '暂无专辑'}
-    </span>
+    <div class="album-caption-stats">
+      <span id="album-track-count">
+        {albums[0]?.songs.length ? `${albums[0].songs.length} 首` : '暂无曲目'}
+      </span>
+      <span id="album-caption-count">
+        {albums.length ? `${albums.length} 张唱片` : '暂无唱片'}
+      </span>
+    </div>
   </div>
 </section>
 
@@ -103,50 +107,11 @@ const { albums } = Astro.props
     z-index: 8;
     display: grid;
     grid-template-rows: minmax(0, 1fr) auto;
-    grid-template-columns: minmax(14rem, 0.72fr) minmax(0, 1.28fr);
-    column-gap: clamp(1.5rem, 4vw, 5rem);
+    grid-template-columns: minmax(0, 1fr);
     min-width: 0;
     height: 100%;
-    padding: clamp(1.1rem, 2.5vh, 2rem) clamp(1.25rem, 4vw, 4.5rem)
-      clamp(0.8rem, 2vh, 1.4rem);
-    color: #f7f2ea;
-  }
-
-  .album-stage-heading {
-    position: relative;
-    z-index: 3;
-    max-width: 34rem;
-    grid-row: 1 / 3;
-    align-self: center;
-  }
-
-  .album-stage-kicker {
-    display: block;
-    margin-bottom: 0.75rem;
-    color: color-mix(in srgb, var(--album-tint, #d6b57b) 72%, white);
-    font-size: 0.66rem;
-    font-weight: 700;
-    letter-spacing: 0.24em;
-  }
-
-  .album-stage-heading h1 {
-    max-width: 11ch;
-    margin: 0;
-    color: #fffaf2;
-    font-family: var(--font-serif, Georgia, serif);
-    font-size: clamp(2.15rem, 4vw, 4.7rem);
-    font-weight: 400;
-    letter-spacing: -0.045em;
-    line-height: 0.98;
-    text-wrap: balance;
-  }
-
-  .album-stage-heading p {
-    max-width: 26rem;
-    margin: 1rem 0 0;
-    color: rgba(247, 242, 234, 0.58);
-    font-size: clamp(0.78rem, 1vw, 0.9rem);
-    line-height: 1.65;
+    padding: clamp(1rem, 2.4vh, 1.75rem) 0 clamp(0.75rem, 1.8vh, 1.25rem);
+    color: var(--music-text, #f7f2ea);
   }
 
   .album-deck-shell {
@@ -156,17 +121,17 @@ const { albums } = Astro.props
     grid-template-rows: minmax(0, 1fr);
     place-items: center;
     min-height: 0;
-    margin-top: 0;
+    margin-block: 0 0.5rem;
     overflow: clip;
     contain: paint;
   }
 
   .album-deck {
     position: relative;
-    width: min(100%, 34rem);
+    width: min(100%, 32rem);
     min-width: 0;
-    height: min(100%, 15rem);
-    min-height: 12rem;
+    height: min(50vh, 29rem);
+    min-height: 20rem;
     cursor: grab;
     perspective: 1050px;
     perspective-origin: 50% 36%;
@@ -193,8 +158,8 @@ const { albums } = Astro.props
     top: 50%;
     left: 50%;
     z-index: var(--deck-order, 1);
-    width: min(18vw, 13.5rem);
-    min-width: 11rem;
+    width: clamp(11.5rem, 20vw, 16.5rem);
+    min-width: 0;
     aspect-ratio: 1;
     padding: 0;
     color: inherit;
@@ -217,7 +182,7 @@ const { albums } = Astro.props
   }
 
   .album-sleeve:focus-visible {
-    outline: 2px solid rgba(255, 255, 255, 0.88);
+    outline: 2px solid var(--music-focus, rgba(255, 255, 255, 0.88));
     outline-offset: 8px;
     border-radius: 3px;
   }
@@ -372,12 +337,12 @@ const { albums } = Astro.props
     position: relative;
     z-index: 50;
     display: grid;
-    width: 2.35rem;
-    height: 2.35rem;
+    width: 2.5rem;
+    height: 2.5rem;
     padding: 0;
-    color: rgba(247, 242, 234, 0.68);
-    background: rgba(255, 255, 255, 0.055);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: var(--music-text-soft, rgba(247, 242, 234, 0.68));
+    background: var(--music-control-soft, rgba(255, 255, 255, 0.055));
+    border: 0;
     border-radius: 999px;
     cursor: pointer;
     place-items: center;
@@ -389,9 +354,8 @@ const { albums } = Astro.props
   }
 
   .album-nav:not(:disabled):hover {
-    color: white;
-    background: rgba(255, 255, 255, 0.12);
-    border-color: rgba(255, 255, 255, 0.24);
+    color: var(--music-text-strong, white);
+    background: var(--music-control-hover, rgba(255, 255, 255, 0.12));
     transform: translateY(-1px);
   }
 
@@ -402,80 +366,98 @@ const { albums } = Astro.props
 
   .album-caption {
     display: flex;
-    grid-column: 2;
-    align-items: flex-end;
+    align-items: center;
     justify-content: space-between;
-    gap: 1rem;
-    padding-top: 0.8rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    gap: 1.25rem;
+    min-height: 5rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--music-border, rgba(255, 255, 255, 0.12));
   }
 
-  .album-caption > div {
+  .album-caption-copy {
     display: flex;
     min-width: 0;
     flex-direction: column;
-    gap: 0.2rem;
+    gap: 0.4rem;
+  }
+
+  .album-caption-title {
+    display: flex;
+    min-width: 0;
+    align-items: baseline;
+    gap: 0.65rem;
   }
 
   .album-caption strong {
     overflow: hidden;
-    color: #fffaf2;
+    color: var(--music-text-strong, #fffaf2);
     font-size: 0.88rem;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  .album-caption div span,
-  .album-caption-count {
-    color: rgba(247, 242, 234, 0.48);
+  .album-caption-title span,
+  .album-caption-stats {
+    color: var(--music-text-muted, rgba(247, 242, 234, 0.48));
     font-size: 0.68rem;
     letter-spacing: 0.08em;
   }
 
+  .album-caption-copy p {
+    display: -webkit-box;
+    overflow: hidden;
+    max-width: 34rem;
+    margin: 0;
+    color: var(--music-text-muted, rgba(247, 242, 234, 0.52));
+    font-size: 0.72rem;
+    line-height: 1.55;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .album-caption-stats {
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    gap: 0.24rem;
+    text-align: right;
+    white-space: nowrap;
+  }
+
   @media (max-width: 600px) {
     .album-stage {
-      grid-template-rows: auto minmax(0, 1fr) auto;
+      grid-template-rows: minmax(0, 1fr) auto;
       grid-template-columns: minmax(0, 1fr);
-      padding: 0.9rem 1rem 0.65rem;
-    }
-
-    .album-stage-heading {
-      grid-row: auto;
-      align-self: auto;
-    }
-
-    .album-stage-heading h1 {
-      max-width: 14ch;
-      font-size: clamp(1.65rem, 7vw, 2.4rem);
-    }
-
-    .album-stage-heading p {
-      margin-top: 0.35rem;
-      font-size: 0.68rem;
-      line-height: 1.5;
+      min-height: 25rem;
+      padding: 0.75rem 0 0.6rem;
     }
 
     .album-deck-shell {
       grid-template-columns: 2.25rem minmax(0, 1fr) 2.25rem;
       grid-template-rows: 1fr;
-      margin-top: 0.35rem;
+      margin-block: 0.45rem 0.25rem;
     }
 
     .album-deck {
-      width: min(60vw, 15rem);
-      min-width: 10rem;
-      height: min(100%, 12rem);
-      min-height: 9.25rem;
+      width: min(68vw, 17rem);
+      min-width: 0;
+      height: 19rem;
+      min-height: 17rem;
     }
 
     .album-sleeve {
-      width: min(38vw, 9.5rem);
-      min-width: 7.5rem;
+      width: min(46vw, 10.75rem);
+      min-width: 0;
     }
 
     .album-caption {
-      grid-column: auto;
-      padding-top: 0.55rem;
+      min-height: 4.75rem;
+      gap: 0.75rem;
+      padding-top: 0.65rem;
+    }
+
+    .album-caption-copy p {
+      -webkit-line-clamp: 1;
     }
   }
 
@@ -484,17 +466,14 @@ const { albums } = Astro.props
       padding-top: 1.2rem;
     }
 
-    .album-stage-heading h1 {
-      font-size: clamp(2rem, 4vw, 3.5rem);
-    }
-
     .album-deck {
-      height: min(28vh, 13rem);
+      height: min(44vh, 19rem);
+      min-height: 15rem;
     }
 
     .album-sleeve {
       width: min(17vw, 12rem);
-      min-width: 10rem;
+      min-width: 0;
     }
   }
 
@@ -512,6 +491,7 @@ const { albums } = Astro.props
   interface StageAlbum {
     id: string
     name: string
+    description: string
     artist: string
     cover: string
     color: string
@@ -541,6 +521,10 @@ const { albums } = Astro.props
     const next = document.getElementById('album-nav-next') as HTMLButtonElement
     const captionName = document.getElementById('album-caption-name')
     const captionArtist = document.getElementById('album-caption-artist')
+    const captionDescription = document.getElementById(
+      'album-caption-description'
+    )
+    const trackCount = document.getElementById('album-track-count')
     const captionCount = document.getElementById('album-caption-count')
     const musicRoot = document.getElementById('music-page-wrapper')
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
@@ -617,8 +601,11 @@ const { albums } = Astro.props
       if (album) {
         if (captionName) captionName.textContent = album.name
         if (captionArtist) captionArtist.textContent = album.artist
+        if (captionDescription)
+          captionDescription.textContent = album.description
+        if (trackCount) trackCount.textContent = `${album.songs.length} 首`
         if (captionCount) {
-          captionCount.textContent = `${cards.length} 张专辑`
+          captionCount.textContent = `${cards.length} 张唱片`
         }
         applyAlbumAtmosphere(album)
       }

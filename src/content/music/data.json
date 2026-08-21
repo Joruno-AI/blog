@@ -72,8 +72,8 @@
   {
     "id": "mock-night-ferry",
     "name": "Night Ferry",
-    "description": "多专辑切换视觉预览数据，音频复用现有本地曲目。",
-    "artist": "Layout Study · Mock",
+    "description": "适合夜间通勤的三首慢速选曲。",
+    "artist": "私人选集",
     "cover": "/img/music-night-ferry.svg",
     "color": "#31485a",
     "songs": [
@@ -100,8 +100,8 @@
   {
     "id": "mock-after-rain",
     "name": "After Rain",
-    "description": "多专辑切换视觉预览数据，音频复用现有本地曲目。",
-    "artist": "Layout Study · Mock",
+    "description": "留给雨后安静时刻的三首选曲。",
+    "artist": "私人选集",
     "cover": "/img/music-after-rain.svg",
     "color": "#6d7668",
     "songs": [
@@ -128,8 +128,8 @@
   {
     "id": "mock-blue-hour",
     "name": "Blue Hour",
-    "description": "多专辑切换视觉预览数据，音频复用现有本地曲目。",
-    "artist": "Layout Study · Mock",
+    "description": "留给黄昏与蓝调时刻的短篇歌单。",
+    "artist": "私人选集",
     "cover": "/img/music-blue-hour.svg",
     "color": "#334666",
     "songs": [
@@ -156,8 +156,8 @@
   {
     "id": "mock-late-letters",
     "name": "Late Letters",
-    "description": "多专辑切换视觉预览数据，音频复用现有本地曲目。",
-    "artist": "Layout Study · Mock",
+    "description": "适合深夜独处时播放的三首选曲。",
+    "artist": "私人选集",
     "cover": "/img/music-late-letters.svg",
     "color": "#783e33",
     "songs": [

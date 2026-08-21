@@ -1,18 +1,15 @@
 ---
-import AlbumStage from '~/components/music/AlbumStage.astro'
-import Gramophone from '~/components/music/Gramophone.astro'
+import AlbumGallery from '~/components/music/AlbumGallery.astro'
+import NowPlayingStage from '~/components/music/NowPlayingStage.astro'
+import PlayerEngine from '~/components/music/PlayerEngine.astro'
 import SongList from '~/components/music/SongList.astro'
-import localAlbumsData from '~/content/music/data.json'
-
-const albumsData = localAlbumsData
-const firstAlbum = albumsData[0]
 ---
 
 <div id="global-music-player" transition:persist="music-player">
   <div
     class="music-page-wrapper hidden"
     id="music-page-wrapper"
-    style={`--album-color: ${firstAlbum?.color ?? '#7d503d'}; --album-cover: url("${firstAlbum?.cover ?? ''}");`}
+    style="--album-color: #1a1a2e;"
   >
     <div class="music-ambient" aria-hidden="true">
       <div class="music-ambient-cover"></div>
@@ -22,22 +19,8 @@ const firstAlbum = albumsData[0]
 
     <div class="music-player-container">
       <div class="listening-stage">
-        <AlbumStage albums={albumsData} />
-
-        <section class="gramophone-section" aria-label="唱片机">
-          <div class="gramophone-label" aria-hidden="true">
-            <span>WOOD DECK · ORBIT VIEW</span>
-            <i></i>
-          </div>
-          <div
-            id="record-drop-target"
-            class="record-drop-target"
-            aria-hidden="true"
-          >
-          </div>
-          <Gramophone />
-          <p class="gramophone-hint">拖动旋转唱机 · 点击唱臂播放或暂停</p>
-        </section>
+        <AlbumGallery />
+        <NowPlayingStage />
       </div>
 
       <section class="playback-hub" id="playback-hub" aria-label="音乐播放控制">
@@ -165,6 +148,8 @@ const firstAlbum = albumsData[0]
   </div>
 </div>
 
+<PlayerEngine />
+
 <style>
   #global-music-player {
     position: fixed;
@@ -174,12 +159,9 @@ const firstAlbum = albumsData[0]
   }
   .music-page-wrapper {
     position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    inset: 0;
     overflow: hidden;
-    color: #f7f2ea;
+    color: var(--music-text, #f7f2ea);
     background: var(--music-room-surface, #0c0d0f);
     pointer-events: auto;
     transition:
@@ -195,88 +177,35 @@ const firstAlbum = albumsData[0]
   .listening-stage {
     position: relative;
     width: 100%;
-    height: 100%;
   }
   .music-player-container {
-    /* `overflow: hidden` creates a programmatically scrollable container.
-       Focusing the queue toggle could therefore scroll the whole listening
-       stage upward. `clip` keeps the crop without creating that scrollport. */
+    display: grid;
+    height: 100dvh;
+    min-height: 100dvh;
+    grid-template-rows: minmax(0, 1fr) auto;
     overflow: clip;
   }
   .listening-stage {
     z-index: 2;
-    display: grid;
-    grid-template-rows: minmax(12rem, 0.44fr) minmax(13rem, 0.56fr);
-    grid-template-columns: minmax(0, 1fr);
-    padding-top: 4rem;
-    padding-bottom: 4.1rem;
-  }
-  .gramophone-section {
     position: relative;
-    display: flex;
-    min-width: 0;
     min-height: 0;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    border-top: 1px solid rgb(255 255 255 / 5%);
-  }
-  .gramophone-label {
-    position: absolute;
-    top: clamp(0.85rem, 2vh, 1.5rem);
-    right: clamp(1.5rem, 4vw, 4.25rem);
-    z-index: 4;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    color: rgba(247, 242, 234, 0.48);
-    font-size: 0.62rem;
-    font-weight: 700;
-    letter-spacing: 0.2em;
-    pointer-events: none;
-  }
-  .gramophone-label i {
-    width: 2.5rem;
-    height: 1px;
-    background: rgba(247, 242, 234, 0.24);
-  }
-  .record-drop-target {
-    position: absolute;
-    top: 53%;
-    left: 50%;
-    z-index: 6;
-    width: clamp(5rem, 9vw, 8.5rem);
-    aspect-ratio: 1;
-    border-radius: 50%;
-    opacity: 0;
-    pointer-events: none;
-    transform: translate(-50%, -50%);
-  }
-  .gramophone-hint {
-    position: absolute;
-    right: 50%;
-    bottom: 1rem;
-    z-index: 4;
-    margin: 0;
-    color: rgba(247, 242, 234, 0.38);
-    font-size: 0.64rem;
-    letter-spacing: 0.05em;
-    white-space: nowrap;
-    pointer-events: none;
-    transform: translateX(50%);
   }
 
   .playback-hub {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    position: relative;
     z-index: 90;
     width: 100%;
-    padding-inline: clamp(0.75rem, 4vw, 4.5rem);
-    background: transparent;
+    padding: 0.45rem clamp(0.75rem, 4vw, 4.5rem)
+      max(0.55rem, env(safe-area-inset-bottom));
+    background: linear-gradient(
+      to top,
+      color-mix(in srgb, var(--music-room-surface, #101318) 94%, transparent),
+      color-mix(in srgb, var(--music-room-surface, #101318) 76%, transparent)
+    );
     border-top: 0;
     box-shadow: none;
+    backdrop-filter: blur(18px) saturate(1.05);
+    -webkit-backdrop-filter: blur(18px) saturate(1.05);
     transition:
       background-color 680ms cubic-bezier(0.22, 1, 0.36, 1),
       border-color 420ms ease;
@@ -284,20 +213,19 @@ const firstAlbum = albumsData[0]
   .playback-queue {
     position: absolute;
     right: max(0.75rem, calc((100vw - 70rem) / 2));
-    bottom: 100%;
+    bottom: calc(100% + 0.5rem);
     left: max(0.75rem, calc((100vw - 70rem) / 2));
     height: min(57vh, 34rem);
     overflow: hidden;
-    color: #f7f2ea;
+    color: var(--music-text, #f7f2ea);
     background: color-mix(
       in srgb,
-      var(--album-color, #28303a) 28%,
-      rgb(10 11 13 / 95%)
+      var(--album-color, #28303a) 16%,
+      var(--music-panel-strong, rgb(10 11 13 / 95%))
     );
-    border: 1px solid
-      color-mix(in srgb, var(--album-color, #6f7885) 28%, white 12%);
+    border: 1px solid var(--music-border, rgba(255, 255, 255, 0.12));
     border-radius: 1rem 1rem 0 0;
-    box-shadow: 0 -1.5rem 5rem rgb(5 6 8 / 32%);
+    box-shadow: var(--music-float-shadow, 0 -1.5rem 5rem rgb(5 6 8 / 32%));
     backdrop-filter: blur(24px) saturate(1.08);
     opacity: 0;
     visibility: hidden;
@@ -324,17 +252,20 @@ const firstAlbum = albumsData[0]
       minmax(9rem, 1fr) minmax(8rem, 1.2fr) auto auto auto
       auto;
     min-height: 3.85rem;
-    width: min(70rem, 100%);
+    width: min(78rem, 100%);
     align-items: center;
     gap: 0.75rem;
     margin-inline: auto;
-    padding: 0.52rem 0.6rem 0.52rem 0.9rem;
-    color: #f7f2ea;
-    background: transparent;
+    padding: 0.58rem 0.65rem 0.58rem 1rem;
+    color: var(--music-text, #f7f2ea);
+    background: var(--music-control-soft, rgba(255, 255, 255, 0.055));
     border: 0;
-    border-radius: 0;
-    box-shadow: none;
-    backdrop-filter: none;
+    border-radius: 1rem;
+    box-shadow:
+      inset 0 1px 0 var(--music-highlight, rgba(255, 255, 255, 0.08)),
+      var(--music-dock-shadow, 0 0.8rem 2.5rem rgba(3, 5, 8, 0.16));
+    backdrop-filter: blur(18px) saturate(1.08);
+    -webkit-backdrop-filter: blur(18px) saturate(1.08);
     transition:
       transform 220ms cubic-bezier(0.23, 1, 0.32, 1),
       opacity 160ms ease,
@@ -351,7 +282,10 @@ const firstAlbum = albumsData[0]
   }
   .mini-track-eyebrow {
     grid-column: 1/-1;
-    color: color-mix(in srgb, var(--album-tint, #d6b57b) 76%, white);
+    color: var(
+      --music-accent-text,
+      color-mix(in srgb, var(--album-tint, #d6b57b) 76%, white)
+    );
     font-size: 0.54rem;
     font-weight: 700;
     letter-spacing: 0.12em;
@@ -364,7 +298,7 @@ const firstAlbum = albumsData[0]
     white-space: nowrap;
   }
   .mini-track-time {
-    color: rgba(247, 242, 234, 0.42);
+    color: var(--music-text-muted, rgba(247, 242, 234, 0.42));
     font-size: 0.56rem;
     font-variant-numeric: tabular-nums;
   }
@@ -372,14 +306,17 @@ const firstAlbum = albumsData[0]
     position: relative;
     height: 3px;
     overflow: hidden;
-    background: rgba(255, 255, 255, 0.13);
+    background: var(--music-progress-track, rgba(255, 255, 255, 0.13));
     border-radius: 999px;
     cursor: pointer;
   }
   .mini-progress-fill {
     position: absolute;
     width: 0;
-    background: color-mix(in srgb, var(--album-tint, #d6b57b) 78%, white);
+    background: var(
+      --music-accent-fill,
+      color-mix(in srgb, var(--album-tint, #d6b57b) 78%, white)
+    );
     border-radius: inherit;
     inset: 0 auto 0 0;
   }
@@ -396,7 +333,7 @@ const firstAlbum = albumsData[0]
     width: 2.15rem;
     height: 2.15rem;
     padding: 0;
-    color: rgba(247, 242, 234, 0.67);
+    color: var(--music-text-soft, rgba(247, 242, 234, 0.67));
     background: transparent;
     border: 0;
     border-radius: 999px;
@@ -412,25 +349,25 @@ const firstAlbum = albumsData[0]
     cursor: default;
   }
   .mini-play-btn {
-    color: #111214;
-    background: #f3eee5;
+    color: var(--music-primary-button-text, #111214);
+    background: var(--music-primary-button, #f3eee5);
   }
   .mini-play-btn:disabled {
-    color: #111214;
-    background: rgba(243, 238, 229, 0.5);
+    color: var(--music-primary-button-text, #111214);
+    background: var(--music-primary-button-disabled, rgba(243, 238, 229, 0.5));
   }
   .dock-speed-options {
     gap: 0.1rem;
     padding: 0.15rem;
-    background: rgba(255, 255, 255, 0.055);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--music-control-soft, rgba(255, 255, 255, 0.055));
+    border: 0;
     border-radius: 0.65rem;
   }
   .dock-speed-btn {
     min-width: 1.85rem;
     height: 1.75rem;
     padding: 0 0.28rem;
-    color: rgba(247, 242, 234, 0.43);
+    color: var(--music-text-muted, rgba(247, 242, 234, 0.43));
     background: transparent;
     border: 0;
     border-radius: 0.48rem;
@@ -442,8 +379,8 @@ const firstAlbum = albumsData[0]
       transform 150ms ease;
   }
   .dock-speed-btn.active {
-    color: #111214;
-    background: #eee8de;
+    color: var(--music-primary-button-text, #111214);
+    background: var(--music-primary-button, #eee8de);
   }
   .queue-toggle {
     display: flex;
@@ -451,9 +388,9 @@ const firstAlbum = albumsData[0]
     align-items: center;
     gap: 0.42rem;
     padding: 0.38rem 0.48rem 0.38rem 0.62rem;
-    color: rgba(247, 242, 234, 0.76);
-    background: rgba(255, 255, 255, 0.055);
-    border: 1px solid rgba(255, 255, 255, 0.09);
+    color: var(--music-text-soft, rgba(247, 242, 234, 0.76));
+    background: var(--music-control-soft, rgba(255, 255, 255, 0.055));
+    border: 0;
     border-radius: 0.72rem;
     cursor: pointer;
     transition:
@@ -469,9 +406,9 @@ const firstAlbum = albumsData[0]
     width: 2.4rem;
     height: 2.4rem;
     padding: 0;
-    color: rgba(247, 242, 234, 0.76);
-    background: rgba(255, 255, 255, 0.055);
-    border: 1px solid rgba(255, 255, 255, 0.09);
+    color: var(--music-text-soft, rgba(247, 242, 234, 0.76));
+    background: var(--music-control-soft, rgba(255, 255, 255, 0.055));
+    border: 0;
     border-radius: 0.72rem;
     cursor: pointer;
     place-items: center;
@@ -493,12 +430,13 @@ const firstAlbum = albumsData[0]
     align-items: center;
     gap: 0.45rem;
     padding: 0.42rem 0.48rem 0.42rem 0.85rem;
-    color: #f7f2ea;
-    background: transparent;
+    color: var(--music-text, #f7f2ea);
+    background: var(--music-control-soft, rgba(255, 255, 255, 0.06));
     border: 0;
-    border-radius: 0;
-    box-shadow: none;
-    backdrop-filter: none;
+    border-radius: 1rem;
+    box-shadow: inset 0 1px 0 var(--music-highlight, rgba(255, 255, 255, 0.08));
+    backdrop-filter: blur(18px) saturate(1.08);
+    -webkit-backdrop-filter: blur(18px) saturate(1.08);
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
@@ -519,8 +457,8 @@ const firstAlbum = albumsData[0]
     white-space: nowrap;
   }
   .compact-play-btn {
-    color: #111214;
-    background: #f3eee5;
+    color: var(--music-primary-button-text, #111214);
+    background: var(--music-primary-button, #f3eee5);
     border-color: transparent;
     border-radius: 999px;
   }
@@ -547,8 +485,8 @@ const firstAlbum = albumsData[0]
     display: grid;
     min-width: 1.25rem;
     height: 1.25rem;
-    color: rgba(247, 242, 234, 0.56);
-    background: rgba(255, 255, 255, 0.07);
+    color: var(--music-text-muted, rgba(247, 242, 234, 0.56));
+    background: var(--music-control-soft, rgba(255, 255, 255, 0.07));
     border-radius: 999px;
     font-size: 0.54rem;
     font-style: normal;
@@ -562,8 +500,8 @@ const firstAlbum = albumsData[0]
     transform: rotate(180deg);
   }
   .queue-toggle[aria-expanded='true'] {
-    color: #fffaf2;
-    background: rgba(255, 255, 255, 0.1);
+    color: var(--music-text-strong, #fffaf2);
+    background: var(--music-control-hover, rgba(255, 255, 255, 0.1));
     border-color: rgba(255, 255, 255, 0.17);
   }
   @media (hover: hover) and (pointer: fine) {
@@ -572,12 +510,12 @@ const firstAlbum = albumsData[0]
     .queue-toggle:hover,
     .dock-collapse-toggle:hover,
     .compact-expand-btn:hover {
-      color: #fffaf2;
-      background-color: rgba(255, 255, 255, 0.1);
+      color: var(--music-text-strong, #fffaf2);
+      background-color: var(--music-control-hover, rgba(255, 255, 255, 0.1));
     }
     .mini-play-btn:not(:disabled):hover {
-      color: #111214;
-      background: #fffaf2;
+      color: var(--music-primary-button-text, #111214);
+      background: var(--music-primary-button-hover, #fffaf2);
       transform: scale(1.035);
     }
   }
@@ -601,43 +539,24 @@ const firstAlbum = albumsData[0]
       gap: 0.5rem;
     }
   }
-  @media (max-width: 820px) {
-    .music-page-wrapper {
-      top: 0;
-    }
-    .listening-stage {
-      grid-template-rows: minmax(13rem, 0.52fr) minmax(12rem, 0.48fr);
-      grid-template-columns: 1fr;
-      padding-top: 3.75rem;
-      padding-bottom: 6rem;
-    }
-    .gramophone-label {
-      top: 0.8rem;
-      right: 1rem;
-    }
-    .record-drop-target {
-      top: 54%;
-      left: 50%;
-      width: 4rem;
-    }
-    .playback-hub {
-      bottom: 0;
-      width: 100%;
-      padding-inline: 0.55rem;
-    }
+  @media (max-width: 960px) {
     .playback-queue {
-      height: min(54vh, 32rem);
+      right: 0.55rem;
+      bottom: calc(100% + 0.45rem);
+      left: 0.55rem;
+      height: min(62dvh, 32rem);
+      max-height: calc(100dvh - 8.5rem);
       border-radius: 1rem;
     }
     .now-playing-dock {
       grid-template-areas:
         'track controls queue collapse'
-        'progress speed speed speed';
+        'progress progress progress progress';
       grid-template-columns: minmax(0, 1fr) auto auto auto;
       gap: 0.42rem 0.55rem;
-      min-height: 5.7rem;
+      min-height: 4.75rem;
       padding: 0.48rem 0.52rem 0.55rem 0.72rem;
-      border-radius: 0;
+      border-radius: 0.95rem;
     }
     .mini-track {
       grid-area: track;
@@ -649,8 +568,7 @@ const firstAlbum = albumsData[0]
       grid-area: controls;
     }
     .dock-speed-options {
-      grid-area: speed;
-      justify-self: end;
+      display: none;
     }
     .queue-toggle {
       grid-area: queue;
@@ -667,12 +585,6 @@ const firstAlbum = albumsData[0]
     }
   }
   @media (max-width: 480px) {
-    .listening-stage {
-      grid-template-rows: minmax(19.5rem, 0.57fr) minmax(11rem, 0.43fr);
-    }
-    .gramophone-label {
-      display: none;
-    }
     .queue-toggle-label {
       display: none;
     }
@@ -680,9 +592,8 @@ const firstAlbum = albumsData[0]
       gap: 0.28rem;
       padding-inline: 0.48rem;
     }
-    .dock-speed-btn {
-      min-width: 1.7rem;
-      padding-inline: 0.2rem;
+    .mini-ctrl-btn:not(.mini-play-btn) {
+      display: none;
     }
   }
   @media (prefers-reduced-motion: reduce) {

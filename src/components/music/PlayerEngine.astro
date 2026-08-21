@@ -1,0 +1,193 @@
+---
+// 音频播放引擎(纯脚本,无 UI)
+// 从旧 Gramophone.astro 抽出,保持原事件协议:
+// 监听: album-selected / auto-play-album / song-selected / toggle-play /
+//       prev-song / next-song / seek-to / seek-to-time / set-playback-rate
+// 派发: playback-state { isPlaying, songIndex }
+//       playback-progress { currentTime, duration, songIndex }
+---
+
+<script>
+  interface EngineSong {
+    id?: string
+    name: string
+    url: string | null
+  }
+  interface EngineAlbum {
+    id: string
+    name: string
+    songs: EngineSong[]
+  }
+
+  declare global {
+    interface Window {
+      __musicEngineBound?: boolean
+    }
+  }
+
+  function initMusicEngine() {
+    if (window.__musicEngineBound) return
+    window.__musicEngineBound = true
+
+    let audio: HTMLAudioElement | null = null
+    let currentAlbum: EngineAlbum | null = null
+    let songIndex = 0
+    let isPlaying = false
+    let playbackRate = 1
+
+    function emitState() {
+      window.dispatchEvent(
+        new CustomEvent('playback-state', {
+          detail: { isPlaying, songIndex },
+        })
+      )
+    }
+
+    function emitProgress() {
+      if (!audio) return
+      window.dispatchEvent(
+        new CustomEvent('playback-progress', {
+          detail: {
+            currentTime: audio.currentTime,
+            duration: audio.duration || 0,
+            songIndex,
+          },
+        })
+      )
+    }
+
+    function ensureAudio() {
+      if (audio) return audio
+      audio = new Audio()
+      audio.addEventListener('timeupdate', emitProgress)
+      audio.addEventListener('loadedmetadata', emitProgress)
+      audio.addEventListener('ended', () => {
+        if (!currentAlbum) return
+        const next = findPlayable(songIndex + 1, 1)
+        if (next !== null && next > songIndex) {
+          playSong(next)
+        } else {
+          isPlaying = false
+          songIndex = 0
+          emitState()
+        }
+      })
+      return audio
+    }
+
+    // 从 start 开始沿 dir 找下一首有音源的歌(不环绕越过端点时返回 null)
+    function findPlayable(start: number, dir: 1 | -1): number | null {
+      if (!currentAlbum) return null
+      const count = currentAlbum.songs.length
+      for (let i = start; i >= 0 && i < count; i += dir) {
+        if (currentAlbum.songs[i].url) return i
+      }
+      return null
+    }
+
+    function playSong(index: number) {
+      if (!currentAlbum) return
+      const song = currentAlbum.songs[index]
+      if (!song?.url) return
+      const el = ensureAudio()
+      songIndex = index
+      el.pause()
+      el.src = song.url
+      el.playbackRate = playbackRate
+      el.load()
+      const p = el.play()
+      if (p) {
+        p.catch((err) => {
+          if (err.name !== 'AbortError')
+            console.error('[music-engine] playback error:', err)
+        })
+      }
+      isPlaying = true
+      emitState()
+    }
+
+    function stopPlayback() {
+      audio?.pause()
+      isPlaying = false
+      emitState()
+    }
+
+    window.addEventListener('album-selected', ((e: CustomEvent) => {
+      const album = e.detail as EngineAlbum
+      if (!album || !Array.isArray(album.songs)) return
+      currentAlbum = album
+      songIndex = 0
+      isPlaying = false
+      if (audio) {
+        audio.pause()
+        audio.removeAttribute('src')
+        audio.currentTime = 0
+      }
+    }) as EventListener)
+
+    window.addEventListener('auto-play-album', (() => {
+      const first = findPlayable(0, 1)
+      if (first !== null) playSong(first)
+    }) as EventListener)
+
+    window.addEventListener('song-selected', ((e: CustomEvent) => {
+      const { index } = e.detail
+      if (typeof index === 'number') playSong(index)
+    }) as EventListener)
+
+    window.addEventListener('toggle-play', (() => {
+      if (!currentAlbum) return
+      if (isPlaying) {
+        stopPlayback()
+      } else if (audio?.src) {
+        audio.play().catch((err) => {
+          if (err.name !== 'AbortError')
+            console.error('[music-engine] resume error:', err)
+        })
+        isPlaying = true
+        emitState()
+      } else {
+        const first = findPlayable(0, 1)
+        if (first !== null) playSong(first)
+      }
+    }) as EventListener)
+
+    window.addEventListener('prev-song', (() => {
+      const prev = findPlayable(songIndex - 1, -1)
+      if (prev !== null) playSong(prev)
+    }) as EventListener)
+
+    window.addEventListener('next-song', (() => {
+      const next = findPlayable(songIndex + 1, 1)
+      if (next !== null) playSong(next)
+    }) as EventListener)
+
+    window.addEventListener('seek-to', ((e: CustomEvent) => {
+      if (audio && audio.duration) {
+        audio.currentTime = audio.duration * Number(e.detail)
+      }
+    }) as EventListener)
+
+    window.addEventListener('seek-to-time', ((e: CustomEvent) => {
+      const t = Number(e.detail)
+      if (audio && Number.isFinite(t)) {
+        audio.currentTime = t
+        if (!isPlaying) {
+          audio.play().catch((err) => {
+            if (err.name !== 'AbortError')
+              console.error('[music-engine] seek resume error:', err)
+          })
+          isPlaying = true
+          emitState()
+        }
+      }
+    }) as EventListener)
+
+    window.addEventListener('set-playback-rate', ((e: CustomEvent) => {
+      playbackRate = Number(e.detail) || 1
+      if (audio) audio.playbackRate = playbackRate
+    }) as EventListener)
+  }
+
+  initMusicEngine()
+</script>

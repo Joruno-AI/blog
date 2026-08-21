@@ -193,7 +193,8 @@ export interface CMSSong {
   id: string
   name: string
   duration: string
-  url: string
+  url: string | null
+  lyrics?: string | null
 }
 
 export interface CMSAlbum {
@@ -203,6 +204,7 @@ export interface CMSAlbum {
   artist: string
   cover?: string
   color?: string
+  releaseDate?: string | null
   songs: CMSSong[]
 }
 

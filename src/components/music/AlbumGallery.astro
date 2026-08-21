@@ -1,0 +1,467 @@
+---
+// 3D 专辑长廊: 透视倾斜的封面长带,支持拖拽/滚轮无缝循环
+// 数据来自 /music/data.json (构建期生成)
+// 派发: gallery-album-open { album } — 打开曲目面板
+// 监听: album-selected — 高亮正在播放的专辑
+---
+
+<section class="album-gallery" id="album-gallery" aria-label="专辑长廊">
+  <div class="gallery-sun" aria-hidden="true"></div>
+  <p class="gallery-decor decor-top" aria-hidden="true">
+    忽然间发现自己 已深深爱上你 真的很简单 爱的地暗天黑都已无所谓
+  </p>
+  <p class="gallery-decor decor-bottom" aria-hidden="true">
+    爱情好像流沙 我不挣扎 随它去吧 我不害怕
+  </p>
+
+  <div class="corridor-viewport" id="corridor-viewport">
+    <div class="corridor-plane">
+      <div class="corridor-band" id="corridor-band"></div>
+    </div>
+  </div>
+
+  <div class="gallery-favorites" id="gallery-favorites" aria-label="个人最爱">
+  </div>
+
+  <p class="gallery-hint" aria-hidden="true">拖动或滚动浏览 点击唱片查看曲目</p>
+</section>
+
+<style>
+  .album-gallery {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+  .gallery-sun {
+    position: absolute;
+    top: -32%;
+    right: -18%;
+    width: 62%;
+    aspect-ratio: 1;
+    background: radial-gradient(
+      circle,
+      rgba(246, 210, 60, 0.85),
+      rgba(246, 190, 40, 0.35) 42%,
+      transparent 68%
+    );
+    filter: blur(8px);
+    pointer-events: none;
+  }
+  .gallery-decor {
+    position: absolute;
+    z-index: 3;
+    margin: 0;
+    color: rgba(247, 242, 234, 0.82);
+    font-weight: 700;
+    font-size: clamp(0.8rem, 1.6vw, 1.25rem);
+    letter-spacing: 0.35em;
+    white-space: nowrap;
+    pointer-events: none;
+    text-shadow: 0 2px 12px rgb(0 0 0 / 55%);
+  }
+  .decor-top {
+    top: clamp(3.4rem, 7vh, 5rem);
+    left: 4%;
+    transform: rotate(-8deg);
+    transform-origin: left center;
+  }
+  .decor-bottom {
+    bottom: clamp(1rem, 4vh, 2.6rem);
+    left: 3%;
+    color: rgba(247, 242, 234, 0.6);
+    transform: rotate(-8deg);
+    transform-origin: left center;
+  }
+
+  .corridor-viewport {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    perspective: 1400px;
+    cursor: grab;
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .corridor-viewport.dragging {
+    cursor: grabbing;
+  }
+  .corridor-plane {
+    position: absolute;
+    top: 52%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotateX(14deg) rotateY(-24deg)
+      rotateZ(-7deg);
+    transform-style: preserve-3d;
+  }
+  .corridor-band {
+    display: flex;
+    align-items: flex-end;
+    gap: clamp(0.9rem, 1.6vw, 1.6rem);
+    will-change: transform;
+  }
+
+  .corridor-band :global(.corridor-cell) {
+    position: relative;
+    flex: none;
+    width: clamp(6.4rem, 11.5vw, 10.5rem);
+    padding: 0;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .corridor-band :global(.cell-no) {
+    display: block;
+    margin-bottom: 0.4rem;
+    color: rgba(247, 242, 234, 0.9);
+    font-weight: 800;
+    font-size: clamp(0.85rem, 1.4vw, 1.2rem);
+    font-style: italic;
+    letter-spacing: 0.04em;
+    text-align: left;
+    text-shadow: 0 1px 8px rgb(0 0 0 / 60%);
+  }
+  .corridor-band :global(.cell-cover) {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    background: #16171a;
+    border-radius: 2px;
+    box-shadow: 0 1.2rem 2.6rem rgb(0 0 0 / 55%);
+    -webkit-box-reflect: below 2px
+      linear-gradient(transparent 58%, rgb(0 0 0 / 26%));
+    transition:
+      transform 200ms ease,
+      box-shadow 200ms ease;
+  }
+  .corridor-band :global(.corridor-cell:hover .cell-cover) {
+    transform: translateY(-0.5rem) scale(1.03);
+    box-shadow: 0 1.8rem 3.2rem rgb(0 0 0 / 65%);
+  }
+  .corridor-band :global(.corridor-cell.is-active .cell-cover) {
+    outline: 2px solid rgba(246, 210, 60, 0.9);
+    outline-offset: 3px;
+  }
+  .corridor-band :global(.cell-name) {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    margin-top: 0.45rem;
+    color: rgba(247, 242, 234, 0.72);
+    font-size: clamp(0.6rem, 0.85vw, 0.74rem);
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+    text-align: left;
+    text-overflow: ellipsis;
+  }
+
+  .gallery-favorites {
+    position: absolute;
+    right: clamp(1rem, 4vw, 4rem);
+    bottom: clamp(6rem, 17vh, 9.5rem);
+    z-index: 3;
+    display: flex;
+    gap: clamp(1rem, 2.4vw, 2.4rem);
+  }
+  .gallery-favorites :global(.fav-card) {
+    position: relative;
+    width: clamp(5rem, 8.5vw, 7.6rem);
+    padding: 0;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    transform: rotate(-7deg);
+    transition: transform 220ms ease;
+  }
+  .gallery-favorites :global(.fav-card:nth-child(2)) {
+    transform: rotate(5deg) translateY(1.1rem);
+  }
+  .gallery-favorites :global(.fav-card:hover) {
+    transform: rotate(0deg) translateY(-0.35rem);
+  }
+  .gallery-favorites :global(.fav-cover) {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 2px;
+    box-shadow: 0 1.1rem 2.4rem rgb(0 0 0 / 60%);
+    -webkit-box-reflect: below 2px
+      linear-gradient(transparent 60%, rgb(0 0 0 / 22%));
+  }
+  .gallery-favorites :global(.fav-label) {
+    display: block;
+    margin-top: 0.55rem;
+    color: rgba(247, 242, 234, 0.88);
+    font-weight: 700;
+    font-size: clamp(0.66rem, 0.95vw, 0.8rem);
+    letter-spacing: 0.32em;
+    text-align: center;
+    text-shadow: 0 1px 8px rgb(0 0 0 / 55%);
+  }
+
+  .gallery-hint {
+    position: absolute;
+    right: 1.2rem;
+    bottom: 0.35rem;
+    z-index: 3;
+    margin: 0;
+    color: rgba(247, 242, 234, 0.35);
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    pointer-events: none;
+  }
+
+  @media (max-width: 767px) {
+    .corridor-plane {
+      top: 62%;
+      transform: translate(-50%, -50%) rotateX(9deg) rotateY(-15deg)
+        rotateZ(-4deg);
+    }
+    .corridor-band :global(.corridor-cell) {
+      width: clamp(5.2rem, 26vw, 6.8rem);
+    }
+    .gallery-favorites {
+      right: 0.9rem;
+      bottom: auto;
+      top: clamp(6.5rem, 16vh, 8.5rem);
+    }
+    .gallery-favorites :global(.fav-card) {
+      width: clamp(3.6rem, 15vw, 4.6rem);
+    }
+    .decor-top {
+      top: 3.2rem;
+      letter-spacing: 0.18em;
+    }
+    .decor-bottom {
+      display: none;
+    }
+    .gallery-hint {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .corridor-band :global(.cell-cover),
+    .gallery-favorites :global(.fav-card) {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  interface GallerySong {
+    id: string
+    name: string
+    duration: string
+    url: string | null
+    hasLyrics: boolean
+  }
+  interface GalleryAlbum {
+    id: string
+    name: string
+    artist: string
+    description: string | null
+    cover: string | null
+    color: string
+    releaseDate: string | null
+    songs: GallerySong[]
+  }
+
+  const FAVORITE_IDS = ['david-tao', 'jay-chou-535739206']
+
+  let albumsCache: GalleryAlbum[] | null = null
+  let albumsPromise: Promise<GalleryAlbum[]> | null = null
+
+  function fetchAlbums(): Promise<GalleryAlbum[]> {
+    if (albumsCache) return Promise.resolve(albumsCache)
+    if (!albumsPromise) {
+      albumsPromise = fetch('/music/data.json')
+        .then((r) => r.json())
+        .then((d) => {
+          albumsCache = d.albums as GalleryAlbum[]
+          return albumsCache
+        })
+        .catch((e) => {
+          albumsPromise = null
+          throw e
+        })
+    }
+    return albumsPromise
+  }
+
+  function isMusicPage() {
+    return /^\/music\/?$/.test(window.location.pathname)
+  }
+
+  function applyAtmosphere(album: GalleryAlbum) {
+    const wrapper = document.getElementById('music-page-wrapper')
+    if (!wrapper) return
+    wrapper.style.setProperty('--album-color', album.color || '#1a1a2e')
+    if (album.cover)
+      wrapper.style.setProperty('--album-cover', `url("${album.cover}")`)
+  }
+
+  function openAlbum(album: GalleryAlbum) {
+    applyAtmosphere(album)
+    window.dispatchEvent(
+      new CustomEvent('gallery-album-open', { detail: album })
+    )
+  }
+
+  function initGallery() {
+    const root = document.getElementById('album-gallery')
+    const viewport = document.getElementById('corridor-viewport')
+    const bandEl = document.getElementById('corridor-band')
+    const favEl = document.getElementById('gallery-favorites')
+    if (!root || !viewport || !bandEl || !favEl) return
+    if (root.dataset.bound === 'true') return
+    root.dataset.bound = 'true'
+    const band = bandEl
+    const favBox = favEl
+
+    let albums: GalleryAlbum[] = []
+    let bandWidth = 0
+    let offset = 0
+    let velocity = 0
+    let dragging = false
+    let lastX = 0
+    let dragTravel = 0
+    let lastInteract = 0
+    let rafId = 0
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
+
+    function buildCells() {
+      const frag = document.createDocumentFragment()
+      // 渲染两份实现无缝循环
+      for (let copy = 0; copy < 2; copy++) {
+        albums.forEach((album, i) => {
+          const cell = document.createElement('button')
+          cell.type = 'button'
+          cell.className = 'corridor-cell'
+          cell.dataset.albumId = album.id
+          if (copy === 1) cell.setAttribute('aria-hidden', 'true')
+          if (copy === 1) cell.tabIndex = -1
+          const no = String(i + 1).padStart(2, '0')
+          cell.innerHTML = `
+            <span class="cell-no">${no}</span>
+            <img class="cell-cover" src="${album.cover ?? ''}" alt="${album.name}" loading="lazy" draggable="false" />
+            <span class="cell-name">${album.name} · ${album.artist}</span>`
+          cell.addEventListener('click', () => {
+            if (dragTravel > 6) return
+            openAlbum(album)
+          })
+          frag.appendChild(cell)
+        })
+      }
+      band.replaceChildren(frag)
+      measure()
+    }
+
+    function buildFavorites() {
+      const frag = document.createDocumentFragment()
+      FAVORITE_IDS.forEach((id) => {
+        const album = albums.find((a) => a.id === id)
+        if (!album) return
+        const card = document.createElement('button')
+        card.type = 'button'
+        card.className = 'fav-card'
+        card.innerHTML = `
+          <img class="fav-cover" src="${album.cover ?? ''}" alt="${album.name}" loading="lazy" draggable="false" />
+          <span class="fav-label">个人最爱</span>`
+        card.addEventListener('click', () => openAlbum(album))
+        frag.appendChild(card)
+      })
+      favBox.replaceChildren(frag)
+    }
+
+    function measure() {
+      bandWidth = band.scrollWidth / 2
+    }
+
+    function tick() {
+      rafId = requestAnimationFrame(tick)
+      if (!bandWidth) return
+      if (!dragging) {
+        offset += velocity
+        velocity *= 0.94
+        if (Math.abs(velocity) < 0.02) velocity = 0
+        // 闲置 3 秒后缓慢自动漂移
+        if (
+          !reduceMotion.matches &&
+          velocity === 0 &&
+          performance.now() - lastInteract > 3000
+        ) {
+          offset += 0.3
+        }
+      }
+      offset = ((offset % bandWidth) + bandWidth) % bandWidth
+      band.style.transform = `translate3d(${-offset}px, 0, 0)`
+    }
+
+    viewport.addEventListener('pointerdown', (e) => {
+      dragging = true
+      dragTravel = 0
+      lastX = e.clientX
+      velocity = 0
+      lastInteract = performance.now()
+      viewport.classList.add('dragging')
+      viewport.setPointerCapture(e.pointerId)
+    })
+    viewport.addEventListener('pointermove', (e) => {
+      if (!dragging) return
+      const dx = e.clientX - lastX
+      lastX = e.clientX
+      dragTravel += Math.abs(dx)
+      offset -= dx
+      velocity = -dx
+      lastInteract = performance.now()
+    })
+    const endDrag = () => {
+      dragging = false
+      viewport.classList.remove('dragging')
+    }
+    viewport.addEventListener('pointerup', endDrag)
+    viewport.addEventListener('pointercancel', endDrag)
+    viewport.addEventListener(
+      'wheel',
+      (e) => {
+        e.preventDefault()
+        const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY)
+          ? e.deltaX
+          : e.deltaY
+        velocity += delta * 0.08
+        lastInteract = performance.now()
+      },
+      { passive: false }
+    )
+    window.addEventListener('resize', measure)
+
+    window.addEventListener('album-selected', ((e: CustomEvent) => {
+      const id = e.detail?.id
+      band.querySelectorAll('.corridor-cell').forEach((cell) => {
+        cell.classList.toggle(
+          'is-active',
+          (cell as HTMLElement).dataset.albumId === id
+        )
+      })
+    }) as EventListener)
+
+    fetchAlbums()
+      .then((data) => {
+        albums = data
+        buildCells()
+        buildFavorites()
+        if (!rafId) tick()
+      })
+      .catch((e) => console.error('[gallery] failed to load albums:', e))
+  }
+
+  function activateWhenOnMusicPage() {
+    if (isMusicPage()) initGallery()
+  }
+  document.addEventListener('astro:page-load', activateWhenOnMusicPage)
+  activateWhenOnMusicPage()
+</script>

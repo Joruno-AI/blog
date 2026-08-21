@@ -1480,15 +1480,28 @@ import '~/styles/music.css'
 
     // ==================== Theme Adaptation ====================
     const updateThemeColors = () => {
-      // 音乐页在站点亮/暗主题下都保持固定的暖色暗舞台（见 music-polish.css），
-      // 因此 3D 灯光使用统一的舞台预设，不再随站点主题切换，避免亮色主题下灯光偏弱。
-      ambientLight.intensity = 0.54
-      spotLight.intensity = 82
-      warmLight.intensity = 18
-      coolLight.intensity = 9
-      rimLight.intensity = 1.8
-      woodKeyLight.intensity = 54
-      renderer.toneMappingExposure = 1.06
+      const isDark = document.documentElement.classList.contains('dark')
+
+      scene.fog?.color.setHex(isDark ? 0x0f0e0d : 0xdce3e8)
+      if (scene.fog instanceof THREE.FogExp2) {
+        scene.fog.density = isDark ? 0.026 : 0.018
+      }
+
+      ambientLight.color.setHex(isDark ? 0xe8dfcf : 0xffffff)
+      ambientLight.groundColor.setHex(isDark ? 0x11100f : 0x9aa8b2)
+      ambientLight.intensity = isDark ? 0.54 : 0.72
+
+      spotLight.color.setHex(isDark ? 0xe8d4b2 : 0xfff4df)
+      spotLight.intensity = isDark ? 82 : 70
+      warmLight.color.setHex(isDark ? 0xd7b37c : 0xe4b47d)
+      warmLight.intensity = isDark ? 18 : 13
+      coolLight.color.setHex(isDark ? 0xd7d4c8 : 0xd8e7f1)
+      coolLight.intensity = isDark ? 9 : 12
+      rimLight.color.setHex(isDark ? 0xfff1d4 : 0xffffff)
+      rimLight.intensity = isDark ? 1.8 : 2.15
+      woodKeyLight.color.setHex(isDark ? 0xe0b47d : 0xf0c18a)
+      woodKeyLight.intensity = isDark ? 54 : 46
+      renderer.toneMappingExposure = isDark ? 1.06 : 1.14
     }
 
     // Listen for theme changes
