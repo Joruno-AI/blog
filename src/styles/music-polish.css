@@ -3,8 +3,53 @@
   --album-tint: color-mix(in srgb, var(--album-color, #7d503d) 42%, #d8b981);
 }
 
-/* 海报风长廊: music 页面在亮暗主题下均保持深色 */
+/* 亮色主题(默认) */
 #global-music-player .music-page-wrapper {
+  --music-room-surface: color-mix(
+    in srgb,
+    var(--album-color, #5f7894) 10%,
+    #edf1f4
+  );
+  --music-text: #252b31;
+  --music-text-strong: #11161a;
+  --music-text-soft: rgba(23, 29, 34, 0.72);
+  --music-text-muted: rgba(23, 29, 34, 0.5);
+  --music-focus: color-mix(in srgb, var(--album-color) 68%, #17202a);
+  --music-panel-subtle: rgba(255, 255, 255, 0.34);
+  --music-panel-strong: rgba(244, 247, 249, 0.96);
+  --music-control-soft: rgba(255, 255, 255, 0.54);
+  --music-control-hover: rgba(255, 255, 255, 0.82);
+  --music-border: rgba(29, 39, 48, 0.12);
+  --music-border-soft: rgba(29, 39, 48, 0.07);
+  --music-highlight: rgba(255, 255, 255, 0.72);
+  --music-progress-track: rgba(29, 39, 48, 0.14);
+  --music-primary-button: #20272d;
+  --music-primary-button-hover: #101519;
+  --music-primary-button-disabled: rgba(32, 39, 45, 0.38);
+  --music-primary-button-text: #f7f9fa;
+  --music-accent-text: color-mix(
+    in srgb,
+    var(--album-color, #405f7f) 76%,
+    #17202a
+  );
+  --music-accent-fill: color-mix(
+    in srgb,
+    var(--album-color, #405f7f) 72%,
+    #25313b
+  );
+  --music-accent-contrast: #f7f9fa;
+  --music-scrim: rgb(240 243 246 / 82%);
+  --music-scrim-strong: rgb(238 241 245 / 95%);
+  --music-decor-shadow: 0 1px 8px rgb(255 255 255 / 45%);
+  --music-ambient-edge: rgba(249, 251, 252, 0.74);
+  --music-ambient-edge-soft: rgba(249, 251, 252, 0.28);
+  --music-ambient-noise-opacity: 0.035;
+  --music-dock-shadow: 0 0.8rem 2.5rem rgba(58, 73, 85, 0.12);
+  --music-float-shadow: 0 -1.5rem 5rem rgba(58, 73, 85, 0.16);
+}
+
+/* 暗色主题 */
+.dark #global-music-player .music-page-wrapper {
   --music-room-surface: color-mix(
     in srgb,
     var(--album-color, #2d568d) 14%,
@@ -27,8 +72,12 @@
   --music-primary-button-hover: #fffaf2;
   --music-primary-button-disabled: rgba(243, 238, 229, 0.5);
   --music-primary-button-text: #111214;
-  --music-accent-text: color-mix(in srgb, var(--album-tint) 76%, white);
-  --music-accent-fill: color-mix(in srgb, var(--album-tint) 78%, white);
+  --music-accent-text: color-mix(in srgb, var(--album-tint) 62%, #ffe9a8);
+  --music-accent-fill: color-mix(in srgb, var(--album-tint) 66%, #ffe9a8);
+  --music-accent-contrast: #191507;
+  --music-scrim: rgb(6 7 9 / 82%);
+  --music-scrim-strong: rgb(5 6 8 / 94%);
+  --music-decor-shadow: 0 2px 12px rgb(0 0 0 / 55%);
   --music-ambient-edge: rgba(7, 8, 10, 0.86);
   --music-ambient-edge-soft: rgba(7, 8, 10, 0.42);
   --music-ambient-noise-opacity: 0.07;

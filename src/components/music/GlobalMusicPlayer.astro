@@ -1,5 +1,6 @@
 ---
 import AlbumGallery from '~/components/music/AlbumGallery.astro'
+import AuroraBackground from '~/components/music/AuroraBackground.astro'
 import NowPlayingStage from '~/components/music/NowPlayingStage.astro'
 import PlayerEngine from '~/components/music/PlayerEngine.astro'
 import SongList from '~/components/music/SongList.astro'
@@ -14,6 +15,7 @@ import SongList from '~/components/music/SongList.astro'
     <div class="music-ambient" aria-hidden="true">
       <div class="music-ambient-cover"></div>
       <div class="music-ambient-light"></div>
+      <AuroraBackground />
       <div class="music-ambient-noise"></div>
     </div>
 
@@ -121,28 +123,14 @@ import SongList from '~/components/music/SongList.astro'
           </button>
         </div>
 
-        <div class="compact-player-dock" aria-hidden="true">
-          <span class="compact-track-title" id="compact-track-title"
-            >请选择一张唱片</span
-          >
-          <button
-            class="compact-play-btn"
-            id="compact-play"
-            type="button"
-            aria-label="播放或暂停"
-            disabled
-          >
-            <span class="i-ri-play-fill" id="compact-play-icon"></span>
-          </button>
-          <button
-            class="compact-expand-btn"
-            id="player-expand-trigger"
-            type="button"
-            aria-label="展开播放条"
-          >
-            <span class="i-ri-arrow-up-s-line"></span>
-          </button>
-        </div>
+        <button
+          class="dock-restore"
+          id="player-expand-trigger"
+          type="button"
+          aria-label="展开播放条"
+        >
+          <span class="i-ri-arrow-up-s-line"></span>
+        </button>
       </section>
     </div>
   </div>
@@ -199,8 +187,13 @@ import SongList from '~/components/music/SongList.astro'
       max(0.55rem, env(safe-area-inset-bottom));
     background: linear-gradient(
       to top,
-      rgb(5 6 8 / 88%) 0%,
-      rgb(5 6 8 / 46%) 62%,
+      var(--music-scrim-strong, rgb(5 6 8 / 88%)) 0%,
+      color-mix(
+          in srgb,
+          var(--music-scrim-strong, rgb(5 6 8 / 88%)) 52%,
+          transparent
+        )
+        62%,
       transparent
     );
     border-top: 0;
@@ -294,7 +287,7 @@ import SongList from '~/components/music/SongList.astro'
     position: relative;
     height: 2px;
     overflow: hidden;
-    background: rgba(255, 255, 255, 0.12);
+    background: var(--music-progress-track, rgba(255, 255, 255, 0.12));
     border-radius: 999px;
     cursor: pointer;
     transition: transform 140ms ease;
@@ -370,7 +363,7 @@ import SongList from '~/components/music/SongList.astro'
       transform 150ms ease;
   }
   .dock-speed-btn.active {
-    color: #f6d23c;
+    color: var(--music-accent-text, #f6d23c);
     background: transparent;
     font-weight: 700;
   }
@@ -391,9 +384,7 @@ import SongList from '~/components/music/SongList.astro'
       border-color 150ms ease,
       transform 150ms ease;
   }
-  .dock-collapse-toggle,
-  .compact-expand-btn,
-  .compact-play-btn {
+  .dock-collapse-toggle {
     display: grid;
     width: 2.4rem;
     height: 2.4rem;
@@ -410,52 +401,33 @@ import SongList from '~/components/music/SongList.astro'
       border-color 150ms ease,
       transform 150ms ease;
   }
-  .compact-player-dock {
+  /* 收起态: 只保留一个居中小箭头 */
+  .dock-restore {
     position: absolute;
-    bottom: 0;
+    bottom: max(0.4rem, env(safe-area-inset-bottom));
     left: 50%;
     z-index: 3;
     display: grid;
-    width: min(22rem, calc(100vw - 1.2rem));
-    min-height: 3.35rem;
-    grid-template-columns: minmax(0, 1fr) auto auto;
-    align-items: center;
-    gap: 0.45rem;
-    padding: 0.42rem 0.48rem 0.42rem 0.85rem;
-    color: var(--music-text, #f7f2ea);
-    background: var(--music-control-soft, rgba(255, 255, 255, 0.06));
+    width: 2.2rem;
+    height: 1.5rem;
+    padding: 0;
+    color: var(--music-text-muted, rgba(247, 242, 234, 0.5));
+    background: transparent;
     border: 0;
-    border-radius: 1rem;
-    box-shadow: inset 0 1px 0 var(--music-highlight, rgba(255, 255, 255, 0.08));
-    backdrop-filter: blur(18px) saturate(1.08);
-    -webkit-backdrop-filter: blur(18px) saturate(1.08);
+    cursor: pointer;
+    place-items: center;
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    transform: translate3d(-50%, 0.5rem, 0) scale(0.965);
+    transform: translate3d(-50%, 0.4rem, 0);
     transition:
-      transform 220ms cubic-bezier(0.23, 1, 0.32, 1),
+      transform 200ms cubic-bezier(0.23, 1, 0.32, 1),
+      color 150ms ease,
       opacity 150ms ease,
-      background-color 280ms ease,
-      border-color 280ms ease,
-      visibility 220ms ease;
-    will-change: transform, opacity;
+      visibility 200ms ease;
   }
-  .compact-track-title {
-    overflow: hidden;
-    font-size: 0.72rem;
-    font-weight: 650;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .compact-play-btn {
-    color: var(--music-primary-button-text, #111214);
-    background: var(--music-primary-button, #f3eee5);
-    border-color: transparent;
-    border-radius: 999px;
-  }
-  .compact-play-btn:disabled {
-    opacity: 0.42;
+  .dock-restore:hover {
+    color: var(--music-text-strong, #fffaf2);
   }
   .playback-hub.is-collapsed .now-playing-dock {
     opacity: 0;
@@ -463,11 +435,14 @@ import SongList from '~/components/music/SongList.astro'
     pointer-events: none;
     transform: translate3d(0, 0.5rem, 0) scale(0.985);
   }
-  .playback-hub.is-collapsed .compact-player-dock {
+  .playback-hub.is-collapsed .dock-restore {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
-    transform: translate3d(-50%, 0, 0) scale(1);
+    transform: translate3d(-50%, 0, 0);
+  }
+  .playback-hub.is-collapsed {
+    background: none;
   }
   .queue-toggle-label {
     font-size: 0.66rem;
@@ -500,8 +475,7 @@ import SongList from '~/components/music/SongList.astro'
     .mini-ctrl-btn:not(:disabled):hover,
     .dock-speed-btn:hover,
     .queue-toggle:hover,
-    .dock-collapse-toggle:hover,
-    .compact-expand-btn:hover {
+    .dock-collapse-toggle:hover {
       color: var(--music-text-strong, #fffaf2);
       background-color: var(--music-control-hover, rgba(255, 255, 255, 0.1));
     }
@@ -514,9 +488,7 @@ import SongList from '~/components/music/SongList.astro'
   .mini-ctrl-btn:not(:disabled):active,
   .dock-speed-btn:active,
   .queue-toggle:active,
-  .dock-collapse-toggle:active,
-  .compact-expand-btn:active,
-  .compact-play-btn:active {
+  .dock-collapse-toggle:active {
     transform: scale(0.97);
   }
 
@@ -592,14 +564,12 @@ import SongList from '~/components/music/SongList.astro'
     .music-page-wrapper,
     .playback-queue,
     .now-playing-dock,
-    .compact-player-dock,
     .queue-chevron,
     .mini-ctrl-btn,
     .dock-speed-btn,
     .queue-toggle,
     .dock-collapse-toggle,
-    .compact-expand-btn,
-    .compact-play-btn {
+    .dock-restore {
       transition-duration: 1ms !important;
     }
   }
@@ -649,9 +619,7 @@ import SongList from '~/components/music/SongList.astro'
   }
   function setControlsEnabled(enabled: boolean) {
     document
-      .querySelectorAll<HTMLButtonElement>(
-        '#mini-prev, #mini-play, #mini-next, #compact-play'
-      )
+      .querySelectorAll<HTMLButtonElement>('#mini-prev, #mini-play, #mini-next')
       .forEach((button) => {
         button.disabled = !enabled
       })
@@ -660,10 +628,8 @@ import SongList from '~/components/music/SongList.astro'
     const state = window.MusicPlayerState
     const song = state.currentSongs?.[state.currentSongIndex ?? 0]
     const title = document.getElementById('mini-track-title')
-    const compactTitle = document.getElementById('compact-track-title')
     const eyebrow = document.getElementById('mini-track-eyebrow')
     if (title) title.textContent = song?.name ?? '请选择一张唱片'
-    if (compactTitle) compactTitle.textContent = song?.name ?? '请选择一张唱片'
     if (eyebrow)
       eyebrow.textContent = song
         ? state.isPlaying
@@ -674,10 +640,7 @@ import SongList from '~/components/music/SongList.astro'
   }
   function updatePlayIcon(isPlaying: boolean) {
     const icon = document.getElementById('mini-play-icon')
-    const compactIcon = document.getElementById('compact-play-icon')
     if (icon) icon.className = isPlaying ? 'i-ri-pause-fill' : 'i-ri-play-fill'
-    if (compactIcon)
-      compactIcon.className = isPlaying ? 'i-ri-pause-fill' : 'i-ri-play-fill'
   }
   function setPlaylistOpen(open: boolean) {
     const playerContainer = document.querySelector<HTMLElement>(
@@ -701,11 +664,9 @@ import SongList from '~/components/music/SongList.astro'
   function setPlayerCollapsed(collapsed: boolean) {
     const hub = document.getElementById('playback-hub')
     const fullDock = document.getElementById('mobile-mini-player')
-    const compactDock = hub?.querySelector<HTMLElement>('.compact-player-dock')
     window.MusicPlayerState.playerCollapsed = collapsed
     hub?.classList.toggle('is-collapsed', collapsed)
     fullDock?.setAttribute('aria-hidden', String(collapsed))
-    compactDock?.setAttribute('aria-hidden', String(!collapsed))
     if (collapsed) setPlaylistOpen(false)
   }
   function syncSpeed(rate: number) {
@@ -782,11 +743,6 @@ import SongList from '~/components/music/SongList.astro'
       )
     document
       .getElementById('mini-play')
-      ?.addEventListener('click', () =>
-        window.dispatchEvent(new CustomEvent('toggle-play'))
-      )
-    document
-      .getElementById('compact-play')
       ?.addEventListener('click', () =>
         window.dispatchEvent(new CustomEvent('toggle-play'))
       )

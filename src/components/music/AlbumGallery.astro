@@ -6,7 +6,6 @@
 ---
 
 <section class="album-gallery" id="album-gallery" aria-label="专辑长廊">
-  <div class="gallery-sun" aria-hidden="true"></div>
   <p class="gallery-decor decor-top" aria-hidden="true">
     忽然间发现自己 已深深爱上你 真的很简单 爱的地暗天黑都已无所谓
   </p>
@@ -32,32 +31,17 @@
     inset: 0;
     overflow: hidden;
   }
-  .gallery-sun {
-    position: absolute;
-    top: -32%;
-    right: -18%;
-    width: 62%;
-    aspect-ratio: 1;
-    background: radial-gradient(
-      circle,
-      rgba(246, 210, 60, 0.85),
-      rgba(246, 190, 40, 0.35) 42%,
-      transparent 68%
-    );
-    filter: blur(8px);
-    pointer-events: none;
-  }
   .gallery-decor {
     position: absolute;
     z-index: 3;
     margin: 0;
-    color: rgba(247, 242, 234, 0.82);
+    color: var(--music-text-soft, rgba(247, 242, 234, 0.82));
     font-weight: 700;
     font-size: min(1.15rem, 1.5vw);
     letter-spacing: 0.3em;
     white-space: nowrap;
     pointer-events: none;
-    text-shadow: 0 2px 12px rgb(0 0 0 / 55%);
+    text-shadow: var(--music-decor-shadow, 0 2px 12px rgb(0 0 0 / 55%));
   }
   .decor-top {
     top: clamp(5.5rem, 11vh, 7.5rem);
@@ -68,7 +52,7 @@
   .decor-bottom {
     bottom: clamp(1rem, 4vh, 2.6rem);
     left: 3%;
-    color: rgba(247, 242, 234, 0.6);
+    color: var(--music-text-muted, rgba(247, 242, 234, 0.6));
     transform: rotate(-5deg);
     transform-origin: left center;
   }
@@ -114,13 +98,13 @@
   .corridor-band :global(.cell-no) {
     display: block;
     margin-bottom: 0.4rem;
-    color: rgba(247, 242, 234, 0.9);
+    color: var(--music-text, rgba(247, 242, 234, 0.9));
     font-weight: 800;
     font-size: clamp(0.85rem, 1.4vw, 1.2rem);
     font-style: italic;
     letter-spacing: 0.04em;
     text-align: left;
-    text-shadow: 0 1px 8px rgb(0 0 0 / 60%);
+    text-shadow: var(--music-decor-shadow, 0 1px 8px rgb(0 0 0 / 60%));
   }
   .corridor-band :global(.cell-cover) {
     display: block;
@@ -141,7 +125,7 @@
     box-shadow: 0 1.8rem 3.2rem rgb(0 0 0 / 65%);
   }
   .corridor-band :global(.corridor-cell.is-active .cell-cover) {
-    outline: 2px solid rgba(246, 210, 60, 0.9);
+    outline: 2px solid var(--music-accent-fill, rgba(246, 210, 60, 0.9));
     outline-offset: 3px;
   }
   .corridor-band :global(.cell-name) {
@@ -149,7 +133,7 @@
     max-width: 100%;
     overflow: hidden;
     margin-top: 0.45rem;
-    color: rgba(247, 242, 234, 0.72);
+    color: var(--music-text-muted, rgba(247, 242, 234, 0.72));
     font-size: clamp(0.6rem, 0.85vw, 0.74rem);
     letter-spacing: 0.08em;
     white-space: nowrap;
@@ -200,12 +184,12 @@
   .gallery-favorites :global(.fav-label) {
     display: block;
     margin-top: 0.55rem;
-    color: rgba(247, 242, 234, 0.88);
+    color: var(--music-text-soft, rgba(247, 242, 234, 0.88));
     font-weight: 700;
     font-size: clamp(0.66rem, 0.95vw, 0.8rem);
     letter-spacing: 0.32em;
     text-align: center;
-    text-shadow: 0 1px 8px rgb(0 0 0 / 55%);
+    text-shadow: var(--music-decor-shadow, 0 1px 8px rgb(0 0 0 / 55%));
   }
 
   .gallery-hint {
@@ -214,7 +198,7 @@
     bottom: 0.35rem;
     z-index: 3;
     margin: 0;
-    color: rgba(247, 242, 234, 0.35);
+    color: var(--music-text-muted, rgba(247, 242, 234, 0.35));
     font-size: 0.62rem;
     letter-spacing: 0.08em;
     pointer-events: none;

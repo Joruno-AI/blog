@@ -70,8 +70,9 @@
     z-index: -1;
     background: radial-gradient(
       ellipse at 42% 50%,
-      rgb(6 7 9 / 82%),
-      rgb(6 7 9 / 48%) 52%,
+      var(--music-scrim, rgb(6 7 9 / 82%)),
+      color-mix(in srgb, var(--music-scrim, rgb(6 7 9 / 82%)) 58%, transparent)
+        52%,
       transparent 74%
     );
     pointer-events: none;
@@ -137,10 +138,10 @@
   }
   .lyrics-empty {
     margin: 0.4rem 0;
-    color: rgba(247, 242, 234, 0.35);
+    color: var(--music-text-muted, rgba(247, 242, 234, 0.35));
     font-size: 0.72rem;
     letter-spacing: 0.14em;
-    text-shadow: 0 1px 10px rgb(0 0 0 / 70%);
+    text-shadow: var(--music-decor-shadow, 0 1px 10px rgb(0 0 0 / 70%));
   }
   .lyrics-scroll {
     max-height: clamp(11rem, 26vh, 16rem);
@@ -163,26 +164,25 @@
     padding: 0.3rem 0;
     background: none;
     border: 0;
-    color: rgba(247, 242, 234, 0.38);
+    color: var(--music-text-muted, rgba(247, 242, 234, 0.38));
     font-size: 0.8rem;
     letter-spacing: 0.05em;
     line-height: 1.55;
     text-align: left;
-    text-shadow: 0 1px 12px rgb(0 0 0 / 80%);
+    text-shadow: var(--music-decor-shadow, 0 1px 12px rgb(0 0 0 / 80%));
     cursor: pointer;
     transition:
       color 180ms ease,
       transform 180ms ease;
   }
   .lyrics-scroll :global(.lyric-line:hover) {
-    color: rgba(247, 242, 234, 0.68);
+    color: var(--music-text-soft, rgba(247, 242, 234, 0.68));
   }
   .lyrics-scroll :global(.lyric-line.is-current) {
-    color: #f6d23c;
+    color: var(--music-accent-text, #f6d23c);
     font-weight: 600;
     transform: scale(1.04);
     transform-origin: left center;
-    text-shadow: 0 1px 14px rgb(0 0 0 / 85%);
   }
 
   .track-panel {
@@ -198,9 +198,17 @@
       clamp(5rem, 12vh, 7rem) 3.5rem;
     background: linear-gradient(
       to left,
-      color-mix(in srgb, var(--album-color, #101216) 26%, rgb(7 8 10 / 97%))
+      color-mix(
+          in srgb,
+          var(--album-color, #101216) 24%,
+          var(--music-scrim-strong, rgb(7 8 10 / 97%))
+        )
         72%,
-      color-mix(in srgb, var(--album-color, #101216) 14%, rgb(7 8 10 / 78%))
+      color-mix(
+          in srgb,
+          var(--album-color, #101216) 12%,
+          var(--music-scrim, rgb(7 8 10 / 78%))
+        )
         88%,
       transparent
     );
@@ -230,12 +238,12 @@
     background: none;
     border: 0;
     border-radius: 50%;
-    color: rgba(247, 242, 234, 0.55);
+    color: var(--music-text-muted, rgba(247, 242, 234, 0.55));
     cursor: pointer;
     transition: color 160ms ease;
   }
   .track-panel-close:hover {
-    color: #f7f2ea;
+    color: var(--music-text-strong, #f7f2ea);
   }
   .track-panel-head {
     display: flex;
@@ -255,14 +263,14 @@
   .panel-title {
     overflow: hidden;
     margin: 0 1.6rem 0.2rem 0;
-    color: #f7f2ea;
+    color: var(--music-text, #f7f2ea);
     font-size: 1.05rem;
     white-space: nowrap;
     text-overflow: ellipsis;
   }
   .panel-sub {
     margin: 0 0 0.55rem;
-    color: rgba(247, 242, 234, 0.55);
+    color: var(--music-text-muted, rgba(247, 242, 234, 0.55));
     font-size: 0.72rem;
     letter-spacing: 0.06em;
   }
@@ -271,17 +279,17 @@
     align-items: center;
     gap: 0.3rem;
     padding: 0.34rem 0.85rem;
-    background: #f6d23c;
+    background: var(--music-accent-fill, #f6d23c);
     border: 0;
     border-radius: 999px;
-    color: #191507;
+    color: var(--music-accent-contrast, #191507);
     font-weight: 700;
     font-size: 0.74rem;
     cursor: pointer;
   }
   .panel-play-all:disabled {
-    background: rgba(255, 255, 255, 0.14);
-    color: rgba(247, 242, 234, 0.4);
+    background: var(--music-control-soft, rgba(255, 255, 255, 0.14));
+    color: var(--music-text-muted, rgba(247, 242, 234, 0.4));
     cursor: not-allowed;
   }
   .panel-tracks {
@@ -312,20 +320,24 @@
     background: none;
     border: 0;
     border-radius: 0.45rem;
-    color: rgba(247, 242, 234, 0.85);
+    color: var(--music-text-soft, rgba(247, 242, 234, 0.85));
     font-size: 0.8rem;
     text-align: left;
     cursor: pointer;
   }
   .panel-tracks :global(.track-row:hover) {
-    background: rgba(255, 255, 255, 0.06);
+    background: color-mix(in srgb, var(--music-text, #fff) 8%, transparent);
   }
   .panel-tracks :global(.track-row.is-current) {
-    background: rgba(246, 210, 60, 0.12);
-    color: #f6d23c;
+    background: color-mix(
+      in srgb,
+      var(--music-accent-fill, #f6d23c) 16%,
+      transparent
+    );
+    color: var(--music-accent-text, #f6d23c);
   }
   .panel-tracks :global(.track-row.is-disabled) {
-    color: rgba(247, 242, 234, 0.32);
+    color: var(--music-text-muted, rgba(247, 242, 234, 0.32));
     cursor: default;
   }
   .panel-tracks :global(.track-row.is-disabled:hover) {
@@ -334,7 +346,7 @@
   .panel-tracks :global(.track-no) {
     flex: none;
     width: 1.4rem;
-    color: rgba(247, 242, 234, 0.45);
+    color: var(--music-text-muted, rgba(247, 242, 234, 0.45));
     font-size: 0.68rem;
     font-style: italic;
   }
@@ -346,12 +358,12 @@
   }
   .panel-tracks :global(.track-tag) {
     flex: none;
-    color: rgba(247, 242, 234, 0.35);
+    color: var(--music-text-muted, rgba(247, 242, 234, 0.35));
     font-size: 0.62rem;
   }
   .panel-tracks :global(.track-dur) {
     flex: none;
-    color: rgba(247, 242, 234, 0.45);
+    color: var(--music-text-muted, rgba(247, 242, 234, 0.45));
     font-size: 0.68rem;
     font-variant-numeric: tabular-nums;
   }
@@ -387,7 +399,11 @@
       padding: 3rem 1rem calc(5rem + env(safe-area-inset-bottom)) 1rem;
       background: linear-gradient(
         to top,
-        color-mix(in srgb, var(--album-color, #101216) 26%, rgb(7 8 10 / 96%))
+        color-mix(
+            in srgb,
+            var(--album-color, #101216) 24%,
+            var(--music-scrim-strong, rgb(7 8 10 / 96%))
+          )
           70%,
         transparent
       );
