@@ -11,6 +11,11 @@
         <div class="vinyl-label" id="vinyl-label"></div>
         <div class="vinyl-hole"></div>
       </div>
+      <div class="tonearm" id="tonearm">
+        <div class="tonearm-pivot"></div>
+        <div class="tonearm-rod"></div>
+        <div class="tonearm-head"></div>
+      </div>
       <div class="vinyl-notes" id="vinyl-notes"></div>
     </div>
     <div class="lyrics-panel" id="lyrics-panel" aria-label="歌词">
@@ -101,11 +106,58 @@
       ),
       radial-gradient(circle, #202124 0 26%, #0d0e10 27% 100%);
     border-radius: 50%;
-    animation: vinyl-spin 3.6s linear infinite;
+    animation: vinyl-spin var(--spin-duration, 3.6s) linear infinite;
     animation-play-state: paused;
   }
   .stage-vinyl.is-playing .vinyl-disc {
     animation-play-state: running;
+  }
+  /* 唱臂: 支点在右上角,播放落针/暂停抬针 */
+  .tonearm {
+    position: absolute;
+    top: -4%;
+    right: -7%;
+    width: 46%;
+    height: 60%;
+    transform-origin: 78% 12%;
+    transform: rotate(-24deg);
+    transition: transform 700ms cubic-bezier(0.34, 1.2, 0.4, 1);
+    filter: drop-shadow(0 0.5rem 0.9rem rgb(0 0 0 / 45%));
+    pointer-events: none;
+  }
+  .stage-vinyl.is-playing .tonearm {
+    transform: rotate(6deg);
+  }
+  .tonearm-pivot {
+    position: absolute;
+    top: 4%;
+    right: 12%;
+    width: 22%;
+    aspect-ratio: 1;
+    background: radial-gradient(circle at 38% 34%, #4a4d52, #1b1d20 68%);
+    border-radius: 50%;
+    box-shadow: inset 0 1px 2px rgb(255 255 255 / 18%);
+  }
+  .tonearm-rod {
+    position: absolute;
+    top: 12%;
+    right: 20%;
+    width: 3.5%;
+    height: 74%;
+    background: linear-gradient(90deg, #52555a, #2c2e32);
+    border-radius: 999px;
+    transform: rotate(14deg);
+    transform-origin: top center;
+  }
+  .tonearm-head {
+    position: absolute;
+    bottom: 2%;
+    left: 47%;
+    width: 12%;
+    height: 15%;
+    background: linear-gradient(135deg, #5d6167, #24262a);
+    border-radius: 0.15rem;
+    transform: rotate(24deg);
   }
   .vinyl-label {
     position: absolute;
@@ -828,6 +880,12 @@
       if (e.key === 'Escape') setPanelOpen(false)
     })
 
+    // 倍速与黑胶转速同步: 基准 3.6s/转
+    window.addEventListener('set-playback-rate', ((e: CustomEvent) => {
+      const rate = Number(e.detail) || 1
+      vinyl?.style.setProperty('--spin-duration', `${3.6 / rate}s`)
+    }) as EventListener)
+
     window.addEventListener('playback-state', ((e: CustomEvent) => {
       const { isPlaying, songIndex } = e.detail
       vinyl?.classList.toggle('is-playing', Boolean(isPlaying))
@@ -853,6 +911,12 @@
       if (song && song.id !== currentSongId) renderLyrics(song.id)
       syncLyrics(Number(currentTime) || 0)
     }) as EventListener)
+
+    // 初始化时同步全局倍速(跨页返回场景)
+    const initialRate =
+      (window as { MusicPlayerState?: { currentPlaybackRate?: number } })
+        .MusicPlayerState?.currentPlaybackRate ?? 1
+    vinyl?.style.setProperty('--spin-duration', `${3.6 / initialRate}s`)
   }
 
   document.addEventListener('astro:page-load', initNowPlaying)
