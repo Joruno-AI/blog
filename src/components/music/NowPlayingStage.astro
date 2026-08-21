@@ -124,13 +124,6 @@
     border: 1px solid rgba(255, 255, 255, 0.07);
     border-radius: 0.75rem;
     backdrop-filter: blur(10px);
-    mask-image: linear-gradient(
-      to bottom,
-      transparent,
-      #000 14%,
-      #000 86%,
-      transparent
-    );
   }
   .lyrics-empty {
     margin: 0.4rem 0;
@@ -139,9 +132,16 @@
     letter-spacing: 0.1em;
   }
   .lyrics-scroll {
-    max-height: inherit;
+    max-height: calc(clamp(9rem, 26vh, 15rem) - 1.2rem);
     overflow-y: auto;
     scrollbar-width: none;
+    mask-image: linear-gradient(
+      to bottom,
+      transparent,
+      #000 12%,
+      #000 88%,
+      transparent
+    );
   }
   .lyrics-scroll::-webkit-scrollbar {
     display: none;

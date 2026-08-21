@@ -53,23 +53,23 @@
     margin: 0;
     color: rgba(247, 242, 234, 0.82);
     font-weight: 700;
-    font-size: clamp(0.8rem, 1.6vw, 1.25rem);
-    letter-spacing: 0.35em;
+    font-size: min(1.15rem, 1.5vw);
+    letter-spacing: 0.3em;
     white-space: nowrap;
     pointer-events: none;
     text-shadow: 0 2px 12px rgb(0 0 0 / 55%);
   }
   .decor-top {
-    top: clamp(3.4rem, 7vh, 5rem);
+    top: clamp(5.5rem, 11vh, 7.5rem);
     left: 4%;
-    transform: rotate(-8deg);
+    transform: rotate(-5deg);
     transform-origin: left center;
   }
   .decor-bottom {
     bottom: clamp(1rem, 4vh, 2.6rem);
     left: 3%;
     color: rgba(247, 242, 234, 0.6);
-    transform: rotate(-8deg);
+    transform: rotate(-5deg);
     transform-origin: left center;
   }
 
@@ -232,7 +232,8 @@
       width: clamp(3.6rem, 15vw, 4.6rem);
     }
     .decor-top {
-      top: 3.2rem;
+      top: 3.6rem;
+      font-size: 0.72rem;
       letter-spacing: 0.18em;
     }
     .decor-bottom {
