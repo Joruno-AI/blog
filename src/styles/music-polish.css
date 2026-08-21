@@ -296,32 +296,22 @@
 body:has(#music-page-wrapper:not(.hidden)) {
   --music-room-surface: color-mix(
     in srgb,
-    var(--music-album-color, #5f7894) 10%,
-    #edf1f4
+    var(--music-album-color, #2d568d) 14%,
+    #090a0c
   );
   --music-room-top: var(--music-room-surface);
   --music-room-control: var(--music-room-surface);
   overflow: hidden;
   background-color: var(--music-room-top);
-  transition: background-color 680ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.dark body:has(#music-page-wrapper:not(.hidden)) {
-  --music-room-surface: color-mix(
-    in srgb,
-    var(--music-album-color, #2d568d) 42%,
-    #090a0c
-  );
-}
-
-/* The site-wide light glass header reads as a flat grey strip on this dark
-   scene. Give the music room its own dark, translucent navigation surface. */
+/* music 页恒定深色: header 无论站点主题都用浅色前景 */
 body:has(#music-page-wrapper:not(.hidden)) .nav-header {
-  --c-text: #252b31;
-  --c-text-soft: rgba(23, 29, 34, 0.72);
-  --c-text-muted: rgba(23, 29, 34, 0.5);
-  --c-surface-soft: rgba(255, 255, 255, 0.54);
-  --c-surface-hover: rgba(255, 255, 255, 0.82);
+  --c-text: #f5f0e8;
+  --c-text-soft: rgba(245, 240, 232, 0.76);
+  --c-text-muted: rgba(245, 240, 232, 0.58);
+  --c-surface-soft: rgba(255, 255, 255, 0.055);
+  --c-surface-hover: rgba(255, 255, 255, 0.09);
   z-index: 120;
   color: var(--c-text);
   background: transparent;
@@ -329,18 +319,6 @@ body:has(#music-page-wrapper:not(.hidden)) .nav-header {
   box-shadow: none;
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
-  transition:
-    background-color 680ms cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 280ms ease,
-    box-shadow 280ms ease;
-}
-
-.dark body:has(#music-page-wrapper:not(.hidden)) .nav-header {
-  --c-text: #f5f0e8;
-  --c-text-soft: rgba(245, 240, 232, 0.76);
-  --c-text-muted: rgba(245, 240, 232, 0.58);
-  --c-surface-soft: rgba(255, 255, 255, 0.055);
-  --c-surface-hover: rgba(255, 255, 255, 0.09);
 }
 
 body:has(#music-page-wrapper:not(.hidden)) .nav-header :is(a, button) {
