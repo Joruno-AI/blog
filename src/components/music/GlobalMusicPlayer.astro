@@ -1,9 +1,8 @@
 ---
 import AlbumGallery from '~/components/music/AlbumGallery.astro'
-import AuroraBackground from '~/components/music/AuroraBackground.astro'
+import LightRaysBackground from '~/components/music/LightRaysBackground.astro'
 import NowPlayingStage from '~/components/music/NowPlayingStage.astro'
 import PlayerEngine from '~/components/music/PlayerEngine.astro'
-import SongList from '~/components/music/SongList.astro'
 ---
 
 <div id="global-music-player" transition:persist="music-player">
@@ -15,7 +14,7 @@ import SongList from '~/components/music/SongList.astro'
     <div class="music-ambient" aria-hidden="true">
       <div class="music-ambient-cover"></div>
       <div class="music-ambient-light"></div>
-      <AuroraBackground />
+      <LightRaysBackground />
       <div class="music-ambient-noise"></div>
     </div>
 
@@ -26,10 +25,6 @@ import SongList from '~/components/music/SongList.astro'
       </div>
 
       <section class="playback-hub" id="playback-hub" aria-label="音乐播放控制">
-        <aside class="playback-queue" id="playlist-drawer" aria-hidden="true">
-          <SongList />
-        </aside>
-
         <div class="now-playing-dock" id="mobile-mini-player">
           <div class="mini-track">
             <span class="mini-track-eyebrow" id="mini-track-eyebrow"
@@ -98,20 +93,6 @@ import SongList from '~/components/music/SongList.astro'
               >2×</button
             >
           </div>
-
-          <button
-            class="queue-toggle"
-            id="playlist-trigger"
-            type="button"
-            aria-label="展开曲目"
-            aria-expanded="false"
-            aria-controls="playlist-drawer"
-          >
-            <span class="i-ri-play-list-2-line"></span>
-            <span class="queue-toggle-label">曲目</span>
-            <i id="playlist-trigger-count">0</i>
-            <span class="queue-chevron i-ri-arrow-up-s-line"></span>
-          </button>
 
           <button
             class="dock-collapse-toggle"
@@ -199,40 +180,8 @@ import SongList from '~/components/music/SongList.astro'
     border-top: 0;
     box-shadow: none;
   }
-  .playback-queue {
-    position: absolute;
-    right: max(0.75rem, calc((100vw - 70rem) / 2));
-    bottom: calc(100% + 0.5rem);
-    left: max(0.75rem, calc((100vw - 70rem) / 2));
-    height: min(57vh, 34rem);
-    overflow: hidden;
-    color: var(--music-text, #f7f2ea);
-    background: color-mix(
-      in srgb,
-      var(--album-color, #28303a) 16%,
-      var(--music-panel-strong, rgb(10 11 13 / 95%))
-    );
-    border: 1px solid var(--music-border, rgba(255, 255, 255, 0.12));
-    border-radius: 1rem 1rem 0 0;
-    box-shadow: var(--music-float-shadow, 0 -1.5rem 5rem rgb(5 6 8 / 32%));
-    backdrop-filter: blur(24px) saturate(1.08);
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transform: translate3d(0, 0.8rem, 0) scale(0.992);
-    transform-origin: bottom center;
-    transition:
-      transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
-      opacity 170ms ease,
-      visibility 260ms ease;
-    will-change: transform, opacity;
-  }
-  .playback-queue.active {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    transform: translate3d(0, 0, 0) scale(1);
-  }
+  
+  
   .now-playing-dock {
     position: relative;
     z-index: 2;
@@ -367,23 +316,7 @@ import SongList from '~/components/music/SongList.astro'
     background: transparent;
     font-weight: 700;
   }
-  .queue-toggle {
-    display: flex;
-    min-height: 2.4rem;
-    align-items: center;
-    gap: 0.42rem;
-    padding: 0.38rem 0.48rem 0.38rem 0.62rem;
-    color: var(--music-text-soft, rgba(247, 242, 234, 0.76));
-    background: transparent;
-    border: 0;
-    border-radius: 0.72rem;
-    cursor: pointer;
-    transition:
-      color 150ms ease,
-      background-color 150ms ease,
-      border-color 150ms ease,
-      transform 150ms ease;
-  }
+  
   .dock-collapse-toggle {
     display: grid;
     width: 2.4rem;
@@ -444,37 +377,14 @@ import SongList from '~/components/music/SongList.astro'
   .playback-hub.is-collapsed {
     background: none;
   }
-  .queue-toggle-label {
-    font-size: 0.66rem;
-    font-weight: 650;
-  }
-  .queue-toggle i {
-    display: grid;
-    min-width: 1.25rem;
-    height: 1.25rem;
-    color: var(--music-text-muted, rgba(247, 242, 234, 0.56));
-    background: var(--music-control-soft, rgba(255, 255, 255, 0.07));
-    border-radius: 999px;
-    font-size: 0.54rem;
-    font-style: normal;
-    place-items: center;
-  }
-  .queue-chevron {
-    font-size: 0.86rem;
-    transition: transform 210ms cubic-bezier(0.22, 1, 0.36, 1);
-  }
-  .queue-toggle[aria-expanded='true'] .queue-chevron {
-    transform: rotate(180deg);
-  }
-  .queue-toggle[aria-expanded='true'] {
-    color: var(--music-text-strong, #fffaf2);
-    background: var(--music-control-hover, rgba(255, 255, 255, 0.1));
-    border-color: rgba(255, 255, 255, 0.17);
-  }
+  
+  
+  
+  
+  
   @media (hover: hover) and (pointer: fine) {
     .mini-ctrl-btn:not(:disabled):hover,
     .dock-speed-btn:hover,
-    .queue-toggle:hover,
     .dock-collapse-toggle:hover {
       color: var(--music-text-strong, #fffaf2);
       background-color: var(--music-control-hover, rgba(255, 255, 255, 0.1));
@@ -487,7 +397,6 @@ import SongList from '~/components/music/SongList.astro'
   }
   .mini-ctrl-btn:not(:disabled):active,
   .dock-speed-btn:active,
-  .queue-toggle:active,
   .dock-collapse-toggle:active {
     transform: scale(0.97);
   }
@@ -504,19 +413,11 @@ import SongList from '~/components/music/SongList.astro'
     }
   }
   @media (max-width: 960px) {
-    .playback-queue {
-      right: 0.55rem;
-      bottom: calc(100% + 0.45rem);
-      left: 0.55rem;
-      height: min(62dvh, 32rem);
-      max-height: calc(100dvh - 8.5rem);
-      border-radius: 1rem;
-    }
     .now-playing-dock {
       grid-template-areas:
-        'track controls queue collapse'
-        'progress progress progress progress';
-      grid-template-columns: minmax(0, 1fr) auto auto auto;
+        'track controls collapse'
+        'progress progress progress';
+      grid-template-columns: minmax(0, 1fr) auto auto;
       gap: 0.42rem 0.55rem;
       min-height: 4.75rem;
       padding: 0.48rem 0.52rem 0.55rem 0.72rem;
@@ -534,9 +435,6 @@ import SongList from '~/components/music/SongList.astro'
     .dock-speed-options {
       display: none;
     }
-    .queue-toggle {
-      grid-area: queue;
-    }
     .dock-collapse-toggle {
       grid-area: collapse;
     }
@@ -549,25 +447,15 @@ import SongList from '~/components/music/SongList.astro'
     }
   }
   @media (max-width: 480px) {
-    .queue-toggle-label {
-      display: none;
-    }
-    .queue-toggle {
-      gap: 0.28rem;
-      padding-inline: 0.48rem;
-    }
     .mini-ctrl-btn:not(.mini-play-btn) {
       display: none;
     }
   }
   @media (prefers-reduced-motion: reduce) {
     .music-page-wrapper,
-    .playback-queue,
     .now-playing-dock,
-    .queue-chevron,
     .mini-ctrl-btn,
     .dock-speed-btn,
-    .queue-toggle,
     .dock-collapse-toggle,
     .dock-restore {
       transition-duration: 1ms !important;
@@ -642,32 +530,12 @@ import SongList from '~/components/music/SongList.astro'
     const icon = document.getElementById('mini-play-icon')
     if (icon) icon.className = isPlaying ? 'i-ri-pause-fill' : 'i-ri-play-fill'
   }
-  function setPlaylistOpen(open: boolean) {
-    const playerContainer = document.querySelector<HTMLElement>(
-      '.music-player-container'
-    )
-    if (playerContainer) playerContainer.scrollTop = 0
-    const drawer = document.getElementById('playlist-drawer')
-    const trigger = document.getElementById('playlist-trigger')
-    drawer?.classList.toggle('active', open)
-    drawer?.setAttribute('aria-hidden', String(!open))
-    trigger?.setAttribute('aria-expanded', String(open))
-    trigger?.setAttribute('aria-label', open ? '收起曲目' : '展开曲目')
-    // 抽屉打开时让个人最爱/提示文案让位(与曲目面板共用 panel-open)
-    const trackPanelOpen = document
-      .getElementById('track-panel')
-      ?.classList.contains('is-open')
-    document
-      .getElementById('music-page-wrapper')
-      ?.classList.toggle('panel-open', open || Boolean(trackPanelOpen))
-  }
   function setPlayerCollapsed(collapsed: boolean) {
     const hub = document.getElementById('playback-hub')
     const fullDock = document.getElementById('mobile-mini-player')
     window.MusicPlayerState.playerCollapsed = collapsed
     hub?.classList.toggle('is-collapsed', collapsed)
     fullDock?.setAttribute('aria-hidden', String(collapsed))
-    if (collapsed) setPlaylistOpen(false)
   }
   function syncSpeed(rate: number) {
     window.MusicPlayerState.currentPlaybackRate = rate
@@ -689,8 +557,6 @@ import SongList from '~/components/music/SongList.astro'
       )
       window.MusicPlayerState.currentSongIndex = 0
       window.MusicPlayerState.isPlaying = false
-      const count = document.getElementById('playlist-trigger-count')
-      if (count) count.textContent = String(album.songs.length)
       const fill = document.getElementById('mini-progress-fill')
       const progress = document.getElementById('mini-progress')
       const time = document.getElementById('mini-track-time')
@@ -732,15 +598,6 @@ import SongList from '~/components/music/SongList.astro'
     const root = document.getElementById('music-page-wrapper')
     if (!root || root.dataset.shellBound === 'true') return
     root.dataset.shellBound = 'true'
-    document
-      .getElementById('playlist-trigger')
-      ?.addEventListener('click', () =>
-        setPlaylistOpen(
-          !document
-            .getElementById('playlist-drawer')
-            ?.classList.contains('active')
-        )
-      )
     document
       .getElementById('mini-play')
       ?.addEventListener('click', () =>
@@ -788,14 +645,6 @@ import SongList from '~/components/music/SongList.astro'
           )
         })
       })
-    document.addEventListener('click', (event) => {
-      const target = event.target as Node
-      const hub = document.getElementById('playback-hub')
-      if (hub && !hub.contains(target)) setPlaylistOpen(false)
-    })
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape' && isMusicPage()) setPlaylistOpen(false)
-    })
     syncSpeed(window.MusicPlayerState.currentPlaybackRate ?? 1)
     setPlayerCollapsed(Boolean(window.MusicPlayerState.playerCollapsed))
     updateMiniTrack()

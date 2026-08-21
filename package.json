@@ -73,8 +73,8 @@
     "remark-math": "^6.0.0",
     "satori": "^0.26.0",
     "satori-html": "^0.3.2",
-    "shiki": "^4.3.1",
     "sharp": "^0.35.3",
+    "shiki": "^4.3.1",
     "simple-git-hooks": "2.13.0",
     "three": "^0.181.2",
     "typescript": "^5.9.3",
@@ -99,6 +99,7 @@
   },
   "dependencies": {
     "dompurify": "^3.4.14",
-    "marked": "^18.0.10"
+    "marked": "^18.0.10",
+    "ogl": "^1.0.11"
   }
 }

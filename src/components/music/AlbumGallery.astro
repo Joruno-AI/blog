@@ -295,10 +295,17 @@
       wrapper.style.setProperty('--album-cover', `url("${album.cover}")`)
   }
 
-  function openAlbum(album: GalleryAlbum) {
+  function openAlbum(
+    album: GalleryAlbum,
+    sourceEl?: HTMLElement,
+    autoPlay = false
+  ) {
     applyAtmosphere(album)
+    const sourceRect = sourceEl?.getBoundingClientRect()
     window.dispatchEvent(
-      new CustomEvent('gallery-album-open', { detail: album })
+      new CustomEvent('gallery-album-open', {
+        detail: { album, sourceRect, autoPlay },
+      })
     )
   }
 
@@ -342,7 +349,8 @@
             <span class="cell-name">${album.name} · ${album.artist}</span>`
           cell.addEventListener('click', () => {
             if (dragTravel > 6) return
-            openAlbum(album)
+            const cover = cell.querySelector<HTMLElement>('.cell-cover')
+            openAlbum(album, cover ?? cell, true)
           })
           frag.appendChild(cell)
         })
@@ -362,7 +370,10 @@
         card.innerHTML = `
           <img class="fav-cover" src="${album.cover ?? ''}" alt="${album.name}" loading="lazy" draggable="false" />
           <span class="fav-label">个人最爱</span>`
-        card.addEventListener('click', () => openAlbum(album))
+        card.addEventListener('click', () => {
+          const cover = card.querySelector<HTMLElement>('.fav-cover')
+          openAlbum(album, cover ?? card, true)
+        })
         frag.appendChild(card)
       })
       favBox.replaceChildren(frag)

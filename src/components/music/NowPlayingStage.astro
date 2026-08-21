@@ -1,5 +1,5 @@
 ---
-// 正在播放舞台: 黑胶指示 + 同步歌词 + 专辑曲目面板
+// 正在播放舞台: 黑胶指示 + 同步歌词 + 右侧曲目侧边栏
 // 监听: gallery-album-open / album-selected / playback-state / playback-progress
 // 派发: album-selected / auto-play-album / song-selected / seek-to-time
 ---
@@ -11,6 +11,7 @@
         <div class="vinyl-label" id="vinyl-label"></div>
         <div class="vinyl-hole"></div>
       </div>
+      <div class="vinyl-notes" id="vinyl-notes"></div>
     </div>
     <div class="lyrics-panel" id="lyrics-panel" aria-label="歌词">
       <p class="lyrics-empty" id="lyrics-empty">选一张唱片 让歌词在这里流动</p>
@@ -25,24 +26,28 @@
     aria-hidden="true"
   >
     <button
-      class="track-panel-close"
-      id="track-panel-close"
+      class="track-panel-handle"
+      id="track-panel-handle"
       type="button"
-      aria-label="关闭曲目面板"
+      aria-label="展开或收起曲目"
+      aria-expanded="false"
     >
-      <span class="i-ri-close-line"></span>
+      <span class="handle-chevron i-ri-arrow-left-s-line"></span>
+      <span class="handle-label">曲目</span>
     </button>
-    <header class="track-panel-head">
-      <img class="panel-cover" id="panel-cover" src="" alt="" />
-      <div class="panel-meta">
-        <h2 class="panel-title" id="panel-title">专辑</h2>
-        <p class="panel-sub" id="panel-sub"></p>
-        <button class="panel-play-all" id="panel-play-all" type="button">
-          <span class="i-ri-play-fill"></span> 播放专辑
-        </button>
-      </div>
-    </header>
-    <ol class="panel-tracks" id="panel-tracks"></ol>
+    <div class="track-panel-body">
+      <header class="track-panel-head">
+        <img class="panel-cover" id="panel-cover" src="" alt="" />
+        <div class="panel-meta">
+          <h2 class="panel-title" id="panel-title">专辑</h2>
+          <p class="panel-sub" id="panel-sub"></p>
+          <button class="panel-play-all" id="panel-play-all" type="button">
+            <span class="i-ri-play-fill"></span> 播放专辑
+          </button>
+        </div>
+      </header>
+      <ol class="panel-tracks" id="panel-tracks"></ol>
+    </div>
   </aside>
 </div>
 
@@ -130,6 +135,37 @@
     }
   }
 
+  /* 播放时飘出的音符 */
+  .vinyl-notes {
+    position: absolute;
+    inset: -30%;
+    overflow: visible;
+    pointer-events: none;
+  }
+  .vinyl-notes :global(.note) {
+    position: absolute;
+    bottom: 46%;
+    left: 50%;
+    color: var(--music-accent-text, #f6d23c);
+    opacity: 0;
+    animation: note-float var(--note-dur, 2.6s) ease-out forwards;
+    will-change: transform, opacity;
+  }
+  @keyframes note-float {
+    0% {
+      opacity: 0;
+      transform: translate(-50%, 0) rotate(0deg) scale(0.6);
+    }
+    12% {
+      opacity: var(--note-alpha, 0.85);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(calc(-50% + var(--note-dx, 2rem)), -7.5rem)
+        rotate(var(--note-rot, 18deg)) scale(var(--note-scale, 1));
+    }
+  }
+
   .lyrics-panel {
     position: relative;
     width: clamp(13rem, 22vw, 20rem);
@@ -185,17 +221,27 @@
     transform-origin: left center;
   }
 
+  /* 右侧曲目侧边栏: 平时收在屏幕右缘只露把手,展开时滑入 */
   .track-panel {
     position: absolute;
-    top: 0;
+    top: clamp(4.2rem, 9vh, 5.5rem);
     right: 0;
-    bottom: 0;
+    bottom: clamp(4.6rem, 11vh, 6.5rem);
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+    transform: translateX(var(--panel-width, 24rem));
+    transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .track-panel.is-open {
+    transform: translateX(0);
+  }
+  .track-panel-body {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    width: min(26rem, calc(100vw - 1.5rem));
-    padding: clamp(4.5rem, 10vh, 6rem) clamp(1.2rem, 2.5vw, 2.5rem)
-      clamp(5rem, 12vh, 7rem) 3.5rem;
+    width: var(--panel-width, 24rem);
+    max-height: 100%;
+    padding: 1.2rem 1.4rem 1.2rem 1.6rem;
     background: linear-gradient(
       to left,
       color-mix(
@@ -203,47 +249,49 @@
           var(--album-color, #101216) 24%,
           var(--music-scrim-strong, rgb(7 8 10 / 97%))
         )
-        72%,
+        78%,
       color-mix(
           in srgb,
           var(--album-color, #101216) 12%,
           var(--music-scrim, rgb(7 8 10 / 78%))
         )
-        88%,
+        94%,
       transparent
     );
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transform: translateX(2rem);
-    transition:
-      transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
-      opacity 200ms ease,
-      visibility 260ms;
-  }
-  .track-panel.is-open {
-    opacity: 1;
-    visibility: visible;
     pointer-events: auto;
-    transform: translateX(0);
   }
-  .track-panel-close {
+  .track-panel-handle {
     position: absolute;
-    top: clamp(4.6rem, 10vh, 6.2rem);
-    right: clamp(1.2rem, 2.5vw, 2.5rem);
-    display: grid;
-    place-items: center;
-    width: 1.9rem;
-    height: 1.9rem;
-    background: none;
+    top: 50%;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.7rem 0.3rem;
+    background: var(--music-scrim, rgb(7 8 10 / 78%));
     border: 0;
-    border-radius: 50%;
+    border-radius: 0.6rem 0 0 0.6rem;
     color: var(--music-text-muted, rgba(247, 242, 234, 0.55));
     cursor: pointer;
+    pointer-events: auto;
+    transform: translate(-100%, -50%);
     transition: color 160ms ease;
   }
-  .track-panel-close:hover {
+  .track-panel-handle:hover {
     color: var(--music-text-strong, #f7f2ea);
+  }
+  .handle-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    writing-mode: vertical-rl;
+  }
+  .handle-chevron {
+    font-size: 0.9rem;
+    transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .track-panel.is-open .handle-chevron {
+    transform: rotate(180deg);
   }
   .track-panel-head {
     display: flex;
@@ -390,35 +438,15 @@
       font-size: 0.68rem;
     }
     .track-panel {
-      top: auto;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      width: auto;
-      justify-content: flex-end;
-      padding: 3rem 1rem calc(5rem + env(safe-area-inset-bottom)) 1rem;
-      background: linear-gradient(
-        to top,
-        color-mix(
-            in srgb,
-            var(--album-color, #101216) 24%,
-            var(--music-scrim-strong, rgb(7 8 10 / 96%))
-          )
-          70%,
-        transparent
-      );
-      transform: translateY(2rem);
+      --panel-width: min(19rem, calc(100vw - 3rem));
+      top: 4.2rem;
+      bottom: 4.6rem;
     }
-    .track-panel.is-open {
-      transform: translateY(0);
-    }
-    .track-panel-close {
-      top: auto;
-      right: 1rem;
-      bottom: calc(5rem + env(safe-area-inset-bottom));
+    .track-panel-body {
+      padding: 0.9rem 1rem 0.9rem 1.1rem;
     }
     .panel-tracks {
-      max-height: 38vh;
+      max-height: 46vh;
     }
   }
 
@@ -499,13 +527,13 @@
     function setPanelOpen(open: boolean) {
       panel?.classList.toggle('is-open', open)
       panel?.setAttribute('aria-hidden', String(!open))
-      // 面板打开时让个人最爱/提示文案让位,避免遮挡(与 dock 曲目抽屉共用)
-      const queueOpen = document
-        .getElementById('playlist-drawer')
-        ?.classList.contains('active')
+      document
+        .getElementById('track-panel-handle')
+        ?.setAttribute('aria-expanded', String(open))
+      // 侧边栏展开时让个人最爱/提示文案让位,避免遮挡
       document
         .getElementById('music-page-wrapper')
-        ?.classList.toggle('panel-open', open || Boolean(queueOpen))
+        ?.classList.toggle('panel-open', open)
     }
 
     async function loadLyricsMap(album: StageAlbum) {
@@ -618,6 +646,121 @@
       }
     }
 
+    // 黑胶飞行: 从来源封面位置克隆一张小黑胶,FLIP 动画飞到唱机位
+    function flyVinylFrom(sourceRect: DOMRect, cover: string | null) {
+      if (!vinyl) return Promise.resolve()
+      const reduceMotion = window.matchMedia(
+        '(prefers-reduced-motion: reduce)'
+      ).matches
+      if (reduceMotion) return Promise.resolve()
+      const target = vinyl.getBoundingClientRect()
+      const size = Math.min(sourceRect.width, sourceRect.height)
+      const ghost = document.createElement('div')
+      ghost.className = 'vinyl-ghost'
+      ghost.style.cssText = `
+        position: fixed; z-index: 200; pointer-events: none;
+        left: ${sourceRect.left + sourceRect.width / 2 - size / 2}px;
+        top: ${sourceRect.top + sourceRect.height / 2 - size / 2}px;
+        width: ${size}px; height: ${size}px; border-radius: 50%;
+        background:
+          radial-gradient(circle at 50% 50%, transparent 0 17%, rgb(0 0 0 / 35%) 18% 19%, transparent 20%),
+          repeating-radial-gradient(circle, rgba(255,255,255,0.05) 0 1px, transparent 1px 4px),
+          radial-gradient(circle, #202124 0 26%, #0d0e10 27% 100%);
+        box-shadow: 0 1rem 2.4rem rgb(0 0 0 / 55%);`
+      const label = document.createElement('div')
+      label.style.cssText = `
+        position: absolute; inset: 31%; border-radius: 50%;
+        background: ${cover ? `url("${cover}") center/cover` : 'var(--album-color, #333)'};
+        box-shadow: inset 0 0 0 2px rgb(0 0 0 / 35%);`
+      ghost.appendChild(label)
+      document.body.appendChild(ghost)
+
+      const dx =
+        target.left + target.width / 2 - (sourceRect.left + sourceRect.width / 2)
+      const dy =
+        target.top + target.height / 2 - (sourceRect.top + sourceRect.height / 2)
+      const scale = target.width / size
+
+      // 唱机位黑胶先隐去,等飞行结束接棒
+      vinyl.style.opacity = '0'
+      const anim = ghost.animate(
+        [
+          { transform: 'translate(0, 0) rotate(0deg) scale(1)', opacity: 1 },
+          {
+            transform: `translate(${dx * 0.5}px, ${dy * 0.5 - 60}px) rotate(200deg) scale(${(1 + scale) / 2})`,
+            opacity: 1,
+            offset: 0.55,
+          },
+          {
+            transform: `translate(${dx}px, ${dy}px) rotate(380deg) scale(${scale})`,
+            opacity: 1,
+          },
+        ],
+        { duration: 680, easing: 'cubic-bezier(0.32, 0.72, 0.24, 1)' }
+      )
+      return anim.finished
+        .catch((err) => {
+          // 动画被中断(如快速连点)属正常,吞掉即可
+          void err
+        })
+        .then(() => {
+          ghost.remove()
+          if (vinyl) {
+            vinyl.style.opacity = ''
+            vinyl.animate(
+              [
+                { transform: 'scale(1.06)' },
+                { transform: 'scale(0.98)', offset: 0.6 },
+                { transform: 'scale(1)' },
+              ],
+              { duration: 320, easing: 'ease-out' }
+            )
+          }
+        })
+    }
+
+    // 音符飘出: 播放时定时从黑胶顶部生成音符
+    const NOTE_GLYPHS = ['♪', '♫', '♩', '♬']
+    let noteTimer = 0
+    function startNotes() {
+      if (noteTimer) return
+      const notesBox = document.getElementById('vinyl-notes')
+      if (!notesBox) return
+      const reduceMotion = window.matchMedia(
+        '(prefers-reduced-motion: reduce)'
+      ).matches
+      if (reduceMotion) return
+      const spawn = () => {
+        const note = document.createElement('span')
+        note.className = 'note'
+        note.textContent =
+          NOTE_GLYPHS[Math.floor(Math.random() * NOTE_GLYPHS.length)]
+        const dur = 2.2 + Math.random() * 1.6
+        note.style.setProperty('--note-dur', `${dur}s`)
+        note.style.setProperty(
+          '--note-dx',
+          `${(Math.random() * 2 - 0.6) * 3.4}rem`
+        )
+        note.style.setProperty(
+          '--note-rot',
+          `${(Math.random() * 2 - 1) * 32}deg`
+        )
+        note.style.setProperty('--note-scale', String(0.8 + Math.random() * 0.7))
+        note.style.setProperty('--note-alpha', String(0.55 + Math.random() * 0.35))
+        note.style.fontSize = `${0.85 + Math.random() * 0.5}rem`
+        notesBox.appendChild(note)
+        window.setTimeout(() => note.remove(), dur * 1000 + 100)
+      }
+      spawn()
+      noteTimer = window.setInterval(spawn, 700)
+    }
+    function stopNotes() {
+      if (noteTimer) {
+        clearInterval(noteTimer)
+        noteTimer = 0
+      }
+    }
+
     async function selectAlbum(album: StageAlbum) {
       playingAlbum = album
       window.dispatchEvent(
@@ -640,8 +783,34 @@
     }
 
     window.addEventListener('gallery-album-open', ((e: CustomEvent) => {
-      renderPanel(e.detail as StageAlbum)
+      const { album, sourceRect, autoPlay } = e.detail as {
+        album: StageAlbum
+        sourceRect?: DOMRect
+        autoPlay?: boolean
+      }
+      renderPanel(album)
       setPanelOpen(true)
+      // 无可播音频: 只展示曲目,不打断当前播放、不换盘
+      const playable = album.songs.some((s) => s.url)
+      if (!playable) return
+      const fly = sourceRect
+        ? flyVinylFrom(sourceRect, album.cover)
+        : Promise.resolve()
+      if (autoPlay) {
+        fly.then(() => {
+          const first = album.songs.findIndex((s) => s.url)
+          if (first >= 0) playTrack(album, first)
+        })
+      } else if (sourceRect) {
+        // 仅换盘不播: 飞行后更新盘面
+        fly.then(() => {
+          if (vinylLabel && album.cover)
+            vinylLabel.style.setProperty(
+              '--vinyl-cover',
+              `url("${album.cover}")`
+            )
+        })
+      }
     }) as EventListener)
 
     panelPlayAll?.addEventListener('click', async () => {
@@ -651,8 +820,10 @@
     })
 
     document
-      .getElementById('track-panel-close')
-      ?.addEventListener('click', () => setPanelOpen(false))
+      .getElementById('track-panel-handle')
+      ?.addEventListener('click', () =>
+        setPanelOpen(!panel?.classList.contains('is-open'))
+      )
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') setPanelOpen(false)
     })
@@ -660,6 +831,8 @@
     window.addEventListener('playback-state', ((e: CustomEvent) => {
       const { isPlaying, songIndex } = e.detail
       vinyl?.classList.toggle('is-playing', Boolean(isPlaying))
+      if (isPlaying) startNotes()
+      else stopNotes()
       const song = playingAlbum?.songs[songIndex]
       if (song && song.id !== currentSongId) renderLyrics(song.id)
       panelTracks?.querySelectorAll('.track-row').forEach((row) => {
