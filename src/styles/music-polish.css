@@ -3,13 +3,10 @@
   --album-tint: color-mix(in srgb, var(--album-color, #7d503d) 42%, #d8b981);
 }
 
-/* 海报页恒定深色: 无论站点主题,music 页保持暗场 */
+/* Music room base tokens; light mode overrides these below. */
 #global-music-player .music-page-wrapper {
-  --music-room-surface: color-mix(
-    in srgb,
-    var(--album-color, #2d568d) 14%,
-    #090a0c
-  );
+  --music-ui-font: inherit;
+  --music-room-surface: var(--c-bg, #050505);
   --music-text: #f7f2ea;
   --music-text-strong: #fffaf2;
   --music-text-soft: rgba(247, 242, 234, 0.72);
@@ -33,11 +30,74 @@
   --music-scrim: rgb(6 7 9 / 82%);
   --music-scrim-strong: rgb(5 6 8 / 94%);
   --music-decor-shadow: 0 2px 12px rgb(0 0 0 / 55%);
-  --music-ambient-edge: rgba(7, 8, 10, 0.86);
-  --music-ambient-edge-soft: rgba(7, 8, 10, 0.42);
-  --music-ambient-noise-opacity: 0.07;
+  --music-ambient-edge: rgba(7, 8, 10, 0.72);
+  --music-ambient-edge-soft: rgba(7, 8, 10, 0.28);
+  --music-ambient-noise-opacity: 0.045;
   --music-dock-shadow: 0 0.8rem 2.5rem rgba(3, 5, 8, 0.16);
   --music-float-shadow: 0 -1.5rem 5rem rgba(5, 6, 8, 0.32);
+  --music-chrome-surface: color-mix(
+    in srgb,
+    var(--music-room-surface) 62%,
+    transparent
+  );
+  --music-chrome-border: transparent;
+}
+
+/* The music room follows the blog theme. Keep the album atmosphere, but do
+   not force the entire site back into a dark palette when the user switches
+   to light mode. */
+:root:not(.dark) #global-music-player .music-page-wrapper {
+  --music-room-surface: var(--c-bg, #fff);
+  --music-text: #2b2925;
+  --music-text-strong: #171613;
+  --music-text-soft: rgb(43 41 37 / 76%);
+  --music-text-muted: rgb(43 41 37 / 52%);
+  --music-focus: rgb(43 41 37 / 88%);
+  --music-panel-subtle: rgb(255 253 248 / 38%);
+  --music-panel-strong: rgb(242 239 232 / 92%);
+  --music-control-soft: rgb(43 41 37 / 6%);
+  --music-control-hover: rgb(43 41 37 / 10%);
+  --music-border: rgb(43 41 37 / 14%);
+  --music-border-soft: rgb(43 41 37 / 8%);
+  --music-highlight: rgb(255 253 248 / 58%);
+  --music-progress-track: rgb(43 41 37 / 16%);
+  --music-primary-button: #25231f;
+  --music-primary-button-hover: #151411;
+  --music-primary-button-disabled: rgb(37 35 31 / 38%);
+  --music-primary-button-text: #fff;
+  --music-accent-text: color-mix(
+    in srgb,
+    var(--album-color, #7d503d) 58%,
+    #302a22
+  );
+  --music-accent-fill: color-mix(
+    in srgb,
+    var(--album-color, #7d503d) 58%,
+    #302a22
+  );
+  --music-accent-contrast: #fff;
+  --music-scrim: rgb(255 255 255 / 76%);
+  --music-scrim-strong: rgb(255 255 255 / 92%);
+  --music-decor-shadow: none;
+  --music-ambient-edge: rgb(255 255 255 / 34%);
+  --music-ambient-edge-soft: rgb(0 0 0 / 5%);
+  --music-ambient-noise-opacity: 0.018;
+  --music-dock-shadow: 0 0.8rem 2.5rem rgb(67 61 51 / 10%);
+  --music-float-shadow: 0 -1.5rem 5rem rgb(67 61 51 / 11%);
+  --music-chrome-surface: rgb(255 255 255 / 54%);
+  --music-chrome-border: transparent;
+}
+
+#global-music-player .music-page-wrapper {
+  font-family: inherit;
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition:
+    background-color 680ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 180ms ease,
+    opacity 220ms ease,
+    transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 #global-music-player .music-ambient,
@@ -49,12 +109,69 @@
   pointer-events: none;
 }
 
+/* In light mode the blog's white canvas stays dominant; album art supplies
+   only a restrained ambient tint. */
+:root:not(.dark) #global-music-player .music-ambient-cover {
+  filter: blur(76px) saturate(0.72) brightness(1.04);
+  opacity: 0.21;
+}
+
+:root:not(.dark) #global-music-player .music-ambient-light {
+  opacity: 0.36;
+}
+
+:root:not(.dark) #global-music-player .corridor-band .cell-cover,
+:root:not(.dark) #global-music-player .gallery-favorites .fav-cover {
+  box-shadow: 0 1rem 2.2rem rgb(67 61 51 / 17%);
+  -webkit-box-reflect: below 2px
+    linear-gradient(transparent 60%, rgb(67 61 51 / 8%));
+}
+
+#global-music-player .playback-hub {
+  background: var(--music-chrome-surface);
+  border-top: 0;
+  box-shadow: none;
+  -webkit-backdrop-filter: blur(14px) saturate(105%);
+  backdrop-filter: blur(14px) saturate(105%);
+}
+
+#global-music-player .playback-hub:has(.now-playing-dock.is-empty) {
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+:root:not(.dark) #global-music-player .lyrics-empty,
+:root:not(.dark) #global-music-player .lyrics-scroll .lyric-line {
+  text-shadow: none;
+}
+
+:root:not(.dark) #global-music-player .track-panel-body,
+:root:not(.dark) #global-music-player .track-panel-handle {
+  background: color-mix(
+    in srgb,
+    var(--album-color, #7b766d) 7%,
+    var(--music-panel-strong)
+  );
+  box-shadow: 0 1rem 2.4rem rgb(67 61 51 / 13%);
+}
+
 #global-music-player .music-ambient {
   position: fixed;
   z-index: 0;
   overflow: hidden;
   background-color: var(--music-room-surface, #101318);
   background-image:
+    radial-gradient(
+      ellipse at 78% 46%,
+      color-mix(in srgb, var(--album-tint) 18%, transparent),
+      transparent 42%
+    ),
+    radial-gradient(
+      ellipse at 18% 78%,
+      color-mix(in srgb, var(--album-color) 12%, transparent),
+      transparent 48%
+    ),
     linear-gradient(
       180deg,
       var(--music-room-surface, #101318) 0,
@@ -64,10 +181,18 @@
     ),
     linear-gradient(
       100deg,
-      var(--music-ambient-edge) 0 26%,
-      var(--music-ambient-edge-soft) 54%,
+      var(--music-ambient-edge) 0%,
+      var(--music-ambient-edge-soft) 32%,
+      transparent 62%,
+      var(--music-ambient-edge-soft) 86%,
       var(--music-ambient-edge) 100%
     );
+  background-size:
+    140% 140%,
+    130% 130%,
+    100% 100%,
+    100% 100%;
+  animation: music-ambient-drift 18s ease-in-out infinite alternate;
   transition: background-color 680ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -76,10 +201,12 @@
   background-image: var(--album-cover);
   background-position: center;
   background-size: cover;
-  filter: blur(88px) saturate(0.96) brightness(0.54);
+  filter: blur(82px) saturate(1.02) brightness(0.58);
   mix-blend-mode: normal;
-  opacity: 0.48;
-  transform: scale(1.12);
+  opacity: 0.38;
+  transform: scale(1.1);
+  animation: music-ambient-cover-drift 24s ease-in-out infinite alternate;
+  will-change: transform, opacity;
   -webkit-mask-image: linear-gradient(
     to bottom,
     transparent 0,
@@ -117,6 +244,8 @@
       transparent 46% 74%,
       var(--music-ambient-edge-soft)
     );
+  opacity: 0.82;
+  animation: music-ambient-light-drift 16s ease-in-out infinite alternate;
   transition: background 700ms cubic-bezier(0.22, 1, 0.36, 1);
   -webkit-mask-image: linear-gradient(
     to bottom,
@@ -132,6 +261,41 @@
     black 84%,
     transparent 100%
   );
+}
+
+@keyframes music-ambient-drift {
+  0% {
+    background-position:
+      0% 50%,
+      100% 45%,
+      50% 0%,
+      50% 50%;
+  }
+  100% {
+    background-position:
+      18% 42%,
+      82% 58%,
+      50% 100%,
+      50% 50%;
+  }
+}
+
+@keyframes music-ambient-cover-drift {
+  0% {
+    transform: scale(1.1) translate3d(-1.5%, -1%, 0);
+  }
+  100% {
+    transform: scale(1.15) translate3d(1.5%, 1%, 0);
+  }
+}
+
+@keyframes music-ambient-light-drift {
+  0% {
+    transform: translate3d(-1.5%, 0, 0) scale(1.02);
+  }
+  100% {
+    transform: translate3d(1.5%, -1%, 0) scale(1.06);
+  }
 }
 
 #global-music-player .music-ambient-noise {
@@ -153,8 +317,6 @@
     transparent 100%
   );
 }
-
-
 
 #global-music-player .gramophone-wrapper,
 #global-music-player .gramophone-canvas {
@@ -294,31 +456,39 @@
 }
 
 body:has(#music-page-wrapper:not(.hidden)) {
-  --music-room-surface: color-mix(
+  --music-room-surface: var(--c-bg, #050505);
+  --music-chrome-surface: color-mix(
     in srgb,
-    var(--music-album-color, #2d568d) 14%,
-    #090a0c
+    var(--music-room-surface) 62%,
+    transparent
   );
+  --music-chrome-border: transparent;
   --music-room-top: var(--music-room-surface);
   --music-room-control: var(--music-room-surface);
   overflow: hidden;
   background-color: var(--music-room-top);
 }
 
-/* music 页恒定深色: header 无论站点主题都用浅色前景 */
+:root:not(.dark) body:has(#music-page-wrapper:not(.hidden)) {
+  --music-room-surface: var(--c-bg, #fff);
+  --music-chrome-surface: rgb(255 255 255 / 54%);
+  --music-chrome-border: transparent;
+}
+
+/* Keep the header readable over the ambient stage in either theme. */
 body:has(#music-page-wrapper:not(.hidden)) .nav-header {
-  --c-text: #f5f0e8;
-  --c-text-soft: rgba(245, 240, 232, 0.76);
-  --c-text-muted: rgba(245, 240, 232, 0.58);
-  --c-surface-soft: rgba(255, 255, 255, 0.055);
-  --c-surface-hover: rgba(255, 255, 255, 0.09);
   z-index: 120;
-  color: var(--c-text);
-  background: transparent;
-  border-bottom-color: transparent;
+  color: color-mix(
+    in srgb,
+    var(--c-text) 88%,
+    var(--music-album-color, #7b766d) 12%
+  );
+  background: var(--music-chrome-surface);
+  border-bottom: 0;
   box-shadow: none;
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
+  font-family: inherit;
+  -webkit-backdrop-filter: saturate(105%) blur(14px);
+  backdrop-filter: saturate(105%) blur(14px);
 }
 
 body:has(#music-page-wrapper:not(.hidden)) .nav-header :is(a, button) {
@@ -340,6 +510,17 @@ body:has(#music-page-wrapper:not(.hidden)) > .to-top-button {
   #global-music-player .song-list-header {
     min-height: 3.7rem;
   }
+
+  #global-music-player .music-ambient-cover,
+  #global-music-player .music-ambient-light {
+    animation: none;
+    will-change: auto;
+  }
+
+  :root:not(.dark) #global-music-player .music-ambient-cover {
+    filter: blur(72px) saturate(0.58) brightness(1.04);
+    opacity: 0.14;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -347,5 +528,11 @@ body:has(#music-page-wrapper:not(.hidden)) > .to-top-button {
   #global-music-player *::before,
   #global-music-player *::after {
     scroll-behavior: auto !important;
+  }
+
+  #global-music-player .music-ambient,
+  #global-music-player .music-ambient-cover,
+  #global-music-player .music-ambient-light {
+    animation: none;
   }
 }

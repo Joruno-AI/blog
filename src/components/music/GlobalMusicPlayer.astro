@@ -25,7 +25,7 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
       </div>
 
       <section class="playback-hub" id="playback-hub" aria-label="音乐播放控制">
-        <div class="now-playing-dock" id="mobile-mini-player">
+        <div class="now-playing-dock is-empty" id="mobile-mini-player">
           <div class="mini-track">
             <span class="mini-track-eyebrow" id="mini-track-eyebrow"
               >等待落针</span
@@ -180,8 +180,7 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
     border-top: 0;
     box-shadow: none;
   }
-  
-  
+
   .now-playing-dock {
     position: relative;
     z-index: 2;
@@ -220,6 +219,23 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
     font-weight: 700;
     letter-spacing: 0.12em;
   }
+  .now-playing-dock.is-empty {
+    grid-template-columns: 1fr auto;
+    min-height: 3.25rem;
+  }
+  .now-playing-dock.is-empty .mini-track {
+    display: block;
+  }
+  .now-playing-dock.is-empty
+    :is(
+      .mini-track-eyebrow,
+      .mini-track-time,
+      .mini-progress,
+      .mini-controls,
+      .dock-speed-options
+    ) {
+    display: none;
+  }
   .mini-track-title {
     overflow: hidden;
     font-size: 0.72rem;
@@ -234,25 +250,44 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
   }
   .mini-progress {
     position: relative;
-    height: 2px;
-    overflow: hidden;
-    background: var(--music-progress-track, rgba(255, 255, 255, 0.12));
+    height: 1.5rem;
+    overflow: visible;
+    background: transparent;
     border-radius: 999px;
     cursor: pointer;
+  }
+  .mini-progress::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 0;
+    left: 0;
+    height: 2px;
+    background: var(--music-progress-track, rgba(255, 255, 255, 0.12));
+    border-radius: inherit;
+    transform: translateY(-50%);
     transition: transform 140ms ease;
   }
-  .mini-progress:hover {
-    transform: scaleY(2);
+  @media (hover: hover) and (pointer: fine) {
+    .mini-progress:hover::before,
+    .mini-progress:hover .mini-progress-fill {
+      transform: translateY(-50%) scaleY(2);
+    }
   }
   .mini-progress-fill {
     position: absolute;
+    top: 50%;
+    right: auto;
+    left: 0;
     width: 0;
+    height: 2px;
     background: var(
       --music-accent-fill,
       color-mix(in srgb, var(--album-tint, #d6b57b) 78%, white)
     );
     border-radius: inherit;
-    inset: 0 auto 0 0;
+    transform: translateY(-50%);
+    transition: transform 140ms ease;
   }
   .mini-controls,
   .dock-speed-options {
@@ -316,7 +351,7 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
     background: transparent;
     font-weight: 700;
   }
-  
+
   .dock-collapse-toggle {
     display: grid;
     width: 2.4rem;
@@ -377,11 +412,7 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
   .playback-hub.is-collapsed {
     background: none;
   }
-  
-  
-  
-  
-  
+
   @media (hover: hover) and (pointer: fine) {
     .mini-ctrl-btn:not(:disabled):hover,
     .dock-speed-btn:hover,
@@ -444,6 +475,14 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
     }
     .mini-track {
       display: block;
+    }
+    .mini-track-title {
+      font-size: 0.8rem;
+    }
+    .mini-ctrl-btn,
+    .dock-collapse-toggle {
+      width: 2.75rem;
+      height: 2.75rem;
     }
   }
   @media (max-width: 480px) {
@@ -517,6 +556,9 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
     const song = state.currentSongs?.[state.currentSongIndex ?? 0]
     const title = document.getElementById('mini-track-title')
     const eyebrow = document.getElementById('mini-track-eyebrow')
+    document
+      .getElementById('mobile-mini-player')
+      ?.classList.toggle('is-empty', !song)
     if (title) title.textContent = song?.name ?? '请选择一张唱片'
     if (eyebrow)
       eyebrow.textContent = song

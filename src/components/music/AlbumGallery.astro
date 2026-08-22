@@ -6,9 +6,6 @@
 ---
 
 <section class="album-gallery" id="album-gallery" aria-label="专辑长廊">
-  <p class="gallery-decor decor-top" aria-hidden="true">
-    忽然间发现自己 已深深爱上你 真的很简单 爱的地暗天黑都已无所谓
-  </p>
   <p class="gallery-decor decor-bottom" aria-hidden="true">
     爱情好像流沙 我不挣扎 随它去吧 我不害怕
   </p>
@@ -21,8 +18,6 @@
 
   <div class="gallery-favorites" id="gallery-favorites" aria-label="个人最爱">
   </div>
-
-  <p class="gallery-hint" aria-hidden="true">拖动或滚动浏览 点击唱片查看曲目</p>
 </section>
 
 <style>
@@ -36,18 +31,12 @@
     z-index: 3;
     margin: 0;
     color: var(--music-text-soft, rgba(247, 242, 234, 0.82));
-    font-weight: 700;
-    font-size: min(1.15rem, 1.5vw);
-    letter-spacing: 0.3em;
+    font-weight: 560;
+    font-size: min(1rem, 1.3vw);
+    letter-spacing: 0.12em;
     white-space: nowrap;
     pointer-events: none;
     text-shadow: var(--music-decor-shadow, 0 2px 12px rgb(0 0 0 / 55%));
-  }
-  .decor-top {
-    top: clamp(5.5rem, 11vh, 7.5rem);
-    left: 4%;
-    transform: rotate(-5deg);
-    transform-origin: left center;
   }
   .decor-bottom {
     bottom: clamp(1rem, 4vh, 2.6rem);
@@ -72,7 +61,7 @@
   }
   .corridor-plane {
     position: absolute;
-    top: 52%;
+    top: 48%;
     left: 50%;
     transform: translate(-50%, -50%) rotateX(14deg) rotateY(-24deg)
       rotateZ(-7deg);
@@ -81,14 +70,14 @@
   .corridor-band {
     display: flex;
     align-items: flex-end;
-    gap: clamp(0.9rem, 1.6vw, 1.6rem);
+    gap: clamp(1rem, 1.7vw, 1.8rem);
     will-change: transform;
   }
 
   .corridor-band :global(.corridor-cell) {
     position: relative;
     flex: none;
-    width: clamp(6.4rem, 11.5vw, 10.5rem);
+    width: clamp(6.8rem, 12vw, 11.5rem);
     padding: 0;
     background: none;
     border: 0;
@@ -111,7 +100,7 @@
     width: 100%;
     aspect-ratio: 1;
     object-fit: cover;
-    background: #16171a;
+    background: color-mix(in srgb, var(--music-text) 9%, transparent);
     border-radius: 2px;
     box-shadow: 0 1.2rem 2.6rem rgb(0 0 0 / 55%);
     -webkit-box-reflect: below 2px
@@ -144,20 +133,19 @@
   .gallery-favorites {
     position: absolute;
     right: clamp(1rem, 4vw, 4rem);
-    bottom: clamp(6rem, 17vh, 9.5rem);
+    bottom: clamp(5.5rem, 15vh, 8.5rem);
     z-index: 3;
     display: flex;
     gap: clamp(1rem, 2.4vw, 2.4rem);
     transition: opacity 220ms ease;
   }
-  :global(#music-page-wrapper.panel-open) .gallery-favorites,
-  :global(#music-page-wrapper.panel-open) .gallery-hint {
+  :global(#music-page-wrapper.panel-open) .gallery-favorites {
     opacity: 0;
     pointer-events: none;
   }
   .gallery-favorites :global(.fav-card) {
     position: relative;
-    width: clamp(5rem, 8.5vw, 7.6rem);
+    width: clamp(5.4rem, 9vw, 8.4rem);
     padding: 0;
     background: none;
     border: 0;
@@ -192,18 +180,6 @@
     text-shadow: var(--music-decor-shadow, 0 1px 8px rgb(0 0 0 / 55%));
   }
 
-  .gallery-hint {
-    position: absolute;
-    right: 1.2rem;
-    bottom: 0.35rem;
-    z-index: 3;
-    margin: 0;
-    color: var(--music-text-muted, rgba(247, 242, 234, 0.35));
-    font-size: 0.62rem;
-    letter-spacing: 0.08em;
-    pointer-events: none;
-  }
-
   @media (max-width: 767px) {
     .corridor-plane {
       top: 62%;
@@ -216,20 +192,12 @@
     .gallery-favorites {
       right: 0.9rem;
       bottom: auto;
-      top: clamp(6.5rem, 16vh, 8.5rem);
+      top: clamp(13rem, 28vh, 15rem);
     }
     .gallery-favorites :global(.fav-card) {
       width: clamp(3.6rem, 15vw, 4.6rem);
     }
-    .decor-top {
-      top: 3.6rem;
-      font-size: 0.72rem;
-      letter-spacing: 0.18em;
-    }
     .decor-bottom {
-      display: none;
-    }
-    .gallery-hint {
       display: none;
     }
   }
@@ -266,6 +234,11 @@
   let albumsCache: GalleryAlbum[] | null = null
   let albumsPromise: Promise<GalleryAlbum[]> | null = null
 
+  function galleryCover(cover: string | null): string {
+    if (!cover) return ''
+    return cover.replace(/\/\d+x\d+bb\.(jpe?g|png|webp)$/i, '/360x360bb.$1')
+  }
+
   function fetchAlbums(): Promise<GalleryAlbum[]> {
     if (albumsCache) return Promise.resolve(albumsCache)
     if (!albumsPromise) {
@@ -290,7 +263,12 @@
   function applyAtmosphere(album: GalleryAlbum) {
     const wrapper = document.getElementById('music-page-wrapper')
     if (!wrapper) return
-    wrapper.style.setProperty('--album-color', album.color || '#1a1a2e')
+    const albumColor = album.color || '#1a1a2e'
+    wrapper.style.setProperty('--album-color', albumColor)
+    document.documentElement.style.setProperty(
+      '--music-album-color',
+      albumColor
+    )
     if (album.cover)
       wrapper.style.setProperty('--album-cover', `url("${album.cover}")`)
   }
@@ -345,7 +323,7 @@
           const no = String(i + 1).padStart(2, '0')
           cell.innerHTML = `
             <span class="cell-no">${no}</span>
-            <img class="cell-cover" src="${album.cover ?? ''}" alt="${album.name}" loading="lazy" draggable="false" />
+            <img class="cell-cover" src="${galleryCover(album.cover)}" alt="${album.name}" loading="lazy" decoding="async" draggable="false" />
             <span class="cell-name">${album.name} · ${album.artist}</span>`
           cell.addEventListener('click', () => {
             if (dragTravel > 6) return
@@ -368,7 +346,7 @@
         card.type = 'button'
         card.className = 'fav-card'
         card.innerHTML = `
-          <img class="fav-cover" src="${album.cover ?? ''}" alt="${album.name}" loading="lazy" draggable="false" />
+          <img class="fav-cover" src="${galleryCover(album.cover)}" alt="${album.name}" loading="lazy" decoding="async" draggable="false" />
           <span class="fav-label">个人最爱</span>`
         card.addEventListener('click', () => {
           const cover = card.querySelector<HTMLElement>('.fav-cover')
@@ -384,7 +362,8 @@
     }
 
     function tick() {
-      rafId = requestAnimationFrame(tick)
+      rafId = 0
+      if (document.hidden || !isMusicPage()) return
       if (!bandWidth) return
       if (!dragging) {
         offset += velocity
@@ -401,6 +380,26 @@
       }
       offset = ((offset % bandWidth) + bandWidth) % bandWidth
       band.style.transform = `translate3d(${-offset}px, 0, 0)`
+      rafId = requestAnimationFrame(tick)
+    }
+
+    function startMotion() {
+      if (rafId || document.hidden || !isMusicPage()) return
+      rafId = requestAnimationFrame(tick)
+    }
+
+    function stopMotion() {
+      if (!rafId) return
+      cancelAnimationFrame(rafId)
+      rafId = 0
+    }
+
+    function syncMotion() {
+      if (document.hidden || !isMusicPage()) stopMotion()
+      else {
+        measure()
+        startMotion()
+      }
     }
 
     viewport.addEventListener('pointerdown', (e) => {
@@ -431,15 +430,16 @@
       'wheel',
       (e) => {
         e.preventDefault()
-        const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY)
-          ? e.deltaX
-          : e.deltaY
+        const delta =
+          Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY
         velocity += delta * 0.08
         lastInteract = performance.now()
       },
       { passive: false }
     )
     window.addEventListener('resize', measure)
+    document.addEventListener('visibilitychange', syncMotion)
+    document.addEventListener('astro:page-load', syncMotion)
 
     window.addEventListener('album-selected', ((e: CustomEvent) => {
       const id = e.detail?.id
@@ -456,7 +456,7 @@
         albums = data
         buildCells()
         buildFavorites()
-        if (!rafId) tick()
+        startMotion()
       })
       .catch((e) => console.error('[gallery] failed to load albums:', e))
   }

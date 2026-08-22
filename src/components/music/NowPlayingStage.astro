@@ -19,7 +19,7 @@
       <div class="vinyl-notes" id="vinyl-notes"></div>
     </div>
     <div class="lyrics-panel" id="lyrics-panel" aria-label="歌词">
-      <p class="lyrics-empty" id="lyrics-empty">选一张唱片 让歌词在这里流动</p>
+      <p class="lyrics-empty" id="lyrics-empty">选择唱片，开始聆听</p>
       <div class="lyrics-scroll" id="lyrics-scroll"></div>
     </div>
   </div>
@@ -42,7 +42,12 @@
     </button>
     <div class="track-panel-body">
       <header class="track-panel-head">
-        <img class="panel-cover" id="panel-cover" src="" alt="" />
+        <img
+          class="panel-cover"
+          id="panel-cover"
+          src="/joruno.png"
+          alt="专辑封面"
+        />
         <div class="panel-meta">
           <h2 class="panel-title" id="panel-title">专辑</h2>
           <p class="panel-sub" id="panel-sub"></p>
@@ -65,32 +70,16 @@
   }
   .stage-left {
     position: absolute;
-    top: clamp(6rem, 15vh, 8.5rem);
+    top: clamp(7rem, 15vh, 9rem);
     left: clamp(1rem, 4vw, 4rem);
     display: flex;
     align-items: center;
-    gap: clamp(1rem, 2.2vw, 2.4rem);
+    gap: clamp(1.25rem, 2.6vw, 3rem);
     pointer-events: auto;
   }
-  /* 无边界渐晕垫底,保证歌词在长廊滑过时仍可读 */
-  .stage-left::before {
-    content: '';
-    position: absolute;
-    inset: -22% -14%;
-    z-index: -1;
-    background: radial-gradient(
-      ellipse at 42% 50%,
-      var(--music-scrim, rgb(6 7 9 / 82%)),
-      color-mix(in srgb, var(--music-scrim, rgb(6 7 9 / 82%)) 58%, transparent)
-        52%,
-      transparent 74%
-    );
-    pointer-events: none;
-  }
-
   .stage-vinyl {
     flex: none;
-    width: clamp(9.5rem, 16vw, 14rem);
+    width: clamp(11rem, 18vw, 16.5rem);
     aspect-ratio: 1;
     filter: drop-shadow(0 1.4rem 2.6rem rgb(0 0 0 / 55%));
   }
@@ -122,14 +111,13 @@
     transform-origin: 78% 12%;
     transform: rotate(-24deg);
     transition:
-      transform 700ms cubic-bezier(0.34, 1.2, 0.4, 1),
+      transform 700ms cubic-bezier(0.16, 1, 0.3, 1),
       filter 180ms ease;
     filter: drop-shadow(0 0.5rem 0.9rem rgb(0 0 0 / 45%));
     cursor: pointer;
   }
   .tonearm:hover {
-    filter: drop-shadow(0 0.5rem 0.9rem rgb(0 0 0 / 45%))
-      brightness(1.35);
+    filter: drop-shadow(0 0.5rem 0.9rem rgb(0 0 0 / 45%)) brightness(1.35);
   }
   .stage-vinyl.is-playing .tonearm {
     transform: rotate(6deg);
@@ -225,21 +213,34 @@
   }
 
   .lyrics-panel {
+    --lyrics-height: clamp(14rem, 32vh, 20rem);
+    --lyrics-line-box: 2.05rem;
     position: relative;
-    width: clamp(13rem, 22vw, 20rem);
-    max-height: clamp(11rem, 26vh, 16rem);
+    z-index: 1;
+    width: clamp(16rem, 25vw, 24rem);
+    height: var(--lyrics-height);
+    max-height: var(--lyrics-height);
     overflow: hidden;
   }
   .lyrics-empty {
-    margin: 0.4rem 0;
+    margin: 0;
     color: var(--music-text-muted, rgba(247, 242, 234, 0.35));
-    font-size: 0.72rem;
-    letter-spacing: 0.14em;
-    text-shadow: var(--music-decor-shadow, 0 1px 10px rgb(0 0 0 / 70%));
+    font-size: 0.78rem;
+    font-weight: 520;
+    letter-spacing: 0.04em;
+    line-height: 1.6;
+    text-shadow:
+      0 1px 1px rgb(0 0 0 / 85%),
+      0 0 1.2rem rgb(0 0 0 / 72%);
   }
   .lyrics-scroll {
-    max-height: clamp(11rem, 26vh, 16rem);
+    box-sizing: border-box;
+    height: 100%;
+    max-height: none;
     overflow-y: auto;
+    /* Leave a half viewport of breathing room so the first and last line can
+       occupy the same centered position as every line in between. */
+    padding-block: calc((var(--lyrics-height) - var(--lyrics-line-box)) / 2);
     scrollbar-width: none;
     mask-image: linear-gradient(
       to bottom,
@@ -255,15 +256,17 @@
   .lyrics-scroll :global(.lyric-line) {
     display: block;
     width: 100%;
-    padding: 0.3rem 0;
+    padding: 0.38rem 0;
     background: none;
     border: 0;
     color: var(--music-text-muted, rgba(247, 242, 234, 0.38));
-    font-size: 0.8rem;
+    font-size: clamp(0.82rem, 0.9vw, 0.94rem);
     letter-spacing: 0.05em;
     line-height: 1.55;
     text-align: left;
-    text-shadow: var(--music-decor-shadow, 0 1px 12px rgb(0 0 0 / 80%));
+    text-shadow:
+      0 1px 1px rgb(0 0 0 / 86%),
+      0 0 1.2rem rgb(0 0 0 / 76%);
     cursor: pointer;
     transition:
       color 180ms ease,
@@ -274,8 +277,8 @@
   }
   .lyrics-scroll :global(.lyric-line.is-current) {
     color: var(--music-accent-text, #f6d23c);
-    font-weight: 600;
-    transform: scale(1.04);
+    font-weight: 650;
+    transform: scale(1.055);
     transform-origin: left center;
   }
 
@@ -288,8 +291,17 @@
     display: flex;
     align-items: center;
     pointer-events: none;
+    visibility: hidden;
+    opacity: 0;
     transform: translateX(var(--panel-width, 24rem));
-    transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition:
+      transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 180ms ease,
+      visibility 180ms ease;
+  }
+  .track-panel.is-available {
+    visibility: visible;
+    opacity: 1;
   }
   .track-panel.is-open {
     transform: translateX(0);
@@ -300,35 +312,32 @@
     width: var(--panel-width, 24rem);
     max-height: 100%;
     padding: 1.2rem 1.4rem 1.2rem 1.6rem;
-    background: linear-gradient(
-      to left,
-      color-mix(
-          in srgb,
-          var(--album-color, #101216) 24%,
-          var(--music-scrim-strong, rgb(7 8 10 / 97%))
-        )
-        78%,
-      color-mix(
-          in srgb,
-          var(--album-color, #101216) 12%,
-          var(--music-scrim, rgb(7 8 10 / 78%))
-        )
-        94%,
-      transparent
+    background: color-mix(
+      in srgb,
+      var(--album-color, #101216) 18%,
+      var(--music-panel-strong, rgb(7 8 10 / 97%))
     );
+    border-inline-start: 0;
+    box-shadow: -1.2rem 0 2.4rem rgb(0 0 0 / 12%);
     pointer-events: auto;
   }
   .track-panel-handle {
     position: absolute;
     top: 50%;
-    left: 0;
+    left: 1px;
+    z-index: 2;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 0.3rem;
     padding: 0.7rem 0.3rem;
-    background: var(--music-scrim, rgb(7 8 10 / 78%));
-    border: 0;
+    background: color-mix(
+      in srgb,
+      var(--album-color, #101216) 18%,
+      var(--music-panel-strong, rgb(7 8 10 / 97%))
+    );
+    border: 1px solid var(--music-border, rgb(255 255 255 / 12%));
+    border-right: 0;
     border-radius: 0.6rem 0 0 0.6rem;
     color: var(--music-text-muted, rgba(247, 242, 234, 0.55));
     cursor: pointer;
@@ -406,13 +415,6 @@
     padding: 0;
     list-style: none;
     scrollbar-width: none;
-    mask-image: linear-gradient(
-      to bottom,
-      transparent,
-      #000 6%,
-      #000 94%,
-      transparent
-    );
   }
   .panel-tracks::-webkit-scrollbar {
     display: none;
@@ -485,26 +487,42 @@
       width: clamp(6.2rem, 30vw, 8rem);
     }
     .lyrics-panel {
+      --lyrics-height: 6.5rem;
+      --lyrics-line-box: 2.75rem;
       width: auto;
       flex: 1;
-      max-height: 6.5rem;
+      height: var(--lyrics-height);
+      max-height: var(--lyrics-height);
     }
     .lyrics-scroll {
-      max-height: 6.5rem;
+      max-height: none;
     }
     .lyrics-scroll :global(.lyric-line) {
+      min-height: 2.75rem;
       font-size: 0.68rem;
     }
     .track-panel {
       --panel-width: min(19rem, calc(100vw - 3rem));
       top: 4.2rem;
-      bottom: 4.6rem;
+      bottom: 5.8rem;
+    }
+    .track-panel-handle {
+      width: 2.75rem;
+      min-height: 4.4rem;
+      justify-content: center;
     }
     .track-panel-body {
       padding: 0.9rem 1rem 0.9rem 1.1rem;
     }
     .panel-tracks {
       max-height: 46vh;
+    }
+  }
+
+  @media (pointer: coarse) {
+    .panel-play-all,
+    .panel-tracks :global(.track-row) {
+      min-height: 2.75rem;
     }
   }
 
@@ -586,7 +604,13 @@
     let currentLineIndex = -1
     let currentSongId: string | null = null
 
+    function setPanelAvailable(available: boolean) {
+      panel?.classList.toggle('is-available', available)
+      if (!available) setPanelOpen(false)
+    }
+
     function setPanelOpen(open: boolean) {
+      if (open && !panel?.classList.contains('is-available')) return
       panel?.classList.toggle('is-open', open)
       panel?.setAttribute('aria-hidden', String(!open))
       document
@@ -657,7 +681,10 @@
       if (idx >= 0) {
         const el = nodes[idx] as HTMLElement
         lyricsScroll.scrollTo({
-          top: el.offsetTop - lyricsScroll.clientHeight / 2 + el.clientHeight,
+          // Center the line itself. The scroll padding above makes this work
+          // for the first and last line too, instead of clamping them into
+          // the masked edges.
+          top: el.offsetTop - (lyricsScroll.clientHeight - el.offsetHeight) / 2,
           behavior: 'smooth',
         })
       }
@@ -666,8 +693,8 @@
     function renderPanel(album: StageAlbum) {
       panelAlbum = album
       if (panelCover) {
-        panelCover.src = album.cover ?? ''
-        panelCover.alt = album.name
+        panelCover.src = album.cover || '/joruno.png'
+        panelCover.alt = `${album.name} 专辑封面`
       }
       if (panelTitle) panelTitle.textContent = album.name
       if (panelSub) {
@@ -738,9 +765,13 @@
       document.body.appendChild(ghost)
 
       const dx =
-        target.left + target.width / 2 - (sourceRect.left + sourceRect.width / 2)
+        target.left +
+        target.width / 2 -
+        (sourceRect.left + sourceRect.width / 2)
       const dy =
-        target.top + target.height / 2 - (sourceRect.top + sourceRect.height / 2)
+        target.top +
+        target.height / 2 -
+        (sourceRect.top + sourceRect.height / 2)
       const scale = target.width / size
 
       // 唱机位黑胶先隐去,等飞行结束接棒
@@ -807,8 +838,14 @@
           '--note-rot',
           `${(Math.random() * 2 - 1) * 32}deg`
         )
-        note.style.setProperty('--note-scale', String(0.8 + Math.random() * 0.7))
-        note.style.setProperty('--note-alpha', String(0.55 + Math.random() * 0.35))
+        note.style.setProperty(
+          '--note-scale',
+          String(0.8 + Math.random() * 0.7)
+        )
+        note.style.setProperty(
+          '--note-alpha',
+          String(0.55 + Math.random() * 0.35)
+        )
         note.style.fontSize = `${0.85 + Math.random() * 0.5}rem`
         notesBox.appendChild(note)
         window.setTimeout(() => note.remove(), dur * 1000 + 100)
@@ -825,9 +862,7 @@
 
     async function selectAlbum(album: StageAlbum) {
       playingAlbum = album
-      window.dispatchEvent(
-        new CustomEvent('album-selected', { detail: album })
-      )
+      window.dispatchEvent(new CustomEvent('album-selected', { detail: album }))
       if (vinylLabel && album.cover) {
         vinylLabel.style.setProperty('--vinyl-cover', `url("${album.cover}")`)
       }
@@ -850,11 +885,15 @@
         sourceRect?: DOMRect
         autoPlay?: boolean
       }
-      renderPanel(album)
-      setPanelOpen(true)
       // 无可播音频: 只展示曲目,不打断当前播放、不换盘
       const playable = album.songs.some((s) => s.url)
-      if (!playable) return
+      if (!playable) {
+        setPanelAvailable(false)
+        return
+      }
+      renderPanel(album)
+      setPanelAvailable(true)
+      setPanelOpen(true)
       const fly = sourceRect
         ? flyVinylFrom(sourceRect, album.cover)
         : Promise.resolve()
@@ -908,8 +947,8 @@
           'is-current',
           Boolean(
             song &&
-              (row as HTMLElement).dataset.songId === song.id &&
-              panelAlbum?.id === playingAlbum?.id
+            (row as HTMLElement).dataset.songId === song.id &&
+            panelAlbum?.id === playingAlbum?.id
           )
         )
       })
