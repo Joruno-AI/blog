@@ -24,84 +24,137 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
         <NowPlayingStage />
       </div>
 
-      <section class="playback-hub" id="playback-hub" aria-label="音乐播放控制">
+      <section
+        class="playback-hub is-empty"
+        id="playback-hub"
+        aria-label="音乐播放控制"
+      >
         <div class="now-playing-dock is-empty" id="mobile-mini-player">
           <div class="mini-track">
-            <span class="mini-track-eyebrow" id="mini-track-eyebrow"
-              >等待落针</span
-            >
-            <span class="mini-track-title" id="mini-track-title"
-              >请选择一张唱片</span
-            >
-            <span class="mini-track-time" id="mini-track-time">0:00 / 0:00</span
-            >
+            <img
+              class="mini-track-cover"
+              id="mini-track-cover"
+              src="/joruno.png"
+              alt=""
+            />
+            <div class="mini-track-copy">
+              <span class="mini-track-title" id="mini-track-title"
+                >请选择一张唱片</span
+              >
+              <span class="mini-track-meta">
+                <span id="mini-track-artist">等待选曲</span>
+                <span class="mini-track-separator" aria-hidden="true">·</span>
+                <span class="mini-track-time" id="mini-track-time"
+                  >0:00 / 0:00</span
+                >
+              </span>
+            </div>
           </div>
 
-          <div
-            class="mini-progress"
-            id="mini-progress"
-            role="progressbar"
-            aria-label="播放进度"
-            aria-valuemin="0"
-            aria-valuemax="100"
-            aria-valuenow="0"
-          >
-            <div class="mini-progress-fill" id="mini-progress-fill"></div>
+          <div class="transport-center">
+            <div class="mini-controls">
+              <button
+                id="mini-prev"
+                class="mini-ctrl-btn"
+                type="button"
+                aria-label="上一首"
+                disabled
+              >
+                <span class="i-ri-skip-back-fill"></span>
+              </button>
+              <button
+                id="mini-play"
+                class="mini-ctrl-btn mini-play-btn"
+                type="button"
+                aria-label="播放或暂停"
+                disabled
+              >
+                <span class="i-ri-play-fill" id="mini-play-icon"></span>
+              </button>
+              <button
+                id="mini-next"
+                class="mini-ctrl-btn"
+                type="button"
+                aria-label="下一首"
+                disabled
+              >
+                <span class="i-ri-skip-forward-fill"></span>
+              </button>
+            </div>
+
+            <div
+              class="mini-progress"
+              id="mini-progress"
+              role="progressbar"
+              tabindex="0"
+              aria-label="播放进度"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow="0"
+              aria-valuetext="0:00 / 0:00"
+            >
+              <div class="mini-progress-fill" id="mini-progress-fill"></div>
+            </div>
           </div>
 
-          <div class="mini-controls">
+          <div class="dock-actions">
+            <div class="dock-mode-options" role="group" aria-label="播放模式">
+              <button
+                class="dock-mode-btn active"
+                type="button"
+                data-mode="order"
+                aria-label="顺序播放"
+                aria-pressed="true"
+                title="顺序播放"
+              >
+                <span class="i-ri-list-ordered-2"></span>
+              </button>
+              <button
+                class="dock-mode-btn"
+                type="button"
+                data-mode="shuffle"
+                aria-label="随机播放"
+                aria-pressed="false"
+                title="随机播放"
+              >
+                <span class="i-ri-shuffle-line"></span>
+              </button>
+              <button
+                class="dock-mode-btn"
+                type="button"
+                data-mode="repeat-all"
+                aria-label="循环播放"
+                aria-pressed="false"
+                title="循环播放"
+              >
+                <span class="i-ri-repeat-2-line"></span>
+              </button>
+            </div>
+
+            <div class="dock-speed-options" role="group" aria-label="播放速度">
+              <button class="dock-speed-btn" type="button" data-rate="0.5"
+                >.5×</button
+              >
+              <button class="dock-speed-btn active" type="button" data-rate="1"
+                >1×</button
+              >
+              <button class="dock-speed-btn" type="button" data-rate="1.5"
+                >1.5×</button
+              >
+              <button class="dock-speed-btn" type="button" data-rate="2"
+                >2×</button
+              >
+            </div>
+
             <button
-              id="mini-prev"
-              class="mini-ctrl-btn"
+              class="dock-collapse-toggle"
+              id="player-collapse-trigger"
               type="button"
-              aria-label="上一首"
-              disabled
+              aria-label="收起播放条"
             >
-              <span class="i-ri-skip-back-fill"></span>
-            </button>
-            <button
-              id="mini-play"
-              class="mini-ctrl-btn mini-play-btn"
-              type="button"
-              aria-label="播放或暂停"
-              disabled
-            >
-              <span class="i-ri-play-fill" id="mini-play-icon"></span>
-            </button>
-            <button
-              id="mini-next"
-              class="mini-ctrl-btn"
-              type="button"
-              aria-label="下一首"
-              disabled
-            >
-              <span class="i-ri-skip-forward-fill"></span>
+              <span class="i-ri-arrow-down-s-line"></span>
             </button>
           </div>
-
-          <div class="dock-speed-options" role="group" aria-label="播放速度">
-            <button class="dock-speed-btn" type="button" data-rate="0.5"
-              >.5×</button
-            >
-            <button class="dock-speed-btn active" type="button" data-rate="1"
-              >1×</button
-            >
-            <button class="dock-speed-btn" type="button" data-rate="1.5"
-              >1.5×</button
-            >
-            <button class="dock-speed-btn" type="button" data-rate="2"
-              >2×</button
-            >
-          </div>
-
-          <button
-            class="dock-collapse-toggle"
-            id="player-collapse-trigger"
-            type="button"
-            aria-label="收起播放条"
-          >
-            <span class="i-ri-arrow-down-s-line"></span>
-          </button>
         </div>
 
         <button
@@ -164,97 +217,140 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
     position: relative;
     z-index: 90;
     width: 100%;
-    padding: 0.45rem clamp(0.75rem, 4vw, 4.5rem)
-      max(0.55rem, env(safe-area-inset-bottom));
-    background: linear-gradient(
-      to top,
-      var(--music-scrim-strong, rgb(5 6 8 / 88%)) 0%,
-      color-mix(
-          in srgb,
-          var(--music-scrim-strong, rgb(5 6 8 / 88%)) 52%,
-          transparent
-        )
-        62%,
-      transparent
-    );
-    border-top: 0;
-    box-shadow: none;
+    padding: 0 clamp(0.55rem, 2vw, 2rem)
+      max(0.4rem, env(safe-area-inset-bottom));
+    background: transparent;
+  }
+  .playback-hub.is-empty {
+    display: none;
   }
 
   .now-playing-dock {
     position: relative;
     z-index: 2;
     display: grid;
-    grid-template-columns:
-      minmax(9rem, 15rem) minmax(14rem, 1fr) auto auto auto
-      auto;
-    min-height: 3.85rem;
-    width: min(68rem, 100%);
+    grid-template-areas: 'track transport actions';
+    grid-template-columns: minmax(12rem, 15rem) minmax(20rem, 1fr) auto;
+    min-height: 4.35rem;
+    width: min(76rem, 100%);
     align-items: center;
-    gap: 0.75rem;
+    gap: clamp(0.65rem, 1.4vw, 1.15rem);
     margin-inline: auto;
-    padding: 0.58rem 0.65rem 0.58rem 1rem;
+    padding: 0.44rem 0.56rem 0.44rem 0.62rem;
     color: var(--music-text, #f7f2ea);
-    background: transparent;
-    border: 0;
+    background: color-mix(
+      in srgb,
+      var(--music-panel-strong, rgb(9 10 12 / 96%)) 86%,
+      var(--album-color, #38342f) 14%
+    );
+    border: 1px solid
+      color-mix(
+        in srgb,
+        var(--music-border-soft, rgb(255 255 255 / 8%)) 72%,
+        var(--music-accent-fill) 28%
+      );
+    border-radius: 1.15rem;
+    box-shadow:
+      0 1.25rem 3.5rem rgb(0 0 0 / 28%),
+      inset 0 1px 0 color-mix(in srgb, var(--music-text) 7%, transparent);
+    -webkit-backdrop-filter: blur(18px) saturate(120%);
+    backdrop-filter: blur(18px) saturate(120%);
     transition:
       transform 220ms cubic-bezier(0.23, 1, 0.32, 1),
       opacity 160ms ease,
-      visibility 220ms ease;
+      visibility 220ms ease,
+      background-color 680ms cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 680ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 680ms cubic-bezier(0.22, 1, 0.36, 1);
     will-change: transform, opacity;
   }
   .mini-track {
+    grid-area: track;
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+    align-items: center;
+    gap: 0.6rem;
+    min-width: 0;
+  }
+  .mini-track-cover {
+    display: block;
+    width: 2.5rem;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 0.62rem;
+    box-shadow: 0 0.5rem 1.25rem rgb(0 0 0 / 34%);
+  }
+  .mini-track-copy {
     display: grid;
     min-width: 0;
-    grid-template-columns: 1fr auto;
-    gap: 0.08rem 0.55rem;
-  }
-  .mini-track-eyebrow {
-    grid-column: 1/-1;
-    color: var(
-      --music-accent-text,
-      color-mix(in srgb, var(--album-tint, #d6b57b) 76%, white)
-    );
-    font-size: 0.54rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
+    gap: 0.22rem;
   }
   .now-playing-dock.is-empty {
-    grid-template-columns: 1fr auto;
-    min-height: 3.25rem;
+    grid-template-areas: 'track actions';
+    grid-template-columns: minmax(0, 1fr) auto;
+    min-height: 3.65rem;
   }
   .now-playing-dock.is-empty .mini-track {
-    display: block;
+    grid-template-columns: minmax(0, 1fr);
   }
   .now-playing-dock.is-empty
     :is(
-      .mini-track-eyebrow,
-      .mini-track-time,
-      .mini-progress,
-      .mini-controls,
+      .mini-track-cover,
+      .mini-track-meta,
+      .transport-center,
       .dock-speed-options
     ) {
     display: none;
   }
   .mini-track-title {
+    width: 100%;
     overflow: hidden;
-    font-size: 0.72rem;
-    font-weight: 650;
+    color: var(--music-text-strong, #fffaf2);
+    font-size: 0.82rem;
+    font-weight: 680;
+    letter-spacing: -0.01em;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+  .mini-track-meta {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: 0.38rem;
+    overflow: hidden;
+    color: var(--music-text-muted, rgba(247, 242, 234, 0.48));
+    font-size: 0.61rem;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+  #mini-track-artist {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .mini-track-separator {
+    opacity: 0.52;
+  }
   .mini-track-time {
-    color: var(--music-text-muted, rgba(247, 242, 234, 0.42));
-    font-size: 0.56rem;
+    flex: none;
     font-variant-numeric: tabular-nums;
+  }
+  .transport-center {
+    grid-area: transport;
+    display: grid;
+    grid-template-columns: auto minmax(12rem, 1fr);
+    align-items: center;
+    gap: clamp(0.85rem, 1.6vw, 1.25rem);
+    min-width: 0;
   }
   .mini-progress {
     position: relative;
-    height: 1.5rem;
+    width: 100%;
+    height: 2.15rem;
     overflow: visible;
     background: transparent;
     border-radius: 999px;
     cursor: pointer;
+    touch-action: none;
   }
   .mini-progress::before {
     content: '';
@@ -262,17 +358,21 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
     top: 50%;
     right: 0;
     left: 0;
-    height: 2px;
-    background: var(--music-progress-track, rgba(255, 255, 255, 0.12));
+    height: 3px;
+    background: color-mix(
+      in srgb,
+      var(--music-progress-track, rgba(255, 255, 255, 0.13)) 86%,
+      transparent
+    );
     border-radius: inherit;
     transform: translateY(-50%);
-    transition: transform 140ms ease;
+    transition:
+      height 160ms ease,
+      background-color 160ms ease;
   }
-  @media (hover: hover) and (pointer: fine) {
-    .mini-progress:hover::before,
-    .mini-progress:hover .mini-progress-fill {
-      transform: translateY(-50%) scaleY(2);
-    }
+  .mini-progress:focus-visible {
+    outline: 2px solid var(--music-focus, rgb(255 255 255 / 82%));
+    outline-offset: 2px;
   }
   .mini-progress-fill {
     position: absolute;
@@ -280,22 +380,52 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
     right: auto;
     left: 0;
     width: 0;
-    height: 2px;
+    height: 3px;
     background: var(
       --music-accent-fill,
       color-mix(in srgb, var(--album-tint, #d6b57b) 78%, white)
     );
     border-radius: inherit;
+    box-shadow: 0 0 0.7rem
+      color-mix(in srgb, var(--music-accent-fill) 30%, transparent);
     transform: translateY(-50%);
-    transition: transform 140ms ease;
+  }
+  .mini-progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 0;
+    width: 0.68rem;
+    aspect-ratio: 1;
+    background: var(--music-accent-fill, #f6d23c);
+    border: 2px solid var(--music-panel-strong, #0a0b0d);
+    border-radius: 50%;
+    box-shadow: 0 0.2rem 0.7rem rgb(0 0 0 / 38%);
+    opacity: 0.82;
+    transform: translate(50%, -50%) scale(0.82);
+    transition:
+      opacity 160ms ease,
+      transform 160ms ease;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .mini-progress:hover::before {
+      height: 5px;
+    }
+    .mini-progress:hover .mini-progress-fill::after,
+    .mini-progress:focus-visible .mini-progress-fill::after {
+      opacity: 1;
+      transform: translate(50%, -50%) scale(1);
+    }
   }
   .mini-controls,
-  .dock-speed-options {
+  .dock-mode-options,
+  .dock-speed-options,
+  .dock-actions {
     display: flex;
     align-items: center;
   }
   .mini-controls {
-    gap: 0.12rem;
+    gap: 0.08rem;
   }
   .mini-ctrl-btn {
     display: grid;
@@ -318,28 +448,68 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
     cursor: default;
   }
   .mini-play-btn {
+    width: 2.7rem;
+    height: 2.7rem;
     color: var(--music-primary-button-text, #111214);
     background: var(--music-primary-button, #f3eee5);
+    box-shadow: 0 0.55rem 1.4rem rgb(0 0 0 / 24%);
   }
   .mini-play-btn:disabled {
     color: var(--music-primary-button-text, #111214);
     background: var(--music-primary-button-disabled, rgba(243, 238, 229, 0.5));
   }
-  .dock-speed-options {
-    gap: 0.1rem;
-    padding: 0;
-    background: transparent;
-    border: 0;
+  .dock-actions {
+    grid-area: actions;
+    justify-content: flex-end;
+    gap: 0.42rem;
   }
-  .dock-speed-btn {
-    min-width: 1.85rem;
-    height: 1.75rem;
-    padding: 0 0.28rem;
+  .dock-mode-options {
+    gap: 0.05rem;
+    padding: 0.16rem;
+    background: var(--music-control-soft, rgba(255, 255, 255, 0.055));
+    border: 1px solid var(--music-border-soft, rgba(255, 255, 255, 0.06));
+    border-radius: 0.72rem;
+  }
+  .dock-mode-btn {
+    display: grid;
+    width: 1.85rem;
+    height: 1.85rem;
+    padding: 0;
     color: var(--music-text-muted, rgba(247, 242, 234, 0.43));
     background: transparent;
     border: 0;
-    border-radius: 0.48rem;
-    font-size: 0.58rem;
+    border-radius: 0.52rem;
+    cursor: pointer;
+    place-items: center;
+    transition:
+      color 150ms ease,
+      background-color 150ms ease,
+      transform 150ms ease;
+  }
+  .dock-mode-btn.active {
+    color: var(--music-accent-text, #f6d23c);
+    background: color-mix(
+      in srgb,
+      var(--music-accent-fill, #f6d23c) 14%,
+      transparent
+    );
+  }
+  .dock-speed-options {
+    gap: 0.05rem;
+    padding: 0.16rem;
+    background: var(--music-control-soft, rgba(255, 255, 255, 0.055));
+    border: 1px solid var(--music-border-soft, rgba(255, 255, 255, 0.06));
+    border-radius: 0.72rem;
+  }
+  .dock-speed-btn {
+    min-width: 2rem;
+    height: 1.85rem;
+    padding: 0 0.34rem;
+    color: var(--music-text-muted, rgba(247, 242, 234, 0.43));
+    background: transparent;
+    border: 0;
+    border-radius: 0.52rem;
+    font-size: 0.61rem;
     cursor: pointer;
     transition:
       color 150ms ease,
@@ -348,19 +518,23 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
   }
   .dock-speed-btn.active {
     color: var(--music-accent-text, #f6d23c);
-    background: transparent;
+    background: color-mix(
+      in srgb,
+      var(--music-accent-fill, #f6d23c) 13%,
+      transparent
+    );
     font-weight: 700;
   }
 
   .dock-collapse-toggle {
     display: grid;
-    width: 2.4rem;
-    height: 2.4rem;
+    width: 2.25rem;
+    height: 2.25rem;
     padding: 0;
     color: var(--music-text-soft, rgba(247, 242, 234, 0.76));
     background: transparent;
     border: 0;
-    border-radius: 0.72rem;
+    border-radius: 0.68rem;
     cursor: pointer;
     place-items: center;
     transition:
@@ -376,12 +550,13 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
     left: 50%;
     z-index: 3;
     display: grid;
-    width: 2.2rem;
-    height: 1.5rem;
+    width: 2.5rem;
+    height: 1.7rem;
     padding: 0;
     color: var(--music-text-muted, rgba(247, 242, 234, 0.5));
-    background: transparent;
-    border: 0;
+    background: var(--music-panel-strong, rgb(9 10 12 / 92%));
+    border: 1px solid var(--music-border-soft, rgb(255 255 255 / 8%));
+    border-radius: 999px;
     cursor: pointer;
     place-items: center;
     opacity: 0;
@@ -415,6 +590,7 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
 
   @media (hover: hover) and (pointer: fine) {
     .mini-ctrl-btn:not(:disabled):hover,
+    .dock-mode-btn:hover,
     .dock-speed-btn:hover,
     .dock-collapse-toggle:hover {
       color: var(--music-text-strong, #fffaf2);
@@ -427,67 +603,89 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
     }
   }
   .mini-ctrl-btn:not(:disabled):active,
+  .dock-mode-btn:active,
   .dock-speed-btn:active,
   .dock-collapse-toggle:active {
     transform: scale(0.97);
   }
 
   @media (max-width: 1024px) {
-    .gramophone-hint {
-      display: none;
-    }
     .now-playing-dock {
-      grid-template-columns:
-        minmax(8rem, 1fr) minmax(6rem, 0.9fr)
-        auto auto auto auto;
-      gap: 0.5rem;
+      grid-template-columns: minmax(10rem, 12rem) minmax(18rem, 1fr) auto;
+      gap: 0.72rem;
     }
   }
   @media (max-width: 960px) {
     .now-playing-dock {
       grid-template-areas:
-        'track controls collapse'
-        'progress progress progress';
-      grid-template-columns: minmax(0, 1fr) auto auto;
-      gap: 0.42rem 0.55rem;
-      min-height: 4.75rem;
-      padding: 0.48rem 0.52rem 0.55rem 0.72rem;
-      border-radius: 0.95rem;
+        'track actions'
+        'transport transport';
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 0.58rem 0.75rem;
+      min-height: 6.1rem;
+      padding: 0.48rem 0.58rem;
+      border-radius: 1rem;
     }
-    .mini-track {
-      grid-area: track;
+    .now-playing-dock.is-empty {
+      grid-template-areas: 'track actions';
+      min-height: 3.65rem;
     }
-    .mini-progress {
-      grid-area: progress;
-    }
-    .mini-controls {
-      grid-area: controls;
-    }
-    .dock-speed-options {
-      display: none;
-    }
-    .dock-collapse-toggle {
-      grid-area: collapse;
-    }
-    .mini-track-time,
-    .mini-track-eyebrow {
-      display: none;
-    }
-    .mini-track {
-      display: block;
-    }
-    .mini-track-title {
-      font-size: 0.8rem;
-    }
-    .mini-ctrl-btn,
-    .dock-collapse-toggle {
-      width: 2.75rem;
-      height: 2.75rem;
+    .transport-center {
+      grid-template-columns: auto minmax(0, 1fr);
     }
   }
-  @media (max-width: 480px) {
-    .mini-ctrl-btn:not(.mini-play-btn) {
-      display: none;
+  @media (max-width: 600px) {
+    .playback-hub {
+      padding-inline: 0.5rem;
+      padding-bottom: max(0.35rem, env(safe-area-inset-bottom));
+    }
+    .now-playing-dock {
+      grid-template-areas:
+        'track track'
+        'transport transport'
+        'actions actions';
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 0.34rem;
+      min-height: 0;
+      padding: 0.42rem 0.48rem;
+      border-radius: 0.9rem;
+    }
+    .mini-track {
+      grid-template-columns: 2.45rem minmax(0, 1fr);
+      gap: 0.58rem;
+    }
+    .mini-track-cover {
+      width: 2.45rem;
+      border-radius: 0.52rem;
+    }
+    .mini-track-title {
+      font-size: 0.76rem;
+    }
+    .transport-center {
+      gap: 0.55rem;
+    }
+    .mini-play-btn {
+      width: 2.6rem;
+      height: 2.6rem;
+    }
+    .dock-actions {
+      width: 100%;
+      justify-content: space-between;
+      gap: 0.25rem;
+    }
+  }
+  @media (max-width: 420px) {
+    .dock-mode-btn {
+      width: 1.72rem;
+      height: 1.72rem;
+    }
+    .dock-speed-btn {
+      min-width: 1.72rem;
+      padding-inline: 0.2rem;
+    }
+    .dock-collapse-toggle {
+      width: 2rem;
+      height: 2rem;
     }
   }
   @media (prefers-reduced-motion: reduce) {
@@ -512,7 +710,10 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
     currentSongs?: MiniSong[]
     currentSongIndex?: number
     currentAlbumId?: string | null
+    currentArtist?: string | null
+    currentCover?: string | null
     currentPlaybackRate?: number
+    playbackMode?: 'order' | 'shuffle' | 'repeat-all'
     currentVinylRotation?: number
     shellEventsBound?: boolean
     playerCollapsed?: boolean
@@ -528,6 +729,7 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
       isPlaying: false,
       isInitialized: false,
       currentPlaybackRate: 1,
+      playbackMode: 'order',
       currentVinylRotation: 0,
     }
   }
@@ -555,17 +757,18 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
     const state = window.MusicPlayerState
     const song = state.currentSongs?.[state.currentSongIndex ?? 0]
     const title = document.getElementById('mini-track-title')
-    const eyebrow = document.getElementById('mini-track-eyebrow')
+    const artist = document.getElementById('mini-track-artist')
+    const cover = document.getElementById(
+      'mini-track-cover'
+    ) as HTMLImageElement | null
+    const empty = !song
     document
       .getElementById('mobile-mini-player')
-      ?.classList.toggle('is-empty', !song)
+      ?.classList.toggle('is-empty', empty)
+    document.getElementById('playback-hub')?.classList.toggle('is-empty', empty)
     if (title) title.textContent = song?.name ?? '请选择一张唱片'
-    if (eyebrow)
-      eyebrow.textContent = song
-        ? state.isPlaying
-          ? '正在播放'
-          : '已就绪'
-        : '等待落针'
+    if (artist) artist.textContent = state.currentArtist ?? '等待选曲'
+    if (cover && state.currentCover) cover.src = state.currentCover
     setControlsEnabled(Boolean(song))
   }
   function updatePlayIcon(isPlaying: boolean) {
@@ -587,6 +790,16 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
         button.classList.toggle('active', Number(button.dataset.rate) === rate)
       })
   }
+  function syncPlaybackMode(mode: 'order' | 'shuffle' | 'repeat-all') {
+    window.MusicPlayerState.playbackMode = mode
+    document
+      .querySelectorAll<HTMLButtonElement>('.dock-mode-btn')
+      .forEach((button) => {
+        const active = button.dataset.mode === mode
+        button.classList.toggle('active', active)
+        button.setAttribute('aria-pressed', String(active))
+      })
+  }
   function bindGlobalMusicEvents() {
     if (window.MusicPlayerState.shellEventsBound) return
     window.MusicPlayerState.shellEventsBound = true
@@ -594,6 +807,8 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
       const album = event.detail
       if (!album || !Array.isArray(album.songs)) return
       window.MusicPlayerState.currentAlbumId = album.id ?? null
+      window.MusicPlayerState.currentArtist = album.artist ?? null
+      window.MusicPlayerState.currentCover = album.cover ?? null
       window.MusicPlayerState.currentSongs = album.songs.map(
         (song: { name: string }) => ({ name: song.name })
       )
@@ -604,6 +819,7 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
       const time = document.getElementById('mini-track-time')
       if (fill) fill.style.width = '0%'
       progress?.setAttribute('aria-valuenow', '0')
+      progress?.setAttribute('aria-valuetext', '0:00 / 0:00')
       if (time) time.textContent = '0:00 / 0:00'
       updateMiniTrack()
       updatePlayIcon(false)
@@ -627,12 +843,18 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
       const time = document.getElementById('mini-track-time')
       if (fill) fill.style.width = `${percent}%`
       progress?.setAttribute('aria-valuenow', String(Math.round(percent)))
+      progress?.setAttribute(
+        'aria-valuetext',
+        `${formatTime(currentTime)} / ${formatTime(duration)}`
+      )
       if (time)
         time.textContent = `${formatTime(currentTime)} / ${formatTime(duration)}`
       updateMiniTrack()
     }) as EventListener)
     window.addEventListener('set-playback-rate', ((event: CustomEvent) =>
       syncSpeed(Number(event.detail) || 1)) as EventListener)
+    window.addEventListener('playback-mode-changed', ((event: CustomEvent) =>
+      syncPlaybackMode(event.detail?.mode ?? 'order')) as EventListener)
   }
   function initialiseMusicShell() {
     bindGlobalMusicEvents()
@@ -655,20 +877,34 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
       ?.addEventListener('click', () =>
         window.dispatchEvent(new CustomEvent('next-song'))
       )
-    document
-      .getElementById('mini-progress')
-      ?.addEventListener('click', (event) => {
-        const bar = event.currentTarget as HTMLElement
-        const rect = bar.getBoundingClientRect()
-        window.dispatchEvent(
-          new CustomEvent('seek-to', {
-            detail: Math.max(
-              0,
-              Math.min(1, (event.clientX - rect.left) / rect.width)
-            ),
-          })
-        )
-      })
+    const progress = document.getElementById('mini-progress')
+    const seekTo = (ratio: number) =>
+      window.dispatchEvent(
+        new CustomEvent('seek-to', {
+          detail: Math.max(0, Math.min(1, ratio)),
+        })
+      )
+    progress?.addEventListener('click', (event) => {
+      const rect = progress.getBoundingClientRect()
+      seekTo((event.clientX - rect.left) / rect.width)
+    })
+    progress?.addEventListener('keydown', (event) => {
+      const current = Number(progress.getAttribute('aria-valuenow')) / 100 || 0
+      const step = event.shiftKey ? 0.1 : 0.025
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') {
+        event.preventDefault()
+        seekTo(current - step)
+      } else if (event.key === 'ArrowRight' || event.key === 'ArrowUp') {
+        event.preventDefault()
+        seekTo(current + step)
+      } else if (event.key === 'Home') {
+        event.preventDefault()
+        seekTo(0)
+      } else if (event.key === 'End') {
+        event.preventDefault()
+        seekTo(1)
+      }
+    })
     document
       .getElementById('player-collapse-trigger')
       ?.addEventListener('click', () => setPlayerCollapsed(true))
@@ -687,7 +923,20 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
           )
         })
       })
+    document
+      .querySelectorAll<HTMLButtonElement>('.dock-mode-btn')
+      .forEach((button) => {
+        button.addEventListener('click', () => {
+          const mode = button.dataset.mode as 'order' | 'shuffle' | 'repeat-all'
+          if (!mode) return
+          syncPlaybackMode(mode)
+          window.dispatchEvent(
+            new CustomEvent('set-playback-mode', { detail: { mode } })
+          )
+        })
+      })
     syncSpeed(window.MusicPlayerState.currentPlaybackRate ?? 1)
+    syncPlaybackMode(window.MusicPlayerState.playbackMode ?? 'order')
     setPlayerCollapsed(Boolean(window.MusicPlayerState.playerCollapsed))
     updateMiniTrack()
     updatePlayIcon(window.MusicPlayerState.isPlaying)

@@ -28,6 +28,18 @@ pnpm-debug.log*
 
 # build cache
 .cache/
+.venv-music-align/
+scripts/__pycache__/
+
+# local music audit caches, previews, and rollback artifacts
+reports/backups/
+reports/music-fingerprints/
+reports/music-lyric-alignments/
+reports/music-lyric-alignment-progress.json
+reports/*.png
+
+# accidentally expanded home-relative local paths
+~/
 
 # vibe coding tools
 .agent/

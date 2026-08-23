@@ -1,0 +1,3 @@
+stable-ts[mlx]==2.19.1
+mlx-whisper==0.4.3
+requests>=2.32,<3

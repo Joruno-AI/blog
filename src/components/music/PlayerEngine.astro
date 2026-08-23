@@ -2,7 +2,8 @@
 // 音频播放引擎(纯脚本,无 UI)
 // 从旧 Gramophone.astro 抽出,保持原事件协议:
 // 监听: album-selected / auto-play-album / song-selected / toggle-play /
-//       prev-song / next-song / seek-to / seek-to-time / set-playback-rate
+//       prev-song / next-song / seek-to / seek-to-time / set-playback-rate /
+//       set-playback-mode
 // 派发: playback-state { isPlaying, songIndex }
 //       playback-progress { currentTime, duration, songIndex }
 ---
@@ -18,6 +19,7 @@
     name: string
     songs: EngineSong[]
   }
+  type PlaybackMode = 'order' | 'shuffle' | 'repeat-all'
 
   declare global {
     interface Window {
@@ -34,6 +36,8 @@
     let songIndex = 0
     let isPlaying = false
     let playbackRate = 1
+    let playbackMode: PlaybackMode = 'order'
+    let playRequestId = 0
 
     function emitState() {
       window.dispatchEvent(
@@ -63,14 +67,17 @@
       audio.addEventListener('loadedmetadata', emitProgress)
       audio.addEventListener('ended', () => {
         if (!currentAlbum) return
-        const next = findPlayable(songIndex + 1, 1)
-        if (next !== null && next > songIndex) {
+        const next = resolveAdjacent(1)
+        if (next !== null) {
           playSong(next)
         } else {
           isPlaying = false
-          songIndex = 0
           emitState()
         }
+      })
+      audio.addEventListener('error', () => {
+        isPlaying = false
+        emitState()
       })
       return audio
     }
@@ -85,11 +92,36 @@
       return null
     }
 
+    function playableIndexes(): number[] {
+      if (!currentAlbum) return []
+      return currentAlbum.songs.flatMap((song, index) =>
+        song.url ? [index] : []
+      )
+    }
+
+    function resolveAdjacent(dir: 1 | -1): number | null {
+      if (!currentAlbum) return null
+      if (playbackMode === 'shuffle') {
+        const playable = playableIndexes()
+        const alternatives = playable.filter((index) => index !== songIndex)
+        const pool = alternatives.length ? alternatives : playable
+        return pool.length
+          ? pool[Math.floor(Math.random() * pool.length)]
+          : null
+      }
+
+      const adjacent = findPlayable(songIndex + dir, dir)
+      if (adjacent !== null) return adjacent
+      if (playbackMode !== 'repeat-all') return null
+      return findPlayable(dir === 1 ? 0 : currentAlbum.songs.length - 1, dir)
+    }
+
     function playSong(index: number) {
       if (!currentAlbum) return
       const song = currentAlbum.songs[index]
       if (!song?.url) return
       const el = ensureAudio()
+      const requestId = ++playRequestId
       songIndex = index
       el.pause()
       el.src = song.url
@@ -97,13 +129,22 @@
       el.load()
       const p = el.play()
       if (p) {
+        p.then(() => {
+          if (requestId !== playRequestId) return
+          isPlaying = true
+          emitState()
+        })
         p.catch((err) => {
+          if (requestId !== playRequestId) return
+          isPlaying = false
+          emitState()
           if (err.name !== 'AbortError')
             console.error('[music-engine] playback error:', err)
         })
+      } else {
+        isPlaying = true
+        emitState()
       }
-      isPlaying = true
-      emitState()
     }
 
     function stopPlayback() {
@@ -153,12 +194,12 @@
     }) as EventListener)
 
     window.addEventListener('prev-song', (() => {
-      const prev = findPlayable(songIndex - 1, -1)
+      const prev = resolveAdjacent(-1)
       if (prev !== null) playSong(prev)
     }) as EventListener)
 
     window.addEventListener('next-song', (() => {
-      const next = findPlayable(songIndex + 1, 1)
+      const next = resolveAdjacent(1)
       if (next !== null) playSong(next)
     }) as EventListener)
 
@@ -186,6 +227,15 @@
     window.addEventListener('set-playback-rate', ((e: CustomEvent) => {
       playbackRate = Number(e.detail) || 1
       if (audio) audio.playbackRate = playbackRate
+    }) as EventListener)
+
+    window.addEventListener('set-playback-mode', ((e: CustomEvent) => {
+      const mode = e.detail?.mode as PlaybackMode
+      if (!['order', 'shuffle', 'repeat-all'].includes(mode)) return
+      playbackMode = mode
+      window.dispatchEvent(
+        new CustomEvent('playback-mode-changed', { detail: { mode } })
+      )
     }) as EventListener)
   }
 

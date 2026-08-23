@@ -5,6 +5,29 @@
 ---
 
 <div class="now-playing-stage" id="now-playing-stage">
+  <section
+    class="listening-intro"
+    id="listening-intro"
+    aria-labelledby="listening-intro-title"
+  >
+    <h1 id="listening-intro-title">
+      <span class="intro-title-lead">一张唱片</span>
+      <span class="intro-title-tail">一个时代</span>
+    </h1>
+    <p class="listening-intro-copy">
+      这里按专辑而不是单曲整理音乐。挑一张封面，从第一首顺着曲序听下去，感受创作者如何铺陈情绪、风格与故事。
+    </p>
+    <p class="listening-intro-hint">拖动浏览唱片，点击封面从头播放</p>
+  </section>
+
+  <section class="record-context" id="record-context" aria-hidden="true">
+    <h1 class="record-context-title" id="record-context-title">
+      正在播放的唱片
+    </h1>
+    <p class="record-context-meta" id="record-context-meta"></p>
+    <p class="record-context-description" id="record-context-description"></p>
+  </section>
+
   <div class="stage-left">
     <div class="stage-vinyl" id="stage-vinyl" aria-hidden="true">
       <div class="vinyl-disc">
@@ -19,17 +42,12 @@
       <div class="vinyl-notes" id="vinyl-notes"></div>
     </div>
     <div class="lyrics-panel" id="lyrics-panel" aria-label="歌词">
-      <p class="lyrics-empty" id="lyrics-empty">选择唱片，开始聆听</p>
+      <p class="lyrics-empty" id="lyrics-empty" hidden></p>
       <div class="lyrics-scroll" id="lyrics-scroll"></div>
     </div>
   </div>
 
-  <aside
-    class="track-panel"
-    id="track-panel"
-    aria-label="专辑曲目"
-    aria-hidden="true"
-  >
+  <aside class="track-panel" id="track-panel" aria-label="专辑曲目">
     <button
       class="track-panel-handle"
       id="track-panel-handle"
@@ -40,7 +58,7 @@
       <span class="handle-chevron i-ri-arrow-left-s-line"></span>
       <span class="handle-label">曲目</span>
     </button>
-    <div class="track-panel-body">
+    <div class="track-panel-body" id="track-panel-body" aria-hidden="true">
       <header class="track-panel-head">
         <img
           class="panel-cover"
@@ -68,18 +86,183 @@
     z-index: 4;
     pointer-events: none;
   }
+  .listening-intro {
+    position: absolute;
+    top: clamp(5.5rem, 13vh, 8.25rem);
+    left: clamp(1.5rem, 6vw, 6.5rem);
+    z-index: 3;
+    width: min(31rem, 36vw);
+    color: var(--music-text-strong);
+    pointer-events: none;
+    transition:
+      opacity 360ms ease,
+      transform 520ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .listening-intro::before {
+    content: '';
+    display: block;
+    width: 3rem;
+    height: 1px;
+    margin-bottom: 1rem;
+    background: var(--music-accent-fill);
+  }
+  .listening-intro.is-hidden {
+    opacity: 0;
+    transform: translateY(-0.75rem);
+  }
+  .listening-intro h1 {
+    display: flex;
+    max-width: none;
+    align-items: baseline;
+    gap: 0.28em;
+    margin: 0;
+    font-size: clamp(2.2rem, 3.8vw, 3.55rem);
+    font-weight: 720;
+    letter-spacing: -0.065em;
+    line-height: 0.96;
+    white-space: nowrap;
+  }
+  .intro-title-lead,
+  .intro-title-tail {
+    display: block;
+  }
+  .intro-title-tail {
+    color: var(--music-text-soft);
+    font-weight: 520;
+    letter-spacing: -0.05em;
+  }
+  .listening-intro-copy {
+    max-width: 28rem;
+    margin: 1.5rem 0 0;
+    color: var(--music-text-soft);
+    font-size: clamp(0.86rem, 1vw, 1rem);
+    letter-spacing: 0.02em;
+    line-height: 1.8;
+    text-wrap: pretty;
+  }
+  .listening-intro-hint {
+    margin: 1.1rem 0 0;
+    color: var(--music-accent-text);
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+  }
+  .record-context {
+    position: absolute;
+    top: clamp(6.5rem, 13vh, 8.25rem);
+    left: clamp(3rem, 6vw, 6.5rem);
+    z-index: 3;
+    width: min(34rem, 38vw);
+    color: var(--music-text-strong);
+    text-align: left;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(0.75rem);
+    transition:
+      opacity 360ms ease,
+      transform 520ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .record-context::before {
+    content: '';
+    display: block;
+    width: 3rem;
+    height: 1px;
+    margin: 0 0 1rem;
+    background: var(--music-accent-fill);
+  }
+  .record-context.has-album {
+    opacity: 0.78;
+    transform: translateY(0);
+  }
+  .record-context-title {
+    max-width: 10ch;
+    margin: 0 0 0.65rem;
+    font-size: clamp(2.5rem, 4.6vw, 4.9rem);
+    font-weight: 720;
+    letter-spacing: -0.04em;
+    line-height: 0.94;
+    text-wrap: balance;
+  }
+  .record-context-meta {
+    margin: 0;
+    color: var(--music-text-soft);
+    font-size: 0.78rem;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.12em;
+  }
+  .record-context-description {
+    display: -webkit-box;
+    max-width: 32rem;
+    overflow: hidden;
+    margin: 1.5rem 0 0;
+    padding-top: 1rem;
+    color: var(--music-text-soft);
+    border-top: 1px solid var(--music-border-soft);
+    font-size: clamp(0.82rem, 0.9vw, 0.94rem);
+    letter-spacing: 0.025em;
+    line-height: 1.75;
+    text-align: left;
+    text-wrap: pretty;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 6;
+  }
+  .record-context-description:empty {
+    display: none;
+  }
+  :global(#music-page-wrapper.stage-compact-intro) .listening-intro,
+  :global(#music-page-wrapper.stage-compact-intro) .record-context {
+    width: clamp(10.5rem, var(--stage-intro-fit, 22rem), 28rem);
+  }
+  :global(#music-page-wrapper.stage-compact-intro) .record-context-title,
+  :global(#music-page-wrapper.stage-compact-intro) .record-context-title {
+    max-width: 9ch;
+    font-size: clamp(2rem, 3.6vw, 3.6rem);
+    line-height: 0.96;
+  }
+  :global(#music-page-wrapper.stage-compact-intro) .listening-intro h1 {
+    max-width: none;
+    gap: 0.2em;
+    font-size: clamp(1.15rem, 2.8vw, 2rem);
+  }
+  :global(#music-page-wrapper.stage-compact-intro) .record-context-description {
+    margin-top: 0.9rem;
+    padding-top: 0.75rem;
+    font-size: clamp(0.72rem, 0.82vw, 0.86rem);
+    line-height: 1.62;
+    -webkit-line-clamp: 4;
+  }
+  :global(#music-page-wrapper.stage-compact-intro) .listening-intro-copy {
+    display: -webkit-box;
+    overflow: hidden;
+    margin-top: 1rem;
+    font-size: clamp(0.72rem, 0.82vw, 0.86rem);
+    line-height: 1.62;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+  }
+  :global(#music-page-wrapper.stage-compact-intro) .listening-intro-hint {
+    margin-top: 0.75rem;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+  }
   .stage-left {
     position: absolute;
-    top: clamp(7rem, 15vh, 9rem);
-    left: clamp(1rem, 4vw, 4rem);
+    top: clamp(6.25rem, 12vh, 7.75rem);
+    right: clamp(2.75rem, 5vw, 5.5rem);
     display: flex;
+    flex-direction: row-reverse;
     align-items: center;
-    gap: clamp(1.25rem, 2.6vw, 3rem);
+    gap: clamp(1.4rem, 2.5vw, 2.8rem);
     pointer-events: auto;
+    transform-origin: right center;
+    transition:
+      right 520ms cubic-bezier(0.22, 1, 0.36, 1),
+      left 520ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 520ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 220ms ease;
   }
   .stage-vinyl {
     flex: none;
-    width: clamp(11rem, 18vw, 16.5rem);
+    width: clamp(12rem, 19vw, 17.5rem);
     aspect-ratio: 1;
     filter: drop-shadow(0 1.4rem 2.6rem rgb(0 0 0 / 55%));
   }
@@ -157,7 +340,7 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 38%;
+    width: 50%;
     aspect-ratio: 1;
     background: var(--album-color, #333) center/cover no-repeat;
     background-image: var(--vinyl-cover, none);
@@ -217,7 +400,7 @@
     --lyrics-line-box: 2.05rem;
     position: relative;
     z-index: 1;
-    width: clamp(16rem, 25vw, 24rem);
+    width: clamp(16rem, 23vw, 22rem);
     height: var(--lyrics-height);
     max-height: var(--lyrics-height);
     overflow: hidden;
@@ -237,6 +420,7 @@
     box-sizing: border-box;
     height: 100%;
     max-height: none;
+    overflow-x: hidden;
     overflow-y: auto;
     /* Leave a half viewport of breathing room so the first and last line can
        occupy the same centered position as every line in between. */
@@ -255,21 +439,27 @@
   }
   .lyrics-scroll :global(.lyric-line) {
     display: block;
+    box-sizing: border-box;
     width: 100%;
+    max-width: 100%;
     padding: 0.38rem 0;
     background: none;
     border: 0;
     color: var(--music-text-muted, rgba(247, 242, 234, 0.38));
-    font-size: clamp(0.82rem, 0.9vw, 0.94rem);
-    letter-spacing: 0.05em;
-    line-height: 1.55;
+    font-size: clamp(0.94rem, 1.08vw, 1.1rem);
+    letter-spacing: 0.025em;
+    line-height: 1.62;
+    overflow-wrap: anywhere;
     text-align: left;
     text-shadow:
       0 1px 1px rgb(0 0 0 / 86%),
       0 0 1.2rem rgb(0 0 0 / 76%);
     cursor: pointer;
+    white-space: normal;
+    word-break: break-word;
     transition:
       color 180ms ease,
+      font-size 220ms cubic-bezier(0.22, 1, 0.36, 1),
       transform 180ms ease;
   }
   .lyrics-scroll :global(.lyric-line:hover) {
@@ -277,9 +467,11 @@
   }
   .lyrics-scroll :global(.lyric-line.is-current) {
     color: var(--music-accent-text, #f6d23c);
-    font-weight: 650;
-    transform: scale(1.055);
-    transform-origin: left center;
+    font-size: clamp(1.2rem, 1.45vw, 1.45rem);
+    font-weight: 720;
+    letter-spacing: 0;
+    line-height: 1.5;
+    transform: none;
   }
 
   /* 右侧曲目侧边栏: 平时收在屏幕右缘只露把手,展开时滑入 */
@@ -288,6 +480,7 @@
     top: clamp(4.2rem, 9vh, 5.5rem);
     right: 0;
     bottom: clamp(4.6rem, 11vh, 6.5rem);
+    z-index: 20;
     display: flex;
     align-items: center;
     pointer-events: none;
@@ -476,20 +669,26 @@
     font-variant-numeric: tabular-nums;
   }
 
+  @media (max-height: 760px) and (min-width: 961px) {
+    .record-context-description {
+      margin-top: 1rem;
+      padding-top: 0.75rem;
+      -webkit-line-clamp: 4;
+    }
+  }
+
   @media (max-width: 767px) {
     .stage-left {
-      top: 4.6rem;
+      top: clamp(4.2rem, 11vh, 6rem);
       left: 0.9rem;
-      right: 0.9rem;
+      right: auto;
+      flex-direction: row-reverse;
       gap: 0.8rem;
     }
-    .stage-vinyl {
-      width: clamp(6.2rem, 30vw, 8rem);
-    }
     .lyrics-panel {
-      --lyrics-height: 6.5rem;
+      --lyrics-height: clamp(8.5rem, 25vh, 12rem);
       --lyrics-line-box: 2.75rem;
-      width: auto;
+      width: clamp(14rem, 62vw, 22rem);
       flex: 1;
       height: var(--lyrics-height);
       max-height: var(--lyrics-height);
@@ -499,12 +698,18 @@
     }
     .lyrics-scroll :global(.lyric-line) {
       min-height: 2.75rem;
-      font-size: 0.68rem;
+      font-size: 0.88rem;
+    }
+    .lyrics-scroll :global(.lyric-line.is-current) {
+      font-size: 1.16rem;
+      line-height: 1.45;
+      transform: none;
     }
     .track-panel {
       --panel-width: min(19rem, calc(100vw - 3rem));
       top: 4.2rem;
-      bottom: 5.8rem;
+      right: 0;
+      bottom: 7.4rem;
     }
     .track-panel-handle {
       width: 2.75rem;
@@ -519,6 +724,26 @@
     }
   }
 
+  /* 三段布局先极限压缩简介，再按真实占用宽度逐级退场。 */
+  :global(#music-page-wrapper.stage-hide-intro) .listening-intro,
+  :global(#music-page-wrapper.stage-hide-intro) .record-context {
+    display: none;
+  }
+  :global(#music-page-wrapper.stage-hide-intro) .stage-left {
+    left: clamp(0.9rem, 5vw, 4rem);
+    right: auto;
+    flex-direction: row-reverse;
+    transform-origin: left center;
+  }
+  :global(#music-page-wrapper.stage-hide-vinyl) .stage-vinyl {
+    display: none;
+  }
+  :global(#music-page-wrapper.stage-hide-lyrics) .lyrics-panel {
+    display: none;
+  }
+  :global(#music-page-wrapper.stage-hide-lyrics) .stage-left {
+    display: none;
+  }
   @media (pointer: coarse) {
     .panel-play-all,
     .panel-tracks :global(.track-row) {
@@ -543,6 +768,15 @@
     duration: string
     url: string | null
     hasLyrics: boolean
+    quality?: {
+      incomplete: boolean
+      lyricsMismatch: boolean
+      actualSeconds: number
+      expectedSeconds: number
+      studioStatus: string
+      fingerprintSimilarity: number | null
+      lyricsAlignmentStatus: string
+    } | null
   }
   interface StageAlbum {
     id: string
@@ -579,12 +813,14 @@
     stage.dataset.bound = 'true'
 
     const vinyl = document.getElementById('stage-vinyl')
+    const stageLeft = stage.querySelector<HTMLElement>('.stage-left')
     // 唱臂点击 = 播放/暂停(有已选专辑时)
     document.getElementById('tonearm')?.addEventListener('click', () => {
       if (playingAlbum) window.dispatchEvent(new CustomEvent('toggle-play'))
     })
     const vinylLabel = document.getElementById('vinyl-label')
     const panel = document.getElementById('track-panel')
+    const panelBody = document.getElementById('track-panel-body')
     const panelCover = document.getElementById(
       'panel-cover'
     ) as HTMLImageElement | null
@@ -596,6 +832,13 @@
     const panelTracks = document.getElementById('panel-tracks')
     const lyricsEmpty = document.getElementById('lyrics-empty')
     const lyricsScroll = document.getElementById('lyrics-scroll')
+    const listeningIntro = document.getElementById('listening-intro')
+    const recordContext = document.getElementById('record-context')
+    const recordContextTitle = document.getElementById('record-context-title')
+    const recordContextMeta = document.getElementById('record-context-meta')
+    const recordContextDescription = document.getElementById(
+      'record-context-description'
+    )
 
     let panelAlbum: StageAlbum | null = null
     let playingAlbum: StageAlbum | null = null
@@ -603,6 +846,83 @@
     let currentLines: LyricLine[] = []
     let currentLineIndex = -1
     let currentSongId: string | null = null
+
+    const musicWrapper = document.getElementById('music-page-wrapper')
+    let fitFrame = 0
+    function updateStageFit() {
+      if (!musicWrapper || !stageLeft) return
+      musicWrapper.classList.remove(
+        'stage-compact-intro',
+        'stage-hide-intro',
+        'stage-hide-vinyl',
+        'stage-hide-lyrics'
+      )
+
+      const width = stage!.clientWidth || window.innerWidth
+      const introWidth = Math.max(
+        listeningIntro?.offsetWidth ?? 0,
+        recordContext?.offsetWidth ?? 0
+      )
+      const lyricsWidth =
+        document.getElementById('lyrics-panel')?.offsetWidth ?? 0
+      const vinylWidth = vinyl?.offsetWidth ?? 0
+      const gap = Number.parseFloat(getComputedStyle(stageLeft).gap) || 24
+      const outerSpace = width * 0.11
+      const sectionGap = Math.max(32, width * 0.04)
+      const allSectionsWidth =
+        introWidth + lyricsWidth + vinylWidth + gap + outerSpace + sectionGap
+
+      const availableIntroWidth =
+        width - (lyricsWidth + vinylWidth + gap + outerSpace + sectionGap)
+      const minimumIntroWidth = 168
+      const compactIntro =
+        allSectionsWidth > width && availableIntroWidth >= minimumIntroWidth
+      const hideIntro =
+        allSectionsWidth > width && availableIntroWidth < minimumIntroWidth
+      const playerSectionsWidth =
+        lyricsWidth + vinylWidth + gap + Math.max(32, width * 0.1)
+      const hideVinyl = hideIntro && playerSectionsWidth > width
+      const lyricsOnlyWidth = lyricsWidth + Math.max(32, width * 0.08)
+      const hideLyrics = hideVinyl && lyricsOnlyWidth > width
+
+      musicWrapper.style.setProperty(
+        '--stage-intro-fit',
+        `${Math.max(minimumIntroWidth, Math.floor(availableIntroWidth))}px`
+      )
+      musicWrapper.classList.toggle('stage-compact-intro', compactIntro)
+      musicWrapper.classList.toggle('stage-hide-intro', hideIntro)
+      musicWrapper.classList.toggle('stage-hide-vinyl', hideVinyl)
+      musicWrapper.classList.toggle('stage-hide-lyrics', hideLyrics)
+    }
+    function scheduleStageFit() {
+      cancelAnimationFrame(fitFrame)
+      fitFrame = requestAnimationFrame(updateStageFit)
+    }
+
+    const fitObserver = new ResizeObserver(scheduleStageFit)
+    fitObserver.observe(stage)
+    window.addEventListener('resize', scheduleStageFit)
+    scheduleStageFit()
+
+    function renderRecordContext(album: StageAlbum) {
+      if (recordContextTitle) recordContextTitle.textContent = album.name
+      if (recordContextMeta) {
+        const year = album.releaseDate?.slice(0, 4)
+        const trackCount = album.songs.length
+          ? `${album.songs.length} 首曲目`
+          : null
+        recordContextMeta.textContent = [album.artist, year, trackCount]
+          .filter(Boolean)
+          .join(' · ')
+      }
+      if (recordContextDescription) {
+        recordContextDescription.textContent = album.description?.trim() ?? ''
+      }
+      recordContext?.classList.add('has-album')
+      recordContext?.setAttribute('aria-hidden', 'false')
+      listeningIntro?.classList.add('is-hidden')
+      listeningIntro?.setAttribute('aria-hidden', 'true')
+    }
 
     function setPanelAvailable(available: boolean) {
       panel?.classList.toggle('is-available', available)
@@ -612,22 +932,27 @@
     function setPanelOpen(open: boolean) {
       if (open && !panel?.classList.contains('is-available')) return
       panel?.classList.toggle('is-open', open)
-      panel?.setAttribute('aria-hidden', String(!open))
+      panelBody?.setAttribute('aria-hidden', String(!open))
+      if (panelBody) panelBody.inert = !open
       document
         .getElementById('track-panel-handle')
         ?.setAttribute('aria-expanded', String(open))
-      // 侧边栏展开时让个人最爱/提示文案让位,避免遮挡
-      document
-        .getElementById('music-page-wrapper')
-        ?.classList.toggle('panel-open', open)
     }
 
+    let lyricsRequestId = 0
+
     async function loadLyricsMap(album: StageAlbum) {
+      const requestId = ++lyricsRequestId
       lyricsMap = {}
       if (!album.songs.some((s) => s.hasLyrics)) return
       try {
         const res = await fetch(`/music/lyrics/${album.id}.json`)
-        if (res.ok) lyricsMap = await res.json()
+        if (res.ok && requestId === lyricsRequestId) {
+          lyricsMap = await res.json()
+          if (playingAlbum?.id === album.id && currentSongId) {
+            renderLyrics(currentSongId)
+          }
+        }
       } catch (e) {
         console.warn('[lyrics] load failed:', e)
       }
@@ -641,10 +966,19 @@
       if (!lyricsScroll || !lyricsEmpty) return
       if (!currentLines.length) {
         lyricsScroll.replaceChildren()
-        lyricsEmpty.textContent = playingAlbum
-          ? '这首歌还没有歌词'
-          : '选一张唱片 让歌词在这里流动'
-        lyricsEmpty.style.display = ''
+        const song = playingAlbum?.songs.find((item) => item.id === songId)
+        lyricsEmpty.textContent = song?.quality?.lyricsMismatch
+          ? '当前音源版本与歌词时间轴不一致'
+          : song?.quality?.lyricsAlignmentStatus === 'lyrics-incomplete'
+            ? '歌词内容不完整，暂不展示'
+            : song?.quality?.lyricsAlignmentStatus === 'timing-review'
+              ? '歌词时间轴待校准，暂不展示'
+              : song?.quality?.lyricsAlignmentStatus === 'lyrics-mismatch'
+                ? '歌词与当前录音室音源不匹配'
+                : playingAlbum
+                  ? '这首作品暂未收录歌词'
+                  : ''
+        lyricsEmpty.style.display = playingAlbum ? '' : 'none'
         return
       }
       lyricsEmpty.style.display = 'none'
@@ -719,10 +1053,35 @@
           row.className = 'track-row'
           row.dataset.songId = song.id
           if (!song.url) row.classList.add('is-disabled')
+          const qualityTag =
+            song.quality?.studioStatus === 'wrong-version'
+              ? '非录音室版本'
+              : song.quality?.studioStatus === 'correct-master-wrong-length'
+                ? '音源长度异常'
+                : song.quality?.studioStatus === 'probable-version-match'
+                  ? '版本待复核'
+                  : song.quality?.studioStatus === 'fingerprint-failed'
+                    ? '版本校验失败'
+                    : song.quality?.incomplete
+                      ? '音源不完整'
+                      : song.quality?.lyricsMismatch
+                        ? '歌词待校准'
+                        : song.quality?.lyricsAlignmentStatus ===
+                            'lyrics-incomplete'
+                          ? '歌词不完整'
+                          : song.quality?.lyricsAlignmentStatus ===
+                              'timing-review'
+                            ? '时间轴待校准'
+                            : song.quality?.lyricsAlignmentStatus ===
+                                'lyrics-mismatch'
+                              ? '歌词待校准'
+                              : !song.url
+                                ? '待补音频'
+                                : ''
           row.innerHTML = `
             <span class="track-no">${String(i + 1).padStart(2, '0')}</span>
             <span class="track-name">${song.name}</span>
-            ${song.url ? '' : '<span class="track-tag">待补音频</span>'}
+            ${qualityTag ? `<span class="track-tag">${qualityTag}</span>` : ''}
             <span class="track-dur">${song.duration}</span>`
           if (song.url) {
             row.addEventListener('click', () => playTrack(album, i))
@@ -789,7 +1148,7 @@
             opacity: 1,
           },
         ],
-        { duration: 680, easing: 'cubic-bezier(0.32, 0.72, 0.24, 1)' }
+        { duration: 1380, easing: 'cubic-bezier(0.2, 0.72, 0.2, 1)' }
       )
       return anim.finished
         .catch((err) => {
@@ -806,7 +1165,7 @@
                 { transform: 'scale(0.98)', offset: 0.6 },
                 { transform: 'scale(1)' },
               ],
-              { duration: 320, easing: 'ease-out' }
+              { duration: 520, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }
             )
           }
         })
@@ -860,18 +1219,20 @@
       }
     }
 
-    async function selectAlbum(album: StageAlbum) {
+    function selectAlbum(album: StageAlbum) {
       playingAlbum = album
+      document.getElementById('music-page-wrapper')?.classList.add('has-album')
+      renderRecordContext(album)
       window.dispatchEvent(new CustomEvent('album-selected', { detail: album }))
       if (vinylLabel && album.cover) {
         vinylLabel.style.setProperty('--vinyl-cover', `url("${album.cover}")`)
       }
-      await loadLyricsMap(album)
+      void loadLyricsMap(album)
     }
 
-    async function playTrack(album: StageAlbum, index: number) {
+    function playTrack(album: StageAlbum, index: number) {
       if (playingAlbum?.id !== album.id) {
-        await selectAlbum(album)
+        selectAlbum(album)
       }
       window.dispatchEvent(
         new CustomEvent('song-selected', { detail: { index } })
@@ -885,6 +1246,7 @@
         sourceRect?: DOMRect
         autoPlay?: boolean
       }
+      renderRecordContext(album)
       // 无可播音频: 只展示曲目,不打断当前播放、不换盘
       const playable = album.songs.some((s) => s.url)
       if (!playable) {
@@ -893,15 +1255,15 @@
       }
       renderPanel(album)
       setPanelAvailable(true)
-      setPanelOpen(true)
+      setPanelOpen(false)
       const fly = sourceRect
         ? flyVinylFrom(sourceRect, album.cover)
         : Promise.resolve()
       if (autoPlay) {
-        fly.then(() => {
-          const first = album.songs.findIndex((s) => s.url)
-          if (first >= 0) playTrack(album, first)
-        })
+        // Start from the original click call stack. Waiting for the vinyl
+        // flight here loses the browser's user-gesture allowance for audio.
+        const first = album.songs.findIndex((s) => s.url)
+        if (first >= 0) playTrack(album, first)
       } else if (sourceRect) {
         // 仅换盘不播: 飞行后更新盘面
         fly.then(() => {
@@ -917,7 +1279,7 @@
     panelPlayAll?.addEventListener('click', async () => {
       if (!panelAlbum) return
       const first = panelAlbum.songs.findIndex((s) => s.url)
-      if (first >= 0) await playTrack(panelAlbum, first)
+      if (first >= 0) playTrack(panelAlbum, first)
     })
 
     document

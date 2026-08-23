@@ -1,10 +1,11 @@
 /* Music room: an immersive, album-led listening stage. */
-#global-music-player {
-  --album-tint: color-mix(in srgb, var(--album-color, #7d503d) 42%, #d8b981);
-}
-
 /* Music room base tokens; light mode overrides these below. */
 #global-music-player .music-page-wrapper {
+  --album-tint: color-mix(
+    in srgb,
+    var(--album-color, #7d503d) 72%,
+    #d9dde4 28%
+  );
   --music-ui-font: inherit;
   --music-room-surface: var(--c-bg, #050505);
   --music-text: #f7f2ea;
@@ -24,8 +25,8 @@
   --music-primary-button-hover: #fffaf2;
   --music-primary-button-disabled: rgba(243, 238, 229, 0.5);
   --music-primary-button-text: #111214;
-  --music-accent-text: color-mix(in srgb, var(--album-tint) 62%, #ffe9a8);
-  --music-accent-fill: color-mix(in srgb, var(--album-tint) 66%, #ffe9a8);
+  --music-accent-text: color-mix(in srgb, var(--album-tint) 76%, #ffffff 24%);
+  --music-accent-fill: color-mix(in srgb, var(--album-tint) 82%, #ffffff 18%);
   --music-accent-contrast: #191507;
   --music-scrim: rgb(6 7 9 / 82%);
   --music-scrim-strong: rgb(5 6 8 / 94%);
@@ -37,7 +38,7 @@
   --music-float-shadow: 0 -1.5rem 5rem rgba(5, 6, 8, 0.32);
   --music-chrome-surface: color-mix(
     in srgb,
-    var(--music-room-surface) 62%,
+    var(--music-room-surface) 0%,
     transparent
   );
   --music-chrome-border: transparent;
@@ -67,13 +68,13 @@
   --music-primary-button-text: #fff;
   --music-accent-text: color-mix(
     in srgb,
-    var(--album-color, #7d503d) 58%,
-    #302a22
+    var(--album-color, #7d503d) 68%,
+    #292c32
   );
   --music-accent-fill: color-mix(
     in srgb,
-    var(--album-color, #7d503d) 58%,
-    #302a22
+    var(--album-color, #7d503d) 72%,
+    #292c32
   );
   --music-accent-contrast: #fff;
   --music-scrim: rgb(255 255 255 / 76%);
@@ -84,7 +85,7 @@
   --music-ambient-noise-opacity: 0.018;
   --music-dock-shadow: 0 0.8rem 2.5rem rgb(67 61 51 / 10%);
   --music-float-shadow: 0 -1.5rem 5rem rgb(67 61 51 / 11%);
-  --music-chrome-surface: rgb(255 255 255 / 54%);
+  --music-chrome-surface: transparent;
   --music-chrome-border: transparent;
 }
 
@@ -117,22 +118,32 @@
 }
 
 :root:not(.dark) #global-music-player .music-ambient-light {
-  opacity: 0.36;
+  opacity: 0.22;
 }
 
-:root:not(.dark) #global-music-player .corridor-band .cell-cover,
-:root:not(.dark) #global-music-player .gallery-favorites .fav-cover {
+:root:not(.dark) #global-music-player .music-light-rays canvas {
+  filter: contrast(1.28) saturate(1.38);
+  opacity: 0.7;
+  mix-blend-mode: multiply;
+}
+
+:root.dark #global-music-player .music-light-rays canvas {
+  opacity: 1;
+  mix-blend-mode: normal;
+}
+
+:root:not(.dark) #global-music-player .corridor-band .cell-cover {
   box-shadow: 0 1rem 2.2rem rgb(67 61 51 / 17%);
   -webkit-box-reflect: below 2px
     linear-gradient(transparent 60%, rgb(67 61 51 / 8%));
 }
 
 #global-music-player .playback-hub {
-  background: var(--music-chrome-surface);
+  background: transparent;
   border-top: 0;
   box-shadow: none;
-  -webkit-backdrop-filter: blur(14px) saturate(105%);
-  backdrop-filter: blur(14px) saturate(105%);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }
 
 #global-music-player .playback-hub:has(.now-playing-dock.is-empty) {
@@ -459,7 +470,7 @@ body:has(#music-page-wrapper:not(.hidden)) {
   --music-room-surface: var(--c-bg, #050505);
   --music-chrome-surface: color-mix(
     in srgb,
-    var(--music-room-surface) 62%,
+    var(--music-room-surface) 0%,
     transparent
   );
   --music-chrome-border: transparent;
@@ -471,7 +482,7 @@ body:has(#music-page-wrapper:not(.hidden)) {
 
 :root:not(.dark) body:has(#music-page-wrapper:not(.hidden)) {
   --music-room-surface: var(--c-bg, #fff);
-  --music-chrome-surface: rgb(255 255 255 / 54%);
+  --music-chrome-surface: transparent;
   --music-chrome-border: transparent;
 }
 
@@ -483,12 +494,12 @@ body:has(#music-page-wrapper:not(.hidden)) .nav-header {
     var(--c-text) 88%,
     var(--music-album-color, #7b766d) 12%
   );
-  background: var(--music-chrome-surface);
+  background: transparent;
   border-bottom: 0;
   box-shadow: none;
   font-family: inherit;
-  -webkit-backdrop-filter: saturate(105%) blur(14px);
-  backdrop-filter: saturate(105%) blur(14px);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }
 
 body:has(#music-page-wrapper:not(.hidden)) .nav-header :is(a, button) {

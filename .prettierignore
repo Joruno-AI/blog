@@ -1,6 +1,7 @@
 # Exclude formatting
 pnpm-lock.yaml
 *.md
+.venv-music-align/
 
 # Avoid incorrect processing
 SearchSwitch.astro

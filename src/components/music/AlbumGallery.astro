@@ -1,22 +1,15 @@
 ---
-// 3D 专辑长廊: 透视倾斜的封面长带,支持拖拽/滚轮无缝循环
+// 专辑长廊: 平面封面长带,支持拖拽/滚轮无缝循环
 // 数据来自 /music/data.json (构建期生成)
 // 派发: gallery-album-open { album } — 打开曲目面板
 // 监听: album-selected — 高亮正在播放的专辑
 ---
 
 <section class="album-gallery" id="album-gallery" aria-label="专辑长廊">
-  <p class="gallery-decor decor-bottom" aria-hidden="true">
-    爱情好像流沙 我不挣扎 随它去吧 我不害怕
-  </p>
-
   <div class="corridor-viewport" id="corridor-viewport">
     <div class="corridor-plane">
       <div class="corridor-band" id="corridor-band"></div>
     </div>
-  </div>
-
-  <div class="gallery-favorites" id="gallery-favorites" aria-label="个人最爱">
   </div>
 </section>
 
@@ -26,31 +19,10 @@
     inset: 0;
     overflow: hidden;
   }
-  .gallery-decor {
-    position: absolute;
-    z-index: 3;
-    margin: 0;
-    color: var(--music-text-soft, rgba(247, 242, 234, 0.82));
-    font-weight: 560;
-    font-size: min(1rem, 1.3vw);
-    letter-spacing: 0.12em;
-    white-space: nowrap;
-    pointer-events: none;
-    text-shadow: var(--music-decor-shadow, 0 2px 12px rgb(0 0 0 / 55%));
-  }
-  .decor-bottom {
-    bottom: clamp(1rem, 4vh, 2.6rem);
-    left: 3%;
-    color: var(--music-text-muted, rgba(247, 242, 234, 0.6));
-    transform: rotate(-5deg);
-    transform-origin: left center;
-  }
-
   .corridor-viewport {
     position: absolute;
     inset: 0;
     z-index: 2;
-    perspective: 1400px;
     cursor: grab;
     touch-action: pan-y;
     user-select: none;
@@ -61,39 +33,26 @@
   }
   .corridor-plane {
     position: absolute;
-    top: 48%;
+    top: 65%;
     left: 50%;
-    transform: translate(-50%, -50%) rotateX(14deg) rotateY(-24deg)
-      rotateZ(-7deg);
-    transform-style: preserve-3d;
+    transform: translateY(-50%);
   }
   .corridor-band {
     display: flex;
     align-items: flex-end;
-    gap: clamp(1rem, 1.7vw, 1.8rem);
+    gap: clamp(0.9rem, 1.45vw, 1.6rem);
     will-change: transform;
   }
 
   .corridor-band :global(.corridor-cell) {
     position: relative;
     flex: none;
-    width: clamp(6.8rem, 12vw, 11.5rem);
+    width: clamp(8.75rem, 13vw, 14.25rem);
     padding: 0;
     background: none;
     border: 0;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
-  }
-  .corridor-band :global(.cell-no) {
-    display: block;
-    margin-bottom: 0.4rem;
-    color: var(--music-text, rgba(247, 242, 234, 0.9));
-    font-weight: 800;
-    font-size: clamp(0.85rem, 1.4vw, 1.2rem);
-    font-style: italic;
-    letter-spacing: 0.04em;
-    text-align: left;
-    text-shadow: var(--music-decor-shadow, 0 1px 8px rgb(0 0 0 / 60%));
   }
   .corridor-band :global(.cell-cover) {
     display: block;
@@ -130,81 +89,43 @@
     text-overflow: ellipsis;
   }
 
-  .gallery-favorites {
-    position: absolute;
-    right: clamp(1rem, 4vw, 4rem);
-    bottom: clamp(5.5rem, 15vh, 8.5rem);
-    z-index: 3;
-    display: flex;
-    gap: clamp(1rem, 2.4vw, 2.4rem);
-    transition: opacity 220ms ease;
+  @media (max-width: 1180px) {
+    .corridor-plane {
+      top: 60%;
+    }
   }
-  :global(#music-page-wrapper.panel-open) .gallery-favorites {
-    opacity: 0;
-    pointer-events: none;
+
+  @media (max-width: 880px) {
+    .corridor-plane {
+      top: 58%;
+    }
   }
-  .gallery-favorites :global(.fav-card) {
-    position: relative;
-    width: clamp(5.4rem, 9vw, 8.4rem);
-    padding: 0;
-    background: none;
-    border: 0;
-    cursor: pointer;
-    transform: rotate(-7deg);
-    transition: transform 220ms ease;
+
+  /* 播放后舞台底部出现控制条，唱片长廊同步下移，为歌词留出稳定呼吸区。 */
+  @media (min-width: 961px) {
+    :global(#music-page-wrapper.has-album) .corridor-plane {
+      top: 69%;
+    }
   }
-  .gallery-favorites :global(.fav-card:nth-child(2)) {
-    transform: rotate(5deg) translateY(1.1rem);
-  }
-  .gallery-favorites :global(.fav-card:hover) {
-    transform: rotate(0deg) translateY(-0.35rem);
-  }
-  .gallery-favorites :global(.fav-cover) {
-    display: block;
-    width: 100%;
-    aspect-ratio: 1;
-    object-fit: cover;
-    border-radius: 2px;
-    box-shadow: 0 1.1rem 2.4rem rgb(0 0 0 / 60%);
-    -webkit-box-reflect: below 2px
-      linear-gradient(transparent 60%, rgb(0 0 0 / 22%));
-  }
-  .gallery-favorites :global(.fav-label) {
-    display: block;
-    margin-top: 0.55rem;
-    color: var(--music-text-soft, rgba(247, 242, 234, 0.88));
-    font-weight: 700;
-    font-size: clamp(0.66rem, 0.95vw, 0.8rem);
-    letter-spacing: 0.32em;
-    text-align: center;
-    text-shadow: var(--music-decor-shadow, 0 1px 8px rgb(0 0 0 / 55%));
+
+  @media (min-width: 768px) and (max-width: 960px) {
+    :global(#music-page-wrapper.has-album) .corridor-plane {
+      top: 74%;
+    }
   }
 
   @media (max-width: 767px) {
     .corridor-plane {
-      top: 62%;
-      transform: translate(-50%, -50%) rotateX(9deg) rotateY(-15deg)
-        rotateZ(-4deg);
+      top: 59%;
+      transform: translateY(-50%);
     }
     .corridor-band :global(.corridor-cell) {
-      width: clamp(5.2rem, 26vw, 6.8rem);
-    }
-    .gallery-favorites {
-      right: 0.9rem;
-      bottom: auto;
-      top: clamp(13rem, 28vh, 15rem);
-    }
-    .gallery-favorites :global(.fav-card) {
-      width: clamp(3.6rem, 15vw, 4.6rem);
-    }
-    .decor-bottom {
-      display: none;
+      width: clamp(6.8rem, 34vw, 8.75rem);
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .corridor-band :global(.cell-cover),
-    .gallery-favorites :global(.fav-card) {
+    .corridor-band :global(.cell-cover) {
       transition: none;
     }
   }
@@ -228,8 +149,6 @@
     releaseDate: string | null
     songs: GallerySong[]
   }
-
-  const FAVORITE_IDS = ['david-tao', 'jay-chou-535739206']
 
   let albumsCache: GalleryAlbum[] | null = null
   let albumsPromise: Promise<GalleryAlbum[]> | null = null
@@ -291,42 +210,42 @@
     const root = document.getElementById('album-gallery')
     const viewport = document.getElementById('corridor-viewport')
     const bandEl = document.getElementById('corridor-band')
-    const favEl = document.getElementById('gallery-favorites')
-    if (!root || !viewport || !bandEl || !favEl) return
+    if (!root || !viewport || !bandEl) return
     if (root.dataset.bound === 'true') return
     root.dataset.bound = 'true'
     const band = bandEl
-    const favBox = favEl
 
     let albums: GalleryAlbum[] = []
-    let bandWidth = 0
+    let cycleWidth = 0
     let offset = 0
     let velocity = 0
     let dragging = false
     let lastX = 0
     let dragTravel = 0
+    let pressedCell: HTMLElement | null = null
     let lastInteract = 0
     let rafId = 0
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
 
     function buildCells() {
       const frag = document.createDocumentFragment()
-      // 渲染两份实现无缝循环
-      for (let copy = 0; copy < 2; copy++) {
-        albums.forEach((album, i) => {
+      // 三份轨道让视口始终停留在中间副本，左右都有完整缓冲。
+      for (let copy = 0; copy < 3; copy++) {
+        albums.forEach((album) => {
           const cell = document.createElement('button')
           cell.type = 'button'
           cell.className = 'corridor-cell'
           cell.dataset.albumId = album.id
-          if (copy === 1) cell.setAttribute('aria-hidden', 'true')
-          if (copy === 1) cell.tabIndex = -1
-          const no = String(i + 1).padStart(2, '0')
+          cell.dataset.copy = String(copy)
+          if (copy !== 1) cell.setAttribute('aria-hidden', 'true')
+          if (copy !== 1) cell.tabIndex = -1
           cell.innerHTML = `
-            <span class="cell-no">${no}</span>
             <img class="cell-cover" src="${galleryCover(album.cover)}" alt="${album.name}" loading="lazy" decoding="async" draggable="false" />
             <span class="cell-name">${album.name} · ${album.artist}</span>`
-          cell.addEventListener('click', () => {
-            if (dragTravel > 6) return
+          cell.addEventListener('click', (event) => {
+            // Pointer activation is handled on pointerup because the viewport
+            // owns pointer capture while dragging. Keep click for keyboard use.
+            if (event.detail !== 0 || dragTravel > 6) return
             const cover = cell.querySelector<HTMLElement>('.cell-cover')
             openAlbum(album, cover ?? cell, true)
           })
@@ -337,34 +256,24 @@
       measure()
     }
 
-    function buildFavorites() {
-      const frag = document.createDocumentFragment()
-      FAVORITE_IDS.forEach((id) => {
-        const album = albums.find((a) => a.id === id)
-        if (!album) return
-        const card = document.createElement('button')
-        card.type = 'button'
-        card.className = 'fav-card'
-        card.innerHTML = `
-          <img class="fav-cover" src="${galleryCover(album.cover)}" alt="${album.name}" loading="lazy" decoding="async" draggable="false" />
-          <span class="fav-label">个人最爱</span>`
-        card.addEventListener('click', () => {
-          const cover = card.querySelector<HTMLElement>('.fav-cover')
-          openAlbum(album, cover ?? card, true)
-        })
-        frag.appendChild(card)
-      })
-      favBox.replaceChildren(frag)
-    }
-
     function measure() {
-      bandWidth = band.scrollWidth / 2
+      const firstCopy = band.querySelector<HTMLElement>(
+        '.corridor-cell[data-copy="0"]'
+      )
+      const middleCopy = band.querySelector<HTMLElement>(
+        '.corridor-cell[data-copy="1"]'
+      )
+      cycleWidth =
+        firstCopy && middleCopy
+          ? middleCopy.offsetLeft - firstCopy.offsetLeft
+          : band.scrollWidth / 3
+      if (cycleWidth) offset = ((offset % cycleWidth) + cycleWidth) % cycleWidth
     }
 
     function tick() {
       rafId = 0
       if (document.hidden || !isMusicPage()) return
-      if (!bandWidth) return
+      if (!cycleWidth) return
       if (!dragging) {
         offset += velocity
         velocity *= 0.94
@@ -378,8 +287,8 @@
           offset += 0.3
         }
       }
-      offset = ((offset % bandWidth) + bandWidth) % bandWidth
-      band.style.transform = `translate3d(${-offset}px, 0, 0)`
+      offset = ((offset % cycleWidth) + cycleWidth) % cycleWidth
+      band.style.transform = `translate3d(${-(cycleWidth + offset)}px, 0, 0)`
       rafId = requestAnimationFrame(tick)
     }
 
@@ -405,6 +314,9 @@
     viewport.addEventListener('pointerdown', (e) => {
       dragging = true
       dragTravel = 0
+      pressedCell = (e.target as Element | null)?.closest(
+        '.corridor-cell'
+      ) as HTMLElement | null
       lastX = e.clientX
       velocity = 0
       lastInteract = performance.now()
@@ -420,12 +332,25 @@
       velocity = -dx
       lastInteract = performance.now()
     })
-    const endDrag = () => {
+    const endDrag = (e: PointerEvent, activate: boolean) => {
+      const cell = pressedCell
+      const shouldOpen = activate && dragTravel <= 6 && Boolean(cell)
       dragging = false
+      pressedCell = null
       viewport.classList.remove('dragging')
+      if (viewport.hasPointerCapture(e.pointerId)) {
+        viewport.releasePointerCapture(e.pointerId)
+      }
+      if (shouldOpen && cell) {
+        const album = albums.find((item) => item.id === cell.dataset.albumId)
+        if (album) {
+          const cover = cell.querySelector<HTMLElement>('.cell-cover')
+          openAlbum(album, cover ?? cell, true)
+        }
+      }
     }
-    viewport.addEventListener('pointerup', endDrag)
-    viewport.addEventListener('pointercancel', endDrag)
+    viewport.addEventListener('pointerup', (e) => endDrag(e, true))
+    viewport.addEventListener('pointercancel', (e) => endDrag(e, false))
     viewport.addEventListener(
       'wheel',
       (e) => {
@@ -455,7 +380,6 @@
       .then((data) => {
         albums = data
         buildCells()
-        buildFavorites()
         startMotion()
       })
       .catch((e) => console.error('[gallery] failed to load albums:', e))
