@@ -1,6 +1,7 @@
 {
   "name": "blog",
   "version": "3.0.0",
+  "packageManager": "pnpm@11.22.0",
   "type": "module",
   "private": true,
   "license": "MIT",
