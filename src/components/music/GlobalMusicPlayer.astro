@@ -213,6 +213,26 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
     min-height: 0;
   }
 
+  /* 未播放时让长导语参与页面高度，矮视口通过页面滚动展示完整文字。 */
+  .music-page-wrapper:not(.has-album) {
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+  }
+  .music-page-wrapper:not(.has-album) .music-player-container {
+    height: max(100dvh, var(--music-intro-stage-height, 46rem));
+    min-height: max(100dvh, var(--music-intro-stage-height, 46rem));
+    overflow: visible;
+  }
+
+  @media (max-width: 767px) {
+    .music-page-wrapper:not(.has-album) .music-player-container {
+      height: max(100dvh, var(--music-intro-stage-height, 48rem));
+      min-height: max(100dvh, var(--music-intro-stage-height, 48rem));
+      overflow: visible;
+    }
+  }
+
   .playback-hub {
     position: relative;
     z-index: 90;

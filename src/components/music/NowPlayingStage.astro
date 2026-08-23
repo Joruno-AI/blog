@@ -11,13 +11,14 @@
     aria-labelledby="listening-intro-title"
   >
     <h1 id="listening-intro-title">
-      <span class="intro-title-lead">一张唱片</span>
+      <span class="intro-title-lead">四种声音</span>
       <span class="intro-title-tail">一个时代</span>
     </h1>
     <p class="listening-intro-copy">
-      这里按专辑而不是单曲整理音乐。挑一张封面，从第一首顺着曲序听下去，感受创作者如何铺陈情绪、风格与故事。
+      这里收藏周杰伦、王力宏、陶喆与林俊杰的专辑，也把四位创作者放回完整唱片的语境。陶喆以松弛的律动重塑华语
+      R&amp;B，周杰伦把说唱、古典与中国式旋律带进流行音乐，王力宏在抒情、摇滚和东方元素之间拓宽制作边界，林俊杰则用细密旋律与宽阔声线记录城市情绪。这里不打乱曲序，也不把专辑压缩成热门单曲；挑一张封面，从第一首听到最后一首，感受开场、中段与尾声如何共同完成一段叙事。
     </p>
-    <p class="listening-intro-hint">拖动浏览唱片，点击封面从头播放</p>
+    <p class="listening-intro-hint">左右滑动浏览，轻触封面，从第一首开始听</p>
   </section>
 
   <section class="record-context" id="record-context" aria-hidden="true">
@@ -91,7 +92,7 @@
     top: clamp(5.5rem, 13vh, 8.25rem);
     left: clamp(1.5rem, 6vw, 6.5rem);
     z-index: 3;
-    width: min(31rem, 36vw);
+    width: min(43rem, 48vw);
     color: var(--music-text-strong);
     pointer-events: none;
     transition:
@@ -132,7 +133,7 @@
     letter-spacing: -0.05em;
   }
   .listening-intro-copy {
-    max-width: 28rem;
+    max-width: 43rem;
     margin: 1.5rem 0 0;
     color: var(--music-text-soft);
     font-size: clamp(0.86rem, 1vw, 1rem);
@@ -190,9 +191,9 @@
     letter-spacing: 0.12em;
   }
   .record-context-description {
-    display: -webkit-box;
+    display: block;
     max-width: 32rem;
-    overflow: hidden;
+    overflow: visible;
     margin: 1.5rem 0 0;
     padding-top: 1rem;
     color: var(--music-text-soft);
@@ -202,8 +203,7 @@
     line-height: 1.75;
     text-align: left;
     text-wrap: pretty;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 6;
+    -webkit-line-clamp: unset;
   }
   .record-context-description:empty {
     display: none;
@@ -228,16 +228,14 @@
     padding-top: 0.75rem;
     font-size: clamp(0.72rem, 0.82vw, 0.86rem);
     line-height: 1.62;
-    -webkit-line-clamp: 4;
+    -webkit-line-clamp: unset;
   }
   :global(#music-page-wrapper.stage-compact-intro) .listening-intro-copy {
-    display: -webkit-box;
-    overflow: hidden;
+    display: block;
     margin-top: 1rem;
     font-size: clamp(0.72rem, 0.82vw, 0.86rem);
     line-height: 1.62;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 4;
+    -webkit-line-clamp: unset;
   }
   :global(#music-page-wrapper.stage-compact-intro) .listening-intro-hint {
     margin-top: 0.75rem;
@@ -467,11 +465,62 @@
   }
   .lyrics-scroll :global(.lyric-line.is-current) {
     color: var(--music-accent-text, #f6d23c);
-    font-size: clamp(1.2rem, 1.45vw, 1.45rem);
+    font-size: inherit;
     font-weight: 720;
     letter-spacing: 0;
     line-height: 1.5;
     transform: none;
+  }
+
+  .lyrics-scroll :global(.lyric-countdown) {
+    display: none;
+    min-height: var(--lyrics-line-box);
+    align-items: center;
+    gap: 0.48rem;
+    padding-inline: 0.15rem;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(0.5rem) scale(0.96);
+    transform-origin: left center;
+    transition:
+      opacity 360ms ease,
+      transform 520ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .lyrics-scroll :global(.lyric-countdown.is-visible) {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  .lyrics-scroll :global(.countdown-dot) {
+    width: 0.48rem;
+    aspect-ratio: 1;
+    background: var(--music-lyric-active, var(--music-accent-text));
+    border-radius: 50%;
+    box-shadow: 0 0 0.9rem
+      color-mix(
+        in srgb,
+        var(--music-lyric-active, var(--music-accent-text)) 42%,
+        transparent
+      );
+    opacity: 0.16;
+    transform: scale(0.7);
+    transition:
+      opacity 320ms ease,
+      transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .lyrics-scroll :global(.countdown-dot.is-active) {
+    opacity: 1;
+    transform: scale(1);
+    animation: countdown-breathe 820ms ease-in-out infinite alternate;
+  }
+  @keyframes countdown-breathe {
+    from {
+      opacity: 0.52;
+      transform: scale(0.82);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1.12);
+    }
   }
 
   /* 右侧曲目侧边栏: 平时收在屏幕右缘只露把手,展开时滑入 */
@@ -673,7 +722,7 @@
     .record-context-description {
       margin-top: 1rem;
       padding-top: 0.75rem;
-      -webkit-line-clamp: 4;
+      -webkit-line-clamp: unset;
     }
   }
 
@@ -698,12 +747,25 @@
     }
     .lyrics-scroll :global(.lyric-line) {
       min-height: 2.75rem;
-      font-size: 0.88rem;
+      font-size: 1rem;
+      opacity: 0.68;
+      transform: translateZ(0) scale(0.96);
+      transform-origin: left center;
+      transition:
+        color 360ms ease,
+        opacity 420ms ease,
+        transform 520ms cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: transform, opacity;
     }
     .lyrics-scroll :global(.lyric-line.is-current) {
-      font-size: 1.16rem;
+      color: var(--music-lyric-active, var(--music-accent-text, #f6d23c));
+      font-size: 1rem;
       line-height: 1.45;
-      transform: none;
+      opacity: 1;
+      transform: translateZ(0) scale(1.16);
+    }
+    .lyrics-scroll :global(.lyric-countdown) {
+      display: flex;
     }
     .track-panel {
       --panel-width: min(19rem, calc(100vw - 3rem));
@@ -744,6 +806,159 @@
   :global(#music-page-wrapper.stage-hide-lyrics) .stage-left {
     display: none;
   }
+
+  @media (max-width: 767px) {
+    /* 手机首屏保留导语，选中唱片后再把空间完整交给歌词。 */
+    :global(#music-page-wrapper:not(.has-album)) .listening-intro {
+      top: max(4.75rem, calc(env(safe-area-inset-top) + 4rem));
+      left: 1rem;
+      display: block;
+      width: calc(100vw - 2rem);
+      opacity: 1;
+      transform: none;
+    }
+    :global(#music-page-wrapper:not(.has-album)) .listening-intro h1 {
+      gap: 0.2em;
+      font-size: clamp(1.85rem, 9vw, 2.35rem);
+    }
+    :global(#music-page-wrapper:not(.has-album)) .listening-intro-copy {
+      display: block;
+      max-width: 36rem;
+      margin-top: 1rem;
+      font-size: 0.8rem;
+      line-height: 1.68;
+      -webkit-line-clamp: unset;
+    }
+    :global(#music-page-wrapper:not(.has-album)) .listening-intro-hint {
+      margin-top: 0.75rem;
+      font-size: 0.62rem;
+      letter-spacing: 0.08em;
+    }
+    :global(#music-page-wrapper:not(.has-album)) .stage-left {
+      display: none;
+    }
+
+    :global(#music-page-wrapper.has-album) .stage-left {
+      top: max(4.75rem, calc(env(safe-area-inset-top) + 4rem));
+      right: 1rem;
+      left: 1rem;
+      display: block;
+      width: auto;
+      transform: none;
+    }
+    :global(#music-page-wrapper.has-album) .stage-vinyl {
+      display: none;
+    }
+    :global(#music-page-wrapper.has-album) .lyrics-panel {
+      --lyrics-height: clamp(14rem, 38dvh, 20rem);
+      --lyrics-line-box: 3rem;
+      display: block;
+      width: 100%;
+      height: var(--lyrics-height);
+      max-height: var(--lyrics-height);
+    }
+    :global(#music-page-wrapper.has-album) .lyrics-scroll :global(.lyric-line) {
+      min-height: 3rem;
+      padding-inline: 0.15rem;
+      font-size: 1rem;
+      line-height: 1.55;
+    }
+    :global(#music-page-wrapper.has-album)
+      .lyrics-scroll
+      :global(.lyric-line.is-current) {
+      line-height: 1.42;
+      transform: translateZ(0) scale(1.16);
+    }
+
+    /* 侧栏始终被舞台高度约束，长专辑只在曲目区内部滚动。 */
+    .track-panel {
+      --panel-width: min(21rem, calc(100vw - 2.75rem));
+      top: max(4rem, calc(env(safe-area-inset-top) + 3.5rem));
+      bottom: 0.75rem;
+      align-items: stretch;
+    }
+    .track-panel-body {
+      box-sizing: border-box;
+      width: var(--panel-width);
+      height: 100%;
+      min-height: 0;
+      max-height: 100%;
+      overflow: hidden;
+      padding: 0.85rem 0.9rem 0.8rem 1rem;
+    }
+    .track-panel-head {
+      flex: none;
+      min-width: 0;
+      gap: 0.75rem;
+      margin-bottom: 0.65rem;
+    }
+    .panel-cover {
+      width: 4.65rem;
+      height: 4.65rem;
+    }
+    .panel-meta {
+      flex: 1;
+      min-width: 0;
+    }
+    .panel-title {
+      max-width: 100%;
+      margin-right: 0;
+    }
+    .panel-play-all {
+      max-width: 100%;
+      white-space: nowrap;
+    }
+    .panel-tracks {
+      flex: 1 1 auto;
+      min-height: 0;
+      max-height: none;
+      overflow-x: hidden;
+      overflow-y: auto;
+      padding-bottom: max(0.65rem, env(safe-area-inset-bottom));
+      overscroll-behavior: contain;
+      touch-action: pan-y;
+    }
+    .panel-tracks :global(.track-row) {
+      box-sizing: border-box;
+      display: grid;
+      grid-template-columns: 1.25rem minmax(0, 1fr) auto auto;
+      gap: 0.42rem;
+      max-width: 100%;
+      min-height: 2.75rem;
+      overflow: hidden;
+      padding-inline: 0.4rem;
+    }
+    .panel-tracks :global(.track-no) {
+      width: auto;
+    }
+    .panel-tracks :global(.track-name) {
+      min-width: 0;
+    }
+    .panel-tracks :global(.track-tag) {
+      max-width: 4.5rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .panel-tracks :global(.track-dur) {
+      justify-self: end;
+    }
+  }
+
+  @media (max-width: 767px) and (max-height: 700px) {
+    :global(#music-page-wrapper.has-album) .lyrics-panel {
+      --lyrics-height: clamp(9.5rem, 28dvh, 11rem);
+    }
+  }
+
+  @media (max-width: 380px) {
+    .panel-tracks :global(.track-row) {
+      grid-template-columns: 1.15rem minmax(0, 1fr) auto;
+    }
+    .panel-tracks :global(.track-tag) {
+      display: none;
+    }
+  }
   @media (pointer: coarse) {
     .panel-play-all,
     .panel-tracks :global(.track-row) {
@@ -754,6 +969,13 @@
   @media (prefers-reduced-motion: reduce) {
     .vinyl-disc {
       animation: none;
+    }
+    .lyrics-scroll :global(.countdown-dot.is-active) {
+      animation: none;
+    }
+    .lyrics-scroll :global(.lyric-line),
+    .lyrics-scroll :global(.lyric-countdown) {
+      transition-duration: 1ms;
     }
     .track-panel {
       transition: none;
@@ -849,6 +1071,55 @@
 
     const musicWrapper = document.getElementById('music-page-wrapper')
     let fitFrame = 0
+
+    function updateIntroGalleryFlow(hasAlbum: boolean) {
+      if (!musicWrapper || !stage || !listeningIntro) return
+      const corridorPlane = document.querySelector<HTMLElement>(
+        '#album-gallery .corridor-plane'
+      )
+      if (!corridorPlane) return
+
+      if (hasAlbum) {
+        corridorPlane.style.removeProperty('top')
+        musicWrapper.style.removeProperty('--music-intro-stage-height')
+        return
+      }
+
+      const stageRect = stage.getBoundingClientRect()
+      const introRect = listeningIntro.getBoundingClientRect()
+      const firstCell = corridorPlane.querySelector<HTMLElement>(
+        '.corridor-cell[data-copy="1"]'
+      )
+      if (!firstCell || introRect.height <= 0) return
+      const cellRect = firstCell.getBoundingClientRect()
+      if (cellRect.height <= 0) return
+
+      const width = stage.clientWidth || window.innerWidth
+      const gap = width <= 767 ? 28 : width <= 960 ? 40 : 48
+      const introBottom = introRect.bottom - stageRect.top
+      const targetCardTop = introBottom + gap
+      const currentCardTop = cellRect.top - stageRect.top
+      const currentCorridorTop =
+        Number.parseFloat(getComputedStyle(corridorPlane).top) || 0
+      const corridorTop = Math.ceil(
+        currentCorridorTop + targetCardTop - currentCardTop
+      )
+      const reflectionRoom = Math.min(120, cellRect.height * 0.55)
+      const requiredHeight = Math.ceil(
+        targetCardTop + cellRect.height + reflectionRoom + 48
+      )
+
+      const nextTop = `${corridorTop}px`
+      const nextHeight = `${requiredHeight}px`
+      if (corridorPlane.style.top !== nextTop) corridorPlane.style.top = nextTop
+      if (
+        musicWrapper.style.getPropertyValue('--music-intro-stage-height') !==
+        nextHeight
+      ) {
+        musicWrapper.style.setProperty('--music-intro-stage-height', nextHeight)
+      }
+    }
+
     function updateStageFit() {
       if (!musicWrapper || !stageLeft) return
       musicWrapper.classList.remove(
@@ -859,6 +1130,23 @@
       )
 
       const width = stage!.clientWidth || window.innerWidth
+      const hasAlbum = musicWrapper.classList.contains('has-album')
+      if (width <= 767) {
+        musicWrapper.classList.toggle('stage-hide-intro', hasAlbum)
+        musicWrapper.classList.toggle('stage-hide-vinyl', hasAlbum)
+        updateIntroGalleryFlow(hasAlbum)
+        return
+      }
+
+      // 尚未选择专辑时只存在导语和长廊，不用未显示的歌词/唱片参与宽度压缩。
+      if (!hasAlbum) {
+        musicWrapper.style.removeProperty('--stage-intro-fit')
+        updateIntroGalleryFlow(false)
+        return
+      }
+
+      updateIntroGalleryFlow(true)
+
       const introWidth = Math.max(
         listeningIntro?.offsetWidth ?? 0,
         recordContext?.offsetWidth ?? 0
@@ -901,6 +1189,11 @@
 
     const fitObserver = new ResizeObserver(scheduleStageFit)
     fitObserver.observe(stage)
+    if (listeningIntro) fitObserver.observe(listeningIntro)
+    const corridorPlane = document.querySelector<HTMLElement>(
+      '#album-gallery .corridor-plane'
+    )
+    if (corridorPlane) fitObserver.observe(corridorPlane)
     window.addEventListener('resize', scheduleStageFit)
     scheduleStageFit()
 
@@ -983,6 +1276,15 @@
       }
       lyricsEmpty.style.display = 'none'
       const frag = document.createDocumentFragment()
+      const countdown = document.createElement('div')
+      countdown.className = 'lyric-countdown'
+      countdown.setAttribute('aria-hidden', 'true')
+      for (let i = 0; i < 3; i++) {
+        const dot = document.createElement('span')
+        dot.className = 'countdown-dot'
+        countdown.appendChild(dot)
+      }
+      frag.appendChild(countdown)
       currentLines.forEach((line, i) => {
         const el = document.createElement('button')
         el.type = 'button'
@@ -999,8 +1301,25 @@
       lyricsScroll.scrollTop = 0
     }
 
+    function updateLyricCountdown(time: number) {
+      if (!lyricsScroll || !currentLines.length) return
+      const countdown =
+        lyricsScroll.querySelector<HTMLElement>('.lyric-countdown')
+      if (!countdown) return
+      const remaining = currentLines[0].t - time
+      const visible = remaining > 0.25 && remaining <= 3.4
+      countdown.classList.toggle('is-visible', visible)
+      const activeDots = visible
+        ? Math.max(0, Math.min(3, 4 - Math.ceil(remaining)))
+        : 0
+      countdown.querySelectorAll('.countdown-dot').forEach((dot, index) => {
+        dot.classList.toggle('is-active', index < activeDots)
+      })
+    }
+
     function syncLyrics(time: number) {
       if (!currentLines.length || !lyricsScroll) return
+      updateLyricCountdown(time)
       let idx = -1
       for (let i = 0; i < currentLines.length; i++) {
         if (currentLines[i].t <= time + 0.25) idx = i
@@ -1008,12 +1327,12 @@
       }
       if (idx === currentLineIndex) return
       currentLineIndex = idx
-      const nodes = lyricsScroll.children
+      const nodes = lyricsScroll.querySelectorAll<HTMLElement>('.lyric-line')
       for (let i = 0; i < nodes.length; i++) {
         nodes[i].classList.toggle('is-current', i === idx)
       }
       if (idx >= 0) {
-        const el = nodes[idx] as HTMLElement
+        const el = nodes[idx]
         lyricsScroll.scrollTo({
           // Center the line itself. The scroll padding above makes this work
           // for the first and last line too, instead of clamping them into
@@ -1222,6 +1541,7 @@
     function selectAlbum(album: StageAlbum) {
       playingAlbum = album
       document.getElementById('music-page-wrapper')?.classList.add('has-album')
+      scheduleStageFit()
       renderRecordContext(album)
       window.dispatchEvent(new CustomEvent('album-selected', { detail: album }))
       if (vinylLabel && album.cover) {

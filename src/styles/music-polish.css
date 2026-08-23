@@ -89,6 +89,17 @@
   --music-chrome-border: transparent;
 }
 
+@media (max-width: 767px) {
+  :root:not(.dark) #global-music-player .music-page-wrapper {
+    --music-lyric-active: var(--music-accent-text);
+  }
+
+  :root.dark #global-music-player .music-page-wrapper {
+    /* 手机端歌词与暗色 Light Ray 使用同一暖金色。 */
+    --music-lyric-active: #f5d789;
+  }
+}
+
 #global-music-player .music-page-wrapper {
   font-family: inherit;
   font-synthesis: none;
