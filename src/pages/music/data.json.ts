@@ -91,7 +91,6 @@ export const GET: APIRoute = async () => {
         duration: song.duration,
         url: audioUnavailable ? null : (song.url ?? null),
         hasLyrics:
-          Boolean(song.lyrics) &&
           !quality?.lyricsMismatch &&
           (!song.url || studioVerified) &&
           lyricAlignment?.verified === true,
