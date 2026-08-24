@@ -409,6 +409,7 @@ const isHidden = !dynamic && !audioUrl
   }
 
   .article-audio-toggle {
+    position: relative;
     display: inline-flex;
     width: 3.7rem;
     height: 3.7rem;
@@ -442,8 +443,21 @@ const isHidden = !dynamic && !audioUrl
   }
 
   .article-audio-toggle[aria-busy='true'] {
-    border-style: dashed;
+    border-color: transparent;
+  }
+
+  .article-audio-toggle[aria-busy='true']::before {
+    position: absolute;
+    inset: -1.5px;
+    border: 1.5px dashed var(--audio-accent);
+    border-radius: 50%;
     animation: article-audio-waiting 1.8s linear infinite;
+    content: '';
+    pointer-events: none;
+  }
+
+  .article-audio-toggle[aria-busy='true'] span {
+    opacity: 0.45;
   }
 
   @keyframes article-audio-waiting {
