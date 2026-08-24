@@ -84,9 +84,10 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
               <div
                 class="mini-progress"
                 id="mini-progress"
-                role="progressbar"
+                role="slider"
                 tabindex="0"
                 aria-label="播放进度"
+                aria-orientation="horizontal"
                 aria-valuemin="0"
                 aria-valuemax="100"
                 aria-valuenow="0"
@@ -372,6 +373,8 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
     border-radius: 999px;
     cursor: pointer;
     touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
   }
   .mini-progress::before {
     content: '';
@@ -436,6 +439,19 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
     .mini-progress:focus-visible .mini-progress-fill::after {
       opacity: 1;
       transform: translate(50%, -50%) scale(1);
+    }
+  }
+  @media (hover: none) and (pointer: coarse) {
+    .mini-progress-fill::after {
+      opacity: 1;
+      transform: translate(50%, -50%) scale(0.94);
+    }
+    .mini-progress.is-seeking::before,
+    .mini-progress.is-seeking .mini-progress-fill {
+      height: 5px;
+    }
+    .mini-progress.is-seeking .mini-progress-fill::after {
+      transform: translate(50%, -50%) scale(1.12);
     }
   }
   .mini-controls,
@@ -675,6 +691,9 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
     .mini-progress-line {
       gap: 0.4rem;
     }
+    .mini-progress {
+      height: 2.75rem;
+    }
     .mini-play-btn {
       width: 2.6rem;
       height: 2.6rem;
@@ -764,6 +783,7 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
     currentVinylRotation?: number
     shellEventsBound?: boolean
     playerCollapsed?: boolean
+    currentDuration?: number
   }
   declare global {
     interface Window {
@@ -822,6 +842,25 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
     const icon = document.getElementById('mini-play-icon')
     if (icon) icon.className = isPlaying ? 'i-ri-pause-fill' : 'i-ri-play-fill'
   }
+  function updateProgressUi(currentTime: number, duration: number) {
+    const safeDuration = Number.isFinite(duration) ? Math.max(0, duration) : 0
+    const safeTime = Number.isFinite(currentTime)
+      ? Math.max(0, Math.min(currentTime, safeDuration || currentTime))
+      : 0
+    const percent = safeDuration > 0 ? (safeTime / safeDuration) * 100 : 0
+    const fill = document.getElementById('mini-progress-fill')
+    const progress = document.getElementById('mini-progress')
+    const currentTimeEl = document.getElementById('mini-current-time')
+    const durationEl = document.getElementById('mini-duration')
+    if (fill) fill.style.width = `${Math.min(100, percent)}%`
+    progress?.setAttribute('aria-valuenow', String(Math.round(percent)))
+    progress?.setAttribute(
+      'aria-valuetext',
+      `${formatTime(safeTime)} / ${formatTime(safeDuration)}`
+    )
+    if (currentTimeEl) currentTimeEl.textContent = formatTime(safeTime)
+    if (durationEl) durationEl.textContent = formatTime(safeDuration)
+  }
   function setPlayerCollapsed(collapsed: boolean) {
     const hub = document.getElementById('playback-hub')
     const fullDock = document.getElementById('mobile-mini-player')
@@ -861,15 +900,8 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
       )
       window.MusicPlayerState.currentSongIndex = 0
       window.MusicPlayerState.isPlaying = false
-      const fill = document.getElementById('mini-progress-fill')
-      const progress = document.getElementById('mini-progress')
-      const currentTime = document.getElementById('mini-current-time')
-      const duration = document.getElementById('mini-duration')
-      if (fill) fill.style.width = '0%'
-      progress?.setAttribute('aria-valuenow', '0')
-      progress?.setAttribute('aria-valuetext', '0:00 / 0:00')
-      if (currentTime) currentTime.textContent = '0:00'
-      if (duration) duration.textContent = '0:00'
+      window.MusicPlayerState.currentDuration = 0
+      updateProgressUi(0, 0)
       updateMiniTrack()
       updatePlayIcon(false)
     }) as EventListener)
@@ -885,20 +917,8 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
       const { currentTime, duration, songIndex } = event.detail
       if (typeof songIndex === 'number')
         window.MusicPlayerState.currentSongIndex = songIndex
-      const percent =
-        duration > 0 ? Math.min(100, (currentTime / duration) * 100) : 0
-      const fill = document.getElementById('mini-progress-fill')
-      const progress = document.getElementById('mini-progress')
-      const currentTimeEl = document.getElementById('mini-current-time')
-      const durationEl = document.getElementById('mini-duration')
-      if (fill) fill.style.width = `${percent}%`
-      progress?.setAttribute('aria-valuenow', String(Math.round(percent)))
-      progress?.setAttribute(
-        'aria-valuetext',
-        `${formatTime(currentTime)} / ${formatTime(duration)}`
-      )
-      if (currentTimeEl) currentTimeEl.textContent = formatTime(currentTime)
-      if (durationEl) durationEl.textContent = formatTime(duration)
+      window.MusicPlayerState.currentDuration = Number(duration) || 0
+      updateProgressUi(Number(currentTime) || 0, Number(duration) || 0)
       updateMiniTrack()
     }) as EventListener)
     window.addEventListener('set-playback-rate', ((event: CustomEvent) =>
@@ -928,16 +948,49 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
         window.dispatchEvent(new CustomEvent('next-song'))
       )
     const progress = document.getElementById('mini-progress')
-    const seekTo = (ratio: number) =>
+    const seekTo = (ratio: number) => {
+      const clampedRatio = Math.max(0, Math.min(1, ratio))
+      const duration = window.MusicPlayerState.currentDuration ?? 0
+      updateProgressUi(clampedRatio * duration, duration)
       window.dispatchEvent(
         new CustomEvent('seek-to', {
-          detail: Math.max(0, Math.min(1, ratio)),
+          detail: clampedRatio,
         })
       )
-    progress?.addEventListener('click', (event) => {
-      const rect = progress.getBoundingClientRect()
-      seekTo((event.clientX - rect.left) / rect.width)
-    })
+    }
+    if (progress) {
+      let activePointerId: number | null = null
+      const seekFromClientX = (clientX: number) => {
+        const rect = progress.getBoundingClientRect()
+        if (rect.width <= 0) return
+        seekTo((clientX - rect.left) / rect.width)
+      }
+      const finishPointerSeek = (event: PointerEvent) => {
+        if (event.pointerId !== activePointerId) return
+        if (event.type === 'pointerup') seekFromClientX(event.clientX)
+        activePointerId = null
+        progress.classList.remove('is-seeking')
+        if (progress.hasPointerCapture(event.pointerId)) {
+          progress.releasePointerCapture(event.pointerId)
+        }
+      }
+
+      progress.addEventListener('pointerdown', (event) => {
+        if (event.pointerType === 'mouse' && event.button !== 0) return
+        activePointerId = event.pointerId
+        progress.classList.add('is-seeking')
+        progress.setPointerCapture(event.pointerId)
+        event.preventDefault()
+        seekFromClientX(event.clientX)
+      })
+      progress.addEventListener('pointermove', (event) => {
+        if (event.pointerId !== activePointerId) return
+        event.preventDefault()
+        seekFromClientX(event.clientX)
+      })
+      progress.addEventListener('pointerup', finishPointerSeek)
+      progress.addEventListener('pointercancel', finishPointerSeek)
+    }
     progress?.addEventListener('keydown', (event) => {
       const current = Number(progress.getAttribute('aria-valuenow')) / 100 || 0
       const step = event.shiftKey ? 0.1 : 0.025

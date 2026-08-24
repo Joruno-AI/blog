@@ -206,6 +206,7 @@
     window.addEventListener('seek-to', ((e: CustomEvent) => {
       if (audio && audio.duration) {
         audio.currentTime = audio.duration * Number(e.detail)
+        emitProgress()
       }
     }) as EventListener)
 
@@ -213,6 +214,7 @@
       const t = Number(e.detail)
       if (audio && Number.isFinite(t)) {
         audio.currentTime = t
+        emitProgress()
         if (!isPlaying) {
           audio.play().catch((err) => {
             if (err.name !== 'AbortError')

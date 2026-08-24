@@ -477,8 +477,24 @@
       font-size 220ms cubic-bezier(0.22, 1, 0.36, 1),
       transform 180ms ease;
   }
+  .lyrics-scroll :global(.lyric-line-shell) {
+    position: relative;
+    width: 100%;
+  }
+  .lyrics-scroll :global(.lyric-seek-time),
+  .lyrics-scroll :global(.lyric-seek-confirm) {
+    display: none;
+  }
   .lyrics-scroll :global(.lyric-line:hover) {
     color: var(--music-text-soft, rgba(247, 242, 234, 0.68));
+  }
+  .lyrics-scroll :global(.lyric-line:focus) {
+    outline: none;
+    box-shadow: none;
+  }
+  .lyrics-scroll :global(.lyric-line:focus-visible) {
+    color: var(--music-text-strong, #fffaf2);
+    outline: none;
   }
   .lyrics-scroll :global(.lyric-line.is-current) {
     color: var(--music-accent-text, #f6d23c);
@@ -875,6 +891,7 @@
         clamp(8rem, 42dvh, 20rem)
       );
       --lyrics-line-box: clamp(2rem, 6.5vw, 2.45rem);
+      --lyric-control-gutter: 2.7rem;
       display: block;
       flex: 1 1 auto;
       width: auto;
@@ -893,15 +910,72 @@
     }
     :global(#music-page-wrapper.has-album) .lyrics-scroll :global(.lyric-line) {
       min-height: var(--lyrics-line-box);
-      padding: 0.24rem 0.15rem;
+      padding: 0.24rem var(--lyric-control-gutter);
       font-size: clamp(0.72rem, 2.7vw, 0.94rem);
       line-height: 1.48;
+      transform: none;
     }
     :global(#music-page-wrapper.has-album)
       .lyrics-scroll
       :global(.lyric-line.is-current) {
       line-height: 1.4;
-      transform: translateZ(0) scale(1.05);
+      transform: none;
+    }
+    :global(#music-page-wrapper.has-album)
+      .lyrics-scroll
+      :global(.lyric-line-shell.is-seek-selected .lyric-line) {
+      min-height: 2.75rem;
+      padding-inline: var(--lyric-control-gutter);
+      color: var(--music-text-strong, #fffaf2);
+      background: color-mix(
+        in srgb,
+        var(--music-panel-strong, #0a0b0d) 46%,
+        transparent
+      );
+      border-radius: 0.65rem;
+      opacity: 1;
+      transform: translateZ(0) scale(1);
+    }
+    :global(#music-page-wrapper.has-album)
+      .lyrics-scroll
+      :global(.lyric-line-shell.is-seek-selected .lyric-seek-time) {
+      position: absolute;
+      top: 50%;
+      left: 0.45rem;
+      z-index: 2;
+      display: block;
+      color: var(--music-text-muted, rgba(247, 242, 234, 0.48));
+      font-size: 0.58rem;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+      pointer-events: none;
+      transform: translateY(-50%);
+    }
+    :global(#music-page-wrapper.has-album)
+      .lyrics-scroll
+      :global(.lyric-line-shell.is-seek-selected .lyric-seek-confirm) {
+      position: absolute;
+      top: 50%;
+      right: 0.1rem;
+      z-index: 3;
+      display: grid;
+      width: 2.75rem;
+      height: 2.75rem;
+      padding: 0;
+      color: var(--music-text-strong, #fffaf2);
+      background: transparent;
+      border: 0;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      cursor: pointer;
+      place-items: center;
+      transform: translateY(-50%);
+    }
+    :global(#music-page-wrapper.has-album)
+      .lyrics-scroll
+      :global(.lyric-seek-confirm:focus-visible) {
+      outline: 2px solid var(--music-focus, rgb(255 255 255 / 82%));
+      outline-offset: -2px;
     }
 
     /* 侧栏始终被舞台高度约束，长专辑只在曲目区内部滚动。 */
@@ -1096,6 +1170,9 @@
     let currentLines: LyricLine[] = []
     let currentLineIndex = -1
     let currentSongId: string | null = null
+    let selectedLyricIndex = -1
+    let lyricSelectionTimer = 0
+    const mobileLyricSeekQuery = window.matchMedia('(max-width: 767px)')
 
     const musicWrapper = document.getElementById('music-page-wrapper')
     let fitFrame = 0
@@ -1338,6 +1415,31 @@
 
     let lyricsRequestId = 0
 
+    function formatLyricTime(seconds: number) {
+      const safeSeconds = Math.max(0, Math.floor(seconds))
+      return `${String(Math.floor(safeSeconds / 60)).padStart(2, '0')}:${String(safeSeconds % 60).padStart(2, '0')}`
+    }
+
+    function clearLyricSeekSelection() {
+      window.clearTimeout(lyricSelectionTimer)
+      lyricSelectionTimer = 0
+      selectedLyricIndex = -1
+      lyricsScroll
+        ?.querySelectorAll<HTMLElement>('.lyric-line-shell')
+        .forEach((shell) => shell.classList.remove('is-seek-selected'))
+    }
+
+    function selectLyricForSeek(index: number) {
+      clearLyricSeekSelection()
+      selectedLyricIndex = index
+      lyricsScroll
+        ?.querySelectorAll<HTMLElement>('.lyric-line-shell')
+        [index]?.classList.add('is-seek-selected')
+      lyricSelectionTimer = window.setTimeout(clearLyricSeekSelection, 5000)
+    }
+
+    mobileLyricSeekQuery.addEventListener('change', clearLyricSeekSelection)
+
     async function loadLyricsMap(album: StageAlbum) {
       const requestId = ++lyricsRequestId
       lyricsMap = {}
@@ -1356,6 +1458,7 @@
     }
 
     function renderLyrics(songId: string) {
+      clearLyricSeekSelection()
       currentSongId = songId
       currentLineIndex = -1
       const lrc = lyricsMap[songId]
@@ -1390,16 +1493,49 @@
       }
       frag.appendChild(countdown)
       currentLines.forEach((line, i) => {
+        const shell = document.createElement('div')
+        shell.className = 'lyric-line-shell'
         const el = document.createElement('button')
         el.type = 'button'
         el.className = 'lyric-line'
         el.textContent = line.text
-        el.addEventListener('click', () =>
+        el.setAttribute(
+          'aria-label',
+          `${line.text}，${formatLyricTime(line.t)}`
+        )
+        el.addEventListener('click', () => {
+          if (mobileLyricSeekQuery.matches) {
+            selectLyricForSeek(i)
+            return
+          }
           window.dispatchEvent(
             new CustomEvent('seek-to-time', { detail: currentLines[i].t })
           )
+        })
+
+        const time = document.createElement('span')
+        time.className = 'lyric-seek-time'
+        time.textContent = formatLyricTime(line.t)
+        time.setAttribute('aria-hidden', 'true')
+
+        const confirm = document.createElement('button')
+        confirm.type = 'button'
+        confirm.className = 'lyric-seek-confirm'
+        confirm.setAttribute(
+          'aria-label',
+          `从 ${formatLyricTime(line.t)} 播放《${line.text}》`
         )
-        frag.appendChild(el)
+        confirm.innerHTML =
+          '<span class="i-ri-play-fill" aria-hidden="true"></span>'
+        confirm.addEventListener('click', () => {
+          window.dispatchEvent(
+            new CustomEvent('seek-to-time', { detail: currentLines[i].t })
+          )
+          clearLyricSeekSelection()
+        })
+
+        shell.append(el, time, confirm)
+        frag.appendChild(shell)
       })
       lyricsScroll.replaceChildren(frag)
       lyricsScroll.scrollTop = 0
@@ -1437,8 +1573,11 @@
       }
       if (idx >= 0) {
         const el = nodes[idx]
+        if (selectedLyricIndex >= 0 && mobileLyricSeekQuery.matches) return
+        const scrollTarget = el.closest<HTMLElement>('.lyric-line-shell') ?? el
         const centeredTop =
-          el.offsetTop - (lyricsScroll.clientHeight - el.offsetHeight) / 2
+          scrollTarget.offsetTop -
+          (lyricsScroll.clientHeight - scrollTarget.offsetHeight) / 2
         const maxScrollTop = Math.max(
           0,
           lyricsScroll.scrollHeight - lyricsScroll.clientHeight
