@@ -7,6 +7,9 @@ interface Props {
   title?: string
   dynamic?: boolean
   id?: string
+  status?: string
+  podcastApiUrl?: string
+  podcastSlug?: string
 }
 
 const {
@@ -17,6 +20,9 @@ const {
   title = '文章播客讲解',
   dynamic = false,
   id,
+  status = audioUrl ? 'ready' : 'none',
+  podcastApiUrl = '',
+  podcastSlug = '',
 } = Astro.props
 
 const isHidden = !dynamic && !audioUrl
@@ -30,7 +36,9 @@ const isHidden = !dynamic && !audioUrl
   data-duration={duration || undefined}
   data-size={size || undefined}
   data-title={title}
-  data-status={audioUrl ? 'ready' : undefined}
+  data-status={audioUrl ? 'ready' : status}
+  data-podcast-api-url={podcastApiUrl || undefined}
+  data-podcast-slug={podcastSlug || undefined}
   hidden={isHidden}
 >
   <audio preload="metadata" src={audioUrl || undefined}>
@@ -118,6 +126,8 @@ const isHidden = !dynamic && !audioUrl
     private sizeOutput!: HTMLElement
     private sizeItem!: HTMLElement
     private initialized = false
+    private podcastPollTimer?: number
+    private podcastRequestStarted = false
 
     connectedCallback() {
       if (!this.initialized) {
@@ -147,10 +157,16 @@ const isHidden = !dynamic && !audioUrl
       }
 
       this.syncConfiguration()
+      if (!this.podcastRequestStarted && this.dataset.podcastApiUrl) {
+        this.podcastRequestStarted = true
+        void this.ensureRemotePodcast()
+      }
     }
 
     disconnectedCallback() {
       this.audio?.pause()
+      if (this.podcastPollTimer) window.clearTimeout(this.podcastPollTimer)
+      this.podcastRequestStarted = false
     }
 
     attributeChangedCallback() {
@@ -198,6 +214,7 @@ const isHidden = !dynamic && !audioUrl
       const sourceUrl = source ? new URL(source, window.location.href).href : ''
       if (sourceUrl !== this.audio.src) {
         this.audio.pause()
+        delete this.dataset.error
         this.audio.removeAttribute('src')
         if (source) this.audio.src = source
         this.audio.load()
@@ -233,6 +250,74 @@ const isHidden = !dynamic && !audioUrl
       this.toggle.setAttribute('aria-label', `播放《${title}》的播客讲解`)
       this.syncPlaybackState()
       this.syncRangeFill()
+    }
+
+    private applyRemotePodcast(podcast: {
+      status?: string
+      audioUrl?: string | null
+      narrator?: string | null
+      duration?: number | null
+      size?: number | null
+    }) {
+      if (podcast.status === 'ready' && podcast.audioUrl) {
+        this.dataset.src = podcast.audioUrl
+        this.dataset.status = 'ready'
+        this.dataset.narrator = podcast.narrator || 'AI 双人播客'
+        this.dataset.duration = String(podcast.duration || 0)
+        this.dataset.size = String(podcast.size || 0)
+        return
+      }
+
+      if (
+        podcast.status &&
+        ['pending', 'scripting', 'synthesizing', 'uploading'].includes(
+          podcast.status
+        )
+      ) {
+        this.removeAttribute('data-src')
+        this.dataset.status = podcast.status
+        this.scheduleRemotePodcastPoll()
+        return
+      }
+
+      this.removeAttribute('data-src')
+      this.dataset.status = podcast.status || 'none'
+    }
+
+    private async ensureRemotePodcast() {
+      const apiUrl = this.dataset.podcastApiUrl
+      const slug = this.dataset.podcastSlug
+      if (!apiUrl || !slug || this.dataset.src) return
+
+      try {
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ slug }),
+        })
+        if (!response.ok) throw new Error('Podcast queue request failed')
+        this.applyRemotePodcast(await response.json())
+      } catch {
+        this.dataset.status = 'none'
+      }
+    }
+
+    private scheduleRemotePodcastPoll() {
+      if (this.podcastPollTimer) window.clearTimeout(this.podcastPollTimer)
+      this.podcastPollTimer = window.setTimeout(async () => {
+        const apiUrl = this.dataset.podcastApiUrl
+        const slug = this.dataset.podcastSlug
+        if (!apiUrl || !slug || !this.isConnected) return
+        const url = new URL(apiUrl)
+        url.searchParams.set('slug', slug)
+        try {
+          const response = await fetch(url)
+          if (!response.ok) throw new Error('Podcast status request failed')
+          this.applyRemotePodcast(await response.json())
+        } catch {
+          this.scheduleRemotePodcastPoll()
+        }
+      }, 15_000)
     }
 
     private syncDuration = () => {

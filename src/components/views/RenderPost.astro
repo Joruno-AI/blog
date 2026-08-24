@@ -60,6 +60,9 @@ const podcastNarrator = frontmatter.podcastNarrator
 const podcastDuration = frontmatter.podcastDuration
 const podcastSize = frontmatter.podcastSize
 const podcastStatus = frontmatter.podcastStatus
+const podcastApiUrl =
+  import.meta.env.PUBLIC_PODCAST_POST_API_URL ||
+  'https://blog-cms-1j0.pages.dev/api/public/podcast/posts'
 
 const cover = frontmatter.cover
 const coverAlt = frontmatter.coverAlt
@@ -213,14 +216,16 @@ if (collectionType === 'blog') {
         <Fragment slot="article">
           {isDraft && <Warning html={WARNING} />}
           {
-            collectionType === 'blog' &&
-              podcastStatus === 'ready' &&
-              podcastAudioUrl && (
+            collectionType === 'blog' && !isDraft && (
                 <ArticleAudioPlayer
                   audioUrl={podcastAudioUrl}
                   narrator={podcastNarrator}
                   duration={podcastDuration}
                   size={podcastSize}
+                  status={podcastStatus}
+                  podcastApiUrl={podcastApiUrl}
+                  podcastSlug={post.id}
+                  dynamic={true}
                   {title}
                 />
               )
