@@ -37,6 +37,11 @@ export interface CMSPost {
   radio: boolean
   video: boolean
   platform?: string
+  podcastAudioUrl?: string
+  podcastNarrator?: string
+  podcastDuration?: number
+  podcastSize?: number
+  podcastStatus?: string
   minutesRead?: number
   pubDate: string
   lastModDate?: string
@@ -175,6 +180,11 @@ export function transformCMSPostToCollectionEntry(post: CMSPost) {
       radio: post.radio,
       video: post.video,
       platform: post.platform || '',
+      podcastAudioUrl: post.podcastAudioUrl || '',
+      podcastNarrator: post.podcastNarrator || 'AI 双人播客',
+      podcastDuration: post.podcastDuration || 0,
+      podcastSize: post.podcastSize || 0,
+      podcastStatus: post.podcastStatus || 'none',
       ogImage: post.ogImage || true,
     },
     body: post.content,

@@ -15,6 +15,12 @@ export interface GeektimeArticle {
   title: string
   path: string
   bytes: number
+  podcast?: {
+    url: string
+    narrator?: string
+    duration?: number
+    size?: number
+  }
 }
 
 export interface GeektimeCourse {

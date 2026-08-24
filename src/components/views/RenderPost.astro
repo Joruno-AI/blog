@@ -6,6 +6,7 @@ import StandardLayout from '~/layouts/StandardLayout.astro'
 import PostMeta from '~/components/base/PostMeta.astro'
 import Warning from '~/components/base/Warning.astro'
 import BlogCatalog from '~/components/blog/BlogCatalog.astro'
+import ArticleAudioPlayer from '~/components/blog/ArticleAudioPlayer.astro'
 import DesktopAside from '~/components/base/DesktopAside.astro'
 import MobileControl from '~/components/base/MobileControl.astro'
 import PostCover from '~/components/base/PostCover.astro'
@@ -54,6 +55,11 @@ const minutesRead = getMinutesRead(
 const tags = frontmatter.tags
 const category = frontmatter.category
 const isDraft = frontmatter.draft
+const podcastAudioUrl = frontmatter.podcastAudioUrl
+const podcastNarrator = frontmatter.podcastNarrator
+const podcastDuration = frontmatter.podcastDuration
+const podcastSize = frontmatter.podcastSize
+const podcastStatus = frontmatter.podcastStatus
 
 const cover = frontmatter.cover
 const coverAlt = frontmatter.coverAlt
@@ -206,6 +212,19 @@ if (collectionType === 'blog') {
         </Fragment>
         <Fragment slot="article">
           {isDraft && <Warning html={WARNING} />}
+          {
+            collectionType === 'blog' &&
+              podcastStatus === 'ready' &&
+              podcastAudioUrl && (
+                <ArticleAudioPlayer
+                  audioUrl={podcastAudioUrl}
+                  narrator={podcastNarrator}
+                  duration={podcastDuration}
+                  size={podcastSize}
+                  {title}
+                />
+              )
+          }
           {
             haveHeadings && (
               <>
