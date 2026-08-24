@@ -13,7 +13,7 @@ import PostActions from '~/components/widgets/PostActions.astro'
 >
   <StandardLayout class="reader-shell">
     <geektime-reader
-      data-catalog-url="/docs/catalog.json?v=2"
+      data-catalog-url="/docs/catalog.json?v=3"
       data-loading
       aria-busy="true"
     >
@@ -29,6 +29,13 @@ import PostActions from '~/components/widgets/PostActions.astro'
           <span></span>
           <span></span>
           <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <div class="reader-panel-skeleton-fill"></div>
         </aside>
 
         <aside
@@ -46,6 +53,11 @@ import PostActions from '~/components/widgets/PostActions.astro'
         </aside>
 
         <div class="reader-main">
+          <div class="reader-breadcrumb-skeleton" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
           <nav class="reader-breadcrumb" aria-label="面包屑">
             <a href="/docs/">Docs</a>
             <span data-course-separator aria-hidden="true" hidden>/</span>
@@ -66,6 +78,16 @@ import PostActions from '~/components/widgets/PostActions.astro'
               <h1 data-title><span class="sr-only">正在加载文档</span></h1>
               <div class="reader-actions" data-reader-actions hidden>
                 <PostActions markdown="" postUrl="" title="课程文档" />
+                <button
+                  type="button"
+                  class="reader-mindmap-trigger"
+                  data-mindmap-trigger
+                  aria-haspopup="dialog"
+                  aria-controls="reader-mindmap-dialog"
+                >
+                  <span class="i-ri-node-tree" aria-hidden="true"></span>
+                  <span>思维导图</span>
+                </button>
               </div>
             </div>
           </header>
@@ -73,6 +95,16 @@ import PostActions from '~/components/widgets/PostActions.astro'
           <div class="reader-state" data-state aria-live="polite">
             <span class="sr-only">正在从内容快照加载正文</span>
             <div class="reader-skeleton" aria-hidden="true">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span class="reader-skeleton-media"></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
               <span></span>
               <span></span>
               <span></span>
@@ -121,6 +153,11 @@ import PostActions from '~/components/widgets/PostActions.astro'
           <span></span>
           <span></span>
           <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <div class="reader-panel-skeleton-fill"></div>
         </aside>
       </div>
 
@@ -156,6 +193,67 @@ import PostActions from '~/components/widgets/PostActions.astro'
             aria-hidden="true"></span>
         </button>
       </div>
+
+      <dialog
+        id="reader-mindmap-dialog"
+        class="reader-mindmap-dialog"
+        data-mindmap-dialog
+        aria-labelledby="reader-mindmap-title"
+      >
+        <section class="reader-mindmap-shell">
+          <header class="reader-mindmap-header">
+            <div class="reader-mindmap-heading">
+              <span class="reader-mindmap-kicker">文章导图</span>
+              <h2 id="reader-mindmap-title" data-mindmap-title>思维导图</h2>
+            </div>
+            <div class="reader-mindmap-tools" aria-label="导图控制">
+              <button
+                type="button"
+                data-mindmap-action="zoom-out"
+                aria-label="缩小导图"
+                title="缩小"
+              >
+                <span class="i-ri-subtract-line" aria-hidden="true"></span>
+              </button>
+              <button
+                type="button"
+                class="reader-mindmap-fit"
+                data-mindmap-action="fit"
+                aria-label="适应画布"
+              >
+                适应
+              </button>
+              <button
+                type="button"
+                data-mindmap-action="zoom-in"
+                aria-label="放大导图"
+                title="放大"
+              >
+                <span class="i-ri-add-line" aria-hidden="true"></span>
+              </button>
+              <button
+                type="button"
+                class="reader-mindmap-close"
+                data-mindmap-action="close"
+                aria-label="关闭思维导图"
+                title="关闭"
+              >
+                <span class="i-ri-close-line" aria-hidden="true"></span>
+              </button>
+            </div>
+          </header>
+          <div class="reader-mindmap-viewport" data-mindmap-viewport>
+            <svg
+              class="reader-mindmap-canvas"
+              data-mindmap-canvas
+              role="img"
+              aria-labelledby="reader-mindmap-title"></svg>
+          </div>
+          <p class="reader-mindmap-hint">
+            点击节点即可跳转到对应章节，放大后可滚动查看。
+          </p>
+        </section>
+      </dialog>
     </geektime-reader>
   </StandardLayout>
 </BaseLayout>
@@ -180,6 +278,12 @@ import PostActions from '~/components/widgets/PostActions.astro'
       var(--c-bg) 95%,
       var(--reader-math-accent) 5%
     );
+    --reader-skeleton-base: color-mix(
+      in srgb,
+      var(--c-surface-soft) 90%,
+      var(--c-text) 10%
+    );
+    --reader-skeleton-glow: color-mix(in srgb, var(--c-bg) 74%, white 26%);
     display: block;
   }
 
@@ -187,6 +291,10 @@ import PostActions from '~/components/widgets/PostActions.astro'
     width: 100%;
     max-width: 96rem;
     margin-inline: auto;
+  }
+
+  geektime-reader[data-loading] .reader-layout {
+    min-height: calc(100svh - 7rem);
   }
 
   .reader-main {
@@ -207,6 +315,15 @@ import PostActions from '~/components/widgets/PostActions.astro'
     display: none;
   }
 
+  geektime-reader[data-loading] .reader-floating-controls {
+    display: none;
+  }
+
+  geektime-reader[data-loading] .reader-course-panel,
+  geektime-reader[data-loading] .reader-toc-panel {
+    display: none !important;
+  }
+
   .reader-course-panel[hidden],
   .reader-toc-panel[hidden],
   .reader-actions[hidden] {
@@ -220,6 +337,36 @@ import PostActions from '~/components/widgets/PostActions.astro'
     margin-bottom: 1.75rem;
     color: var(--c-text-faint);
     font-size: 0.7rem;
+  }
+
+  .reader-breadcrumb-skeleton {
+    display: none;
+    height: 1rem;
+    align-items: center;
+    gap: 0.45rem;
+    margin-bottom: 1.75rem;
+  }
+
+  geektime-reader[data-loading] .reader-breadcrumb {
+    display: none;
+  }
+
+  geektime-reader[data-loading] .reader-breadcrumb-skeleton {
+    display: flex;
+  }
+
+  .reader-breadcrumb-skeleton span {
+    width: 2.6rem;
+    height: 0.58rem;
+    border-radius: 999px;
+  }
+
+  .reader-breadcrumb-skeleton span:nth-child(2) {
+    width: 0.35rem;
+  }
+
+  .reader-breadcrumb-skeleton span:nth-child(3) {
+    width: 6.5rem;
   }
 
   .reader-breadcrumb a {
@@ -256,11 +403,36 @@ import PostActions from '~/components/widgets/PostActions.astro'
     display: none;
   }
 
-  .reader-header-skeleton span {
+  .reader-breadcrumb-skeleton span,
+  .reader-header-skeleton span,
+  .reader-skeleton span,
+  .reader-panel-skeleton span {
     display: block;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
     border-radius: 0.25rem;
-    background: var(--c-surface-soft);
-    animation: reader-pulse 1.4s ease-in-out infinite;
+    background: var(--reader-skeleton-base);
+  }
+
+  .reader-breadcrumb-skeleton span::after,
+  .reader-header-skeleton span::after,
+  .reader-skeleton span::after,
+  .reader-panel-skeleton span::after,
+  .reader-panel-skeleton-fill::after {
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    background: linear-gradient(
+      100deg,
+      transparent 18%,
+      color-mix(in srgb, var(--reader-skeleton-glow) 82%, transparent) 46%,
+      transparent 72%
+    );
+    content: '';
+    transform: translate3d(-115%, 0, 0);
+    animation: reader-shimmer 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    will-change: transform;
   }
 
   .reader-header-skeleton-title {
@@ -272,14 +444,12 @@ import PostActions from '~/components/widgets/PostActions.astro'
   .reader-header-skeleton-title-short {
     width: min(25rem, 58%);
     margin-top: -0.35rem;
-    animation-delay: 100ms !important;
   }
 
   .reader-header-skeleton-actions {
     width: min(19rem, 72%);
     height: 2rem;
     margin-top: 0.65rem;
-    animation-delay: 180ms !important;
   }
 
   .reader-header h1 {
@@ -297,15 +467,244 @@ import PostActions from '~/components/widgets/PostActions.astro'
   }
 
   .reader-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
     margin-top: 1.25rem;
   }
 
   .reader-actions :global(.post-actions) {
+    display: contents;
     margin-bottom: 0;
   }
 
+  .reader-mindmap-trigger {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.7rem;
+    border: 1px solid var(--c-border-soft);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--c-text-muted);
+    font-size: 0.8rem;
+    font-weight: 500;
+    line-height: 1.2;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      border-color 0.2s ease,
+      color 0.2s ease,
+      transform 0.14s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .reader-mindmap-trigger:hover,
+  .reader-mindmap-trigger:focus-visible {
+    border-color: rgb(96 165 250);
+    color: rgb(59 130 246);
+  }
+
+  :global(.dark) .reader-mindmap-trigger:hover,
+  :global(.dark) .reader-mindmap-trigger:focus-visible {
+    color: rgb(147 197 253);
+  }
+
+  .reader-mindmap-trigger:active {
+    transform: scale(0.97);
+  }
+
+  .reader-mindmap-dialog {
+    width: min(94vw, 84rem);
+    height: min(88svh, 54rem);
+    max-width: none;
+    max-height: none;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid var(--c-border-soft);
+    border-radius: 0.9rem;
+    background: var(--c-bg);
+    box-shadow: 0 30px 90px rgb(0 0 0 / 0.25);
+    color: var(--c-text);
+  }
+
+  .reader-mindmap-dialog::backdrop {
+    background: rgb(15 23 42 / 0.38);
+    -webkit-backdrop-filter: blur(7px);
+    backdrop-filter: blur(7px);
+  }
+
+  .reader-mindmap-shell {
+    display: flex;
+    height: 100%;
+    min-height: 0;
+    flex-direction: column;
+  }
+
+  .reader-mindmap-header {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 4.5rem;
+    padding: 0.85rem 1rem 0.85rem 1.15rem;
+    border-bottom: 1px solid var(--reader-line);
+    background: color-mix(in srgb, var(--c-bg) 94%, var(--c-surface-soft) 6%);
+  }
+
+  .reader-mindmap-heading {
+    min-width: 0;
+  }
+
+  .reader-mindmap-kicker {
+    display: block;
+    margin-bottom: 0.12rem;
+    color: var(--c-text-faint);
+    font-size: 0.66rem;
+    letter-spacing: 0.12em;
+  }
+
+  .reader-mindmap-heading h2 {
+    overflow: hidden;
+    margin: 0;
+    color: var(--c-text);
+    font-family: var(--font-sans);
+    font-size: clamp(0.95rem, 2vw, 1.15rem);
+    font-weight: 600;
+    line-height: 1.35;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .reader-mindmap-tools {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .reader-mindmap-tools button {
+    display: inline-flex;
+    min-width: 2.1rem;
+    height: 2.1rem;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0.5rem;
+    border: 1px solid transparent;
+    border-radius: 0.4rem;
+    background: transparent;
+    color: var(--c-text-muted);
+    cursor: pointer;
+    transition:
+      background-color 160ms ease,
+      border-color 160ms ease,
+      color 160ms ease;
+  }
+
+  .reader-mindmap-tools button:hover,
+  .reader-mindmap-tools button:focus-visible {
+    border-color: var(--c-border-soft);
+    background: var(--c-surface-hover);
+    color: var(--c-text);
+  }
+
+  .reader-mindmap-tools .reader-mindmap-fit {
+    min-width: 3.2rem;
+    font-size: 0.72rem;
+  }
+
+  .reader-mindmap-tools .reader-mindmap-close {
+    margin-left: 0.35rem;
+  }
+
+  .reader-mindmap-viewport {
+    position: relative;
+    min-height: 0;
+    flex: 1;
+    overflow: auto;
+    padding: 1rem;
+    background-color: color-mix(in srgb, var(--c-bg) 97%, var(--c-text) 3%);
+    background-image: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--c-text-faint) 24%, transparent) 0.7px,
+      transparent 0.8px
+    );
+    background-size: 18px 18px;
+    scrollbar-color: var(--c-border-strong) transparent;
+    scrollbar-width: thin;
+    overscroll-behavior: contain;
+  }
+
+  .reader-mindmap-canvas {
+    display: block;
+    max-width: none;
+    overflow: visible;
+    margin: auto;
+    transform-origin: left top;
+  }
+
+  .reader-mindmap-canvas :global(.reader-mindmap-edge) {
+    fill: none;
+    stroke: color-mix(in srgb, var(--c-text-faint) 42%, transparent);
+    stroke-linecap: round;
+    stroke-width: 1.4;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .reader-mindmap-canvas :global(.reader-mindmap-node) {
+    color: var(--c-text);
+    cursor: pointer;
+    outline: none;
+  }
+
+  .reader-mindmap-canvas :global(.reader-mindmap-node rect) {
+    fill: color-mix(in srgb, var(--c-bg) 92%, #60a5fa 8%);
+    stroke: color-mix(in srgb, var(--c-border-strong) 72%, #60a5fa 28%);
+    stroke-width: 1;
+    transition:
+      fill 160ms ease,
+      stroke 160ms ease;
+  }
+
+  .reader-mindmap-canvas :global(.reader-mindmap-node[data-root='true'] rect) {
+    fill: color-mix(in srgb, var(--c-bg) 82%, #3b82f6 18%);
+    stroke: color-mix(in srgb, var(--c-border-strong) 42%, #3b82f6 58%);
+    stroke-width: 1.25;
+  }
+
+  .reader-mindmap-canvas :global(.reader-mindmap-node:hover rect),
+  .reader-mindmap-canvas :global(.reader-mindmap-node:focus rect) {
+    fill: color-mix(in srgb, var(--c-bg) 78%, #60a5fa 22%);
+    stroke: #3b82f6;
+  }
+
+  .reader-mindmap-canvas :global(.reader-mindmap-node text) {
+    fill: currentColor;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    pointer-events: none;
+  }
+
+  .reader-mindmap-canvas :global(.reader-mindmap-node[data-root='true'] text) {
+    font-size: 14px;
+    font-weight: 650;
+  }
+
+  .reader-mindmap-hint {
+    flex: none;
+    margin: 0;
+    padding: 0.55rem 1rem 0.65rem;
+    border-top: 1px solid var(--reader-line);
+    color: var(--c-text-faint);
+    font-size: 0.68rem;
+    text-align: center;
+  }
+
   .reader-state {
-    min-height: 20rem;
+    min-height: max(34rem, calc(100svh - 14rem));
     padding-top: 2.25rem;
   }
 
@@ -326,11 +725,17 @@ import PostActions from '~/components/widgets/PostActions.astro'
   }
 
   :global(.reader-error-back) {
-    margin-top: 0.35rem;
+    display: inline-flex;
+    min-height: 2.25rem;
+    align-items: center;
+    justify-content: center;
     padding: 0.5rem 0.75rem;
     border: 1px solid var(--reader-line);
     border-radius: 0.375rem;
+    background: transparent;
     color: var(--c-text-muted);
+    cursor: pointer;
+    font: inherit;
     text-decoration: none;
     transition:
       background-color 0.2s ease,
@@ -345,6 +750,20 @@ import PostActions from '~/components/widgets/PostActions.astro'
     color: var(--c-text);
   }
 
+  :global(.reader-error-actions) {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.55rem;
+    margin-top: 0.35rem;
+  }
+
+  :global(.reader-error-retry) {
+    border-color: var(--c-border-strong);
+    background: var(--c-surface-soft);
+    color: var(--c-text);
+  }
+
   .reader-state[hidden] {
     display: none;
   }
@@ -352,14 +771,13 @@ import PostActions from '~/components/widgets/PostActions.astro'
   .reader-skeleton {
     display: grid;
     gap: 1rem;
+    align-content: start;
+    padding-bottom: 2rem;
   }
 
   .reader-skeleton span {
-    display: block;
     height: 0.82rem;
     border-radius: 0.2rem;
-    background: var(--c-surface-soft);
-    animation: reader-pulse 1.5s ease-in-out infinite;
   }
 
   .reader-skeleton span:nth-child(1) {
@@ -368,41 +786,61 @@ import PostActions from '~/components/widgets/PostActions.astro'
 
   .reader-skeleton span:nth-child(2) {
     width: 100%;
-    animation-delay: 80ms;
   }
 
   .reader-skeleton span:nth-child(3) {
     width: 86%;
-    animation-delay: 160ms;
   }
 
   .reader-skeleton span:nth-child(4) {
     width: 100%;
-    animation-delay: 240ms;
   }
 
   .reader-skeleton span:nth-child(5) {
     width: 97%;
-    animation-delay: 320ms;
   }
 
   .reader-skeleton span:nth-child(6) {
     width: 88%;
-    animation-delay: 400ms;
   }
 
   .reader-skeleton span:nth-child(7) {
     width: 94%;
     margin-top: 0.9rem;
-    animation-delay: 480ms;
   }
 
   .reader-skeleton span:nth-child(8) {
     width: 72%;
-    animation-delay: 560ms;
+  }
+
+  .reader-skeleton span:nth-child(9),
+  .reader-skeleton span:nth-child(15) {
+    width: 34%;
+    height: 1.25rem;
+    margin-top: 1rem;
+  }
+
+  .reader-skeleton span:nth-child(10),
+  .reader-skeleton span:nth-child(16) {
+    width: 98%;
+  }
+
+  .reader-skeleton span:nth-child(11),
+  .reader-skeleton span:nth-child(17) {
+    width: 91%;
+  }
+
+  .reader-skeleton span:nth-child(12),
+  .reader-skeleton span:nth-child(18) {
+    width: 76%;
+  }
+
+  .reader-skeleton span:nth-child(13) {
+    width: 95%;
   }
 
   .reader-skeleton .reader-skeleton-media {
+    width: 100%;
     height: clamp(10rem, 23vw, 15rem);
     margin-block: 1rem 0.6rem;
     border-radius: 0.5rem;
@@ -449,6 +887,15 @@ import PostActions from '~/components/widgets/PostActions.astro'
     padding: 0;
     background: transparent;
     font-size: 0.82rem;
+  }
+
+  .reader-content :global(:not(pre) > code) {
+    color: color-mix(in srgb, var(--c-text) 70%, #b45372 30%);
+    font-weight: 520;
+  }
+
+  :global(.dark) .reader-content :global(:not(pre) > code) {
+    color: color-mix(in srgb, var(--c-text) 72%, #f9a8d4 28%);
   }
 
   .reader-content :global(.reader-code-block) {
@@ -735,24 +1182,33 @@ import PostActions from '~/components/widgets/PostActions.astro'
     white-space: nowrap;
   }
 
-  @keyframes reader-pulse {
-    0%,
-    100% {
-      opacity: 0.45;
+  @keyframes reader-shimmer {
+    0% {
+      transform: translate3d(-115%, 0, 0);
     }
-    50% {
-      opacity: 0.9;
+    58%,
+    100% {
+      transform: translate3d(115%, 0, 0);
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .reader-header-skeleton span,
-    .reader-skeleton span,
-    .reader-panel-skeleton span {
+    .reader-breadcrumb-skeleton span::after,
+    .reader-header-skeleton span::after,
+    .reader-skeleton span::after,
+    .reader-panel-skeleton span::after,
+    .reader-panel-skeleton-fill::after {
       animation: none;
+      opacity: 0;
     }
 
     .reader-content :global(.reader-code-copy-feedback) {
+      transition: none;
+    }
+
+    .reader-mindmap-trigger,
+    .reader-mindmap-tools button,
+    .reader-mindmap-canvas :global(.reader-mindmap-node rect) {
       transition: none;
     }
   }
@@ -790,36 +1246,76 @@ import PostActions from '~/components/widgets/PostActions.astro'
     }
 
     geektime-reader[data-loading] .reader-panel-skeleton {
-      display: grid;
+      display: flex;
+      height: calc(100svh - 7rem);
+      min-height: 38rem;
+      flex-direction: column;
       gap: 0.78rem;
-      align-content: start;
       padding: 0.2rem 0.35rem;
     }
 
     .reader-panel-skeleton span {
-      display: block;
       width: 86%;
       height: 0.62rem;
       border-radius: 0.2rem;
-      background: var(--c-surface-soft);
-      animation: reader-pulse 1.5s ease-in-out infinite;
     }
 
     .reader-panel-skeleton span:nth-child(3n) {
       width: 68%;
-      animation-delay: 120ms;
     }
 
     .reader-panel-skeleton span:nth-child(3n + 2) {
       width: 96%;
-      animation-delay: 220ms;
     }
 
     .reader-panel-skeleton .reader-panel-skeleton-heading {
       width: 100%;
       height: 1.55rem;
+      flex: none;
       margin-bottom: 0.35rem;
       border-radius: 0.3rem;
+    }
+
+    .reader-panel-skeleton-fill {
+      position: relative;
+      isolation: isolate;
+      width: 100%;
+      min-height: 8rem;
+      flex: 1;
+      overflow: hidden;
+      background: var(--reader-skeleton-base);
+      -webkit-mask-image:
+        linear-gradient(to bottom, #000 0 0.62rem, transparent 0.62rem),
+        linear-gradient(to bottom, #000 0 0.62rem, transparent 0.62rem),
+        linear-gradient(to bottom, #000 0 0.62rem, transparent 0.62rem),
+        linear-gradient(to bottom, #000 0 0.62rem, transparent 0.62rem);
+      mask-image:
+        linear-gradient(to bottom, #000 0 0.62rem, transparent 0.62rem),
+        linear-gradient(to bottom, #000 0 0.62rem, transparent 0.62rem),
+        linear-gradient(to bottom, #000 0 0.62rem, transparent 0.62rem),
+        linear-gradient(to bottom, #000 0 0.62rem, transparent 0.62rem);
+      -webkit-mask-position:
+        0 0,
+        0 1.4rem,
+        0 2.8rem,
+        0 4.2rem;
+      mask-position:
+        0 0,
+        0 1.4rem,
+        0 2.8rem,
+        0 4.2rem;
+      -webkit-mask-repeat: repeat-y;
+      mask-repeat: repeat-y;
+      -webkit-mask-size:
+        96% 5.6rem,
+        68% 5.6rem,
+        86% 5.6rem,
+        76% 5.6rem;
+      mask-size:
+        96% 5.6rem,
+        68% 5.6rem,
+        86% 5.6rem,
+        76% 5.6rem;
     }
 
     .reader-course-panel,
@@ -984,6 +1480,37 @@ import PostActions from '~/components/widgets/PostActions.astro'
 
     .reader-neighbors a:last-child {
       text-align: left;
+    }
+
+    .reader-mindmap-dialog {
+      width: 100vw;
+      height: 100svh;
+      border-width: 0;
+      border-radius: 0;
+    }
+
+    .reader-mindmap-header {
+      min-height: 6.4rem;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.55rem;
+      padding: max(0.75rem, env(safe-area-inset-top)) 0.75rem 0.65rem;
+    }
+
+    .reader-mindmap-tools {
+      justify-content: flex-end;
+    }
+
+    .reader-mindmap-tools .reader-mindmap-close {
+      margin-left: auto;
+    }
+
+    .reader-mindmap-viewport {
+      padding: 0.55rem;
+    }
+
+    .reader-mindmap-hint {
+      padding-bottom: max(0.65rem, env(safe-area-inset-bottom));
     }
   }
 
@@ -1345,12 +1872,39 @@ import PostActions from '~/components/widgets/PostActions.astro'
   import { finishProgress, startProgress } from '~/scripts/progress'
 
   const COURSE_PROGRESS_TASK = 'course-reader'
+  const FETCH_RETRY_DELAYS = [240, 700, 1400] as const
   const COURSE_MATH_DELIMITERS = [
     { left: '$$', right: '$$', display: true },
     { left: '\\[', right: '\\]', display: true },
     { left: '\\(', right: '\\)', display: false },
     { left: '$', right: '$', display: false },
   ] as const
+
+  const waitForRetry = (delay: number, signal?: AbortSignal) =>
+    new Promise<void>((resolve, reject) => {
+      if (signal?.aborted) {
+        reject(new DOMException('Aborted', 'AbortError'))
+        return
+      }
+
+      const timer = window.setTimeout(() => {
+        signal?.removeEventListener('abort', handleAbort)
+        resolve()
+      }, delay)
+      const handleAbort = () => {
+        window.clearTimeout(timer)
+        reject(new DOMException('Aborted', 'AbortError'))
+      }
+      signal?.addEventListener('abort', handleAbort, { once: true })
+    })
+
+  const shouldRetryStatus = (status: number) =>
+    status === 403 ||
+    status === 404 ||
+    status === 408 ||
+    status === 425 ||
+    status === 429 ||
+    status >= 500
 
   const legacyStrongExtension: TokenizerAndRendererExtension = {
     name: 'courseLegacyStrong',
@@ -1390,41 +1944,78 @@ import PostActions from '~/components/widgets/PostActions.astro'
   courseMarkdown.use({ extensions: [legacyStrongExtension] })
 
   const CODE_LANGUAGE_ALIASES: Record<string, BundledLanguage> = {
-    bash: 'shellscript',
-    c: 'c',
-    cjs: 'javascript',
-    cpp: 'cpp',
-    css: 'css',
-    graphql: 'graphql',
-    html: 'html',
-    http: 'http',
-    java: 'java',
-    javascript: 'javascript',
-    js: 'javascript',
-    json: 'json',
-    jsx: 'jsx',
-    md: 'markdown',
-    markdown: 'markdown',
-    mts: 'typescript',
-    mysql: 'sql',
-    php: 'php',
-    py: 'python',
-    python: 'python',
-    sh: 'shellscript',
-    shell: 'shellscript',
-    curl: 'shellscript',
-    sql: 'sql',
-    ts: 'typescript',
-    tsx: 'tsx',
-    typescript: 'typescript',
-    vue: 'vue',
-    xml: 'xml',
-    yaml: 'yaml',
-    yml: 'yaml',
+    'bash': 'shellscript',
+    'bat': 'bat',
+    'c': 'c',
+    'c#': 'csharp',
+    'c++': 'cpp',
+    'cjs': 'javascript',
+    'console': 'shellscript',
+    'cpp': 'cpp',
+    'cs': 'csharp',
+    'csharp': 'csharp',
+    'css': 'css',
+    'docker': 'dockerfile',
+    'dockerfile': 'dockerfile',
+    'dotenv': 'dotenv',
+    'graphql': 'graphql',
+    'go': 'go',
+    'golang': 'go',
+    'html': 'html',
+    'http': 'http',
+    'ini': 'ini',
+    'java': 'java',
+    'javascript': 'javascript',
+    'js': 'javascript',
+    'json': 'json',
+    'json5': 'json5',
+    'jsx': 'jsx',
+    'kotlin': 'kotlin',
+    'kt': 'kotlin',
+    'make': 'makefile',
+    'makefile': 'makefile',
+    'md': 'markdown',
+    'markdown': 'markdown',
+    'mts': 'typescript',
+    'mysql': 'sql',
+    'nginx': 'nginx',
+    'objectivec': 'objective-c',
+    'perl': 'perl',
+    'php': 'php',
+    'powershell': 'powershell',
+    'ps1': 'powershell',
+    'py': 'python',
+    'python': 'python',
+    'rb': 'ruby',
+    'ruby': 'ruby',
+    'rs': 'rust',
+    'rust': 'rust',
+    'scala': 'scala',
+    'sh': 'shellscript',
+    'shell': 'shellscript',
+    'shellscript': 'shellscript',
+    'curl': 'shellscript',
+    'sql': 'sql',
+    'swift': 'swift',
+    'terminal': 'shellscript',
+    'toml': 'toml',
+    'ts': 'typescript',
+    'tsx': 'tsx',
+    'typescript': 'typescript',
+    'vue': 'vue',
+    'xml': 'xml',
+    'yaml': 'yaml',
+    'yml': 'yaml',
   }
 
   const DIFF_LANGUAGE_TOKENS = new Set(['dif', 'diff', 'patch'])
-  const GENERIC_LANGUAGE_TOKENS = new Set(['plain', 'plaintext', 'text'])
+  const GENERIC_LANGUAGE_TOKENS = new Set([
+    'none',
+    'plain',
+    'plaintext',
+    'text',
+    'txt',
+  ])
   const CODE_LANGUAGE_LABELS: Partial<Record<BundledLanguage, string>> = {
     shellscript: 'bash',
   }
@@ -1481,6 +2072,28 @@ import PostActions from '~/components/widgets/PostActions.astro'
     }
     if (/<template(?:\s|>)|<script\s+setup|defineComponent\s*\(/i.test(code))
       return 'vue'
+    if (/^<\?php|\b(?:namespace|use)\s+[A-Z\\][\w\\]*;/m.test(code))
+      return 'php'
+    if (
+      /(?:^|\n)\s*package\s+\w+\b|(?:^|\n)\s*func\s+(?:\([^)]*\)\s*)?\w+\s*\(|\bfmt\.(?:Print|Printf|Println)\b/m.test(
+        code
+      )
+    )
+      return 'go'
+    if (
+      /(?:^|\n)\s*(?:use\s+(?:std|crate)::|fn\s+\w+\s*\(|let\s+mut\s+\w+)|\bprintln!\s*\(/m.test(
+        code
+      )
+    )
+      return 'rust'
+    if (/(?:^|\n)\s*#include\s*[<"]|\bstd::|\b(?:cout|cin)\s*<</m.test(code))
+      return 'cpp'
+    if (
+      /(?:^|\n)\s*(?:using\s+System\b|namespace\s+\w+)|\bConsole\.WriteLine\s*\(/m.test(
+        code
+      )
+    )
+      return 'csharp'
     if (
       /(?:^|\n)\s*(?:interface|type|enum|namespace)\s+\w+|:\s*(?:string|number|boolean|unknown|never)(?:\W|$)|\b(?:as const|satisfies)\b/m.test(
         code
@@ -1488,6 +2101,12 @@ import PostActions from '~/components/widgets/PostActions.astro'
     )
       return 'typescript'
     if (/^\s*export\s+[A-Z_][A-Z0-9_]*\s*=/m.test(code)) return 'shellscript'
+    if (
+      /(?:^|\n)\s*(?:FROM|RUN|COPY|ADD|ENTRYPOINT|CMD|WORKDIR|EXPOSE)\s+/m.test(
+        code
+      )
+    )
+      return 'dockerfile'
     if (
       /(?:^|\n)\s*(?:from\s+[\w.]+\s+import\s+|import\s+(?:os|sys|json|re|math|pathlib|typing|openai|langchain)\b)/m.test(
         code
@@ -1497,6 +2116,12 @@ import PostActions from '~/components/widgets/PostActions.astro'
       )
     )
       return 'python'
+    if (
+      /(?:^|\n)\s*(?:require\s+['"][^'"]+['"]|puts\s+|class\s+\w+\s*<)|\.each\s+do\s*\|/m.test(
+        code
+      )
+    )
+      return 'ruby'
     if (
       /(?:^|\n)\s*(?:import|export)\b|\b(?:const|let|var)\s+[$\w]+|=>|\bfunction\s+[$\w]+|\b(?:window|document|console)\./m.test(
         code
@@ -1517,6 +2142,20 @@ import PostActions from '~/components/widgets/PostActions.astro'
     )
       return 'shellscript'
     if (
+      ((code.match(/(?:^|\n)\s*[\w.-]+:\s+[^\n]+/g) || []).length >= 2 ||
+        /(?:^|\n)\s*---\s*$/.test(code)) &&
+      !/<[a-z][\s\S]*>/i.test(code) &&
+      !/[{}()]|(?:^|\n)\s*(?:def|class|from|import)\b/m.test(code)
+    )
+      return 'yaml'
+    if (
+      /(?:^|\n)\s*\[[\w.-]+\]\s*$/m.test(code) ||
+      ((code.match(/(?:^|\n)\s*[\w.-]+\s*=\s*(?:"[^"]*"|'[^']*'|\d+)/g) || [])
+        .length >= 2 &&
+        !/[(){}:]|(?:^|\n)\s*(?:def|class|from|import)\b/m.test(code))
+    )
+      return 'toml'
+    if (
       /(?:^|\n)\s*(?:def|class)\s+\w+|(?:^|\n)\s*from\s+[\w.]+\s+import\s+|(?:^|\n)\s*import\s+[\w.]+|\bprint\s*\(|\b(?:model|temperature|max_tokens|prompt|messages)\s*=|\b(?:client|response)\.[\w.]+\(/m.test(
         code
       )
@@ -1526,6 +2165,12 @@ import PostActions from '~/components/widgets/PostActions.astro'
       /\b(?:SELECT|INSERT|UPDATE|DELETE|CREATE TABLE|ALTER TABLE)\b/i.test(code)
     )
       return 'sql'
+    if (
+      /(?:^|\n)\s*(?:val|var)\s+\w+\s*(?::[^=]+)?=|(?:^|\n)\s*(?:object|case class|trait)\s+\w+/m.test(
+        code
+      )
+    )
+      return 'scala'
     if (/\bpublic\s+(?:static\s+)?(?:class|void)|\bSystem\.out\./m.test(code))
       return 'java'
 
@@ -1538,6 +2183,7 @@ import PostActions from '~/components/widgets/PostActions.astro'
   interface Article {
     title: string
     path: string
+    bytes?: number
   }
 
   interface Course {
@@ -1569,6 +2215,18 @@ import PostActions from '~/components/widgets/PostActions.astro'
     commit: string
   }
 
+  interface MindMapNode {
+    title: string
+    headingId?: string
+    depth: number
+    children: MindMapNode[]
+    lines?: string[]
+    x?: number
+    y?: number
+    width?: number
+    height?: number
+  }
+
   class GeektimeReader extends HTMLElement {
     private catalog!: Catalog
     private article!: Article
@@ -1581,13 +2239,21 @@ import PostActions from '~/components/widgets/PostActions.astro'
     private markdownCache = new Map<string, string>()
     private requestedLocationKey = ''
     private copyFeedbackTimers = new WeakMap<HTMLButtonElement, number>()
+    private mindMapRoot?: MindMapNode
+    private mindMapScale = 1
+    private mindMapWidth = 0
+    private mindMapHeight = 0
+    private mindMapResizeFrame?: number
 
     connectedCallback() {
       this.addEventListener('click', this.handleReaderLink)
       this.addEventListener('click', this.handleCodeCopy)
       this.addEventListener('click', this.handlePanelToggle)
+      this.addEventListener('click', this.handleMindMapClick)
+      this.addEventListener('keydown', this.handleMindMapKeydown)
       this.addEventListener('pointerover', this.prefetchReaderLink)
       window.addEventListener('popstate', this.handlePopState)
+      window.addEventListener('resize', this.handleMindMapResize)
       document.addEventListener('astro:page-load', this.handlePageLoad)
       startProgress(COURSE_PROGRESS_TASK)
       this.load()
@@ -1599,11 +2265,16 @@ import PostActions from '~/components/widgets/PostActions.astro'
       this.removeEventListener('click', this.handleReaderLink)
       this.removeEventListener('click', this.handleCodeCopy)
       this.removeEventListener('click', this.handlePanelToggle)
+      this.removeEventListener('click', this.handleMindMapClick)
+      this.removeEventListener('keydown', this.handleMindMapKeydown)
       this.removeEventListener('pointerover', this.prefetchReaderLink)
       window.removeEventListener('popstate', this.handlePopState)
+      window.removeEventListener('resize', this.handleMindMapResize)
       document.removeEventListener('astro:page-load', this.handlePageLoad)
       this.headingObserver?.disconnect()
       this.requestController?.abort()
+      if (this.mindMapResizeFrame)
+        window.cancelAnimationFrame(this.mindMapResizeFrame)
       finishProgress(COURSE_PROGRESS_TASK)
     }
 
@@ -1615,8 +2286,7 @@ import PostActions from '~/components/widgets/PostActions.astro'
       }
 
       const catalogUrl = this.dataset.catalogUrl || '/docs/catalog.json'
-      const catalogResponse = await fetch(catalogUrl)
-      if (!catalogResponse.ok) throw new Error('无法加载文档目录。')
+      const catalogResponse = await this.fetchCatalog(catalogUrl)
       this.catalog = (await catalogResponse.json()) as Catalog
 
       await this.loadArticle(
@@ -1643,6 +2313,7 @@ import PostActions from '~/components/widgets/PostActions.astro'
       const sequence = ++this.loadSequence
       this.requestController?.abort()
       this.requestController = new AbortController()
+      this.closeMindMap()
       const readerMain = this.querySelector<HTMLElement>('.reader-main')
       startProgress(COURSE_PROGRESS_TASK)
       if (!initial) {
@@ -1669,7 +2340,6 @@ import PostActions from '~/components/widgets/PostActions.astro'
         this.canonicalizeLocation()
 
         this.updateHeader()
-        this.updateCoursePanel()
         const rendered = courseMarkdown.parse(articleMarkdown)
         const safeHtml = DOMPurify.sanitize(rendered as string, {
           USE_PROFILES: { html: true },
@@ -1706,7 +2376,9 @@ import PostActions from '~/components/widgets/PostActions.astro'
         state.classList.remove('is-error')
         this.removeAttribute('data-loading')
         this.removeAttribute('aria-busy')
+        this.updateCoursePanel()
         this.updatePostActions(articleMarkdown)
+        this.updateMindMap(content)
         this.updateToc(content)
         this.updateNavigation()
 
@@ -1748,14 +2420,16 @@ import PostActions from '~/components/widgets/PostActions.astro'
       const blocks = Array.from(root.querySelectorAll('pre'))
       for (const pre of blocks) {
         const code = pre.querySelector('code')
-        if (!code) return
-
-        const source = (code.textContent || '').replace(/\n+$/, '')
-        const languageClass = Array.from(code.classList).find((name) =>
-          name.startsWith('language-')
+        const source = (code?.textContent || pre.textContent || '').replace(
+          /\n+$/,
+          ''
         )
+        const languageClass = Array.from(
+          new Set([...pre.classList, ...(code?.classList || [])])
+        ).find((name) => name.startsWith('language-'))
         const languageToken = languageClass
           ?.slice('language-'.length)
+          .split(/[\s,{]/, 1)[0]
           .toLowerCase()
         const declaredLanguage = languageToken
           ? CODE_LANGUAGE_ALIASES[languageToken] ||
@@ -1773,9 +2447,7 @@ import PostActions from '~/components/widgets/PostActions.astro'
           inferredLanguage &&
           declaredLanguage &&
           inferredLanguage !== declaredLanguage &&
-          (inferredLanguage === 'shellscript' ||
-            inferredLanguage === 'python' ||
-            inferredLanguage === ('text' as BundledLanguage))
+          (inferredLanguage === 'shellscript' || inferredLanguage === 'python')
         const language = shouldInfer
           ? inferredLanguage || declaredLanguage
           : hasLanguageMismatch
@@ -1784,29 +2456,47 @@ import PostActions from '~/components/widgets/PostActions.astro'
         const resolvedLanguage = language || ('text' as BundledLanguage)
 
         let highlightedPre: HTMLPreElement | null = null
-        try {
-          const highlighted = await codeToHtml(source, {
-            lang: resolvedLanguage,
-            themes: {
-              light: 'vitesse-light',
-              dark: 'vitesse-dark',
-            },
-            defaultColor: false,
-          })
-          const highlightedTemplate = document.createElement('template')
-          highlightedTemplate.innerHTML = highlighted
-          highlightedPre = highlightedTemplate.content.querySelector('pre')
-        } catch (error) {
-          console.warn('[course-reader] code highlighting failed', {
-            language: resolvedLanguage,
-            error,
-          })
+        let highlightedLanguage = resolvedLanguage
+        const candidates = Array.from(
+          new Set<BundledLanguage>([
+            resolvedLanguage,
+            'text' as BundledLanguage,
+          ])
+        )
+        for (const candidate of candidates) {
+          try {
+            const highlighted = await codeToHtml(source, {
+              lang: candidate,
+              themes: {
+                light: 'vitesse-light',
+                dark: 'vitesse-dark',
+              },
+              defaultColor: false,
+            })
+            const highlightedTemplate = document.createElement('template')
+            highlightedTemplate.innerHTML = highlighted
+            highlightedPre = highlightedTemplate.content.querySelector('pre')
+            if (highlightedPre) {
+              highlightedLanguage = candidate
+              break
+            }
+          } catch (error) {
+            if (candidate === candidates.at(-1)) {
+              console.warn('[course-reader] code highlighting failed', {
+                language: resolvedLanguage,
+                error,
+              })
+            }
+          }
         }
 
         const wrapper = document.createElement('div')
         wrapper.className = 'reader-code-block'
         wrapper.dataset.code = source
-        const isTerminal = resolvedLanguage === 'shellscript'
+        if (languageToken) wrapper.dataset.sourceLanguage = languageToken
+        wrapper.dataset.highlighted = String(Boolean(highlightedPre))
+        wrapper.dataset.language = highlightedLanguage
+        const isTerminal = highlightedLanguage === 'shellscript'
         wrapper.dataset.terminal = String(isTerminal)
 
         const toolbar = document.createElement('div')
@@ -1823,8 +2513,10 @@ import PostActions from '~/components/widgets/PostActions.astro'
         const languageLabel = document.createElement('span')
         languageLabel.className = 'reader-code-language'
         languageLabel.textContent =
-          CODE_LANGUAGE_LABELS[resolvedLanguage] ||
-          resolvedLanguage ||
+          CODE_LANGUAGE_LABELS[highlightedLanguage] ||
+          (highlightedLanguage === ('text' as BundledLanguage)
+            ? '代码'
+            : highlightedLanguage) ||
           languageToken ||
           '代码'
 
@@ -1897,6 +2589,346 @@ import PostActions from '~/components/widgets/PostActions.astro'
         delete button.dataset.copied
       }, 1400)
       this.copyFeedbackTimers.set(button, hideTimer)
+    }
+
+    private updateMindMap(content: HTMLElement) {
+      const root: MindMapNode = {
+        title: this.article.title,
+        depth: 1,
+        children: [],
+      }
+      const stack: MindMapNode[] = [root]
+      const headings = Array.from(
+        content.querySelectorAll<HTMLElement>('h2, h3, h4')
+      )
+
+      for (const heading of headings) {
+        const depth = Number(heading.tagName.slice(1))
+        const node: MindMapNode = {
+          title: heading.textContent?.trim() || '未命名章节',
+          headingId: heading.id,
+          depth,
+          children: [],
+        }
+        while (stack.length > 1 && stack.at(-1)!.depth >= depth) stack.pop()
+        ;(stack.at(-1) || root).children.push(node)
+        stack.push(node)
+      }
+
+      this.mindMapRoot = root
+      const title = this.querySelector<HTMLElement>('[data-mindmap-title]')
+      if (title) title.textContent = this.article.title
+    }
+
+    private wrapMindMapText(value: string, maxUnits: number, maxLines = 3) {
+      const normalized = value.replace(/\s+/g, ' ').trim() || '未命名章节'
+      const tokens =
+        normalized.match(
+          /[\u3400-\u9fff\uf900-\ufaff]|[A-Za-z0-9_$@#.+:/-]+|[^\s]/g
+        ) || []
+      const lines: string[] = []
+      let line = ''
+      let units = 0
+
+      const measure = (token: string) =>
+        /^[\u3400-\u9fff\uf900-\ufaff]$/.test(token)
+          ? 2
+          : Math.max(1, Math.min(token.length, maxUnits))
+
+      for (const token of tokens) {
+        const tokenUnits = measure(token)
+        const needsSpace = Boolean(line) && /^[A-Za-z0-9_$@#]/.test(token)
+        const nextUnits = units + tokenUnits + (needsSpace ? 1 : 0)
+        if (line && nextUnits > maxUnits) {
+          lines.push(line)
+          line = token
+          units = tokenUnits
+          if (lines.length === maxLines) break
+        } else {
+          line += `${needsSpace ? ' ' : ''}${token}`
+          units = nextUnits
+        }
+      }
+      if (lines.length < maxLines && line) lines.push(line)
+
+      const visibleText = lines.join('').replace(/\s+/g, '')
+      const fullText = normalized.replace(/\s+/g, '')
+      if (visibleText.length < fullText.length && lines.length) {
+        lines[lines.length - 1] = `${lines.at(-1)!.replace(/[….]+$/, '')}…`
+      }
+      return lines
+    }
+
+    private renderMindMap() {
+      const root = this.mindMapRoot
+      const canvas = this.querySelector<SVGSVGElement>('[data-mindmap-canvas]')
+      if (!root || !canvas) return
+
+      const compact = window.matchMedia('(max-width: 640px)').matches
+      const nodeWidth = compact ? 176 : 208
+      const rootWidth = compact ? 192 : 226
+      const horizontalGap = compact ? 54 : 78
+      const verticalGap = compact ? 13 : 16
+      const padding = compact ? 22 : 30
+      const lineHeight = compact ? 18 : 19
+      const nodes: MindMapNode[] = []
+      let cursorY = padding
+
+      const prepare = (node: MindMapNode) => {
+        node.width = node.depth === 1 ? rootWidth : nodeWidth
+        node.lines = this.wrapMindMapText(
+          node.title,
+          node.depth === 1 ? (compact ? 20 : 24) : compact ? 17 : 21
+        )
+        node.height = Math.max(44, node.lines.length * lineHeight + 22)
+        node.children.forEach(prepare)
+      }
+
+      const position = (node: MindMapNode) => {
+        node.x =
+          padding +
+          (node.depth - 1) * (nodeWidth + horizontalGap) +
+          (node.depth > 1 ? rootWidth - nodeWidth : 0)
+        if (node.children.length === 0) {
+          node.y = cursorY
+          cursorY += node.height! + verticalGap
+        } else {
+          node.children.forEach(position)
+          const first = node.children[0]
+          const last = node.children.at(-1)!
+          const firstCenter = first.y! + first.height! / 2
+          const lastCenter = last.y! + last.height! / 2
+          node.y = Math.max(
+            padding,
+            (firstCenter + lastCenter) / 2 - node.height! / 2
+          )
+        }
+        nodes.push(node)
+      }
+
+      prepare(root)
+      position(root)
+      this.mindMapWidth = Math.ceil(
+        Math.max(...nodes.map((node) => node.x! + node.width!)) + padding
+      )
+      this.mindMapHeight = Math.ceil(
+        Math.max(...nodes.map((node) => node.y! + node.height!)) + padding
+      )
+
+      const svgNamespace = 'http://www.w3.org/2000/svg'
+      const fragment = document.createDocumentFragment()
+      const edges = document.createElementNS(svgNamespace, 'g')
+      edges.setAttribute('aria-hidden', 'true')
+      for (const parent of nodes) {
+        for (const child of parent.children) {
+          const startX = parent.x! + parent.width!
+          const startY = parent.y! + parent.height! / 2
+          const endX = child.x!
+          const endY = child.y! + child.height! / 2
+          const bend = Math.max(24, (endX - startX) * 0.48)
+          const path = document.createElementNS(svgNamespace, 'path')
+          path.setAttribute('class', 'reader-mindmap-edge')
+          path.setAttribute(
+            'd',
+            `M ${startX} ${startY} C ${startX + bend} ${startY}, ${endX - bend} ${endY}, ${endX} ${endY}`
+          )
+          edges.append(path)
+        }
+      }
+      fragment.append(edges)
+
+      for (const node of nodes) {
+        const group = document.createElementNS(svgNamespace, 'g')
+        group.setAttribute('class', 'reader-mindmap-node')
+        group.setAttribute('transform', `translate(${node.x} ${node.y})`)
+        group.dataset.root = String(node.depth === 1)
+        if (node.headingId) {
+          group.dataset.mindmapHeading = node.headingId
+          group.setAttribute('role', 'link')
+          group.setAttribute('tabindex', '0')
+          group.setAttribute('aria-label', `跳转到：${node.title}`)
+        } else {
+          group.setAttribute('aria-hidden', 'true')
+        }
+
+        const rect = document.createElementNS(svgNamespace, 'rect')
+        rect.setAttribute('width', String(node.width))
+        rect.setAttribute('height', String(node.height))
+        rect.setAttribute('rx', '10')
+
+        const text = document.createElementNS(svgNamespace, 'text')
+        const textX = node.depth === 1 ? 15 : 13
+        const startY =
+          (node.height! - node.lines!.length * lineHeight) / 2 +
+          lineHeight * 0.76
+        node.lines!.forEach((line, index) => {
+          const span = document.createElementNS(svgNamespace, 'tspan')
+          span.setAttribute('x', String(textX))
+          span.setAttribute('y', String(startY + index * lineHeight))
+          span.textContent = line
+          text.append(span)
+        })
+        group.append(rect, text)
+        fragment.append(group)
+      }
+
+      canvas.replaceChildren(fragment)
+      canvas.setAttribute(
+        'viewBox',
+        `0 0 ${this.mindMapWidth} ${this.mindMapHeight}`
+      )
+      this.applyMindMapScale(1)
+    }
+
+    private applyMindMapScale(scale: number, preserveCenter = false) {
+      const canvas = this.querySelector<SVGSVGElement>('[data-mindmap-canvas]')
+      const viewport = this.querySelector<HTMLElement>(
+        '[data-mindmap-viewport]'
+      )
+      if (!canvas || !viewport || !this.mindMapWidth || !this.mindMapHeight)
+        return
+
+      const centerX = preserveCenter
+        ? (viewport.scrollLeft + viewport.clientWidth / 2) /
+          Math.max(1, viewport.scrollWidth)
+        : 0
+      const centerY = preserveCenter
+        ? (viewport.scrollTop + viewport.clientHeight / 2) /
+          Math.max(1, viewport.scrollHeight)
+        : 0
+      this.mindMapScale = Math.min(1.8, Math.max(0.32, scale))
+      canvas.style.width = `${Math.round(this.mindMapWidth * this.mindMapScale)}px`
+      canvas.style.height = `${Math.round(this.mindMapHeight * this.mindMapScale)}px`
+
+      if (preserveCenter) {
+        requestAnimationFrame(() => {
+          viewport.scrollLeft =
+            centerX * viewport.scrollWidth - viewport.clientWidth / 2
+          viewport.scrollTop =
+            centerY * viewport.scrollHeight - viewport.clientHeight / 2
+        })
+      }
+    }
+
+    private fitMindMap() {
+      const viewport = this.querySelector<HTMLElement>(
+        '[data-mindmap-viewport]'
+      )
+      if (!viewport || !this.mindMapWidth || !this.mindMapHeight) return
+      const availableWidth = Math.max(1, viewport.clientWidth - 32)
+      const minimumReadableScale = window.matchMedia('(max-width: 640px)')
+        .matches
+        ? 0.78
+        : 0.68
+      const scale = Math.min(
+        1,
+        Math.max(minimumReadableScale, availableWidth / this.mindMapWidth)
+      )
+      this.applyMindMapScale(scale)
+      viewport.scrollTo({ left: 0, top: 0, behavior: 'auto' })
+    }
+
+    private openMindMap() {
+      const dialog = this.querySelector<HTMLDialogElement>(
+        '[data-mindmap-dialog]'
+      )
+      if (!dialog || !this.mindMapRoot) return
+      this.renderMindMap()
+      if (!dialog.open) dialog.showModal()
+      requestAnimationFrame(() => this.fitMindMap())
+    }
+
+    private closeMindMap() {
+      const dialog = this.querySelector<HTMLDialogElement>(
+        '[data-mindmap-dialog]'
+      )
+      if (dialog?.open) dialog.close()
+    }
+
+    private jumpToMindMapHeading(headingId: string) {
+      const heading = this.querySelector<HTMLElement>(
+        `#${CSS.escape(headingId)}`
+      )
+      if (!heading) return
+      this.closeMindMap()
+      requestAnimationFrame(() => {
+        const headingTop =
+          heading.getBoundingClientRect().top + window.scrollY - 88
+        window.scrollTo({
+          top: Math.max(0, headingTop),
+          behavior: window.matchMedia('(prefers-reduced-motion: reduce)')
+            .matches
+            ? 'auto'
+            : 'smooth',
+        })
+        const anchorUrl = new URL(window.location.href)
+        anchorUrl.hash = encodeURIComponent(headingId)
+        window.history.pushState(window.history.state, '', anchorUrl)
+        this.setActiveToc(headingId)
+      })
+    }
+
+    private handleMindMapClick = (event: MouseEvent) => {
+      if (!(event.target instanceof Element)) return
+      const dialog = this.querySelector<HTMLDialogElement>(
+        '[data-mindmap-dialog]'
+      )
+      if (event.target === dialog) {
+        this.closeMindMap()
+        return
+      }
+
+      const trigger = event.target.closest<HTMLElement>(
+        '[data-mindmap-trigger]'
+      )
+      if (trigger && this.contains(trigger)) {
+        event.preventDefault()
+        this.openMindMap()
+        return
+      }
+
+      const action = event.target.closest<HTMLButtonElement>(
+        '[data-mindmap-action]'
+      )
+      if (action && this.contains(action)) {
+        event.preventDefault()
+        if (action.dataset.mindmapAction === 'close') this.closeMindMap()
+        if (action.dataset.mindmapAction === 'fit') this.fitMindMap()
+        if (action.dataset.mindmapAction === 'zoom-in')
+          this.applyMindMapScale(this.mindMapScale + 0.14, true)
+        if (action.dataset.mindmapAction === 'zoom-out')
+          this.applyMindMapScale(this.mindMapScale - 0.14, true)
+        return
+      }
+
+      const node = event.target.closest<SVGGElement>('[data-mindmap-heading]')
+      if (node?.dataset.mindmapHeading)
+        this.jumpToMindMapHeading(node.dataset.mindmapHeading)
+    }
+
+    private handleMindMapKeydown = (event: KeyboardEvent) => {
+      if (!(event.target instanceof Element)) return
+      const node = event.target.closest<SVGGElement>('[data-mindmap-heading]')
+      if (
+        !node?.dataset.mindmapHeading ||
+        (event.key !== 'Enter' && event.key !== ' ')
+      )
+        return
+      event.preventDefault()
+      this.jumpToMindMapHeading(node.dataset.mindmapHeading)
+    }
+
+    private handleMindMapResize = () => {
+      const dialog = this.querySelector<HTMLDialogElement>(
+        '[data-mindmap-dialog]'
+      )
+      if (!dialog?.open) return
+      if (this.mindMapResizeFrame)
+        window.cancelAnimationFrame(this.mindMapResizeFrame)
+      this.mindMapResizeFrame = window.requestAnimationFrame(() => {
+        this.renderMindMap()
+        this.fitMindMap()
+      })
     }
 
     private handlePanelToggle = (event: MouseEvent) => {
@@ -2130,13 +3162,62 @@ import PostActions from '~/components/widgets/PostActions.astro'
       const cached = this.markdownCache.get(cacheKey)
       if (cached !== undefined) return cached
 
-      const response = await fetch(this.getRawUrl(path, source), { signal })
-      if (!response.ok) {
-        throw new Error(`正文加载失败（HTTP ${response.status}）。`)
+      let lastStatus: number | undefined
+      for (const url of this.getMarkdownUrls(path, source)) {
+        for (let attempt = 0; attempt < FETCH_RETRY_DELAYS.length; attempt++) {
+          try {
+            const response = await fetch(url, { signal })
+            lastStatus = response.status
+            if (response.ok) {
+              const markdown = await response.text()
+              if (!markdown.trim()) {
+                throw new Error('该章节源文件暂无正文。')
+              }
+              this.markdownCache.set(cacheKey, markdown)
+              return markdown
+            }
+            if (!shouldRetryStatus(response.status)) break
+          } catch (error) {
+            if (error instanceof DOMException && error.name === 'AbortError') {
+              throw error
+            }
+            if (
+              error instanceof Error &&
+              error.message === '该章节源文件暂无正文。'
+            ) {
+              throw error
+            }
+          }
+
+          if (attempt < FETCH_RETRY_DELAYS.length - 1) {
+            await waitForRetry(FETCH_RETRY_DELAYS[attempt], signal)
+          }
+        }
       }
-      const markdown = await response.text()
-      this.markdownCache.set(cacheKey, markdown)
-      return markdown
+
+      const statusMessage = lastStatus ? `（HTTP ${lastStatus}）` : ''
+      throw new Error(`正文加载失败${statusMessage}，已自动重试并切换备用源。`)
+    }
+
+    private async fetchCatalog(url: string) {
+      let lastStatus: number | undefined
+      for (let attempt = 0; attempt < FETCH_RETRY_DELAYS.length; attempt++) {
+        try {
+          const response = await fetch(url)
+          lastStatus = response.status
+          if (response.ok) return response
+          if (!shouldRetryStatus(response.status)) break
+        } catch {
+          // Retry same-origin catalog requests after transient network failures.
+        }
+
+        if (attempt < FETCH_RETRY_DELAYS.length - 1) {
+          await waitForRetry(FETCH_RETRY_DELAYS[attempt])
+        }
+      }
+
+      const statusMessage = lastStatus ? `（HTTP ${lastStatus}）` : ''
+      throw new Error(`无法加载文档目录${statusMessage}，请稍后重试。`)
     }
 
     private findArticle(path: string, sourceId: string, courseId?: string) {
@@ -2415,6 +3496,18 @@ import PostActions from '~/components/widgets/PostActions.astro'
       return `https://cdn.jsdelivr.net/gh/${source.repository}@${source.commit}/${encodedPath}`
     }
 
+    private getMarkdownUrls(path: string, source: Source) {
+      const encodedPath = path
+        .split('/')
+        .map((segment) => encodeURIComponent(segment))
+        .join('/')
+      return [
+        this.getRawUrl(path, source),
+        `https://gcore.jsdelivr.net/gh/${source.repository}@${source.commit}/${encodedPath}`,
+        `https://raw.githubusercontent.com/${source.repository}/${source.commit}/${encodedPath}`,
+      ]
+    }
+
     private getArticleUrl(
       path: string,
       sourceId = this.source.id,
@@ -2506,10 +3599,13 @@ import PostActions from '~/components/widgets/PostActions.astro'
       this.removeAttribute('aria-busy')
 
       const title = this.querySelector<HTMLElement>('[data-title]')
-      const course = this.querySelector<HTMLElement>('[data-course]')
+      const course = this.querySelector<HTMLAnchorElement>('[data-course-link]')
       const content = this.querySelector<HTMLElement>('[data-content]')
       if (title) title.textContent = '文档暂时无法打开'
-      if (course) course.textContent = '请返回 Docs 后重试'
+      if (course) {
+        course.href = '/docs/'
+        course.textContent = '加载失败'
+      }
 
       state.hidden = false
       state.classList.add('is-error')
@@ -2521,11 +3617,21 @@ import PostActions from '~/components/widgets/PostActions.astro'
       const message = document.createElement('span')
       message.textContent =
         error instanceof Error ? error.message : '文档加载失败，请稍后重试。'
+      const actions = document.createElement('div')
+      actions.className = 'reader-error-actions'
+      const retryButton = document.createElement('button')
+      retryButton.type = 'button'
+      retryButton.className = 'reader-error-back reader-error-retry'
+      retryButton.textContent = '重新加载'
+      retryButton.addEventListener('click', () => window.location.reload(), {
+        once: true,
+      })
       const backLink = document.createElement('a')
       backLink.className = 'reader-error-back'
       backLink.href = '/docs/'
       backLink.textContent = '返回 Docs'
-      state.append(icon, message, backLink)
+      actions.append(retryButton, backLink)
+      state.append(icon, message, actions)
     }
   }
 

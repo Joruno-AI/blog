@@ -71,13 +71,27 @@ function normalizeSource(
     commit: catalog.commit,
     generatedAt: catalog.generatedAt,
   }
-  const categories = catalog.categories.map((category) => ({
-    ...category,
-    courses: category.courses.map((course) => ({
-      ...course,
-      sourceId: course.sourceId || id,
-    })),
-  }))
+  const categories = catalog.categories
+    .map((category) => {
+      const courses = category.courses
+        .map((course) => ({
+          ...course,
+          sourceId: course.sourceId || id,
+          articles: course.articles.filter((article) => article.bytes > 0),
+        }))
+        .filter((course) => course.articles.length > 0)
+
+      return {
+        ...category,
+        courseCount: courses.length,
+        articleCount: courses.reduce(
+          (total, course) => total + course.articles.length,
+          0
+        ),
+        courses,
+      }
+    })
+    .filter((category) => category.courses.length > 0)
 
   return { source, categories }
 }
