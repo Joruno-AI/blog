@@ -43,10 +43,6 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
               >
               <span class="mini-track-meta">
                 <span id="mini-track-artist">等待选曲</span>
-                <span class="mini-track-separator" aria-hidden="true">·</span>
-                <span class="mini-track-time" id="mini-track-time"
-                  >0:00 / 0:00</span
-                >
               </span>
             </div>
           </div>
@@ -82,18 +78,23 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
               </button>
             </div>
 
-            <div
-              class="mini-progress"
-              id="mini-progress"
-              role="progressbar"
-              tabindex="0"
-              aria-label="播放进度"
-              aria-valuemin="0"
-              aria-valuemax="100"
-              aria-valuenow="0"
-              aria-valuetext="0:00 / 0:00"
-            >
-              <div class="mini-progress-fill" id="mini-progress-fill"></div>
+            <div class="mini-progress-line">
+              <span class="mini-progress-time" id="mini-current-time">0:00</span
+              >
+              <div
+                class="mini-progress"
+                id="mini-progress"
+                role="progressbar"
+                tabindex="0"
+                aria-label="播放进度"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                aria-valuenow="0"
+                aria-valuetext="0:00 / 0:00"
+              >
+                <div class="mini-progress-fill" id="mini-progress-fill"></div>
+              </div>
+              <span class="mini-progress-time" id="mini-duration">0:00</span>
             </div>
           </div>
 
@@ -260,27 +261,19 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
     color: var(--music-text, #f7f2ea);
     background: color-mix(
       in srgb,
-      var(--music-panel-strong, rgb(9 10 12 / 96%)) 86%,
-      var(--album-color, #38342f) 14%
+      var(--music-dock-surface, var(--music-room-surface, #0c0d0f)) 84%,
+      transparent
     );
-    border: 1px solid
-      color-mix(
-        in srgb,
-        var(--music-border-soft, rgb(255 255 255 / 8%)) 72%,
-        var(--music-accent-fill) 28%
-      );
+    border: 0;
     border-radius: 1.15rem;
-    box-shadow:
-      0 1.25rem 3.5rem rgb(0 0 0 / 28%),
-      inset 0 1px 0 color-mix(in srgb, var(--music-text) 7%, transparent);
-    -webkit-backdrop-filter: blur(18px) saturate(120%);
-    backdrop-filter: blur(18px) saturate(120%);
+    box-shadow: var(--music-dock-shadow, 0 0.8rem 2.5rem rgb(0 0 0 / 16%));
+    -webkit-backdrop-filter: blur(22px) saturate(112%);
+    backdrop-filter: blur(22px) saturate(112%);
     transition:
       transform 220ms cubic-bezier(0.23, 1, 0.32, 1),
       opacity 160ms ease,
       visibility 220ms ease,
       background-color 680ms cubic-bezier(0.22, 1, 0.36, 1),
-      border-color 680ms cubic-bezier(0.22, 1, 0.36, 1),
       box-shadow 680ms cubic-bezier(0.22, 1, 0.36, 1);
     will-change: transform, opacity;
   }
@@ -337,22 +330,16 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
     min-width: 0;
     align-items: center;
     gap: 0.38rem;
-    overflow: hidden;
     color: var(--music-text-muted, rgba(247, 242, 234, 0.48));
     font-size: 0.61rem;
     letter-spacing: 0.02em;
     white-space: nowrap;
   }
   #mini-track-artist {
+    flex: 0 1 auto;
+    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-  .mini-track-separator {
-    opacity: 0.52;
-  }
-  .mini-track-time {
-    flex: none;
-    font-variant-numeric: tabular-nums;
   }
   .transport-center {
     grid-area: transport;
@@ -361,6 +348,20 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
     align-items: center;
     gap: clamp(0.85rem, 1.6vw, 1.25rem);
     min-width: 0;
+  }
+  .mini-progress-line {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    min-width: 0;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .mini-progress-time {
+    color: var(--music-text-muted, rgba(247, 242, 234, 0.48));
+    font-size: 0.61rem;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
   }
   .mini-progress {
     position: relative;
@@ -484,15 +485,11 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
     gap: 0.42rem;
   }
   .dock-mode-options {
-    gap: 0.05rem;
-    padding: 0.16rem;
-    background: var(--music-control-soft, rgba(255, 255, 255, 0.055));
-    border: 1px solid var(--music-border-soft, rgba(255, 255, 255, 0.06));
-    border-radius: 0.72rem;
+    gap: 0.28rem;
   }
   .dock-mode-btn {
     display: grid;
-    width: 1.85rem;
+    width: 1.55rem;
     height: 1.85rem;
     padding: 0;
     color: var(--music-text-muted, rgba(247, 242, 234, 0.43));
@@ -508,27 +505,17 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
   }
   .dock-mode-btn.active {
     color: var(--music-accent-text, #f6d23c);
-    background: color-mix(
-      in srgb,
-      var(--music-accent-fill, #f6d23c) 14%,
-      transparent
-    );
   }
   .dock-speed-options {
-    gap: 0.05rem;
-    padding: 0.16rem;
-    background: var(--music-control-soft, rgba(255, 255, 255, 0.055));
-    border: 1px solid var(--music-border-soft, rgba(255, 255, 255, 0.06));
-    border-radius: 0.72rem;
+    gap: 0.48rem;
   }
   .dock-speed-btn {
-    min-width: 2rem;
-    height: 1.85rem;
-    padding: 0 0.34rem;
+    min-width: 0;
+    height: auto;
+    padding: 0.35rem 0;
     color: var(--music-text-muted, rgba(247, 242, 234, 0.43));
     background: transparent;
     border: 0;
-    border-radius: 0.52rem;
     font-size: 0.61rem;
     cursor: pointer;
     transition:
@@ -538,11 +525,6 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
   }
   .dock-speed-btn.active {
     color: var(--music-accent-text, #f6d23c);
-    background: color-mix(
-      in srgb,
-      var(--music-accent-fill, #f6d23c) 13%,
-      transparent
-    );
     font-weight: 700;
   }
 
@@ -574,9 +556,14 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
     height: 1.7rem;
     padding: 0;
     color: var(--music-text-muted, rgba(247, 242, 234, 0.5));
-    background: var(--music-panel-strong, rgb(9 10 12 / 92%));
-    border: 1px solid var(--music-border-soft, rgb(255 255 255 / 8%));
+    background: color-mix(
+      in srgb,
+      var(--music-dock-surface, var(--music-room-surface, #0c0d0f)) 84%,
+      transparent
+    );
+    border: 0;
     border-radius: 999px;
+    box-shadow: var(--music-dock-shadow, 0 0.8rem 2.5rem rgb(0 0 0 / 16%));
     cursor: pointer;
     place-items: center;
     opacity: 0;
@@ -610,11 +597,13 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
 
   @media (hover: hover) and (pointer: fine) {
     .mini-ctrl-btn:not(:disabled):hover,
-    .dock-mode-btn:hover,
-    .dock-speed-btn:hover,
     .dock-collapse-toggle:hover {
       color: var(--music-text-strong, #fffaf2);
       background-color: var(--music-control-hover, rgba(255, 255, 255, 0.1));
+    }
+    .dock-mode-btn:hover,
+    .dock-speed-btn:hover {
+      color: var(--music-text-strong, #fffaf2);
     }
     .mini-play-btn:not(:disabled):hover {
       color: var(--music-primary-button-text, #111214);
@@ -661,11 +650,10 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
     }
     .now-playing-dock {
       grid-template-areas:
-        'track track'
-        'transport transport'
-        'actions actions';
+        'track actions'
+        'transport transport';
       grid-template-columns: minmax(0, 1fr) auto;
-      gap: 0.34rem;
+      gap: 0.3rem 0.45rem;
       min-height: 0;
       padding: 0.42rem 0.48rem;
       border-radius: 0.9rem;
@@ -684,28 +672,67 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
     .transport-center {
       gap: 0.55rem;
     }
+    .mini-progress-line {
+      gap: 0.4rem;
+    }
     .mini-play-btn {
       width: 2.6rem;
       height: 2.6rem;
     }
     .dock-actions {
-      width: 100%;
-      justify-content: space-between;
-      gap: 0.25rem;
+      width: auto;
+      min-width: 0;
+      justify-content: flex-end;
+      gap: 0.18rem;
     }
   }
   @media (max-width: 420px) {
+    .mini-track {
+      grid-template-columns: 2.2rem minmax(0, 1fr);
+      gap: 0.42rem;
+    }
+    .mini-track-cover {
+      width: 2.2rem;
+    }
+    .mini-track-meta {
+      display: none;
+    }
+    .mini-progress-line {
+      gap: 0.3rem;
+    }
+    .mini-progress-time {
+      font-size: 0.56rem;
+    }
+    .dock-mode-options {
+      gap: 0.18rem;
+    }
+    .dock-speed-options {
+      gap: 0.34rem;
+    }
     .dock-mode-btn {
-      width: 1.72rem;
-      height: 1.72rem;
+      width: 1.35rem;
+      height: 1.7rem;
     }
     .dock-speed-btn {
-      min-width: 1.72rem;
-      padding-inline: 0.2rem;
+      min-width: 0;
+      height: auto;
+      padding: 0.3rem 0;
+      font-size: 0.56rem;
     }
     .dock-collapse-toggle {
-      width: 2rem;
-      height: 2rem;
+      width: 1.7rem;
+      height: 1.9rem;
+    }
+  }
+  @media (max-width: 360px) {
+    .mini-track {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .mini-track-cover {
+      display: none;
+    }
+    .mini-track-title {
+      font-size: 0.7rem;
     }
   }
   @media (prefers-reduced-motion: reduce) {
@@ -836,11 +863,13 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
       window.MusicPlayerState.isPlaying = false
       const fill = document.getElementById('mini-progress-fill')
       const progress = document.getElementById('mini-progress')
-      const time = document.getElementById('mini-track-time')
+      const currentTime = document.getElementById('mini-current-time')
+      const duration = document.getElementById('mini-duration')
       if (fill) fill.style.width = '0%'
       progress?.setAttribute('aria-valuenow', '0')
       progress?.setAttribute('aria-valuetext', '0:00 / 0:00')
-      if (time) time.textContent = '0:00 / 0:00'
+      if (currentTime) currentTime.textContent = '0:00'
+      if (duration) duration.textContent = '0:00'
       updateMiniTrack()
       updatePlayIcon(false)
     }) as EventListener)
@@ -860,15 +889,16 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
         duration > 0 ? Math.min(100, (currentTime / duration) * 100) : 0
       const fill = document.getElementById('mini-progress-fill')
       const progress = document.getElementById('mini-progress')
-      const time = document.getElementById('mini-track-time')
+      const currentTimeEl = document.getElementById('mini-current-time')
+      const durationEl = document.getElementById('mini-duration')
       if (fill) fill.style.width = `${percent}%`
       progress?.setAttribute('aria-valuenow', String(Math.round(percent)))
       progress?.setAttribute(
         'aria-valuetext',
         `${formatTime(currentTime)} / ${formatTime(duration)}`
       )
-      if (time)
-        time.textContent = `${formatTime(currentTime)} / ${formatTime(duration)}`
+      if (currentTimeEl) currentTimeEl.textContent = formatTime(currentTime)
+      if (durationEl) durationEl.textContent = formatTime(duration)
       updateMiniTrack()
     }) as EventListener)
     window.addEventListener('set-playback-rate', ((event: CustomEvent) =>

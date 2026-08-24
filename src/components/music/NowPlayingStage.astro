@@ -57,7 +57,6 @@
       aria-expanded="false"
     >
       <span class="handle-chevron i-ri-arrow-left-s-line"></span>
-      <span class="handle-label">曲目</span>
     </button>
     <div class="track-panel-body" id="track-panel-body" aria-hidden="true">
       <header class="track-panel-head">
@@ -193,17 +192,26 @@
   .record-context-description {
     display: block;
     max-width: 32rem;
-    overflow: visible;
+    max-height: var(--record-description-max-height, none);
+    overflow: hidden;
     margin: 1.5rem 0 0;
     padding-top: 1rem;
     color: var(--music-text-soft);
     border-top: 1px solid var(--music-border-soft);
-    font-size: clamp(0.82rem, 0.9vw, 0.94rem);
+    font-size: clamp(0.98rem, 1vw, 1.08rem);
     letter-spacing: 0.025em;
     line-height: 1.75;
     text-align: left;
     text-wrap: pretty;
     -webkit-line-clamp: unset;
+  }
+  :global(#music-page-wrapper.stage-description-clipped)
+    .record-context-description {
+    mask-image: linear-gradient(to bottom, #000 82%, transparent 100%);
+  }
+  :global(#music-page-wrapper.stage-hide-description)
+    .record-context-description {
+    display: none;
   }
   .record-context-description:empty {
     display: none;
@@ -226,8 +234,8 @@
   :global(#music-page-wrapper.stage-compact-intro) .record-context-description {
     margin-top: 0.9rem;
     padding-top: 0.75rem;
-    font-size: clamp(0.72rem, 0.82vw, 0.86rem);
-    line-height: 1.62;
+    font-size: clamp(0.94rem, 0.96vw, 1.02rem);
+    line-height: 1.7;
     -webkit-line-clamp: unset;
   }
   :global(#music-page-wrapper.stage-compact-intro) .listening-intro-copy {
@@ -250,17 +258,19 @@
     flex-direction: row-reverse;
     align-items: center;
     gap: clamp(1.4rem, 2.5vw, 2.8rem);
+    max-width: calc(100vw - clamp(2rem, 8vw, 8rem));
     pointer-events: auto;
     transform-origin: right center;
     transition:
-      right 520ms cubic-bezier(0.22, 1, 0.36, 1),
-      left 520ms cubic-bezier(0.22, 1, 0.36, 1),
       transform 520ms cubic-bezier(0.22, 1, 0.36, 1),
       opacity 220ms ease;
   }
   .stage-vinyl {
     flex: none;
-    width: clamp(12rem, 19vw, 17.5rem);
+    width: min(
+      clamp(9rem, min(19vw, 32vh), 19rem),
+      var(--stage-player-max-size, 100vmax)
+    );
     aspect-ratio: 1;
     filter: drop-shadow(0 1.4rem 2.6rem rgb(0 0 0 / 55%));
   }
@@ -394,11 +404,17 @@
   }
 
   .lyrics-panel {
-    --lyrics-height: clamp(14rem, 32vh, 20rem);
+    --lyrics-preferred-height: clamp(10rem, 32vh, 20rem);
+    --lyrics-height: min(
+      var(--lyrics-preferred-height),
+      var(--stage-player-max-size, 100vmax)
+    );
     --lyrics-line-box: 2.05rem;
     position: relative;
     z-index: 1;
-    width: clamp(16rem, 23vw, 22rem);
+    flex: 1 1 clamp(12rem, 21vw, 22rem);
+    width: clamp(12rem, 21vw, 22rem);
+    min-width: 0;
     height: var(--lyrics-height);
     max-height: var(--lyrics-height);
     overflow: hidden;
@@ -420,9 +436,10 @@
     max-height: none;
     overflow-x: hidden;
     overflow-y: auto;
-    /* Leave a half viewport of breathing room so the first and last line can
-       occupy the same centered position as every line in between. */
-    padding-block: calc((var(--lyrics-height) - var(--lyrics-line-box)) / 2);
+    /* Keep the opening and ending lines inside the fade mask without adding
+       enough empty space for either edge line to move into the centre. */
+    padding-block-start: calc(var(--lyrics-line-box) * 0.75);
+    padding-block-end: calc(var(--lyrics-line-box) * 0.75);
     scrollbar-width: none;
     mask-image: linear-gradient(
       to bottom,
@@ -560,6 +577,7 @@
       var(--music-panel-strong, rgb(7 8 10 / 97%))
     );
     border-inline-start: 0;
+    border-radius: 0.7rem 0 0 0.7rem;
     box-shadow: -1.2rem 0 2.4rem rgb(0 0 0 / 12%);
     pointer-events: auto;
   }
@@ -569,10 +587,11 @@
     left: 1px;
     z-index: 2;
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 0.3rem;
-    padding: 0.7rem 0.3rem;
+    justify-content: center;
+    width: 1.75rem;
+    min-height: 2.1rem;
+    padding: 0.25rem 0.1rem;
     background: color-mix(
       in srgb,
       var(--album-color, #101216) 18%,
@@ -580,7 +599,7 @@
     );
     border: 1px solid var(--music-border, rgb(255 255 255 / 12%));
     border-right: 0;
-    border-radius: 0.6rem 0 0 0.6rem;
+    border-radius: 0.45rem 0 0 0.45rem;
     color: var(--music-text-muted, rgba(247, 242, 234, 0.55));
     cursor: pointer;
     pointer-events: auto;
@@ -590,13 +609,13 @@
   .track-panel-handle:hover {
     color: var(--music-text-strong, #f7f2ea);
   }
-  .handle-label {
-    font-size: 0.6rem;
-    letter-spacing: 0.2em;
-    writing-mode: vertical-rl;
+  .track-panel-handle::before {
+    content: '';
+    position: absolute;
+    inset: -0.35rem 0 -0.35rem -0.35rem;
   }
   .handle-chevron {
-    font-size: 0.9rem;
+    font-size: 0.72rem;
     transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
   }
   .track-panel.is-open .handle-chevron {
@@ -735,7 +754,6 @@
       gap: 0.8rem;
     }
     .lyrics-panel {
-      --lyrics-height: clamp(8.5rem, 25vh, 12rem);
       --lyrics-line-box: 2.75rem;
       width: clamp(14rem, 62vw, 22rem);
       flex: 1;
@@ -764,7 +782,7 @@
       opacity: 1;
       transform: translateZ(0) scale(1.16);
     }
-    .lyrics-scroll :global(.lyric-countdown) {
+    .lyrics-scroll :global(.lyric-countdown.is-visible) {
       display: flex;
     }
     .track-panel {
@@ -774,9 +792,8 @@
       bottom: 7.4rem;
     }
     .track-panel-handle {
-      width: 2.75rem;
-      min-height: 4.4rem;
-      justify-content: center;
+      width: 1.85rem;
+      min-height: 2.35rem;
     }
     .track-panel-body {
       padding: 0.9rem 1rem 0.9rem 1.1rem;
@@ -786,29 +803,22 @@
     }
   }
 
-  /* 三段布局先极限压缩简介，再按真实占用宽度逐级退场。 */
+  /* 简介空间不足时退场，歌词与唱片始终保留并在同一行内缩放。 */
   :global(#music-page-wrapper.stage-hide-intro) .listening-intro,
   :global(#music-page-wrapper.stage-hide-intro) .record-context {
     display: none;
   }
   :global(#music-page-wrapper.stage-hide-intro) .stage-left {
     left: clamp(0.9rem, 5vw, 4rem);
-    right: auto;
+    right: clamp(0.9rem, 5vw, 4rem);
+    width: auto;
+    max-width: none;
     flex-direction: row-reverse;
     transform-origin: left center;
   }
-  :global(#music-page-wrapper.stage-hide-vinyl) .stage-vinyl {
-    display: none;
-  }
-  :global(#music-page-wrapper.stage-hide-lyrics) .lyrics-panel {
-    display: none;
-  }
-  :global(#music-page-wrapper.stage-hide-lyrics) .stage-left {
-    display: none;
-  }
 
   @media (max-width: 767px) {
-    /* 手机首屏保留导语，选中唱片后再把空间完整交给歌词。 */
+    /* 手机首屏保留导语；选中唱片后歌词和唱片机始终同行展示。 */
     :global(#music-page-wrapper:not(.has-album)) .listening-intro {
       top: max(4.75rem, calc(env(safe-area-inset-top) + 4rem));
       left: 1rem;
@@ -840,34 +850,58 @@
 
     :global(#music-page-wrapper.has-album) .stage-left {
       top: max(4.75rem, calc(env(safe-area-inset-top) + 4rem));
-      right: 1rem;
-      left: 1rem;
-      display: block;
+      right: 0.75rem;
+      left: 0.75rem;
+      display: flex;
       width: auto;
+      max-width: none;
+      align-items: flex-start;
+      gap: clamp(0.45rem, 2.2vw, 0.8rem);
+      flex-direction: row-reverse;
       transform: none;
     }
     :global(#music-page-wrapper.has-album) .stage-vinyl {
-      display: none;
+      display: block;
+      width: min(
+        clamp(8.25rem, min(42vw, 38dvh), 18rem),
+        var(--stage-player-max-size, 100vmax)
+      );
     }
     :global(#music-page-wrapper.has-album) .lyrics-panel {
-      --lyrics-height: clamp(14rem, 38dvh, 20rem);
-      --lyrics-line-box: 3rem;
+      /* Consume the real room above the gallery instead of capping the lyric
+         viewport at 12/20rem and leaving an empty column on tall phones. */
+      --lyrics-preferred-height: var(
+        --stage-player-max-size,
+        clamp(8rem, 42dvh, 20rem)
+      );
+      --lyrics-line-box: clamp(2rem, 6.5vw, 2.45rem);
       display: block;
-      width: 100%;
+      flex: 1 1 auto;
+      width: auto;
+      min-width: 0;
       height: var(--lyrics-height);
       max-height: var(--lyrics-height);
     }
+    :global(#music-page-wrapper.has-album) .lyrics-scroll {
+      mask-image: linear-gradient(
+        to bottom,
+        transparent,
+        #000 9%,
+        #000 91%,
+        transparent
+      );
+    }
     :global(#music-page-wrapper.has-album) .lyrics-scroll :global(.lyric-line) {
-      min-height: 3rem;
-      padding-inline: 0.15rem;
-      font-size: 1rem;
-      line-height: 1.55;
+      min-height: var(--lyrics-line-box);
+      padding: 0.24rem 0.15rem;
+      font-size: clamp(0.72rem, 2.7vw, 0.94rem);
+      line-height: 1.48;
     }
     :global(#music-page-wrapper.has-album)
       .lyrics-scroll
       :global(.lyric-line.is-current) {
-      line-height: 1.42;
-      transform: translateZ(0) scale(1.16);
+      line-height: 1.4;
+      transform: translateZ(0) scale(1.05);
     }
 
     /* 侧栏始终被舞台高度约束，长专辑只在曲目区内部滚动。 */
@@ -942,12 +976,6 @@
     }
     .panel-tracks :global(.track-dur) {
       justify-self: end;
-    }
-  }
-
-  @media (max-width: 767px) and (max-height: 700px) {
-    :global(#music-page-wrapper.has-album) .lyrics-panel {
-      --lyrics-height: clamp(9.5rem, 28dvh, 11rem);
     }
   }
 
@@ -1071,6 +1099,7 @@
 
     const musicWrapper = document.getElementById('music-page-wrapper')
     let fitFrame = 0
+    let fitSettleTimer = 0
 
     function updateIntroGalleryFlow(hasAlbum: boolean) {
       if (!musicWrapper || !stage || !listeningIntro) return
@@ -1120,21 +1149,98 @@
       }
     }
 
+    function updatePlayerVerticalFit() {
+      if (!musicWrapper || !stage || !stageLeft) return
+      musicWrapper.style.removeProperty('--stage-player-max-size')
+      if (!musicWrapper.classList.contains('has-album')) return
+
+      const firstCell = document.querySelector<HTMLElement>(
+        '#album-gallery .corridor-cell[data-copy="1"]'
+      )
+      if (!firstCell) return
+
+      const stageRect = stage.getBoundingClientRect()
+      const playerRect = stageLeft.getBoundingClientRect()
+      const cellRect = firstCell.getBoundingClientRect()
+      const availableHeight = Math.floor(
+        Math.min(cellRect.top - 12, stageRect.bottom - 12) - playerRect.top
+      )
+      musicWrapper.style.setProperty(
+        '--stage-player-max-size',
+        `${Math.max(64, availableHeight)}px`
+      )
+    }
+
+    function updateRecordDescriptionFit() {
+      if (!musicWrapper || !stage || !recordContextDescription) return
+      musicWrapper.classList.remove(
+        'stage-hide-description',
+        'stage-description-clipped'
+      )
+      musicWrapper.style.removeProperty('--record-description-max-height')
+
+      if (
+        !musicWrapper.classList.contains('has-album') ||
+        musicWrapper.classList.contains('stage-hide-intro')
+      )
+        return
+
+      const firstCell = document.querySelector<HTMLElement>(
+        '#album-gallery .corridor-cell[data-copy="1"]'
+      )
+      if (!firstCell) return
+
+      const stageRect = stage.getBoundingClientRect()
+      const cellRect = firstCell.getBoundingClientRect()
+      const descriptionRect = recordContextDescription.getBoundingClientRect()
+      const metaBottom = recordContextMeta?.getBoundingClientRect().bottom ?? 0
+      const lineHeight =
+        Number.parseFloat(
+          getComputedStyle(recordContextDescription).lineHeight
+        ) || 24
+      const bottomLimit = Math.min(cellRect.top - 20, stageRect.bottom - 16)
+      const availableHeight = Math.floor(bottomLimit - descriptionRect.top)
+      const minimumHeight = Math.ceil(lineHeight * 2.2)
+
+      if (bottomLimit <= metaBottom + 12) {
+        musicWrapper.classList.add('stage-hide-intro')
+        return
+      }
+
+      if (availableHeight < minimumHeight) {
+        musicWrapper.classList.add('stage-hide-description')
+        return
+      }
+
+      musicWrapper.style.setProperty(
+        '--record-description-max-height',
+        `${availableHeight}px`
+      )
+      musicWrapper.classList.toggle(
+        'stage-description-clipped',
+        recordContextDescription.scrollHeight > availableHeight + 1
+      )
+    }
+
     function updateStageFit() {
-      if (!musicWrapper || !stageLeft) return
+      if (!musicWrapper || !stage || !stageLeft) return
       musicWrapper.classList.remove(
         'stage-compact-intro',
         'stage-hide-intro',
         'stage-hide-vinyl',
-        'stage-hide-lyrics'
+        'stage-hide-lyrics',
+        'stage-hide-description',
+        'stage-description-clipped'
       )
+      musicWrapper.style.removeProperty('--record-description-max-height')
+      musicWrapper.style.removeProperty('--stage-player-max-size')
 
-      const width = stage!.clientWidth || window.innerWidth
+      const width = stage.clientWidth || window.innerWidth
       const hasAlbum = musicWrapper.classList.contains('has-album')
       if (width <= 767) {
         musicWrapper.classList.toggle('stage-hide-intro', hasAlbum)
-        musicWrapper.classList.toggle('stage-hide-vinyl', hasAlbum)
         updateIntroGalleryFlow(hasAlbum)
+        updatePlayerVerticalFit()
         return
       }
 
@@ -1146,45 +1252,43 @@
       }
 
       updateIntroGalleryFlow(true)
+      updatePlayerVerticalFit()
 
-      const introWidth = Math.max(
-        listeningIntro?.offsetWidth ?? 0,
-        recordContext?.offsetWidth ?? 0
+      const stageRect = stage.getBoundingClientRect()
+      const playerRect = stageLeft.getBoundingClientRect()
+      const introInset = Math.max(48, Math.min(104, width * 0.06))
+      const sectionGap = Math.max(28, width * 0.025)
+      const availableIntroWidth = Math.floor(
+        playerRect.left - stageRect.left - introInset - sectionGap
       )
-      const lyricsWidth =
-        document.getElementById('lyrics-panel')?.offsetWidth ?? 0
-      const vinylWidth = vinyl?.offsetWidth ?? 0
-      const gap = Number.parseFloat(getComputedStyle(stageLeft).gap) || 24
-      const outerSpace = width * 0.11
-      const sectionGap = Math.max(32, width * 0.04)
-      const allSectionsWidth =
-        introWidth + lyricsWidth + vinylWidth + gap + outerSpace + sectionGap
-
-      const availableIntroWidth =
-        width - (lyricsWidth + vinylWidth + gap + outerSpace + sectionGap)
-      const minimumIntroWidth = 168
+      const minimumIntroWidth = 240
+      const preferredIntroWidth = Math.min(544, width * 0.38)
+      const hideIntro = availableIntroWidth < minimumIntroWidth
       const compactIntro =
-        allSectionsWidth > width && availableIntroWidth >= minimumIntroWidth
-      const hideIntro =
-        allSectionsWidth > width && availableIntroWidth < minimumIntroWidth
-      const playerSectionsWidth =
-        lyricsWidth + vinylWidth + gap + Math.max(32, width * 0.1)
-      const hideVinyl = hideIntro && playerSectionsWidth > width
-      const lyricsOnlyWidth = lyricsWidth + Math.max(32, width * 0.08)
-      const hideLyrics = hideVinyl && lyricsOnlyWidth > width
+        !hideIntro && availableIntroWidth < preferredIntroWidth
 
       musicWrapper.style.setProperty(
         '--stage-intro-fit',
-        `${Math.max(minimumIntroWidth, Math.floor(availableIntroWidth))}px`
+        `${Math.max(minimumIntroWidth, Math.min(544, availableIntroWidth))}px`
       )
       musicWrapper.classList.toggle('stage-compact-intro', compactIntro)
       musicWrapper.classList.toggle('stage-hide-intro', hideIntro)
-      musicWrapper.classList.toggle('stage-hide-vinyl', hideVinyl)
-      musicWrapper.classList.toggle('stage-hide-lyrics', hideLyrics)
+      updateRecordDescriptionFit()
     }
     function scheduleStageFit() {
       cancelAnimationFrame(fitFrame)
-      fitFrame = requestAnimationFrame(updateStageFit)
+      window.clearTimeout(fitSettleTimer)
+      fitFrame = requestAnimationFrame(() => {
+        updateStageFit()
+        // Viewport media queries can resize the gallery one frame after the
+        // resize event. Measure again on the next frame so dragging never
+        // exposes a stale lyric height between breakpoints.
+        fitFrame = requestAnimationFrame(updateStageFit)
+      })
+      fitSettleTimer = window.setTimeout(() => {
+        cancelAnimationFrame(fitFrame)
+        fitFrame = requestAnimationFrame(updateStageFit)
+      }, 620)
     }
 
     const fitObserver = new ResizeObserver(scheduleStageFit)
@@ -1333,11 +1437,16 @@
       }
       if (idx >= 0) {
         const el = nodes[idx]
+        const centeredTop =
+          el.offsetTop - (lyricsScroll.clientHeight - el.offsetHeight) / 2
+        const maxScrollTop = Math.max(
+          0,
+          lyricsScroll.scrollHeight - lyricsScroll.clientHeight
+        )
         lyricsScroll.scrollTo({
-          // Center the line itself. The scroll padding above makes this work
-          // for the first and last line too, instead of clamping them into
-          // the masked edges.
-          top: el.offsetTop - (lyricsScroll.clientHeight - el.offsetHeight) / 2,
+          // Keep regular lines centred, then progressively clamp the final
+          // lines so the lyric content finishes at the bottom without a gap.
+          top: Math.min(Math.max(0, centeredTop), maxScrollTop),
           behavior: 'smooth',
         })
       }
@@ -1413,16 +1522,42 @@
       }
     }
 
-    // 黑胶飞行: 从来源封面位置克隆一张小黑胶,FLIP 动画飞到唱机位
-    function flyVinylFrom(sourceRect: DOMRect, cover: string | null) {
+    let vinylFlightId = 0
+    let activeVinylGhost: HTMLElement | null = null
+    let activeVinylAnimation: Animation | null = null
+
+    function waitForStageLayout() {
+      return new Promise<void>((resolve) => {
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+      })
+    }
+
+    // 黑胶飞行: 先等响应式舞台完成布局，再从封面飞向真实唱机位。
+    async function flyVinylFrom(sourceRect: DOMRect, cover: string | null) {
       if (!vinyl) return Promise.resolve()
       const reduceMotion = window.matchMedia(
         '(prefers-reduced-motion: reduce)'
       ).matches
       if (reduceMotion) return Promise.resolve()
+
+      const flightId = ++vinylFlightId
+      activeVinylAnimation?.cancel()
+      activeVinylGhost?.remove()
+      activeVinylAnimation = null
+      activeVinylGhost = null
+      vinyl.style.opacity = '0'
+
+      await waitForStageLayout()
+      if (flightId !== vinylFlightId) return
+
       const target = vinyl.getBoundingClientRect()
       const size = Math.min(sourceRect.width, sourceRect.height)
+      if (size <= 0 || target.width <= 0 || target.height <= 0) {
+        vinyl.style.opacity = ''
+        return
+      }
       const ghost = document.createElement('div')
+      activeVinylGhost = ghost
       ghost.className = 'vinyl-ghost'
       ghost.style.cssText = `
         position: fixed; z-index: 200; pointer-events: none;
@@ -1451,43 +1586,45 @@
         target.height / 2 -
         (sourceRect.top + sourceRect.height / 2)
       const scale = target.width / size
+      const distance = Math.hypot(dx, dy)
+      const arcLift = Math.min(86, Math.max(28, distance * 0.14))
+      const duration = Math.min(1120, Math.max(860, 760 + distance * 0.42))
 
-      // 唱机位黑胶先隐去,等飞行结束接棒
-      vinyl.style.opacity = '0'
       const anim = ghost.animate(
         [
           { transform: 'translate(0, 0) rotate(0deg) scale(1)', opacity: 1 },
           {
-            transform: `translate(${dx * 0.5}px, ${dy * 0.5 - 60}px) rotate(200deg) scale(${(1 + scale) / 2})`,
+            transform: `translate(${dx * 0.52}px, ${dy * 0.52 - arcLift}px) rotate(190deg) scale(${(1 + scale) / 2})`,
             opacity: 1,
-            offset: 0.55,
+            offset: 0.52,
           },
           {
-            transform: `translate(${dx}px, ${dy}px) rotate(380deg) scale(${scale})`,
+            transform: `translate(${dx}px, ${dy}px) rotate(360deg) scale(${scale})`,
             opacity: 1,
           },
         ],
-        { duration: 1380, easing: 'cubic-bezier(0.2, 0.72, 0.2, 1)' }
+        { duration, easing: 'cubic-bezier(0.4, 0, 0.2, 1)' }
       )
-      return anim.finished
-        .catch((err) => {
-          // 动画被中断(如快速连点)属正常,吞掉即可
-          void err
-        })
-        .then(() => {
-          ghost.remove()
-          if (vinyl) {
-            vinyl.style.opacity = ''
-            vinyl.animate(
-              [
-                { transform: 'scale(1.06)' },
-                { transform: 'scale(0.98)', offset: 0.6 },
-                { transform: 'scale(1)' },
-              ],
-              { duration: 520, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }
-            )
-          }
-        })
+      activeVinylAnimation = anim
+      try {
+        await anim.finished
+      } catch (err) {
+        // 动画被中断(如快速连点)属正常,吞掉即可
+        void err
+      }
+
+      ghost.remove()
+      if (flightId !== vinylFlightId) return
+      activeVinylGhost = null
+      activeVinylAnimation = null
+      vinyl.style.opacity = ''
+      vinyl.animate(
+        [
+          { transform: 'scale(0.96)', opacity: 0.72 },
+          { transform: 'scale(1)', opacity: 1 },
+        ],
+        { duration: 280, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }
+      )
     }
 
     // 音符飘出: 播放时定时从黑胶顶部生成音符
@@ -1576,16 +1713,18 @@
       renderPanel(album)
       setPanelAvailable(true)
       setPanelOpen(false)
-      const fly = sourceRect
-        ? flyVinylFrom(sourceRect, album.cover)
-        : Promise.resolve()
+      let fly: Promise<void> = Promise.resolve()
       if (autoPlay) {
         // Start from the original click call stack. Waiting for the vinyl
         // flight here loses the browser's user-gesture allowance for audio.
         const first = album.songs.findIndex((s) => s.url)
-        if (first >= 0) playTrack(album, first)
+        if (first >= 0) {
+          playTrack(album, first)
+          if (sourceRect) fly = flyVinylFrom(sourceRect, album.cover)
+        }
       } else if (sourceRect) {
         // 仅换盘不播: 飞行后更新盘面
+        fly = flyVinylFrom(sourceRect, album.cover)
         fly.then(() => {
           if (vinylLabel && album.cover)
             vinylLabel.style.setProperty(

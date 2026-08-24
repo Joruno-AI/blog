@@ -35,6 +35,11 @@
   --music-ambient-edge-soft: rgba(7, 8, 10, 0.28);
   --music-ambient-noise-opacity: 0.045;
   --music-dock-shadow: 0 0.8rem 2.5rem rgba(3, 5, 8, 0.16);
+  --music-dock-surface: color-mix(
+    in srgb,
+    var(--music-room-surface) 82%,
+    var(--album-color, #7d503d) 18%
+  );
   --music-float-shadow: 0 -1.5rem 5rem rgba(5, 6, 8, 0.32);
   --music-chrome-surface: color-mix(
     in srgb,
@@ -84,6 +89,11 @@
   --music-ambient-edge-soft: rgb(0 0 0 / 5%);
   --music-ambient-noise-opacity: 0.018;
   --music-dock-shadow: 0 0.8rem 2.5rem rgb(67 61 51 / 10%);
+  --music-dock-surface: color-mix(
+    in srgb,
+    var(--music-room-surface) 88%,
+    var(--album-color, #7d503d) 12%
+  );
   --music-float-shadow: 0 -1.5rem 5rem rgb(67 61 51 / 11%);
   --music-chrome-surface: transparent;
   --music-chrome-border: transparent;
