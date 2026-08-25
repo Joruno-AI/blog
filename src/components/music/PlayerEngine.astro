@@ -19,7 +19,7 @@
     name: string
     songs: EngineSong[]
   }
-  type PlaybackMode = 'order' | 'shuffle' | 'repeat-all'
+  type PlaybackMode = 'order' | 'shuffle' | 'repeat-all' | 'repeat-one'
 
   declare global {
     interface Window {
@@ -67,6 +67,10 @@
       audio.addEventListener('loadedmetadata', emitProgress)
       audio.addEventListener('ended', () => {
         if (!currentAlbum) return
+        if (playbackMode === 'repeat-one') {
+          playSong(songIndex)
+          return
+        }
         const next = resolveAdjacent(1)
         if (next !== null) {
           playSong(next)
@@ -233,7 +237,8 @@
 
     window.addEventListener('set-playback-mode', ((e: CustomEvent) => {
       const mode = e.detail?.mode as PlaybackMode
-      if (!['order', 'shuffle', 'repeat-all'].includes(mode)) return
+      if (!['order', 'shuffle', 'repeat-all', 'repeat-one'].includes(mode))
+        return
       playbackMode = mode
       window.dispatchEvent(
         new CustomEvent('playback-mode-changed', { detail: { mode } })

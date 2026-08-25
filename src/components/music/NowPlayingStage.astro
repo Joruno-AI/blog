@@ -410,6 +410,8 @@
       var(--stage-player-max-size, 100vmax)
     );
     --lyrics-line-box: 2.05rem;
+    --lyrics-active-scale: 1.08;
+    --lyrics-safe-line-width: 92.5%;
     position: relative;
     z-index: 1;
     flex: 1 1 clamp(12rem, 21vw, 22rem);
@@ -470,6 +472,7 @@
       0 1px 1px rgb(0 0 0 / 86%),
       0 0 1.2rem rgb(0 0 0 / 76%);
     cursor: pointer;
+    transform-origin: left center;
     white-space: normal;
     word-break: break-word;
     transition:
@@ -479,7 +482,8 @@
   }
   .lyrics-scroll :global(.lyric-line-shell) {
     position: relative;
-    width: 100%;
+    width: var(--lyrics-safe-line-width);
+    max-width: var(--lyrics-safe-line-width);
   }
   .lyrics-scroll :global(.lyric-seek-time),
   .lyrics-scroll :global(.lyric-seek-confirm) {
@@ -497,29 +501,36 @@
     outline: none;
   }
   .lyrics-scroll :global(.lyric-line.is-current) {
-    color: var(--music-accent-text, #f6d23c);
-    font-size: inherit;
+    position: relative;
+    z-index: 1;
+    color: var(--music-lyric-active, var(--music-accent-text, #f6d23c));
     font-weight: 720;
     letter-spacing: 0;
     line-height: 1.5;
-    transform: none;
+    transform: scale(var(--lyrics-active-scale));
   }
 
   .lyrics-scroll :global(.lyric-countdown) {
-    display: none;
-    min-height: var(--lyrics-line-box);
+    display: flex;
+    height: 0;
+    min-height: 0;
     align-items: center;
     gap: 0.48rem;
+    overflow: hidden;
     padding-inline: 0.15rem;
     opacity: 0;
     pointer-events: none;
     transform: translateY(0.5rem) scale(0.96);
     transform-origin: left center;
     transition:
-      opacity 360ms ease,
+      height 520ms cubic-bezier(0.16, 1, 0.3, 1),
+      min-height 520ms cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 480ms ease,
       transform 520ms cubic-bezier(0.16, 1, 0.3, 1);
   }
   .lyrics-scroll :global(.lyric-countdown.is-visible) {
+    height: var(--lyrics-line-box);
+    min-height: var(--lyrics-line-box);
     opacity: 1;
     transform: translateY(0) scale(1);
   }
@@ -537,13 +548,13 @@
     opacity: 0.16;
     transform: scale(0.7);
     transition:
-      opacity 320ms ease,
-      transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+      opacity 520ms ease,
+      transform 720ms cubic-bezier(0.16, 1, 0.3, 1);
   }
   .lyrics-scroll :global(.countdown-dot.is-active) {
     opacity: 1;
     transform: scale(1);
-    animation: countdown-breathe 820ms ease-in-out infinite alternate;
+    animation: countdown-breathe 1.35s ease-in-out infinite alternate;
   }
   @keyframes countdown-breathe {
     from {
@@ -796,10 +807,7 @@
       font-size: 1rem;
       line-height: 1.45;
       opacity: 1;
-      transform: translateZ(0) scale(1.16);
-    }
-    .lyrics-scroll :global(.lyric-countdown.is-visible) {
-      display: flex;
+      transform: translateZ(0) scale(var(--lyrics-active-scale));
     }
     .track-panel {
       --panel-width: min(19rem, calc(100vw - 3rem));
@@ -891,7 +899,8 @@
         clamp(8rem, 42dvh, 20rem)
       );
       --lyrics-line-box: clamp(2rem, 6.5vw, 2.45rem);
-      --lyric-control-gutter: 2.7rem;
+      --lyric-text-inset: 0.3rem;
+      --lyric-action-gutter: 2.1rem;
       display: block;
       flex: 1 1 auto;
       width: auto;
@@ -910,22 +919,28 @@
     }
     :global(#music-page-wrapper.has-album) .lyrics-scroll :global(.lyric-line) {
       min-height: var(--lyrics-line-box);
-      padding: 0.24rem var(--lyric-control-gutter);
+      padding: 0.24rem var(--lyric-text-inset);
       font-size: clamp(0.72rem, 2.7vw, 0.94rem);
       line-height: 1.48;
       transform: none;
     }
     :global(#music-page-wrapper.has-album)
       .lyrics-scroll
+      :global(.lyric-countdown) {
+      padding: 0.24rem var(--lyric-text-inset);
+    }
+    :global(#music-page-wrapper.has-album)
+      .lyrics-scroll
       :global(.lyric-line.is-current) {
       line-height: 1.4;
-      transform: none;
+      transform: translateZ(0) scale(var(--lyrics-active-scale));
     }
     :global(#music-page-wrapper.has-album)
       .lyrics-scroll
       :global(.lyric-line-shell.is-seek-selected .lyric-line) {
       min-height: 2.75rem;
-      padding-inline: var(--lyric-control-gutter);
+      padding-left: var(--lyric-text-inset);
+      padding-right: var(--lyric-action-gutter);
       color: var(--music-text-strong, #fffaf2);
       background: color-mix(
         in srgb,
@@ -938,35 +953,20 @@
     }
     :global(#music-page-wrapper.has-album)
       .lyrics-scroll
-      :global(.lyric-line-shell.is-seek-selected .lyric-seek-time) {
-      position: absolute;
-      top: 50%;
-      left: 0.45rem;
-      z-index: 2;
-      display: block;
-      color: var(--music-text-muted, rgba(247, 242, 234, 0.48));
-      font-size: 0.58rem;
-      font-variant-numeric: tabular-nums;
-      line-height: 1;
-      pointer-events: none;
-      transform: translateY(-50%);
-    }
-    :global(#music-page-wrapper.has-album)
-      .lyrics-scroll
       :global(.lyric-line-shell.is-seek-selected .lyric-seek-confirm) {
       position: absolute;
       top: 50%;
       right: 0.1rem;
       z-index: 3;
       display: grid;
-      width: 2.75rem;
-      height: 2.75rem;
+      width: 1.85rem;
+      height: 1.85rem;
       padding: 0;
       color: var(--music-text-strong, #fffaf2);
       background: transparent;
       border: 0;
       border-radius: 999px;
-      font-size: 1.05rem;
+      font-size: clamp(0.72rem, 2.7vw, 0.94rem);
       cursor: pointer;
       place-items: center;
       transform: translateY(-50%);
@@ -1172,6 +1172,8 @@
     let currentSongId: string | null = null
     let selectedLyricIndex = -1
     let lyricSelectionTimer = 0
+    let lyricScrollIdleTimer = 0
+    let lyricUserBrowsing = false
     const mobileLyricSeekQuery = window.matchMedia('(max-width: 767px)')
 
     const musicWrapper = document.getElementById('music-page-wrapper')
@@ -1429,6 +1431,70 @@
         .forEach((shell) => shell.classList.remove('is-seek-selected'))
     }
 
+    function centerCurrentLyric(behavior: ScrollBehavior = 'smooth') {
+      if (!lyricsScroll || currentLineIndex < 0) return
+      const currentLine =
+        lyricsScroll.querySelectorAll<HTMLElement>('.lyric-line')[
+          currentLineIndex
+        ]
+      if (!currentLine) return
+      const scrollTarget =
+        currentLine.closest<HTMLElement>('.lyric-line-shell') ?? currentLine
+      const centeredTop =
+        scrollTarget.offsetTop -
+        (lyricsScroll.clientHeight - scrollTarget.offsetHeight) / 2
+      const maxScrollTop = Math.max(
+        0,
+        lyricsScroll.scrollHeight - lyricsScroll.clientHeight
+      )
+      lyricsScroll.scrollTo({
+        top: Math.min(Math.max(0, centeredTop), maxScrollTop),
+        behavior,
+      })
+    }
+
+    function scheduleLyricRecenter(delay = 1400) {
+      window.clearTimeout(lyricScrollIdleTimer)
+      lyricScrollIdleTimer = window.setTimeout(() => {
+        if (selectedLyricIndex >= 0 && mobileLyricSeekQuery.matches) {
+          scheduleLyricRecenter(400)
+          return
+        }
+        lyricUserBrowsing = false
+        centerCurrentLyric()
+      }, delay)
+    }
+
+    function markLyricUserBrowsing() {
+      if (!lyricsScroll || currentLineIndex < 0) return
+      lyricUserBrowsing = true
+      scheduleLyricRecenter()
+    }
+
+    lyricsScroll?.addEventListener('wheel', markLyricUserBrowsing, {
+      passive: true,
+    })
+    lyricsScroll?.addEventListener('touchstart', markLyricUserBrowsing, {
+      passive: true,
+    })
+    lyricsScroll?.addEventListener('pointerdown', markLyricUserBrowsing)
+    lyricsScroll?.addEventListener(
+      'scroll',
+      () => {
+        if (lyricUserBrowsing) scheduleLyricRecenter()
+      },
+      { passive: true }
+    )
+    lyricsScroll?.addEventListener('keydown', (event) => {
+      if (
+        ['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End'].includes(
+          event.key
+        )
+      ) {
+        markLyricUserBrowsing()
+      }
+    })
+
     function selectLyricForSeek(index: number) {
       clearLyricSeekSelection()
       selectedLyricIndex = index
@@ -1459,6 +1525,9 @@
 
     function renderLyrics(songId: string) {
       clearLyricSeekSelection()
+      window.clearTimeout(lyricScrollIdleTimer)
+      lyricScrollIdleTimer = 0
+      lyricUserBrowsing = false
       currentSongId = songId
       currentLineIndex = -1
       const lrc = lyricsMap[songId]
@@ -1513,11 +1582,6 @@
           )
         })
 
-        const time = document.createElement('span')
-        time.className = 'lyric-seek-time'
-        time.textContent = formatLyricTime(line.t)
-        time.setAttribute('aria-hidden', 'true')
-
         const confirm = document.createElement('button')
         confirm.type = 'button'
         confirm.className = 'lyric-seek-confirm'
@@ -1534,7 +1598,7 @@
           clearLyricSeekSelection()
         })
 
-        shell.append(el, time, confirm)
+        shell.append(el, confirm)
         frag.appendChild(shell)
       })
       lyricsScroll.replaceChildren(frag)
@@ -1547,10 +1611,23 @@
         lyricsScroll.querySelector<HTMLElement>('.lyric-countdown')
       if (!countdown) return
       const remaining = currentLines[0].t - time
-      const visible = remaining > 0.25 && remaining <= 3.4
+      const countdownWindow = 5.8
+      const visible = remaining > 0.25 && remaining <= countdownWindow
+      const wasVisible = countdown.classList.contains('is-visible')
       countdown.classList.toggle('is-visible', visible)
+      if (visible && !wasVisible) {
+        lyricsScroll.scrollTo({ top: 0, behavior: 'smooth' })
+      }
       const activeDots = visible
-        ? Math.max(0, Math.min(3, 4 - Math.ceil(remaining)))
+        ? Math.max(
+            1,
+            Math.min(
+              3,
+              Math.ceil(
+                (countdownWindow - remaining + 0.05) / (countdownWindow / 3)
+              )
+            )
+          )
         : 0
       countdown.querySelectorAll('.countdown-dot').forEach((dot, index) => {
         dot.classList.toggle('is-active', index < activeDots)
@@ -1572,22 +1649,8 @@
         nodes[i].classList.toggle('is-current', i === idx)
       }
       if (idx >= 0) {
-        const el = nodes[idx]
         if (selectedLyricIndex >= 0 && mobileLyricSeekQuery.matches) return
-        const scrollTarget = el.closest<HTMLElement>('.lyric-line-shell') ?? el
-        const centeredTop =
-          scrollTarget.offsetTop -
-          (lyricsScroll.clientHeight - scrollTarget.offsetHeight) / 2
-        const maxScrollTop = Math.max(
-          0,
-          lyricsScroll.scrollHeight - lyricsScroll.clientHeight
-        )
-        lyricsScroll.scrollTo({
-          // Keep regular lines centred, then progressively clamp the final
-          // lines so the lyric content finishes at the bottom without a gap.
-          top: Math.min(Math.max(0, centeredTop), maxScrollTop),
-          behavior: 'smooth',
-        })
+        if (!lyricUserBrowsing) centerCurrentLyric()
       }
     }
 

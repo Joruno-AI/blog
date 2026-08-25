@@ -99,15 +99,13 @@
   --music-chrome-border: transparent;
 }
 
-@media (max-width: 767px) {
-  :root:not(.dark) #global-music-player .music-page-wrapper {
-    --music-lyric-active: var(--music-accent-text);
-  }
+:root:not(.dark) #global-music-player .music-page-wrapper {
+  --music-lyric-active: var(--music-accent-text);
+}
 
-  :root.dark #global-music-player .music-page-wrapper {
-    /* 手机端歌词与暗色 Light Ray 使用同一暖金色。 */
-    --music-lyric-active: #f5d789;
-  }
+:root.dark #global-music-player .music-page-wrapper {
+  /* 暗色主题的歌词与 Light Ray 始终共用同一暖金色。 */
+  --music-lyric-active: #f5d789;
 }
 
 #global-music-player .music-page-wrapper {
@@ -224,7 +222,6 @@
     130% 130%,
     100% 100%,
     100% 100%;
-  animation: music-ambient-drift 18s ease-in-out infinite alternate;
   transition: background-color 680ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -278,7 +275,10 @@
     );
   opacity: 0.82;
   animation: music-ambient-light-drift 16s ease-in-out infinite alternate;
-  transition: background 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  /* Interpolating a full-screen multi-gradient background forces a repaint on
+     every frame. Album/theme changes now repaint once while opacity remains
+     composited. */
+  transition: opacity 240ms ease;
   -webkit-mask-image: linear-gradient(
     to bottom,
     transparent 0,
@@ -293,23 +293,6 @@
     black 84%,
     transparent 100%
   );
-}
-
-@keyframes music-ambient-drift {
-  0% {
-    background-position:
-      0% 50%,
-      100% 45%,
-      50% 0%,
-      50% 50%;
-  }
-  100% {
-    background-position:
-      18% 42%,
-      82% 58%,
-      50% 100%,
-      50% 50%;
-  }
 }
 
 @keyframes music-ambient-cover-drift {

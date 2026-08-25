@@ -129,22 +129,37 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
                 aria-pressed="false"
                 title="循环播放"
               >
-                <span class="i-ri-repeat-2-line"></span>
+                <span class="dock-repeat-symbol" aria-hidden="true">
+                  <span class="i-ri-repeat-2-line"></span>
+                  <span class="dock-repeat-one">1</span>
+                </span>
               </button>
             </div>
 
             <div class="dock-speed-options" role="group" aria-label="播放速度">
-              <button class="dock-speed-btn" type="button" data-rate="0.5"
-                >.5×</button
+              <button
+                class="dock-speed-btn"
+                type="button"
+                data-rate="0.5"
+                aria-pressed="false">.5×</button
               >
-              <button class="dock-speed-btn active" type="button" data-rate="1"
-                >1×</button
+              <button
+                class="dock-speed-btn active"
+                type="button"
+                data-rate="1"
+                aria-pressed="true">1×</button
               >
-              <button class="dock-speed-btn" type="button" data-rate="1.5"
-                >1.5×</button
+              <button
+                class="dock-speed-btn"
+                type="button"
+                data-rate="1.5"
+                aria-pressed="false">1.5×</button
               >
-              <button class="dock-speed-btn" type="button" data-rate="2"
-                >2×</button
+              <button
+                class="dock-speed-btn"
+                type="button"
+                data-rate="2"
+                aria-pressed="false">2×</button
               >
             </div>
 
@@ -520,7 +535,39 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
       transform 150ms ease;
   }
   .dock-mode-btn.active {
-    color: var(--music-accent-text, #f6d23c);
+    color: var(--music-primary-button-text, #111214);
+    background: var(--music-primary-button, #f3eee5);
+    box-shadow: 0 0.25rem 0.75rem rgb(0 0 0 / 18%);
+  }
+  .dock-repeat-symbol {
+    position: relative;
+    display: grid;
+    width: 1rem;
+    height: 1rem;
+    place-items: center;
+  }
+  .dock-repeat-one {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 1;
+    display: grid;
+    min-width: 0.58rem;
+    height: 0.62rem;
+    padding: 0;
+    color: currentColor;
+    background: var(--music-primary-button, #f3eee5);
+    border-radius: 0.14rem;
+    font-family: Arial, sans-serif;
+    font-size: 0.56rem;
+    font-weight: 900;
+    line-height: 1;
+    opacity: 0;
+    place-items: center;
+    transform: translate(-50%, -50%);
+  }
+  .dock-mode-btn.is-repeat-one .dock-repeat-one {
+    opacity: 1;
   }
   .dock-speed-options {
     gap: 0.48rem;
@@ -528,10 +575,11 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
   .dock-speed-btn {
     min-width: 0;
     height: auto;
-    padding: 0.35rem 0;
+    padding: 0.35rem 0.38rem;
     color: var(--music-text-muted, rgba(247, 242, 234, 0.43));
     background: transparent;
     border: 0;
+    border-radius: 0.42rem;
     font-size: 0.61rem;
     cursor: pointer;
     transition:
@@ -540,8 +588,10 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
       transform 150ms ease;
   }
   .dock-speed-btn.active {
-    color: var(--music-accent-text, #f6d23c);
+    color: var(--music-primary-button-text, #111214);
+    background: var(--music-primary-button, #f3eee5);
     font-weight: 700;
+    box-shadow: 0 0.25rem 0.75rem rgb(0 0 0 / 18%);
   }
 
   .dock-collapse-toggle {
@@ -617,8 +667,8 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
       color: var(--music-text-strong, #fffaf2);
       background-color: var(--music-control-hover, rgba(255, 255, 255, 0.1));
     }
-    .dock-mode-btn:hover,
-    .dock-speed-btn:hover {
+    .dock-mode-btn:not(.active):hover,
+    .dock-speed-btn:not(.active):hover {
       color: var(--music-text-strong, #fffaf2);
     }
     .mini-play-btn:not(:disabled):hover {
@@ -735,7 +785,7 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
     .dock-speed-btn {
       min-width: 0;
       height: auto;
-      padding: 0.3rem 0;
+      padding: 0.3rem 0.28rem;
       font-size: 0.56rem;
     }
     .dock-collapse-toggle {
@@ -770,6 +820,7 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
   interface MiniSong {
     name: string
   }
+  type PlaybackMode = 'order' | 'shuffle' | 'repeat-all' | 'repeat-one'
   interface MusicPlayerState {
     isPlaying: boolean
     isInitialized: boolean
@@ -779,7 +830,7 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
     currentArtist?: string | null
     currentCover?: string | null
     currentPlaybackRate?: number
-    playbackMode?: 'order' | 'shuffle' | 'repeat-all'
+    playbackMode?: PlaybackMode
     currentVinylRotation?: number
     shellEventsBound?: boolean
     playerCollapsed?: boolean
@@ -873,17 +924,32 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
     document
       .querySelectorAll<HTMLButtonElement>('.dock-speed-btn')
       .forEach((button) => {
-        button.classList.toggle('active', Number(button.dataset.rate) === rate)
+        const active = Number(button.dataset.rate) === rate
+        button.classList.toggle('active', active)
+        button.setAttribute('aria-pressed', String(active))
       })
   }
-  function syncPlaybackMode(mode: 'order' | 'shuffle' | 'repeat-all') {
+  function syncPlaybackMode(mode: PlaybackMode) {
     window.MusicPlayerState.playbackMode = mode
     document
       .querySelectorAll<HTMLButtonElement>('.dock-mode-btn')
       .forEach((button) => {
-        const active = button.dataset.mode === mode
+        const repeatButton = button.dataset.mode === 'repeat-all'
+        const active = repeatButton
+          ? mode === 'repeat-all' || mode === 'repeat-one'
+          : button.dataset.mode === mode
         button.classList.toggle('active', active)
+        button.classList.toggle(
+          'is-repeat-one',
+          repeatButton && mode === 'repeat-one'
+        )
         button.setAttribute('aria-pressed', String(active))
+        if (repeatButton) {
+          const repeatOne = mode === 'repeat-one'
+          const label = repeatOne ? '单曲循环' : '列表循环'
+          button.setAttribute('aria-label', label)
+          button.title = label
+        }
       })
   }
   function bindGlobalMusicEvents() {
@@ -1030,8 +1096,17 @@ import PlayerEngine from '~/components/music/PlayerEngine.astro'
       .querySelectorAll<HTMLButtonElement>('.dock-mode-btn')
       .forEach((button) => {
         button.addEventListener('click', () => {
-          const mode = button.dataset.mode as 'order' | 'shuffle' | 'repeat-all'
-          if (!mode) return
+          const requestedMode = button.dataset.mode as PlaybackMode
+          if (!requestedMode) return
+          const currentMode = window.MusicPlayerState.playbackMode ?? 'order'
+          const mode: PlaybackMode =
+            requestedMode === 'repeat-all'
+              ? currentMode === 'repeat-all'
+                ? 'repeat-one'
+                : currentMode === 'repeat-one'
+                  ? 'order'
+                  : 'repeat-all'
+              : requestedMode
           syncPlaybackMode(mode)
           window.dispatchEvent(
             new CustomEvent('set-playback-mode', { detail: { mode } })

@@ -157,8 +157,10 @@ void main() {
 
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
 
+    const preferredDpr = () =>
+      Math.min(window.devicePixelRatio, window.innerWidth <= 767 ? 1 : 1.35)
     const renderer = new Renderer({
-      dpr: Math.min(window.devicePixelRatio, 2),
+      dpr: preferredDpr(),
       alpha: true,
     })
     const gl = renderer.gl
@@ -215,7 +217,7 @@ void main() {
     const smooth = { x: 0.5, y: 0.5 }
 
     function updatePlacement() {
-      renderer.dpr = Math.min(window.devicePixelRatio, 2)
+      renderer.dpr = preferredDpr()
       const wCSS = ctn!.clientWidth || window.innerWidth
       const hCSS = ctn!.clientHeight || window.innerHeight
       renderer.setSize(wCSS, hCSS)
@@ -233,9 +235,13 @@ void main() {
     }
 
     let rafId = 0
+    let lastFrame = 0
     function loop(t: number) {
       rafId = requestAnimationFrame(loop)
       if (!isMusicPage() || document.hidden) return
+      const frameInterval = window.innerWidth <= 767 ? 1000 / 24 : 1000 / 30
+      if (lastFrame && t - lastFrame < frameInterval) return
+      lastFrame = t
       uniforms.iTime.value = t * 0.001
       const smoothing = 0.92
       smooth.x = smooth.x * smoothing + mouse.x * (1 - smoothing)

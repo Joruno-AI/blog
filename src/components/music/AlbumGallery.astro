@@ -258,6 +258,7 @@
     let pressedCell: HTMLElement | null = null
     let lastInteract = 0
     let rafId = 0
+    let lastFrame = 0
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
 
     function buildCells() {
@@ -303,13 +304,21 @@
       if (cycleWidth) offset = ((offset % cycleWidth) + cycleWidth) % cycleWidth
     }
 
-    function tick() {
+    function tick(time: number) {
       rafId = 0
       if (document.hidden || !isMusicPage()) return
       if (!cycleWidth) return
+      const frameInterval = window.innerWidth <= 767 ? 1000 / 24 : 1000 / 30
+      if (lastFrame && time - lastFrame < frameInterval) {
+        rafId = requestAnimationFrame(tick)
+        return
+      }
+      const elapsed = lastFrame ? time - lastFrame : frameInterval
+      const frameScale = Math.min(2.5, elapsed / (1000 / 60))
+      lastFrame = time
       if (!dragging) {
-        offset += velocity
-        velocity *= 0.94
+        offset += velocity * frameScale
+        velocity *= Math.pow(0.94, frameScale)
         if (Math.abs(velocity) < 0.02) velocity = 0
         // 闲置 3 秒后缓慢自动漂移
         if (
@@ -317,7 +326,7 @@
           velocity === 0 &&
           performance.now() - lastInteract > 3000
         ) {
-          offset += 0.3
+          offset += 0.3 * frameScale
         }
       }
       offset = ((offset % cycleWidth) + cycleWidth) % cycleWidth
@@ -334,6 +343,7 @@
       if (!rafId) return
       cancelAnimationFrame(rafId)
       rafId = 0
+      lastFrame = 0
     }
 
     function syncMotion() {
