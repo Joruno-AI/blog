@@ -59,23 +59,6 @@ export interface CMSPost {
   radio: boolean
   video: boolean
   platform: string | null
-  podcastAudioUrl: string | null
-  podcastNarrator: string | null
-  podcastDuration: number | null
-  podcastSize: number | null
-  podcastStatus:
-    | 'none'
-    | 'pending'
-    | 'scripting'
-    | 'synthesizing'
-    | 'uploading'
-    | 'ready'
-    | 'failed'
-  podcastScript: string | null
-  podcastSourceHash: string | null
-  podcastError: string | null
-  podcastAttempts: number
-  podcastGeneratedAt: string | null
   minutesRead: number | null
   pubDate: string
   lastModDate: string | null

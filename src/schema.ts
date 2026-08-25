@@ -141,37 +141,6 @@ export const postSchema = ({ image }: SchemaContext) =>
       .describe(
         'Specifies the platform where the audio or video content is published. If provided, the platform name will be displayed. If not needed, leave the field as an empty string or delete it.'
       ),
-    podcastAudioUrl: z
-      .union([z.url(), z.literal('')])
-      .default('')
-      .describe('Audio URL for the two-host podcast version of this article.'),
-    podcastNarrator: z
-      .string()
-      .trim()
-      .default('AI 双人播客')
-      .describe('Speaker or narrator label displayed in the article player.'),
-    podcastDuration: z
-      .number()
-      .nonnegative()
-      .default(0)
-      .describe('Podcast duration in seconds.'),
-    podcastSize: z
-      .number()
-      .nonnegative()
-      .default(0)
-      .describe('Podcast file size in bytes.'),
-    podcastStatus: z
-      .enum([
-        'none',
-        'pending',
-        'scripting',
-        'synthesizing',
-        'uploading',
-        'ready',
-        'failed',
-      ])
-      .default('none')
-      .describe('Current state of the automatic podcast generation job.'),
     bgType: z
       .union([z.literal(false), z.enum(['plum', 'dot', 'rose', 'particle'])])
       .default(false)

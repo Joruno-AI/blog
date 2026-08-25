@@ -2,11 +2,6 @@
 import BaseLayout from '~/layouts/BaseLayout.astro'
 import StandardLayout from '~/layouts/StandardLayout.astro'
 import PostActions from '~/components/widgets/PostActions.astro'
-import ArticleAudioPlayer from '~/components/blog/ArticleAudioPlayer.astro'
-
-const podcastApiUrl =
-  import.meta.env.PUBLIC_PODCAST_API_URL ||
-  'https://blog-cms-1j0.pages.dev/api/public/podcast/docs'
 ---
 
 <BaseLayout
@@ -19,7 +14,6 @@ const podcastApiUrl =
   <StandardLayout class="reader-shell">
     <geektime-reader
       data-catalog-url="/docs/catalog.json?v=3"
-      data-podcast-api-url={podcastApiUrl}
       data-loading
       aria-busy="true"
     >
@@ -97,8 +91,6 @@ const podcastApiUrl =
               </div>
             </div>
           </header>
-
-          <ArticleAudioPlayer id="reader-audio-player" dynamic={true} />
 
           <div class="reader-state" data-state aria-live="polite">
             <span class="sr-only">正在从内容快照加载正文</span>
@@ -2192,12 +2184,6 @@ const podcastApiUrl =
     title: string
     path: string
     bytes?: number
-    podcast?: {
-      url: string
-      narrator?: string
-      duration?: number
-      size?: number
-    }
   }
 
   interface Course {
@@ -2229,14 +2215,6 @@ const podcastApiUrl =
     commit: string
   }
 
-  interface DocumentPodcastResponse {
-    status: 'none' | 'pending' | 'scripting' | 'synthesizing' | 'uploading' | 'ready' | 'failed'
-    audioUrl?: string | null
-    narrator?: string | null
-    duration?: number | null
-    size?: number | null
-  }
-
   interface MindMapNode {
     title: string
     headingId?: string
@@ -2266,7 +2244,6 @@ const podcastApiUrl =
     private mindMapWidth = 0
     private mindMapHeight = 0
     private mindMapResizeFrame?: number
-    private podcastPollTimer?: number
 
     connectedCallback() {
       this.addEventListener('click', this.handleReaderLink)
@@ -2296,7 +2273,6 @@ const podcastApiUrl =
       document.removeEventListener('astro:page-load', this.handlePageLoad)
       this.headingObserver?.disconnect()
       this.requestController?.abort()
-      if (this.podcastPollTimer) window.clearTimeout(this.podcastPollTimer)
       if (this.mindMapResizeFrame)
         window.cancelAnimationFrame(this.mindMapResizeFrame)
       finishProgress(COURSE_PROGRESS_TASK)
@@ -2364,7 +2340,6 @@ const podcastApiUrl =
         this.canonicalizeLocation()
 
         this.updateHeader()
-        void this.updatePodcast()
         const rendered = courseMarkdown.parse(articleMarkdown)
         const safeHtml = DOMPurify.sanitize(rendered as string, {
           USE_PROFILES: { html: true },
@@ -3296,115 +3271,6 @@ const podcastApiUrl =
         ?.setAttribute('content', `${this.course.name}：${this.article.title}`)
     }
 
-    private applyPodcastState(podcast: DocumentPodcastResponse) {
-      const player = this.querySelector<HTMLElement>('#reader-audio-player')
-      if (!player) return
-
-      if (podcast.status === 'ready' && podcast.audioUrl) {
-        player.dataset.src = podcast.audioUrl
-        player.dataset.status = 'ready'
-        player.dataset.narrator = podcast.narrator || 'AI 双人播客'
-        player.dataset.duration = String(podcast.duration || 0)
-        player.dataset.size = String(podcast.size || 0)
-        player.dataset.title = this.article.title
-        player.hidden = false
-        return
-      }
-
-      if (
-        ['pending', 'scripting', 'synthesizing', 'uploading'].includes(
-          podcast.status
-        )
-      ) {
-        player.removeAttribute('data-src')
-        player.dataset.status = podcast.status
-        player.dataset.title = this.article.title
-        player.hidden = false
-        return
-      }
-
-      player.removeAttribute('data-src')
-      player.removeAttribute('data-status')
-      player.hidden = true
-    }
-
-    private schedulePodcastPoll(locationKey: string) {
-      if (this.podcastPollTimer) window.clearTimeout(this.podcastPollTimer)
-      this.podcastPollTimer = window.setTimeout(async () => {
-        if (this.requestedLocationKey !== locationKey) return
-        const apiUrl = this.dataset.podcastApiUrl
-        if (!apiUrl) return
-        const url = new URL(apiUrl)
-        url.searchParams.set('sourceId', this.source.id)
-        url.searchParams.set('path', this.article.path)
-        try {
-          const response = await fetch(url)
-          if (!response.ok) return
-          const podcast = (await response.json()) as DocumentPodcastResponse
-          this.applyPodcastState(podcast)
-          if (
-            ['pending', 'scripting', 'synthesizing', 'uploading'].includes(
-              podcast.status
-            )
-          ) {
-            this.schedulePodcastPoll(locationKey)
-          }
-        } catch {
-          this.schedulePodcastPoll(locationKey)
-        }
-      }, 15_000)
-    }
-
-    private async updatePodcast() {
-      if (this.podcastPollTimer) window.clearTimeout(this.podcastPollTimer)
-
-      const embedded = this.article.podcast
-      if (embedded?.url) {
-        this.applyPodcastState({
-          status: 'ready',
-          audioUrl: embedded.url,
-          narrator: embedded.narrator,
-          duration: embedded.duration,
-          size: embedded.size,
-        })
-        return
-      }
-
-      const apiUrl = this.dataset.podcastApiUrl
-      if (!apiUrl) {
-        this.applyPodcastState({ status: 'none' })
-        return
-      }
-
-      const locationKey = this.requestedLocationKey
-      try {
-        const response = await fetch(apiUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            sourceId: this.source.id,
-            path: this.article.path,
-            title: this.article.title,
-            repository: this.source.repository,
-            commit: this.source.commit,
-          }),
-        })
-        if (!response.ok) throw new Error('Podcast queue request failed')
-        const podcast = (await response.json()) as DocumentPodcastResponse
-        if (this.requestedLocationKey !== locationKey) return
-        this.applyPodcastState(podcast)
-        if (
-          ['pending', 'scripting', 'synthesizing', 'uploading'].includes(
-            podcast.status
-          )
-        ) {
-          this.schedulePodcastPoll(locationKey)
-        }
-      } catch {
-        this.applyPodcastState({ status: 'none' })
-      }
-    }
-
     private updateCoursePanel() {
       const panel = this.querySelector<HTMLElement>('[data-course-panel]')
       const list = this.querySelector<HTMLOListElement>('[data-course-list]')
@@ -3745,11 +3611,6 @@ const podcastApiUrl =
       state.classList.add('is-error')
       state.replaceChildren()
       if (content) content.hidden = true
-      const player = this.querySelector<HTMLElement>('#reader-audio-player')
-      if (player) {
-        player.removeAttribute('data-src')
-        player.hidden = true
-      }
 
       const icon = document.createElement('span')
       icon.className = 'i-ri-error-warning-line'
