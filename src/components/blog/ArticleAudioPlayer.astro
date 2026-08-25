@@ -18,14 +18,13 @@ const {
   duration = 0,
   size = 0,
   title = '文章播客讲解',
-  dynamic = false,
   id,
   status = audioUrl ? 'ready' : 'none',
   podcastApiUrl = '',
   podcastSlug = '',
 } = Astro.props
 
-const isHidden = !dynamic && !audioUrl
+const isHidden = !audioUrl
 ---
 
 <article-audio-player
@@ -39,7 +38,7 @@ const isHidden = !dynamic && !audioUrl
   data-status={audioUrl ? 'ready' : status}
   data-podcast-api-url={podcastApiUrl || undefined}
   data-podcast-slug={podcastSlug || undefined}
-  hidden={isHidden}
+  hidden={isHidden ? true : undefined}
 >
   <audio preload="metadata" src={audioUrl || undefined}>
     <track
@@ -222,7 +221,7 @@ const isHidden = !dynamic && !audioUrl
         this.current.textContent = '00:00'
       }
 
-      this.hidden = !source && !processing
+      this.hidden = !source
       this.toggle.disabled = !source
       this.range.disabled = !source
       this.speed.disabled = !source
@@ -304,12 +303,10 @@ const isHidden = !dynamic && !audioUrl
       if (!apiUrl || !slug || this.dataset.src) return
 
       try {
-        const response = await fetch(apiUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ slug }),
-        })
-        if (!response.ok) throw new Error('Podcast queue request failed')
+        const url = new URL(apiUrl)
+        url.searchParams.set('slug', slug)
+        const response = await fetch(url)
+        if (!response.ok) throw new Error('Podcast status request failed')
         this.applyRemotePodcast(await response.json())
       } catch {
         this.dataset.status = 'none'
