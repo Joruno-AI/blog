@@ -155,6 +155,8 @@ export async function fetchCategories(): Promise<CMSCategory[]> {
  * Transform CMS post to match Astro content collection format
  */
 export function transformCMSPostToCollectionEntry(post: CMSPost) {
+  const isLegacyPodcast = post.platform?.trim() === '文章播客'
+
   return {
     id: post.slug,
     slug: post.slug,
@@ -172,9 +174,9 @@ export function transformCMSPostToCollectionEntry(post: CMSPost) {
       share: post.share,
       giscus: post.giscus,
       search: post.search,
-      radio: post.radio,
+      radio: isLegacyPodcast ? false : post.radio,
       video: post.video,
-      platform: post.platform || '',
+      platform: isLegacyPodcast ? '' : post.platform || '',
       ogImage: post.ogImage || true,
     },
     body: post.content,

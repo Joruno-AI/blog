@@ -200,6 +200,11 @@ function transformPostToEntry(post: CMSPost) {
   // This is important for buildNestedCategoryTree to correctly get category names
   const category = post.categoryNamePath || post.category?.name || ''
 
+  // Podcast generation previously reused the generic radio/platform fields.
+  // Ignore that legacy presentation metadata so stale API caches cannot bring
+  // the removed podcast badge back during a rebuild.
+  const isLegacyPodcast = post.platform?.trim() === '文章播客'
+
   // Build frontmatter data matching postSchema
   const data: Record<string, unknown> = {
     title: post.title,
@@ -208,9 +213,9 @@ function transformPostToEntry(post: CMSPost) {
     pubDate: new Date(post.pubDate),
     lastModDate: post.lastModDate ? new Date(post.lastModDate) : undefined,
     minutesRead: post.minutesRead || undefined,
-    radio: post.radio,
+    radio: isLegacyPodcast ? false : post.radio,
     video: post.video,
-    platform: post.platform || '',
+    platform: isLegacyPodcast ? '' : post.platform || '',
     ogImage: post.ogImage || true,
     toc: post.toc,
     share: post.share,
