@@ -64,11 +64,6 @@ const isHidden = !dynamic && !audioUrl
 
   <div class="article-audio-main">
     <div class="article-audio-line">
-      <div class="article-audio-identity" aria-live="polite">
-        <span class="article-audio-kicker">文章播客</span>
-        <span class="article-audio-name" data-audio-narrator>双人对谈</span>
-      </div>
-
       <div class="article-audio-progress-row">
         <output class="article-audio-current" data-audio-current>00:00</output>
         <label class="article-audio-range-wrap">
@@ -100,6 +95,10 @@ const isHidden = !dynamic && !audioUrl
     </div>
 
     <dl class="sr-only">
+      <div>
+        <dt>播放状态</dt>
+        <dd data-audio-narrator>音频讲解</dd>
+      </div>
       <div data-audio-size-item hidden={!size}>
         <dt>音频</dt>
         <dd data-audio-size></dd>
@@ -506,38 +505,6 @@ const isHidden = !dynamic && !audioUrl
     gap: 0.65rem;
   }
 
-  .article-audio-identity {
-    display: flex;
-    max-width: 10rem;
-    flex: none;
-    align-items: baseline;
-    gap: 0.38rem;
-    overflow: hidden;
-    white-space: nowrap;
-  }
-
-  .article-audio-kicker {
-    flex: none;
-    color: var(--c-text);
-    font-size: 0.7rem;
-    font-weight: 650;
-    letter-spacing: 0.02em;
-  }
-
-  .article-audio-name {
-    overflow: hidden;
-    color: var(--c-text-muted);
-    font-size: 0.67rem;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .article-audio-name::before {
-    margin-right: 0.38rem;
-    color: var(--c-border-strong);
-    content: '/';
-  }
-
   .article-audio-progress-row {
     display: grid;
     grid-template-columns: 2.35rem minmax(3rem, 1fr) 2.35rem;
@@ -657,11 +624,6 @@ const isHidden = !dynamic && !audioUrl
   }
 
   .article-audio-player:has(.article-audio-toggle[aria-busy='true'])
-    .article-audio-identity {
-    max-width: 15rem;
-  }
-
-  .article-audio-player:has(.article-audio-toggle[aria-busy='true'])
     .article-audio-range-wrap::after {
     position: absolute;
     left: 0;
@@ -721,7 +683,6 @@ const isHidden = !dynamic && !audioUrl
       gap: 0.45rem;
     }
 
-    .article-audio-identity,
     .article-audio-current {
       display: none;
     }
@@ -732,50 +693,13 @@ const isHidden = !dynamic && !audioUrl
     }
 
     .article-audio-current,
-    .article-audio-duration,
-    .article-audio-kicker {
+    .article-audio-duration {
       font-size: 0.62rem;
     }
 
     .article-audio-speed {
       min-width: 2.9rem;
       font-size: 0.6rem;
-    }
-
-    .article-audio-player:has(.article-audio-toggle[aria-busy='true'])
-      .article-audio-identity,
-    .article-audio-player[data-error='true'] .article-audio-identity {
-      display: flex;
-      max-width: none;
-      flex: 1;
-    }
-
-    .article-audio-player:has(.article-audio-toggle[aria-busy='true'])
-      .article-audio-kicker,
-    .article-audio-player[data-error='true'] .article-audio-kicker,
-    .article-audio-player:has(.article-audio-toggle[aria-busy='true'])
-      .article-audio-progress-row,
-    .article-audio-player[data-error='true'] .article-audio-progress-row {
-      display: none;
-    }
-
-    .article-audio-player:has(.article-audio-toggle[aria-busy='true'])
-      .article-audio-name,
-    .article-audio-player[data-error='true'] .article-audio-name {
-      display: block;
-      font-size: 0.62rem;
-    }
-
-    .article-audio-player:has(.article-audio-toggle[aria-busy='true'])
-      .article-audio-name::before,
-    .article-audio-player[data-error='true'] .article-audio-name::before {
-      display: none;
-    }
-  }
-
-  @media (max-width: 24rem) {
-    .article-audio-kicker {
-      display: none;
     }
   }
 
