@@ -13,7 +13,7 @@ import PostActions from '~/components/widgets/PostActions.astro'
 >
   <StandardLayout class="reader-shell">
     <geektime-reader
-      data-catalog-url="/docs/catalog.json?v=3"
+      data-catalog-url="/docs/catalog.json?v=5"
       data-loading
       aria-busy="true"
     >
@@ -2182,6 +2182,8 @@ import PostActions from '~/components/widgets/PostActions.astro'
 
   interface Article {
     title: string
+    displayTitle: string
+    sequence: string
     path: string
     bytes?: number
   }
@@ -2592,8 +2594,9 @@ import PostActions from '~/components/widgets/PostActions.astro'
     }
 
     private updateMindMap(content: HTMLElement) {
+      const articleTitle = this.getArticleDisplayTitle(this.article)
       const root: MindMapNode = {
-        title: this.article.title,
+        title: articleTitle,
         depth: 1,
         children: [],
       }
@@ -2617,7 +2620,7 @@ import PostActions from '~/components/widgets/PostActions.astro'
 
       this.mindMapRoot = root
       const title = this.querySelector<HTMLElement>('[data-mindmap-title]')
-      if (title) title.textContent = this.article.title
+      if (title) title.textContent = articleTitle
     }
 
     private wrapMindMapText(value: string, maxUnits: number, maxLines = 3) {
@@ -3258,17 +3261,22 @@ import PostActions from '~/components/widgets/PostActions.astro'
         '[data-course-separator]'
       )
 
-      if (title) title.textContent = this.article.title
+      const articleTitle = this.getArticleDisplayTitle(this.article)
+      if (title) title.textContent = articleTitle
       if (courseLink) {
         courseLink.textContent = this.course.name
         courseLink.href = `/docs/#${this.category.id}`
       }
       if (courseSeparator) courseSeparator.hidden = false
 
-      document.title = `${this.article.title} - wangshengliang`
+      document.title = `${articleTitle} - wangshengliang`
       document
         .querySelector('meta[name="description"]')
-        ?.setAttribute('content', `${this.course.name}：${this.article.title}`)
+        ?.setAttribute('content', `${this.course.name}：${articleTitle}`)
+    }
+
+    private getArticleDisplayTitle(article: Article) {
+      return `${article.sequence} ${article.displayTitle}`
     }
 
     private updateCoursePanel() {
@@ -3289,7 +3297,7 @@ import PostActions from '~/components/widgets/PostActions.astro'
       const courseKey = `${this.source.id}:${this.course.id}`
       if (list.dataset.courseId !== courseKey) {
         const fragment = document.createDocumentFragment()
-        this.course.articles.forEach((article, index) => {
+        this.course.articles.forEach((article) => {
           const item = document.createElement('li')
           item.className = 'reader-course-item'
 
@@ -3300,10 +3308,10 @@ import PostActions from '~/components/widgets/PostActions.astro'
 
           const number = document.createElement('span')
           number.className = 'reader-course-index'
-          number.textContent = String(index + 1).padStart(2, '0')
+          number.textContent = article.sequence
 
           const name = document.createElement('span')
-          name.textContent = article.title.replace(/^\d+\s*[-–—]\s*/, '')
+          name.textContent = article.displayTitle
           articleLink.append(number, name)
           item.append(articleLink)
           fragment.append(item)
@@ -3339,7 +3347,7 @@ import PostActions from '~/components/widgets/PostActions.astro'
 
       actions.dataset.markdown = markdown
       actions.dataset.url = window.location.href
-      actions.dataset.title = this.article.title
+      actions.dataset.title = this.getArticleDisplayTitle(this.article)
       container.hidden = false
     }
 
@@ -3588,7 +3596,7 @@ import PostActions from '~/components/widgets/PostActions.astro'
       element.href = this.getArticleUrl(article.path)
       element.dataset.articlePath = article.path
       const title = element.querySelector('strong')
-      if (title) title.textContent = article.title
+      if (title) title.textContent = this.getArticleDisplayTitle(article)
     }
 
     private showError(error: unknown) {

@@ -13,6 +13,8 @@ export interface DocsSource {
 
 export interface GeektimeArticle {
   title: string
+  displayTitle: string
+  sequence: string
   path: string
   bytes: number
 }
@@ -53,9 +55,19 @@ interface SourceCatalog {
   commit: string
   generatedAt: string
   categories: (Omit<GeektimeCategory, 'courses'> & {
-    courses: (Omit<GeektimeCourse, 'sourceId'> & { sourceId?: string })[]
+    courses: (Omit<GeektimeCourse, 'sourceId' | 'articles'> & {
+      sourceId?: string
+      articles: Omit<GeektimeArticle, 'displayTitle' | 'sequence'>[]
+    })[]
   })[]
 }
+
+const ARTICLE_SEQUENCE_PATTERNS = [
+  /^\s*第\s*(\d{1,3})\s*[讲章节课期篇]\s*(?:[-–—._、:：丨｜]\s*)?/u,
+  /^\s*[【[(（]\s*(\d{1,3})\s*[】\])）]\s*(?:[-–—._、:：丨｜]\s*)?/u,
+  /^\s*(\d{1,3})\s*(?:[-–—._、:：丨｜]\s*|\s+)(?=\S)/u,
+  /^\s*(\d{1,2})(?=\[|[\u3400-\u9fff])/u,
+]
 
 function normalizeSource(
   catalog: SourceCatalog,
@@ -74,11 +86,20 @@ function normalizeSource(
   const categories = catalog.categories
     .map((category) => {
       const courses = category.courses
-        .map((course) => ({
-          ...course,
-          sourceId: course.sourceId || id,
-          articles: course.articles.filter((article) => article.bytes > 0),
-        }))
+        .map((course) => {
+          const articles = course.articles
+            .filter((article) => article.bytes > 0)
+            .map((article, index) => ({
+              ...article,
+              ...getGeektimeArticlePresentation(article.title, index),
+            }))
+
+          return {
+            ...course,
+            sourceId: course.sourceId || id,
+            articles,
+          }
+        })
         .filter((course) => course.articles.length > 0)
 
       return {
@@ -156,5 +177,25 @@ export function getGeektimeArticleUrl(
 }
 
 export function formatGeektimeArticleTitle(title: string) {
-  return title.replace(/^\d+\s*[-–—]\s*/, '')
+  return parseGeektimeArticleTitle(title).displayTitle
+}
+
+export function parseGeektimeArticleTitle(title: string) {
+  for (const pattern of ARTICLE_SEQUENCE_PATTERNS) {
+    const match = title.match(pattern)
+    if (!match) continue
+
+    return {
+      displayTitle: title.slice(match[0].length).trim() || title.trim(),
+    }
+  }
+
+  return { displayTitle: title.trim() }
+}
+
+export function getGeektimeArticlePresentation(title: string, index: number) {
+  const { displayTitle } = parseGeektimeArticleTitle(title)
+  const sequence = String(index + 1).padStart(2, '0')
+
+  return { displayTitle, sequence }
 }

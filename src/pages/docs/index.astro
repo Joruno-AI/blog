@@ -509,6 +509,8 @@ const { categories, stats } = geektimeCatalog
 <script>
   interface Article {
     title: string
+    displayTitle: string
+    sequence: string
     path: string
   }
 
@@ -667,10 +669,11 @@ const { categories, stats } = geektimeCatalog
             }
 
             for (const article of course.articles) {
-              const articleTitle = article.title.toLocaleLowerCase('zh-CN')
+              const displayTitle = `${article.sequence} ${article.displayTitle}`
+              const articleTitle = displayTitle.toLocaleLowerCase('zh-CN')
               if (!articleTitle.includes(query)) continue
               matches.push({
-                title: article.title,
+                title: displayTitle,
                 meta: `${category.name} / ${course.name}`,
                 kind: '章节',
                 href: this.getArticleUrl(
