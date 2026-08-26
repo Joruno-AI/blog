@@ -1,0 +1,302 @@
+<p align="center">
+  <img src=".github/assets/banner.webp" alt="Plannotator" width="640" />
+</p>
+
+
+
+<p align="center">
+  <strong>Everything you need to annotate and stay in the loop with your agents</strong><br/>
+  <strong>Markdown Review • Code Review • HTML Artifacts</strong><br/>
+  <sub>Annotate plans, specs, markdown, and HTML before implementation. Review diffs and PRs. Send feedback to your agent.</sub>
+</p>
+
+<p align="center">
+  <img src=".github/assets/icons/amp.svg" alt="Amp" title="Amp" height="28" />&nbsp;&nbsp;
+  <img src=".github/assets/icons/claude.svg" alt="Claude Code" title="Claude Code" height="28" />&nbsp;&nbsp;
+  <img src=".github/assets/icons/codex.png" alt="Codex" title="Codex" height="28" />&nbsp;&nbsp;
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/icons/copilot-dark.svg" />
+    <img src=".github/assets/icons/copilot-light.svg" alt="Copilot CLI" title="Copilot CLI" height="28" />
+  </picture>&nbsp;&nbsp;
+  <img src=".github/assets/icons/droid.png" alt="Droid" title="Droid" height="28" />&nbsp;&nbsp;
+  <img src=".github/assets/icons/gemini.png" alt="Gemini CLI" title="Gemini CLI" height="28" />&nbsp;&nbsp;
+  <img src=".github/assets/icons/kiro.svg" alt="Kiro" title="Kiro" height="28" />&nbsp;&nbsp;
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/icons/opencode-dark.svg" />
+    <img src=".github/assets/icons/opencode-light.svg" alt="OpenCode" title="OpenCode" height="28" />
+  </picture>&nbsp;&nbsp;
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/icons/pi-dark.svg" />
+    <img src=".github/assets/icons/pi-light.svg" alt="Pi" title="Pi" height="28" />
+  </picture>
+</p>
+
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=a_AT7cEN_9I">Watch the og demo</a> · <a href="https://docs.plannotator.ai/open-source/start/installation">Installation guide</a> · <a href="https://plannotator.ai/">Official site</a> · <a href="https://github.com/plannotator/effective-html">Visual HTML Skills</a>
+</p>
+
+# Plannotator
+
+Plannotator is a local, browser-based review surface for AI coding agents: Claude Code, Codex, Copilot CLI, Gemini CLI, OpenCode, Kiro, Droid, Amp, and Pi. 
+
+**It plugs directly into your agent** through its hooks and commands. When the agent proposes a plan, html, or finishes writing code, the work opens in your browser and you mark it up, comment, and send feedback directly to the agent for it to act on it.
+
+<table>
+<tr>
+<td width="40%" valign="middle">
+
+### Review documents, plans, and agent messages
+
+Annotate plans, specs, messages, html, then send the feedback to your agent. 
+
+<p><strong>Demo:</strong> <a href="https://youtu.be/XqFun9XCXPw">Plan review with Pi</a></p>
+
+</td>
+<td width="60%">
+
+<img src=".github/assets/annotate.webp" alt="Annotate UI with inline annotations" width="100%" />
+
+</td>
+</tr>
+<tr>
+<td width="40%" valign="middle">
+
+### Code Review
+
+Review local changes or remote PRs. Comment on diffs, suggest code. Your comments go back to the agent. Works with Git, GitButler, Jujutsu (`jj`), Perforce (`p4`), GitHub, and GitLab.
+
+</td>
+<td width="60%">
+
+<img src=".github/assets/review.webp" alt="Code review with file tree and side-by-side diff" width="100%" />
+
+</td>
+</tr>
+</table>
+
+<p align="center">
+  <sub><strong>AI built in:</strong> ask AI about anything you're reviewing,<br/>or launch AI reviews that post comments to the diff.</sub>
+</p>
+
+## Annotate HTML Artifacts
+
+<p align="center">
+  <img src=".github/assets/html.webp" alt="Annotating a rendered HTML artifact" width="720" />
+</p>
+
+---
+
+## Commands
+
+<sub>On Codex, swap the slash commands for `!plannotator …` (e.g. `!plannotator review`) or the `$plannotator-*` skills.</sub>
+
+### Annotate
+
+```
+/plannotator-annotate README.md                  # Local markdown file
+/plannotator-annotate src/                       # Browse and annotate files in a folder
+/plannotator-annotate https://docs.rs/…          # Fetch and annotate any URL
+/plannotator-annotate report.html --render-html  # Render HTML as-is instead of converting
+/plannotator-last                                # Annotate the agent's last message
+```
+
+Need a realistic document to try? Copy the [product requirements document template and filled example](https://docs.plannotator.ai/templates/product-requirements-document) as Markdown.
+
+### Code review
+
+```
+/plannotator-review                    # Review uncommitted changes
+/plannotator-review <github-pr-url>    # Review a GitHub pull request
+/plannotator-review <gitlab-mr-url>    # Review a GitLab merge request
+plannotator review --gitbutler         # Review an active GitButler workspace
+```
+
+GitButler users can review the whole workspace, one stack, or one branch layer. See the [GitButler workflow guide](https://docs.plannotator.ai/open-source/workflows/gitbutler).
+
+### Plan mode
+
+No command needed. Plan mode is wired in through each harness's hooks. Any time your agent creates a plan, the markdown review surface opens for you.
+
+### CLI
+
+```
+plannotator sessions                   # List active Plannotator sessions
+plannotator sessions --open 1          # Reopen a session in the browser
+plannotator archive                    # Browse saved plan decisions read-only
+```
+
+---
+
+## Privacy and network behavior
+
+Plannotator does not collect usage telemetry or analytics. Plans, diffs, annotations, drafts, history, and configuration stay local by default.
+
+Each plan review, annotate, archive, share-portal, and code-review app surface checks GitHub for the latest Plannotator release when it loads. This sends no plan or review content and gives the Plannotator project owner no usage analytics, although GitHub receives an ordinary request. There is currently no opt-out setting. Local Git code review can also query the configured `origin` with `git ls-remote` to detect the default branch and a stale baseline; it does not send the local diff.
+
+Content leaves the local workflow only when a network feature needs it:
+
+- URL annotation fetches the requested site, through Jina Reader by default for public pages or directly when Jina is disabled or unavailable.
+- GitHub and GitLab review uses your authenticated CLI and Git remote to retrieve PR or MR data.
+- Ask AI and review agents send the selected question and relevant plan, document, repository, or diff context to your configured provider.
+- Sharing sends the complete link to whoever or whatever service you use to deliver it. Encrypted short links upload ciphertext to the paste service.
+- Workspaces is a separate hosted product, so the open source app's local-storage model does not apply to content placed there.
+
+The [privacy policy](https://plannotator.ai/privacy) documents these boundaries and the hosted website and waitlist data.
+
+---
+
+## Link sharing
+
+Open source asynchronous link sharing remains available for compatibility but is moving to deprecated support. Workspaces is the primary direction for team sharing. No removal date has been announced.
+
+<p align="center">
+  <a href="https://room.plannotator.ai/">
+    <img src=".github/assets/sharing.png" alt="Sharing portal with upload options" width="720" />
+  </a>
+</p>
+
+<p align="center">
+  <sub>Legacy link-sharing demo: <a href="https://room.plannotator.ai/">room.plannotator.ai</a></sub>
+</p>
+
+<p align="center">
+  <a href="https://plannotator.ai/workspaces">
+    <img src=".github/assets/workspaces-cta.svg" alt="Workspaces is the team-sharing direction. Join the waitlist." height="44" />
+  </a>
+</p>
+
+Share a plan with a teammate and they can annotate it themselves. Import their feedback and send it straight back to your agent.
+
+**Small markdown shares** are compressed into the URL fragment. The fragment is not included in the browser's request to the share portal, but it is not encrypted. Anyone or any messaging service with the complete link can read the shared content. The portal host still receives ordinary request metadata.
+
+**Large markdown and raw HTML shares** use a short-link service. The share payload is encrypted with AES-256-GCM before upload, the server stores only ciphertext, and the key is kept in the URL fragment rather than sent in the paste request. Anyone with the complete link can decrypt it. Hosted pastes expire after 7 days.
+
+Same model as [PrivateBin](https://privatebin.info/). The paste service is [self-hostable](https://docs.plannotator.ai/open-source/workflows/sharing).
+
+Sharing can be disabled entirely with `PLANNOTATOR_SHARE=disabled`.
+
+[Workspaces](https://plannotator.ai/workspaces) is the primary path for hosted team collaboration.
+
+---
+
+## Install
+
+One installer covers almost every agent. It installs the `plannotator` binary, auto-detects your installed agents, and configures hooks, skills, and slash commands for each:
+
+```bash
+# macOS / Linux / WSL
+curl -fsSL https://plannotator.ai/install.sh | bash
+```
+
+```powershell
+# Windows PowerShell
+irm https://plannotator.ai/install.ps1 | iex
+```
+
+The installer downloads the binary from GitHub Releases. A full install can also contact GitHub for release resolution and agent files, Ataraxy-Labs/sem for the optional `sem` sidecar, and npm for Pi, selected extra skills, or the managed agent-terminal runtime. Pinning `--version` skips only GitHub API release resolution, not the release download. See the [privacy policy](https://plannotator.ai/privacy) for the complete network boundaries.
+
+Want just the binary and nothing else? Pass `--minimal` (or export `PLANNOTATOR_MINIMAL=1`) to install only the `plannotator` binary to `~/.local/bin`, skipping every skill, hook, slash command, and per-agent config:
+
+```bash
+curl -fsSL https://plannotator.ai/install.sh | bash -s -- --minimal
+```
+
+Then finish the step for your agent:
+
+| Agent | After the installer | Details |
+|---|---|---|
+| **Amp** | Copy [`plannotator.ts`](apps/amp-plugin/plannotator.ts) into `~/.config/amp/plugins/`, then `plugins: reload`. Workflows live in the command palette. | [README](apps/amp-plugin/README.md) |
+| **Claude Code** | `/plugin marketplace add backnotprop/plannotator`, then `/plugin install plannotator@plannotator`. Restart Claude Code. | [README](apps/hook/README.md) |
+| **Codex** | Nothing. Plan review is enabled automatically via Codex's experimental `Stop` hook (macOS/Linux/WSL; on native Windows, Codex hooks are experimental and the installer prints manual setup steps). `$plannotator-review`, `$plannotator-annotate`, and `$plannotator-last` skills included. | [README](apps/codex/README.md) |
+| **Copilot CLI** | `/plugin marketplace add backnotprop/plannotator`, then `/plugin install plannotator-copilot@plannotator`. Restart. Plan review activates in plan mode (`Shift+Tab`). | [README](apps/copilot/README.md) |
+| **Droid** | `droid plugin marketplace add https://github.com/backnotprop/plannotator`, then `droid plugin install plannotator@plannotator`. Commands only, no plan interception yet. | [README](apps/droid-plugin/README.md) |
+| **Gemini CLI** | Nothing. The hook, policy, and slash commands are configured automatically. Requires Gemini CLI 0.36.0+. | [README](apps/gemini/README.md) |
+| **Kiro CLI** | Nothing. Skills and an example agent are installed automatically. Try `kiro-cli chat --agent plannotator`. | [README](apps/kiro-cli/README.md) |
+| **OpenCode** | Add `"plugin": ["@plannotator/opencode@latest"]` to `opencode.json`. Restart OpenCode. | [README](apps/opencode-plugin/README.md) |
+| **Pi** | Skip the installer. Just `pi install npm:@plannotator/pi-extension`. Start Pi with `--plan`, or toggle with `/plannotator-plan-mode`. | [README](apps/pi-extension/README.md) |
+
+Full walkthroughs live in the [installation docs](https://docs.plannotator.ai/open-source/start/installation).
+
+### Uninstall
+
+The safe default removes recognized Plannotator-installed components and keeps
+your local plans, history, drafts, guides, and settings:
+
+```bash
+plannotator uninstall
+```
+
+Use `--purge` for a full removal of known local Plannotator data as well:
+
+```bash
+plannotator uninstall --purge
+```
+
+Purge requires typing `purge` at the prompt and explains that the data is
+local-only: it is not stored on a Plannotator server and cannot be recovered.
+For automation, pass `--yes` (or `-y`); non-interactive removal refuses to run
+without it. Use `--dry-run` to preview recognized work without making changes.
+Host integrations are always part of uninstall. If a broken or unavailable
+host prevents safe cleanup, the command names the blocking plugin manager or
+configuration, gives exact manual cleanup instructions, and stops before
+deleting the binary. Complete that cleanup and rerun uninstall.
+These mechanics keep the ordinary confirmation default-negative, make the
+irreversible outcome require a stronger explicit word, and still give package
+managers and scripts a conventional non-interactive flag.
+
+The command covers the conventional macOS, Linux, WSL, and Windows binary
+locations; the managed `sem` sidecar and agent-terminal runtime; installer
+skills, commands, hooks, policies, caches, and recognizable Amp/Kiro files; and
+detected Claude Code, Copilot CLI, Droid, Pi, and VS Code installations through
+their host CLIs. Shared JSONC settings are edited surgically, while strict JSON
+updates preserve the file's indentation, line endings, and trailing-newline
+style. Custom
+or unrecognized files, separately installed optional skills, project-local
+integrations, external plan-save locations, and invalid configs are preserved
+(malformed host config is a fail-safe error). If cleanup reports an error,
+the CLI remains available for a safe retry, and its Windows PATH entry is
+retained or restored when possible. If PATH restoration itself fails, the
+output gives the full CLI path for retry and asks for manual PATH repair.
+For safety, purge refuses filesystem roots, the home directory, the shared
+temporary directory, symlinked data directories, and non-directory data paths.
+Existing paths are compared by filesystem identity, so case aliases, symlinks,
+hardlinks, and bind mounts cannot bypass the root/home/ancestor checks.
+That identity and every containment guard are revalidated after awaited host
+commands, immediately before the synchronous data-removal block; a replaced
+data directory is refused without touching either the old or replacement data.
+If your dedicated data directory is symlinked, point `PLANNOTATOR_DATA_DIR` at
+its resolved target and retry.
+
+If you installed only the standalone Pi extension and do not have the
+`plannotator` CLI, use `pi remove npm:@plannotator/pi-extension`.
+
+<details>
+<summary>Claude Code: manual hook setup (without the plugin system)</summary>
+
+Add to `~/.claude/settings.json`:
+
+```json
+{
+  "hooks": {
+    "PermissionRequest": [
+      {
+        "matcher": "ExitPlanMode",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "plannotator",
+            "timeout": 345600
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+</details>
+
+<details>
+<summary
+
+> _README 过长已截断, 完整内容请查看 GitHub 仓库。_

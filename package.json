@@ -9,6 +9,7 @@
     "astro": "astro",
     "sync": "astro sync",
     "sync:geektime": "node scripts/sync-geektime.mjs",
+    "sync:skills": "node scripts/sync-skills.mjs",
     "sync:nuggets": "node scripts/sync-nuggets.mjs",
     "sync:docs": "pnpm sync:geektime && pnpm sync:nuggets",
     "audit:music": "node --env-file=.env scripts/audit-music-library.mjs",
