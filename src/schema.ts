@@ -264,3 +264,39 @@ export const streamSchema = z.object({
       'Specifies the platform where the stream is published. If not needed, leave the field as an empty string or delete it.'
     ),
 })
+
+/* Skills */
+export const skillSchema = z.object({
+  id: z.string().describe('**Required**. Repo full name, e.g. `owner/repo`.'),
+  name: z.string().describe('**Required**. Skill/repo display name.'),
+  author: z.string().describe('**Required**. GitHub owner name.'),
+  desc: z.string().describe('Short description from the repo.'),
+  descZh: z
+    .string()
+    .default('')
+    .describe('Condensed Chinese description, maintained in desc-zh.json.'),
+  category: z
+    .enum(['claude-skill', 'codex-skill', 'mcp-server', 'agent-tool'])
+    .describe('**Required**. Category from AgentSkillsHub index.'),
+  stars: z.number().describe('**Required**. GitHub star count.'),
+  installs: z
+    .number()
+    .nullable()
+    .describe('Install count from skills.sh, only for skill categories.'),
+  qualityScore: z.number().describe('AgentSkillsHub 0-100 quality score.'),
+  securityGrade: z
+    .string()
+    .describe('Security grade: safe / caution / unknown.'),
+  platforms: z.array(z.string()).default([]),
+  tags: z.array(z.string()).default([]),
+  official: z.boolean().default(false),
+  keywords: z.string().default('').describe('Chinese search keywords.'),
+  pushedAt: z.string().nullable().default(null),
+  createdAt: z.string().nullable().default(null),
+  language: z.string().nullable().default(null),
+  starsDelta: z
+    .number()
+    .nullable()
+    .default(null)
+    .describe('Star growth vs the sync snapshot ~7 days ago.'),
+})

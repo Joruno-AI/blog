@@ -11,6 +11,7 @@ import {
   projectSchema,
   streamSchema,
   photoSchema,
+  skillSchema,
 } from '~/schema'
 import { cmsLoader } from '~/loaders/cms'
 import { mediaLoader } from '~/loaders/cms/media'
@@ -87,6 +88,11 @@ const streams = defineCollection({
   schema: streamSchema,
 })
 
+const skills = defineCollection({
+  loader: file('./src/content/skills/data.json'),
+  schema: skillSchema,
+})
+
 // const feeds = defineCollection({
 //   loader: feedLoader({
 //     url: 'https://astro.build/rss.xml',
@@ -104,5 +110,6 @@ export const collections = {
   shorts,
   changelog,
   streams,
+  skills,
   // feeds,
 }
