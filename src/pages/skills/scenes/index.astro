@@ -1,0 +1,121 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro'
+import StandardLayout from '~/layouts/StandardLayout.astro'
+import SkillsNav from '~/components/views/SkillsNav.astro'
+import Link from '~/components/base/Link.astro'
+import scenesData from '~/data/skill-scenes.json'
+import { withBasePath } from '~/utils/path'
+import { matchScene } from '~/utils/skills'
+import { loadFullIndex } from '~/utils/skills-data'
+
+const fullIndex = loadFullIndex()
+
+const groups = scenesData.groups.map((group) => ({
+  ...group,
+  scenes: scenesData.scenes
+    .filter((scene) => scene.group === group.key)
+    .map((scene) => ({
+      ...scene,
+      count: fullIndex.filter((item) => matchScene(item, scene.keywords))
+        .length,
+    })),
+}))
+---
+
+<BaseLayout
+  title="场景导航 - Skills"
+  description="按使用场景浏览 Agent Skills 与 MCP 工具：数据库、浏览器自动化、内容创作等"
+  bgType={false}
+>
+  <StandardLayout
+    class="max-w-300"
+    title="场景导航"
+    subtitle={`${scenesData.scenes.length} 个场景，按需找到合适的工具`}
+    isCentered={true}
+  >
+    <SkillsNav active="scenes" slot="head" />
+    {
+      groups.map((group, idx) => (
+        <section
+          class="scene-group slide-enter"
+          style={`--enter-stage: ${idx}`}
+        >
+          <h2 class="scene-group-title">{group.label}</h2>
+          <div class="scene-grid">
+            {group.scenes.map((scene) => (
+              <Link
+                class="scene-card"
+                href={withBasePath(`/skills/scenes/${scene.slug}/`)}
+              >
+                <span class="scene-card-title">{scene.title}</span>
+                <span class="scene-card-desc">{scene.desc}</span>
+                <span class="scene-card-count">{scene.count} 个匹配项目</span>
+              </Link>
+            ))}
+          </div>
+        </section>
+      ))
+    }
+  </StandardLayout>
+</BaseLayout>
+
+<style is:global>
+  .scene-group {
+    margin-top: 1.8rem;
+  }
+
+  .scene-group-title {
+    margin: 0 0 0.8rem;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--c-text);
+  }
+
+  .scene-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr));
+    gap: 0.7rem;
+  }
+
+  .scene-card {
+    display: flex !important;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--c-border-soft);
+    border-radius: 0.6rem;
+    background: var(--c-bg);
+    opacity: 1 !important;
+    transition:
+      transform 0.22s ease,
+      border-color 0.22s ease,
+      box-shadow 0.22s ease;
+  }
+
+  .scene-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--c-border-strong);
+    box-shadow: 0 8px 22px -14px rgba(0, 0, 0, 0.22);
+  }
+
+  .scene-card-title {
+    font-weight: 600;
+    color: var(--c-text);
+  }
+
+  .scene-card-desc {
+    font-size: 0.78rem;
+    line-height: 1.45;
+    color: var(--c-text-muted);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .scene-card-count {
+    margin-top: 0.2rem;
+    font-size: 0.7rem;
+    color: var(--c-text-faint);
+  }
+</style>

@@ -1,0 +1,514 @@
+---
+import { getCollection } from 'astro:content'
+
+import Link from '~/components/base/Link.astro'
+import SkillCard from '~/components/views/SkillCard.astro'
+import scenesData from '~/data/skill-scenes.json'
+import { withBasePath } from '~/utils/path'
+import {
+  CATEGORY_LABELS,
+  SKILL_CATEGORIES,
+  formatCount,
+} from '~/utils/skills'
+
+const skills = (await getCollection('skills'))
+  .map((s) => s.data)
+  .sort((a, b) => b.stars - a.stars)
+
+const totalStars = skills.reduce((sum, s) => sum + s.stars, 0)
+const totalInstalls = skills.reduce((sum, s) => sum + (s.installs ?? 0), 0)
+const avgQuality =
+  Math.round(
+    (skills.reduce((sum, s) => sum + s.qualityScore, 0) / skills.length) * 10
+  ) / 10
+
+const stats = [
+  { label: '精选项目', value: skills.length, fmt: String(skills.length) },
+  { label: 'GitHub Stars', value: totalStars, fmt: formatCount(totalStars) },
+  { label: '安装量', value: totalInstalls, fmt: formatCount(totalInstalls) },
+  { label: '平均质量分', value: avgQuality, fmt: String(avgQuality) },
+]
+
+const boardData = skills.map((s) => ({
+  id: s.id,
+  n: s.name,
+  a: s.author,
+  s: s.stars,
+  i: s.installs ?? 0,
+  q: s.qualityScore,
+  c: s.category,
+  u: withBasePath(`/skills/${s.id}/`),
+}))
+
+const categorySections = SKILL_CATEGORIES.map((c) => ({
+  key: c,
+  label: CATEGORY_LABELS[c],
+  items: skills.filter((s) => s.category === c).slice(0, 6),
+}))
+
+const sceneChips = scenesData.scenes.slice(0, 18)
+---
+
+<section class="skills-stats slide-enter" style="--enter-stage: 0">
+  {
+    stats.map((s) => (
+      <div class="skills-stat">
+        <span class="skills-stat-value" data-count-to={s.value}>
+          {s.fmt}
+        </span>
+        <span class="skills-stat-label">{s.label}</span>
+      </div>
+    ))
+  }
+</section>
+
+<section class="skills-board slide-enter" style="--enter-stage: 1">
+  <div class="skills-board-head">
+    <h2 class="skills-board-title">
+      <span class="i-ri-fire-line" aria-hidden="true"></span>
+      Top 10 榜单
+    </h2>
+    <div class="skills-board-controls">
+      <select class="skills-board-select" data-board-cat aria-label="榜单分类">
+        <option value="all">全部分类</option>
+        {
+          SKILL_CATEGORIES.map((c) => (
+            <option value={c}>{CATEGORY_LABELS[c]}</option>
+          ))
+        }
+      </select>
+      <div class="skills-sort" role="group" aria-label="榜单排序">
+        {
+          [
+            { key: 's', label: 'Stars' },
+            { key: 'i', label: '安装量' },
+            { key: 'q', label: '质量分' },
+          ].map((o, idx) => (
+            <button
+              class:list={['skills-sort-btn', { 'is-active': idx === 0 }]}
+              data-board-sort={o.key}
+            >
+              {o.label}
+            </button>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+  <ol class="skills-board-list" data-board></ol>
+</section>
+
+{
+  categorySections.map((section, idx) => (
+    <section class="skills-section slide-enter" style={`--enter-stage: ${idx + 2}`}>
+      <div class="skills-section-head">
+        <h2 class="skills-section-title">{section.label}</h2>
+        <Link
+          class="skills-section-more"
+          href={withBasePath(`/skills/all/?cat=${section.key}`)}
+        >
+          {'查看全部'}
+          <span class="i-ri-arrow-right-line" aria-hidden="true" />
+        </Link>
+      </div>
+      <div class="skills-grid">
+        {section.items.map((skill) => (
+          <SkillCard skill={skill} />
+        ))}
+      </div>
+    </section>
+  ))
+}
+
+<section class="skills-section slide-enter" style="--enter-stage: 6">
+  <div class="skills-section-head">
+    <h2 class="skills-section-title">按场景找工具</h2>
+    <Link class="skills-section-more" href={withBasePath('/skills/scenes/')}>
+      {`全部 ${scenesData.scenes.length} 个场景`}
+      <span class="i-ri-arrow-right-line" aria-hidden="true"></span>
+    </Link>
+  </div>
+  <div class="skills-scene-chips">
+    {
+      sceneChips.map((scene) => (
+        <Link
+          class="skills-scene-chip"
+          href={withBasePath(`/skills/scenes/${scene.slug}/`)}
+        >
+          {scene.title}
+        </Link>
+      ))
+    }
+  </div>
+</section>
+
+<script is:inline define:vars={{ boardData }}>
+  window.__SKILLS_BOARD__ = boardData
+</script>
+
+<script>
+  interface BoardItem {
+    id: string
+    n: string
+    a: string
+    s: number
+    i: number
+    q: number
+    c: string
+    u: string
+  }
+
+  const board = document.querySelector<HTMLOListElement>('[data-board]')
+  const catSelect = document.querySelector<HTMLSelectElement>('[data-board-cat]')
+  const sortBtns = [
+    ...document.querySelectorAll<HTMLButtonElement>('[data-board-sort]'),
+  ]
+  const data = (window as unknown as { __SKILLS_BOARD__: BoardItem[] })
+    .__SKILLS_BOARD__
+
+  if (board && data) {
+    const reduceMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches
+    let sortKey: 's' | 'i' | 'q' = 's'
+
+    const fmt = (n: number) =>
+      n >= 1e6
+        ? `${(n / 1e6).toFixed(1)}M`
+        : n >= 1e3
+          ? `${(n / 1e3).toFixed(1)}k`
+          : String(n)
+
+    function render(animate: boolean) {
+      const cat = catSelect?.value ?? 'all'
+      const top = data
+        .filter((item) => cat === 'all' || item.c === cat)
+        .sort((a, b) => b[sortKey] - a[sortKey])
+        .slice(0, 10)
+      const prevRects = new Map<string, DOMRect>()
+      if (animate && !reduceMotion) {
+        board!
+          .querySelectorAll<HTMLElement>('[data-repo]')
+          .forEach((row) =>
+            prevRects.set(row.dataset.repo!, row.getBoundingClientRect())
+          )
+      }
+      const max = top.length ? top[0][sortKey] : 0
+      board!.innerHTML = ''
+      top.forEach((item, index) => {
+        const row = document.createElement('li')
+        row.className = 'skills-board-row'
+        row.dataset.repo = item.id
+        row.innerHTML = `
+          <span class="skills-board-rank ${index < 3 ? 'is-top' : ''}">${index + 1}</span>
+          <a class="skills-board-name" href="${item.u}">${item.n}</a>
+          <span class="skills-board-author">${item.a}</span>
+          <span class="skills-board-bar"><i style="width:${max ? Math.max((item[sortKey] / max) * 100, 4) : 0}%"></i></span>
+          <span class="skills-board-value">${fmt(item[sortKey])}</span>`
+        board!.appendChild(row)
+        const prev = prevRects.get(item.id)
+        if (prev && !reduceMotion) {
+          const delta = prev.top - row.getBoundingClientRect().top
+          if (delta)
+            row.animate(
+              [
+                { transform: `translateY(${delta}px)` },
+                { transform: 'translateY(0)' },
+              ],
+              { duration: 350, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }
+            )
+        } else if (animate && !reduceMotion) {
+          row.animate(
+            [
+              { opacity: 0, transform: 'translateY(6px)' },
+              { opacity: 1, transform: 'translateY(0)' },
+            ],
+            { duration: 300, delay: index * 40, fill: 'backwards' }
+          )
+        }
+      })
+    }
+
+    catSelect?.addEventListener('change', () => render(true))
+    sortBtns.forEach((btn) =>
+      btn.addEventListener('click', () => {
+        sortKey = btn.dataset.boardSort as typeof sortKey
+        sortBtns.forEach((b) => b.classList.toggle('is-active', b === btn))
+        render(true)
+      })
+    )
+
+    if (!reduceMotion) {
+      document
+        .querySelectorAll<HTMLElement>('[data-count-to]')
+        .forEach((el) => {
+          const end = Number(el.dataset.countTo || 0)
+          const start = performance.now()
+          const tick = (now: number) => {
+            const progress = Math.min((now - start) / 900, 1)
+            el.textContent = fmt(
+              Math.round(end * (1 - Math.pow(1 - progress, 3)))
+            )
+            if (progress < 1) requestAnimationFrame(tick)
+          }
+          requestAnimationFrame(tick)
+        })
+    }
+
+    render(true)
+  }
+</script>
+
+<style is:global>
+  .skills-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+
+  .skills-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    padding: 0.9rem 0.5rem;
+    border: 1px solid var(--c-border-soft);
+    border-radius: 0.625rem;
+    background: var(--c-surface-soft);
+  }
+
+  .skills-stat-value {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--c-text);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .skills-stat-label {
+    font-size: 0.72rem;
+    color: var(--c-text-faint);
+  }
+
+  .skills-sort {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .skills-sort-btn {
+    border: 1px solid var(--c-border-soft);
+    border-radius: 0.45rem;
+    background: transparent;
+    padding: 0.28rem 0.65rem;
+    font-size: 0.78rem;
+    color: var(--c-text-muted);
+    cursor: pointer;
+    transition:
+      color 0.2s ease,
+      border-color 0.2s ease,
+      background 0.2s ease;
+  }
+
+  .skills-sort-btn:hover {
+    border-color: var(--c-border-strong);
+  }
+
+  .skills-sort-btn.is-active {
+    background: var(--c-surface-active);
+    color: var(--c-text);
+    border-color: var(--c-border-strong);
+  }
+
+  .skills-board {
+    margin-top: 1.6rem;
+    border: 1px solid var(--c-border-soft);
+    border-radius: 0.75rem;
+    padding: 1rem 1.15rem 0.6rem;
+    background: var(--c-surface-soft);
+  }
+
+  .skills-board-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .skills-board-title {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--c-text);
+  }
+
+  .skills-board-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .skills-board-select {
+    border: 1px solid var(--c-border-soft);
+    border-radius: 0.45rem;
+    background: var(--c-bg);
+    color: var(--c-text-soft);
+    font-size: 0.78rem;
+    padding: 0.28rem 0.5rem;
+  }
+
+  .skills-board-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .skills-board-row {
+    display: grid;
+    grid-template-columns: 1.6rem minmax(7rem, 14rem) minmax(0, 9rem) 1fr 3.5rem;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.42rem 0;
+    border-top: 1px dashed var(--c-border-soft);
+    font-size: 0.82rem;
+  }
+
+  .skills-board-row:first-child {
+    border-top: none;
+  }
+
+  .skills-board-rank {
+    font-weight: 700;
+    color: var(--c-text-faint);
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+  }
+
+  .skills-board-rank.is-top {
+    color: var(--c-text);
+  }
+
+  .skills-board-name {
+    color: var(--c-text-soft);
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .skills-board-name:hover {
+    color: var(--c-text);
+    text-decoration: underline;
+  }
+
+  .skills-board-author {
+    color: var(--c-text-faint);
+    font-size: 0.72rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .skills-board-bar {
+    height: 0.4rem;
+    border-radius: 999px;
+    background: var(--c-surface-active);
+    overflow: hidden;
+  }
+
+  .skills-board-bar i {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    background: var(--c-text-muted);
+    transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .skills-board-value {
+    text-align: right;
+    color: var(--c-text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .skills-section {
+    margin-top: 2.2rem;
+  }
+
+  .skills-section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.6rem;
+  }
+
+  .skills-section-title {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--c-text);
+  }
+
+  .skills-section-more {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.8rem;
+    color: var(--c-text-muted);
+  }
+
+  .skills-section-more:hover {
+    color: var(--c-text);
+  }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+    gap: 0.85rem;
+    margin-top: 0.9rem;
+  }
+
+  .skills-scene-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-top: 0.9rem;
+    padding-bottom: 2rem;
+  }
+
+  .skills-scene-chip {
+    display: inline-flex !important;
+    padding: 0.32rem 0.85rem;
+    border: 1px solid var(--c-border-soft);
+    border-radius: 999px;
+    font-size: 0.82rem;
+    color: var(--c-text-muted);
+    transition:
+      color 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .skills-scene-chip:hover {
+    border-color: var(--c-border-strong);
+    color: var(--c-text);
+  }
+
+  @media (max-width: 640px) {
+    .skills-stats {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .skills-board-row {
+      grid-template-columns: 1.4rem minmax(0, 1fr) 3.2rem;
+    }
+
+    .skills-board-author,
+    .skills-board-bar {
+      display: none;
+    }
+  }
+</style>

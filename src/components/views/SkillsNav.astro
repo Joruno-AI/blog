@@ -1,0 +1,69 @@
+---
+import Link from '~/components/base/Link.astro'
+import { withBasePath } from '~/utils/path'
+
+interface Props {
+  active: 'overview' | 'all' | 'scenes' | 'trending' | 'masters'
+}
+
+const { active } = Astro.props
+
+const tabs = [
+  { key: 'overview', label: '概览', icon: 'i-ri-dashboard-line', path: '/skills/' },
+  { key: 'all', label: '全部', icon: 'i-ri-apps-2-line', path: '/skills/all/' },
+  { key: 'scenes', label: '场景', icon: 'i-ri-compass-3-line', path: '/skills/scenes/' },
+  { key: 'trending', label: '趋势', icon: 'i-ri-line-chart-line', path: '/skills/trending/' },
+  { key: 'masters', label: '大师', icon: 'i-ri-vip-crown-line', path: '/skills/masters/' },
+] as const
+---
+
+<nav class="skills-nav" aria-label="Skills 板块导航">
+  {
+    tabs.map((tab) => (
+      <Link
+        class:list={['skills-nav-tab', { 'is-active': tab.key === active }]}
+        href={withBasePath(tab.path)}
+      >
+        <span class={tab.icon} aria-hidden="true" />
+        {tab.label}
+      </Link>
+    ))
+  }
+</nav>
+
+<style is:global>
+  .skills-nav {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 1.2rem auto 0;
+  }
+
+  .skills-nav-tab {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.95rem;
+    border: 1px solid var(--c-border-soft);
+    border-radius: 999px;
+    font-size: 0.85rem;
+    color: var(--c-text-muted);
+    opacity: 1 !important;
+    transition:
+      color 0.2s ease,
+      border-color 0.2s ease,
+      background 0.2s ease;
+  }
+
+  .skills-nav-tab:hover {
+    border-color: var(--c-border-strong);
+    color: var(--c-text);
+  }
+
+  .skills-nav-tab.is-active {
+    background: var(--c-text);
+    border-color: var(--c-text);
+    color: var(--c-bg);
+  }
+</style>

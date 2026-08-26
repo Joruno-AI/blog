@@ -1,0 +1,30 @@
+---
+title: Skills
+subtitle: Agent Skills、MCP Servers 与工具榜单
+description: 精选 Claude Skills、Codex Skills、MCP Servers 与 Agent 工具，含安装量、质量评分与场景导航
+bgType: dot
+toc: false
+ogImage: true
+---
+
+import BaseLayout from '~/layouts/BaseLayout.astro'
+import StandardLayout from '~/layouts/StandardLayout.astro'
+import SkillsNav from '~/components/views/SkillsNav.astro'
+import SkillsOverview from '~/components/views/SkillsOverview.astro'
+
+<BaseLayout
+  title={frontmatter.title}
+  description={frontmatter.description}
+  bgType={frontmatter.bgType}
+  ogImage={frontmatter.ogImage}
+>
+  <StandardLayout
+    class="max-w-300"
+    title={frontmatter.title}
+    subtitle={frontmatter.subtitle}
+    isCentered={true}
+  >
+    <SkillsNav active="overview" slot="head" />
+    <SkillsOverview />
+  </StandardLayout>
+</BaseLayout>

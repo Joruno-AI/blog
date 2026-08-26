@@ -1,0 +1,442 @@
+---
+import { getCollection } from 'astro:content'
+
+import BaseLayout from '~/layouts/BaseLayout.astro'
+import Link from '~/components/base/Link.astro'
+import { withBasePath } from '~/utils/path'
+import { renderReadme } from '~/utils/skill-readme'
+import {
+  CATEGORY_LABELS,
+  INSTALLABLE_CATEGORIES,
+  SECURITY_GRADES,
+  formatCount,
+  githubAvatar,
+  installCommand,
+} from '~/utils/skills'
+
+import type { CollectionEntry } from 'astro:content'
+
+export async function getStaticPaths() {
+  const skills = await getCollection('skills')
+  return skills.map((skill) => ({
+    params: { id: skill.data.id },
+    props: { skill: skill.data },
+  }))
+}
+
+const { skill } = Astro.props as {
+  skill: CollectionEntry<'skills'>['data']
+}
+
+const readmes = import.meta.glob('/src/data/skills-readmes/*.md', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+}) as Record<string, string>
+const readmeRaw = readmes[`/src/data/skills-readmes/${skill.id.replace('/', '__')}.md`]
+const readmeHtml = readmeRaw ? await renderReadme(readmeRaw, skill.id) : ''
+
+const grade = SECURITY_GRADES[skill.securityGrade] ?? SECURITY_GRADES.unknown
+const installable = INSTALLABLE_CATEGORIES.has(skill.category)
+const displayDesc = skill.descZh || skill.desc
+const command = installable
+  ? installCommand(skill.id)
+  : `git clone https://github.com/${skill.id}.git`
+const githubUrl = `https://github.com/${skill.id}`
+
+const metrics = [
+  { label: 'GitHub Stars', value: formatCount(skill.stars) },
+  ...(skill.installs !== null
+    ? [{ label: '安装量', value: formatCount(skill.installs) }]
+    : []),
+  { label: '质量分', value: String(skill.qualityScore) },
+  { label: '安全等级', value: grade.label },
+]
+---
+
+<BaseLayout
+  title={`${skill.name} - Skills`}
+  description={skill.desc || `${skill.name} by ${skill.author}`}
+  bgType={false}
+>
+  <div class="skill-detail mx-auto">
+    <Link class="skill-detail-back" href={withBasePath('/skills/')}>
+      <span class="i-ri-arrow-left-line" aria-hidden="true"></span>
+      返回 Skills
+    </Link>
+
+    <header class="skill-detail-head slide-enter" style="--enter-stage: 0">
+      <img
+        class="skill-detail-avatar"
+        src={githubAvatar(skill.author, 160)}
+        alt={skill.author}
+        loading="eager"
+      />
+      <div class="skill-detail-title-group">
+        <h1 class="skill-detail-title">
+          {skill.name}
+          {skill.official && <span class="skill-detail-official">官方</span>}
+        </h1>
+        <p class="skill-detail-byline">
+          <Link href={`https://github.com/${skill.author}`} external={true}>
+            {`@${skill.author}`}
+          </Link>
+          <span class="skill-detail-chip">{CATEGORY_LABELS[skill.category]}</span>
+          <span
+            class="skill-detail-grade"
+            style={`--grade-color: ${grade.color}`}
+          >
+            {grade.label}
+          </span>
+        </p>
+      </div>
+    </header>
+
+    {
+      displayDesc && (
+        <p class="skill-detail-desc slide-enter" style="--enter-stage: 1">
+          {displayDesc}
+        </p>
+      )
+    }
+
+    <div class="skill-detail-metrics slide-enter" style="--enter-stage: 2">
+      {
+        metrics.map((m) => (
+          <div class="skill-detail-metric">
+            <span class="skill-detail-metric-value">{m.value}</span>
+            <span class="skill-detail-metric-label">{m.label}</span>
+          </div>
+        ))
+      }
+    </div>
+
+    <div class="skill-detail-install slide-enter" style="--enter-stage: 3">
+      <span class="skill-detail-install-label">
+        {installable ? '安装命令' : '获取方式'}
+      </span>
+      <button
+        type="button"
+        class="skill-detail-command"
+        data-copy={command}
+        title="点击复制"
+      >
+        <code>{command}</code>
+        <span class="i-ri-file-copy-line copy-icon" aria-hidden="true"></span>
+        <span class="i-ri-check-line copied-icon" aria-hidden="true"></span>
+      </button>
+      <div class="skill-detail-links">
+        <Link href={githubUrl} external={true}>
+          <span class="i-uil-github-alt" aria-hidden="true"></span> GitHub
+        </Link>
+      </div>
+    </div>
+
+    {
+      (skill.platforms.length > 0 || skill.tags.length > 0) && (
+        <div class="skill-detail-tags slide-enter" style="--enter-stage: 4">
+          {[...new Set([...skill.platforms, ...skill.tags])].map((tag) => (
+            <span class="skill-detail-tag">{tag}</span>
+          ))}
+        </div>
+      )
+    }
+
+    {
+      readmeHtml ? (
+        <article
+          class="skill-detail-readme prose slide-enter"
+          style="--enter-stage: 5"
+        >
+          <h2 class="skill-detail-readme-title">
+            <span class="i-ri-book-2-line" aria-hidden="true" />
+            README
+            <span class="skill-detail-readme-hint">
+              渲染自 GitHub, 已过滤原生 HTML,
+              <a href={githubUrl} target="_blank" rel="noopener">
+                查看原版
+              </a>
+            </span>
+          </h2>
+          <div set:html={readmeHtml} />
+        </article>
+      ) : (
+        <p class="skill-detail-noreadme">
+          未抓取到 README, 请前往
+          <a href={githubUrl} target="_blank" rel="noopener">
+            GitHub 仓库
+          </a>
+          查看。
+        </p>
+      )
+    }
+  </div>
+</BaseLayout>
+
+<script>
+  document.addEventListener('click', (event) => {
+    const btn = (event.target as HTMLElement).closest<HTMLElement>(
+      '[data-copy]'
+    )
+    if (!btn) return
+    navigator.clipboard.writeText(btn.dataset.copy!).then(() => {
+      btn.classList.add('is-copied')
+      setTimeout(() => btn.classList.remove('is-copied'), 1500)
+    })
+  })
+</script>
+
+<style>
+  .skill-detail {
+    max-width: 48rem;
+    padding: 0 1.25rem 4rem;
+  }
+
+  :global(.skill-detail-back) {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.85rem;
+    color: var(--c-text-muted);
+    margin-bottom: 1.5rem;
+  }
+
+  :global(.skill-detail-back:hover) {
+    color: var(--c-text);
+  }
+
+  .skill-detail-head {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .skill-detail-avatar {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 0.9rem;
+    background: var(--c-surface-soft);
+    flex: none;
+  }
+
+  .skill-detail-title-group {
+    min-width: 0;
+  }
+
+  .skill-detail-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--c-text);
+    overflow-wrap: anywhere;
+  }
+
+  .skill-detail-official {
+    flex: none;
+    font-size: 0.7rem;
+    font-weight: 500;
+    padding: 0.1rem 0.5rem;
+    border-radius: 999px;
+    border: 1px solid var(--c-border-soft);
+    color: var(--c-text-muted);
+  }
+
+  .skill-detail-byline {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    margin: 0.35rem 0 0;
+    font-size: 0.85rem;
+    color: var(--c-text-muted);
+  }
+
+  .skill-detail-chip {
+    font-size: 0.72rem;
+    border: 1px solid var(--c-border-soft);
+    border-radius: 999px;
+    padding: 0.08rem 0.55rem;
+    color: var(--c-text-faint);
+  }
+
+  .skill-detail-grade {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.75rem;
+  }
+
+  .skill-detail-grade::before {
+    content: '';
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: var(--grade-color);
+  }
+
+  .skill-detail-desc {
+    margin: 1.1rem 0 0;
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: var(--c-text-soft);
+  }
+
+  .skill-detail-metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
+    gap: 0.7rem;
+    margin-top: 1.3rem;
+  }
+
+  .skill-detail-metric {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+    padding: 0.8rem 0.5rem;
+    border: 1px solid var(--c-border-soft);
+    border-radius: 0.6rem;
+    background: var(--c-surface-soft);
+  }
+
+  .skill-detail-metric-value {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--c-text);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .skill-detail-metric-label {
+    font-size: 0.7rem;
+    color: var(--c-text-faint);
+  }
+
+  .skill-detail-install {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    margin-top: 1.3rem;
+  }
+
+  .skill-detail-install-label {
+    font-size: 0.8rem;
+    color: var(--c-text-faint);
+    flex: none;
+  }
+
+  .skill-detail-command {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+    max-width: 100%;
+    padding: 0.45rem 0.8rem;
+    border: 1px solid var(--c-border-soft);
+    border-radius: 0.5rem;
+    background: var(--c-surface-soft);
+    color: var(--c-text-soft);
+    cursor: copy;
+    transition:
+      border-color 0.2s ease,
+      background 0.2s ease;
+  }
+
+  .skill-detail-command:hover {
+    border-color: var(--c-border-strong);
+    background: var(--c-surface-hover);
+  }
+
+  .skill-detail-command code {
+    font-size: 0.8rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .skill-detail-command .copied-icon {
+    display: none;
+    color: #22c55e;
+  }
+
+  .skill-detail-command.is-copied .copied-icon {
+    display: inline-block;
+  }
+
+  .skill-detail-command.is-copied .copy-icon {
+    display: none;
+  }
+
+  .skill-detail-links {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.9rem;
+    font-size: 0.82rem;
+  }
+
+  .skill-detail-links :global(a) {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 0.3rem;
+    color: var(--c-text-muted);
+  }
+
+  .skill-detail-links :global(a:hover) {
+    color: var(--c-text);
+  }
+
+  .skill-detail-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 1rem;
+  }
+
+  .skill-detail-tag {
+    font-size: 0.72rem;
+    color: var(--c-text-muted);
+    border: 1px solid var(--c-border-soft);
+    border-radius: 999px;
+    padding: 0.12rem 0.6rem;
+  }
+
+  .skill-detail-readme {
+    margin-top: 2.2rem;
+    max-width: 100% !important;
+  }
+
+  .skill-detail-readme-title {
+    display: flex;
+    align-items: baseline;
+    gap: 0.45rem;
+    border-bottom: 1px solid var(--c-border-soft);
+    padding-bottom: 0.5rem;
+  }
+
+  .skill-detail-readme-hint {
+    font-size: 0.72rem;
+    font-weight: 400;
+    color: var(--c-text-faint);
+    margin-left: auto;
+  }
+
+  .skill-detail-readme :global(img) {
+    max-width: 100%;
+    border-radius: 0.4rem;
+  }
+
+  .skill-detail-readme :global(table) {
+    display: block;
+    overflow-x: auto;
+  }
+
+  .skill-detail-noreadme {
+    margin-top: 2.2rem;
+    text-align: center;
+    color: var(--c-text-faint);
+    font-size: 0.88rem;
+  }
+</style>

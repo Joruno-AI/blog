@@ -1,0 +1,275 @@
+---
+import Link from '~/components/base/Link.astro'
+import { withBasePath } from '~/utils/path'
+import {
+  INSTALLABLE_CATEGORIES,
+  SECURITY_GRADES,
+  formatCount,
+  githubAvatar,
+  installCommand,
+} from '~/utils/skills'
+
+import type { FullIndexItem } from '~/utils/skills'
+
+interface Props {
+  item: FullIndexItem
+  descZh?: string
+  installs?: number | null
+  hasDetail?: boolean
+  metaText?: string
+}
+
+const { item, descZh, installs, hasDetail = false, metaText } = Astro.props
+
+const grade = SECURITY_GRADES[item.g] ?? SECURITY_GRADES.unknown
+const detailPath = hasDetail ? withBasePath(`/skills/${item.f}/`) : ''
+const primaryLink = detailPath || `https://github.com/${item.f}`
+const installable = INSTALLABLE_CATEGORIES.has(item.c)
+---
+
+<article class="skm-card">
+  <div class="skm-head">
+    <img
+      class="skm-avatar"
+      src={githubAvatar(item.a, 64)}
+      alt=""
+      loading="lazy"
+      decoding="async"
+    />
+    <div class="skm-titles">
+      <Link class="skm-name" href={primaryLink} external={!detailPath}>
+        {item.n}
+      </Link>
+      <span class="skm-author">{item.a}</span>
+    </div>
+    <span class="skm-grade" style={`--gc: ${grade.color}`}>{grade.label}</span>
+  </div>
+  <p class="skm-desc">{descZh || item.d || '暂无描述'}</p>
+  <div class="skm-meta">
+    <span title={`${item.s} stars`}>
+      <span class="i-ri-star-line" aria-hidden="true"></span>
+      {formatCount(item.s)}
+    </span>
+    {
+      installs ? (
+        <span title={`安装量 ${installs}`}>
+          <span class="i-ri-download-2-line" aria-hidden="true" />
+          {formatCount(installs)}
+        </span>
+      ) : null
+    }
+    <span title={`质量分 ${item.q}`}>
+      <span class="i-ri-medal-line" aria-hidden="true"></span>
+      {item.q}
+    </span>
+    {metaText && <span class="skm-extra">{metaText}</span>}
+  </div>
+  <div class="skm-foot">
+    {
+      installable ? (
+        <button
+          type="button"
+          class="skm-install"
+          data-copy={installCommand(item.f)}
+          title="复制安装命令"
+        >
+          <code>{installCommand(item.f)}</code>
+          <span class="i-ri-file-copy-line" aria-hidden="true" />
+        </button>
+      ) : (
+        <Link
+          class="skm-repo"
+          href={`https://github.com/${item.f}`}
+          external={true}
+        >
+          <span class="i-uil-github-alt" aria-hidden="true" />
+          GitHub
+        </Link>
+      )
+    }
+    {
+      detailPath && (
+        <Link class="skm-more" href={detailPath}>
+          {'详情'}
+          <span class="i-ri-arrow-right-line" aria-hidden="true" />
+        </Link>
+      )
+    }
+  </div>
+</article>
+
+<style is:global>
+  .skm-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.85rem 0.95rem;
+    border: 1px solid var(--c-border-soft);
+    border-radius: 0.6rem;
+    background: var(--c-bg);
+    min-width: 0;
+    transition:
+      transform 0.22s ease,
+      border-color 0.22s ease,
+      box-shadow 0.22s ease;
+  }
+
+  .skm-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--c-border-strong);
+    box-shadow: 0 8px 22px -14px rgba(0, 0, 0, 0.22);
+  }
+
+  .skm-head {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-width: 0;
+  }
+
+  .skm-avatar {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.45rem;
+    background: var(--c-surface-soft);
+    flex: none;
+  }
+
+  .skm-titles {
+    flex: auto;
+    min-width: 0;
+  }
+
+  .skm-name {
+    display: block !important;
+    font-weight: 600;
+    color: var(--c-text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    opacity: 1 !important;
+  }
+
+  .skm-name:hover {
+    text-decoration: underline;
+  }
+
+  .skm-author {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--c-text-faint);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .skm-grade {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.28rem;
+    font-size: 0.66rem;
+    color: var(--c-text-muted);
+  }
+
+  .skm-grade::before {
+    content: '';
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 999px;
+    background: var(--gc);
+  }
+
+  .skm-desc {
+    margin: 0;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: var(--c-text-muted);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 2.4rem;
+  }
+
+  .skm-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.73rem;
+    color: var(--c-text-soft);
+  }
+
+  .skm-meta > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+  }
+
+  .skm-extra {
+    margin-left: auto;
+    color: var(--c-text-faint);
+    font-size: 0.68rem;
+  }
+
+  .skm-foot {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin-top: auto;
+  }
+
+  .skm-install {
+    flex: auto;
+    min-width: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.38rem;
+    padding: 0.3rem 0.5rem;
+    border: 1px solid var(--c-border-soft);
+    border-radius: 0.42rem;
+    background: var(--c-surface-soft);
+    color: var(--c-text-soft);
+    font-size: 0.68rem;
+    cursor: copy;
+    transition:
+      border-color 0.2s ease,
+      background 0.2s ease;
+  }
+
+  .skm-install:hover {
+    border-color: var(--c-border-strong);
+    background: var(--c-surface-hover);
+  }
+
+  .skm-install.is-copied {
+    border-color: #22c55e;
+  }
+
+  .skm-install code {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+  }
+
+  .skm-repo,
+  .skm-more {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 0.28rem;
+    font-size: 0.74rem;
+    color: var(--c-text-muted);
+    opacity: 1 !important;
+  }
+
+  .skm-more {
+    margin-left: auto;
+    flex: none;
+  }
+
+  .skm-repo:hover,
+  .skm-more:hover {
+    color: var(--c-text);
+  }
+</style>

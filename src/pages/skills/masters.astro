@@ -1,0 +1,230 @@
+---
+import { getCollection } from 'astro:content'
+
+import BaseLayout from '~/layouts/BaseLayout.astro'
+import StandardLayout from '~/layouts/StandardLayout.astro'
+import SkillsNav from '~/components/views/SkillsNav.astro'
+import Link from '~/components/base/Link.astro'
+import { withBasePath } from '~/utils/path'
+import { formatCount, githubAvatar } from '~/utils/skills'
+
+const skills = (await getCollection('skills')).map((s) => s.data)
+
+interface MasterRow {
+  author: string
+  repoCount: number
+  totalStars: number
+  totalInstalls: number
+  avgQuality: number
+  topRepos: { id: string; name: string }[]
+}
+
+const masters: MasterRow[] = Object.values(
+  skills.reduce((acc: Record<string, (typeof skills)[number][]>, s) => {
+    ;(acc[s.author] ??= []).push(s)
+    return acc
+  }, {})
+)
+  .map((repos) => {
+    const sorted = [...repos].sort((a, b) => b.stars - a.stars)
+    return {
+      author: sorted[0].author,
+      repoCount: repos.length,
+      totalStars: repos.reduce((sum, r) => sum + r.stars, 0),
+      totalInstalls: repos.reduce((sum, r) => sum + (r.installs ?? 0), 0),
+      avgQuality:
+        Math.round(
+          (repos.reduce((sum, r) => sum + r.qualityScore, 0) / repos.length) *
+            10
+        ) / 10,
+      topRepos: sorted.slice(0, 3).map((r) => ({ id: r.id, name: r.name })),
+    }
+  })
+  .sort((a, b) => b.totalStars - a.totalStars)
+  .slice(0, 50)
+---
+
+<BaseLayout
+  title="技能大师 - Skills"
+  description="按作者聚合的 Agent Skills 创作者排行榜"
+  bgType={false}
+>
+  <StandardLayout
+    class="max-w-300"
+    title="技能大师"
+    subtitle="按作者聚合的创作者排行榜 (Top 50)"
+    isCentered={true}
+  >
+    <SkillsNav active="masters" slot="head" />
+    <ol class="masters-list slide-enter" style="--enter-stage: 0">
+      {
+        masters.map((master, index) => (
+          <li class="masters-row">
+            <span
+              class:list={['masters-rank', { 'is-top': index < 3 }]}
+            >
+              {index + 1}
+            </span>
+            <img
+              class="masters-avatar"
+              src={githubAvatar(master.author, 96)}
+              alt={master.author}
+              loading="lazy"
+              decoding="async"
+            />
+            <div class="masters-info">
+              <Link
+                class="masters-name"
+                href={`https://github.com/${master.author}`}
+                external={true}
+              >
+                {master.author}
+              </Link>
+              <span class="masters-repos">
+                {master.topRepos.map((repo, repoIdx) => (
+                  <>
+                    {repoIdx > 0 && ' · '}
+                    <Link href={withBasePath(`/skills/${repo.id}/`)}>
+                      {repo.name}
+                    </Link>
+                  </>
+                ))}
+              </span>
+            </div>
+            <div class="masters-metrics">
+              <span title="收录作品数">
+                <span class="i-ri-archive-line" aria-hidden="true" />
+                {master.repoCount}
+              </span>
+              <span title="总 Star 数">
+                <span class="i-ri-star-line" aria-hidden="true" />
+                {formatCount(master.totalStars)}
+              </span>
+              {master.totalInstalls > 0 && (
+                <span title="总安装量">
+                  <span class="i-ri-download-2-line" aria-hidden="true" />
+                  {formatCount(master.totalInstalls)}
+                </span>
+              )}
+              <span title="平均质量分">
+                <span class="i-ri-medal-line" aria-hidden="true" />
+                {master.avgQuality}
+              </span>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </StandardLayout>
+</BaseLayout>
+
+<style is:global>
+  .masters-list {
+    list-style: none;
+    margin: 1.4rem 0 3rem;
+    padding: 0;
+    border: 1px solid var(--c-border-soft);
+    border-radius: 0.75rem;
+    background: var(--c-bg);
+    overflow: hidden;
+  }
+
+  .masters-row {
+    display: grid;
+    grid-template-columns: 2.2rem 2.6rem minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.7rem 1rem;
+    border-top: 1px solid var(--c-border-soft);
+    transition: background 0.2s ease;
+  }
+
+  .masters-row:first-child {
+    border-top: none;
+  }
+
+  .masters-row:hover {
+    background: var(--c-surface-soft);
+  }
+
+  .masters-rank {
+    text-align: center;
+    font-weight: 700;
+    color: var(--c-text-faint);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .masters-rank.is-top {
+    color: var(--c-text);
+  }
+
+  .masters-avatar {
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 0.55rem;
+    background: var(--c-surface-soft);
+  }
+
+  .masters-info {
+    min-width: 0;
+  }
+
+  .masters-name {
+    display: block !important;
+    font-weight: 600;
+    color: var(--c-text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    opacity: 1 !important;
+  }
+
+  .masters-name:hover {
+    text-decoration: underline;
+  }
+
+  .masters-repos {
+    display: block;
+    font-size: 0.74rem;
+    color: var(--c-text-faint);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .masters-repos a {
+    color: var(--c-text-muted);
+    opacity: 1 !important;
+  }
+
+  .masters-repos a:hover {
+    color: var(--c-text);
+    text-decoration: underline;
+  }
+
+  .masters-metrics {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 0.78rem;
+    color: var(--c-text-soft);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .masters-metrics > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  @media (max-width: 640px) {
+    .masters-row {
+      grid-template-columns: 1.6rem 2.2rem minmax(0, 1fr);
+    }
+
+    .masters-metrics {
+      grid-column: 2 / -1;
+      padding-left: 0;
+    }
+  }
+</style>

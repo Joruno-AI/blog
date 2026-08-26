@@ -1,0 +1,641 @@
+---
+import { getCollection } from 'astro:content'
+
+import BaseLayout from '~/layouts/BaseLayout.astro'
+import StandardLayout from '~/layouts/StandardLayout.astro'
+import SkillsNav from '~/components/views/SkillsNav.astro'
+import { withBasePath } from '~/utils/path'
+import { CATEGORY_LABELS, SKILL_CATEGORIES } from '~/utils/skills'
+
+const featured = await getCollection('skills')
+// 精选项目的增强信息: 中文描述 / 安装量 / 详情页
+const enrichMap = Object.fromEntries(
+  featured.map((s) => [
+    s.data.id,
+    { z: s.data.descZh, i: s.data.installs ?? 0 },
+  ])
+)
+const indexUrl = withBasePath('/skills/full-index.json')
+const detailBase = withBasePath('/skills/')
+---
+
+<BaseLayout
+  title="全部项目 - Skills"
+  description="浏览全部收录的 Agent Skills、MCP Servers 与工具，支持搜索、筛选与分页"
+  bgType={false}
+>
+  <StandardLayout
+    class="max-w-300"
+    title="全部项目"
+    subtitle="全量收录，可搜索、筛选与分页"
+    isCentered={true}
+  >
+    <SkillsNav active="all" slot="head" />
+    <div class="ska-controls">
+      <div class="ska-tabs" role="tablist" aria-label="分类筛选">
+        <button class="ska-tab is-active" data-cat="all">全部</button>
+        {
+          SKILL_CATEGORIES.map((c) => (
+            <button class="ska-tab" data-cat={c}>
+              {CATEGORY_LABELS[c]}
+            </button>
+          ))
+        }
+      </div>
+      <div class="ska-toolbar">
+        <label class="ska-search">
+          <span class="i-ri-search-line" aria-hidden="true"></span>
+          <input
+            type="search"
+            placeholder="搜索名称 / 作者 / 描述"
+            aria-label="搜索全部项目"
+          />
+        </label>
+        <div class="skills-sort" role="group" aria-label="排序方式">
+          <button class="skills-sort-btn is-active" data-sort="s">Stars</button>
+          <button class="skills-sort-btn" data-sort="q">质量分</button>
+        </div>
+        <label class="ska-safe">
+          <input type="checkbox" data-safe />
+          仅看安全评级通过
+        </label>
+      </div>
+      <p class="ska-summary" data-summary>正在加载全量索引…</p>
+    </div>
+
+    <div class="ska-grid" data-grid></div>
+
+    <nav class="ska-pager" data-pager aria-label="分页"></nav>
+  </StandardLayout>
+</BaseLayout>
+
+<script
+  is:inline
+  define:vars={{ enrichMap, indexUrl, detailBase }}
+>
+  window.__SKILLS_ALL__ = { enrichMap, indexUrl, detailBase }
+</script>
+
+<script>
+  interface Item {
+    f: string
+    n: string
+    a: string
+    s: number
+    d: string
+    c: string
+    q: number
+    g: string
+  }
+
+  const cfg = (
+    window as unknown as {
+      __SKILLS_ALL__: {
+        enrichMap: Record<string, { z: string; i: number }>
+        indexUrl: string
+        detailBase: string
+      }
+    }
+  ).__SKILLS_ALL__
+
+  const grid = document.querySelector<HTMLElement>('[data-grid]')
+  const pager = document.querySelector<HTMLElement>('[data-pager]')
+  const summary = document.querySelector<HTMLElement>('[data-summary]')
+  const searchInput = document.querySelector<HTMLInputElement>(
+    '.ska-search input'
+  )
+  const safeCheck = document.querySelector<HTMLInputElement>('[data-safe]')
+  const tabs = [...document.querySelectorAll<HTMLButtonElement>('.ska-tab')]
+  const sortBtns = [
+    ...document.querySelectorAll<HTMLButtonElement>('.skills-sort-btn'),
+  ]
+
+  const PAGE_SIZE = 50
+  const GRADE_LABEL: Record<string, string> = {
+    safe: '安全',
+    caution: '谨慎',
+    unknown: '未评级',
+  }
+  const GRADE_COLOR: Record<string, string> = {
+    safe: '#22c55e',
+    caution: '#f59e0b',
+    unknown: '#9ca3af',
+  }
+  const CAT_LABEL: Record<string, string> = {
+    'claude-skill': 'Claude Skills',
+    'codex-skill': 'Codex Skills',
+    'mcp-server': 'MCP Servers',
+    'agent-tool': 'Agent Tools',
+    'llm-plugin': 'LLM Plugins',
+    'ai-skill': 'AI Skills',
+    uncategorized: '未分类',
+  }
+  const INSTALLABLE = new Set(['claude-skill', 'codex-skill'])
+
+  const fmt = (n: number) =>
+    n >= 1e6
+      ? `${(n / 1e6).toFixed(1)}M`
+      : n >= 1e3
+        ? `${(n / 1e3).toFixed(1)}k`
+        : String(n)
+
+  const esc = (s: string) =>
+    s.replace(
+      /[&<>"]/g,
+      (ch) =>
+        ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[ch] as string
+    )
+
+  async function boot() {
+    if (!grid || !pager || !summary) return
+    let items: Item[] = []
+    try {
+      const res = await fetch(cfg.indexUrl)
+      items = (await res.json()).items
+    } catch {
+      summary.textContent = '索引加载失败，请刷新重试。'
+      return
+    }
+
+    const params = new URLSearchParams(location.search)
+    const state = {
+      cat: params.get('cat') || 'all',
+      sort: (params.get('sort') as 's' | 'q') || 's',
+      query: params.get('q') || '',
+      safe: params.get('safe') === '1',
+      page: Math.max(1, Number(params.get('page')) || 1),
+    }
+    if (searchInput) searchInput.value = state.query
+    if (safeCheck) safeCheck.checked = state.safe
+    tabs.forEach((t) =>
+      t.classList.toggle('is-active', t.dataset.cat === state.cat)
+    )
+    sortBtns.forEach((b) =>
+      b.classList.toggle('is-active', b.dataset.sort === state.sort)
+    )
+
+    function filtered() {
+      const query = state.query.trim().toLowerCase()
+      let list = items
+      if (state.cat !== 'all') list = list.filter((x) => x.c === state.cat)
+      if (state.safe) list = list.filter((x) => x.g === 'safe')
+      if (query)
+        list = list.filter((x) =>
+          `${x.n} ${x.a} ${x.d}`.toLowerCase().includes(query)
+        )
+      if (state.sort === 'q') list = [...list].sort((a, b) => b.q - a.q)
+      return list
+    }
+
+    function cardHtml(item: Item) {
+      const enrich = cfg.enrichMap[item.f]
+      const desc = enrich?.z || item.d || '暂无描述'
+      const detail = enrich ? `${cfg.detailBase}${item.f}/` : ''
+      const install = INSTALLABLE.has(item.c)
+        ? `npx skills add ${item.f}`
+        : ''
+      return `<article class="ska-card">
+        <div class="ska-card-head">
+          <img class="ska-card-avatar" src="https://github.com/${encodeURIComponent(item.a)}.png?size=64" alt="" loading="lazy" decoding="async" onerror="this.style.visibility='hidden'">
+          <div class="ska-card-titles">
+            <a class="ska-card-name" href="${detail || `https://github.com/${item.f}`}"${detail ? '' : ' target="_blank" rel="noopener"'}>${esc(item.n)}</a>
+            <span class="ska-card-author">${esc(item.a)}</span>
+          </div>
+          <span class="ska-card-grade" style="--gc:${GRADE_COLOR[item.g] || GRADE_COLOR.unknown}">${GRADE_LABEL[item.g] || GRADE_LABEL.unknown}</span>
+        </div>
+        <p class="ska-card-desc">${esc(desc)}</p>
+        <div class="ska-card-meta">
+          <span><span class="i-ri-star-line"></span>${fmt(item.s)}</span>
+          ${enrich?.i ? `<span><span class="i-ri-download-2-line"></span>${fmt(enrich.i)}</span>` : ''}
+          <span><span class="i-ri-medal-line"></span>${item.q}</span>
+          <span class="ska-card-cat">${CAT_LABEL[item.c] || esc(item.c)}</span>
+        </div>
+        <div class="ska-card-foot">
+          ${
+            install
+              ? `<button type="button" class="ska-card-install" data-copy="${esc(install)}" title="复制安装命令"><code>${esc(install)}</code><span class="i-ri-file-copy-line"></span></button>`
+              : `<a class="ska-card-repo" href="https://github.com/${item.f}" target="_blank" rel="noopener"><span class="i-uil-github-alt"></span>GitHub</a>`
+          }
+          ${detail ? `<a class="ska-card-more" href="${detail}">详情<span class="i-ri-arrow-right-line"></span></a>` : ''}
+        </div>
+      </article>`
+    }
+
+    function render() {
+      const list = filtered()
+      const pages = Math.max(1, Math.ceil(list.length / PAGE_SIZE))
+      state.page = Math.min(state.page, pages)
+      const start = (state.page - 1) * PAGE_SIZE
+      grid!.innerHTML = list
+        .slice(start, start + PAGE_SIZE)
+        .map(cardHtml)
+        .join('')
+      summary!.textContent = `共 ${list.length.toLocaleString()} 个项目 · 第 ${state.page}/${pages} 页`
+
+      const btn = (page: number, label: string, disabled = false, current = false) =>
+        `<button class="ska-page-btn${current ? ' is-current' : ''}" data-page="${page}"${disabled ? ' disabled' : ''}>${label}</button>`
+      const windowPages: number[] = []
+      for (
+        let p = Math.max(1, state.page - 2);
+        p <= Math.min(pages, state.page + 2);
+        p++
+      )
+        windowPages.push(p)
+      pager!.innerHTML = [
+        btn(state.page - 1, '上一页', state.page <= 1),
+        ...(windowPages[0] > 1 ? [btn(1, '1'), '<span class="ska-ellipsis">…</span>'] : []),
+        ...windowPages.map((p) => btn(p, String(p), false, p === state.page)),
+        ...(windowPages[windowPages.length - 1] < pages
+          ? ['<span class="ska-ellipsis">…</span>', btn(pages, String(pages))]
+          : []),
+        btn(state.page + 1, '下一页', state.page >= pages),
+      ].join('')
+
+      const url = new URL(location.href)
+      const setParam = (key: string, value: string, def: string) =>
+        value === def
+          ? url.searchParams.delete(key)
+          : url.searchParams.set(key, value)
+      setParam('cat', state.cat, 'all')
+      setParam('sort', state.sort, 's')
+      setParam('q', state.query.trim(), '')
+      setParam('safe', state.safe ? '1' : '0', '0')
+      setParam('page', String(state.page), '1')
+      history.replaceState(null, '', url)
+    }
+
+    tabs.forEach((tab) =>
+      tab.addEventListener('click', () => {
+        state.cat = tab.dataset.cat!
+        state.page = 1
+        tabs.forEach((t) => t.classList.toggle('is-active', t === tab))
+        render()
+      })
+    )
+    sortBtns.forEach((b) =>
+      b.addEventListener('click', () => {
+        state.sort = b.dataset.sort as 's' | 'q'
+        state.page = 1
+        sortBtns.forEach((x) => x.classList.toggle('is-active', x === b))
+        render()
+      })
+    )
+    safeCheck?.addEventListener('change', () => {
+      state.safe = safeCheck.checked
+      state.page = 1
+      render()
+    })
+    let timer = 0
+    searchInput?.addEventListener('input', () => {
+      clearTimeout(timer)
+      timer = window.setTimeout(() => {
+        state.query = searchInput.value
+        state.page = 1
+        render()
+      }, 150)
+    })
+    pager.addEventListener('click', (event) => {
+      const target = (event.target as HTMLElement).closest<HTMLButtonElement>(
+        '[data-page]'
+      )
+      if (!target || target.disabled) return
+      state.page = Number(target.dataset.page)
+      render()
+      grid!.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
+    grid.addEventListener('click', (event) => {
+      const copyBtn = (event.target as HTMLElement).closest<HTMLElement>(
+        '[data-copy]'
+      )
+      if (!copyBtn) return
+      navigator.clipboard.writeText(copyBtn.dataset.copy!).then(() => {
+        copyBtn.classList.add('is-copied')
+        setTimeout(() => copyBtn.classList.remove('is-copied'), 1200)
+      })
+    })
+
+    render()
+  }
+
+  boot()
+</script>
+
+<style is:global>
+  .ska-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1.4rem;
+  }
+
+  .ska-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.45rem;
+  }
+
+  .ska-tab {
+    border: 1px solid var(--c-border-soft);
+    border-radius: 999px;
+    padding: 0.32rem 0.85rem;
+    font-size: 0.82rem;
+    color: var(--c-text-muted);
+    background: transparent;
+    cursor: pointer;
+    transition:
+      color 0.2s ease,
+      border-color 0.2s ease,
+      background 0.2s ease;
+  }
+
+  .ska-tab:hover {
+    border-color: var(--c-border-strong);
+    color: var(--c-text);
+  }
+
+  .ska-tab.is-active {
+    background: var(--c-text);
+    border-color: var(--c-text);
+    color: var(--c-bg);
+  }
+
+  .ska-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .ska-search {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    border: 1px solid var(--c-border-soft);
+    border-radius: 0.55rem;
+    padding: 0.4rem 0.75rem;
+    color: var(--c-text-faint);
+    background: var(--c-bg);
+    width: min(22rem, 100%);
+    transition: border-color 0.2s ease;
+  }
+
+  .ska-search:focus-within {
+    border-color: var(--c-border-strong);
+  }
+
+  .ska-search input {
+    flex: auto;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--c-text);
+    font-size: 0.85rem;
+  }
+
+  .ska-safe {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.78rem;
+    color: var(--c-text-muted);
+    cursor: pointer;
+  }
+
+  .ska-summary {
+    text-align: center;
+    font-size: 0.78rem;
+    color: var(--c-text-faint);
+    margin: 0;
+  }
+
+  .ska-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+    gap: 0.85rem;
+    margin-top: 1.2rem;
+    min-height: 20rem;
+  }
+
+  .ska-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--c-border-soft);
+    border-radius: 0.625rem;
+    background: var(--c-bg);
+    transition:
+      transform 0.22s ease,
+      border-color 0.22s ease,
+      box-shadow 0.22s ease;
+    min-width: 0;
+  }
+
+  .ska-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--c-border-strong);
+    box-shadow: 0 8px 24px -14px rgba(0, 0, 0, 0.25);
+  }
+
+  .ska-card-head {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-width: 0;
+  }
+
+  .ska-card-avatar {
+    width: 2.1rem;
+    height: 2.1rem;
+    border-radius: 0.45rem;
+    background: var(--c-surface-soft);
+    flex: none;
+  }
+
+  .ska-card-titles {
+    flex: auto;
+    min-width: 0;
+  }
+
+  .ska-card-name {
+    display: block;
+    font-weight: 600;
+    color: var(--c-text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ska-card-name:hover {
+    text-decoration: underline;
+  }
+
+  .ska-card-author {
+    display: block;
+    font-size: 0.72rem;
+    color: var(--c-text-faint);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ska-card-grade {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.68rem;
+    color: var(--c-text-muted);
+  }
+
+  .ska-card-grade::before {
+    content: '';
+    width: 0.42rem;
+    height: 0.42rem;
+    border-radius: 999px;
+    background: var(--gc);
+  }
+
+  .ska-card-desc {
+    margin: 0;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: var(--c-text-muted);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 2.45rem;
+  }
+
+  .ska-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 0.75rem;
+    color: var(--c-text-soft);
+  }
+
+  .ska-card-meta > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.22rem;
+  }
+
+  .ska-card-cat {
+    margin-left: auto;
+    font-size: 0.66rem;
+    color: var(--c-text-faint);
+    border: 1px solid var(--c-border-soft);
+    border-radius: 999px;
+    padding: 0.05rem 0.45rem;
+  }
+
+  .ska-card-foot {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: auto;
+  }
+
+  .ska-card-install {
+    flex: auto;
+    min-width: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.32rem 0.55rem;
+    border: 1px solid var(--c-border-soft);
+    border-radius: 0.45rem;
+    background: var(--c-surface-soft);
+    color: var(--c-text-soft);
+    font-size: 0.7rem;
+    cursor: copy;
+    transition:
+      border-color 0.2s ease,
+      background 0.2s ease;
+  }
+
+  .ska-card-install:hover {
+    border-color: var(--c-border-strong);
+    background: var(--c-surface-hover);
+  }
+
+  .ska-card-install.is-copied {
+    border-color: #22c55e;
+  }
+
+  .ska-card-install code {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+  }
+
+  .ska-card-repo,
+  .ska-card-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.76rem;
+    color: var(--c-text-muted);
+  }
+
+  .ska-card-more {
+    margin-left: auto;
+    flex: none;
+  }
+
+  .ska-card-repo:hover,
+  .ska-card-more:hover {
+    color: var(--c-text);
+  }
+
+  .ska-pager {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    padding: 1.6rem 0 2.4rem;
+  }
+
+  .ska-page-btn {
+    border: 1px solid var(--c-border-soft);
+    border-radius: 0.45rem;
+    background: transparent;
+    padding: 0.32rem 0.7rem;
+    font-size: 0.8rem;
+    color: var(--c-text-muted);
+    cursor: pointer;
+    font-variant-numeric: tabular-nums;
+    transition:
+      color 0.2s ease,
+      border-color 0.2s ease,
+      background 0.2s ease;
+  }
+
+  .ska-page-btn:hover:not(:disabled) {
+    border-color: var(--c-border-strong);
+    color: var(--c-text);
+  }
+
+  .ska-page-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .ska-page-btn.is-current {
+    background: var(--c-text);
+    border-color: var(--c-text);
+    color: var(--c-bg);
+  }
+
+  .ska-ellipsis {
+    color: var(--c-text-faint);
+    padding: 0 0.2rem;
+  }
+</style>

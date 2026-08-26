@@ -38,6 +38,12 @@ export const UI: Ui = {
       displayMode: 'alwaysIcon',
       icon: 'i-ri-code-box-line',
     },
+    {
+      path: '/skills',
+      title: 'Skills',
+      displayMode: 'alwaysIcon',
+      icon: 'i-ri-shapes-line',
+    },
     // {
     //   path: '/highlights',
     //   title: 'Highlights',
