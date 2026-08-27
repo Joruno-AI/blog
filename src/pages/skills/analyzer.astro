@@ -1,0 +1,252 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro'
+import StandardLayout from '~/layouts/StandardLayout.astro'
+import SkillsNav from '~/components/views/SkillsNav.astro'
+import '~/styles/agent-tools.css'
+---
+
+<BaseLayout
+  title="仓库分析器 - Agent 能力目录"
+  description="输入 GitHub 仓库地址，获取结构风险、可维护性与信任分析"
+  bgType="dot"
+>
+  <StandardLayout
+    class="max-w-300"
+    title="仓库分析器"
+    subtitle="在安装前先检查结构风险、活跃度与文档完整度"
+    isCentered={true}
+  >
+    <SkillsNav active="analyzer" slot="head" />
+
+    <div class="agent-tool-page" data-agent-analyzer>
+      <section class="agent-tool-hero">
+        <div>
+          <span class="agent-tool-kicker">REPOSITORY ANALYZER</span>
+          <h1>安装前，先看清仓库</h1>
+        </div>
+        <p>
+          基于 GitHub 实时元数据与文件树检查 11 类结构信号。这是安装前的筛查工具，结果会明确区分“通过”与“需要人工确认”。
+        </p>
+      </section>
+
+      <form class="agent-tool-form" data-analyzer-form>
+        <label class="agent-tool-field">
+          <span class="i-uil-github-alt" aria-hidden="true"></span>
+          <input
+            type="text"
+            inputmode="url"
+            autocomplete="off"
+            placeholder="https://github.com/owner/repository"
+            aria-label="GitHub 仓库地址"
+            data-analyzer-input
+          />
+        </label>
+        <button class="agent-tool-primary" type="submit">开始分析</button>
+      </form>
+      <div class="agent-tool-examples">
+        <span>示例</span>
+        <button type="button" data-example="openclaw/openclaw">openclaw/openclaw</button>
+        <button type="button" data-example="modelcontextprotocol/servers">modelcontextprotocol/servers</button>
+        <button type="button" data-example="vuejs/core">vuejs/core</button>
+      </div>
+
+      <div class="agent-tool-status" data-analyzer-status hidden></div>
+      <section class="agent-tool-result" data-analyzer-result hidden></section>
+
+      <section class="agent-method-section">
+        <div class="agent-method-head">
+          <div>
+            <span class="agent-tool-kicker">WHAT WE CHECK</span>
+            <h2>11 类安装前信号</h2>
+          </div>
+          <p>
+            检查仓库结构中的可执行脚本、凭据面、二进制文件、网络能力、权限与供应链自动化等信号。
+          </p>
+        </div>
+      </section>
+    </div>
+  </StandardLayout>
+</BaseLayout>
+
+<script>
+  interface RepoMeta {
+    fullName: string
+    name: string
+    owner: string
+    description: string
+    stars: number
+    forks: number
+    watchers: number
+    language: string | null
+    defaultBranch: string
+    updatedAt: string
+    license: string | null
+    topics: string[]
+    archived: boolean
+  }
+
+  interface TreeItem {
+    path: string
+    type: 'blob' | 'tree'
+    size: number | null
+  }
+
+  interface Check {
+    title: string
+    detail: string
+    count: number
+    level: 'pass' | 'attention'
+  }
+
+  const mountAnalyzer = () => {
+    const root = document.querySelector<HTMLElement>('[data-agent-analyzer]')
+    if (!root || root.dataset.bound === 'true') return
+    root.dataset.bound = 'true'
+    const form = root.querySelector<HTMLFormElement>('[data-analyzer-form]')!
+    const input = root.querySelector<HTMLInputElement>('[data-analyzer-input]')!
+    const status = root.querySelector<HTMLElement>('[data-analyzer-status]')!
+    const result = root.querySelector<HTMLElement>('[data-analyzer-result]')!
+    const controller = new AbortController()
+    document.addEventListener('astro:before-swap', () => controller.abort(), {
+      once: true,
+    })
+
+    const escapeHtml = (value: string) =>
+      value.replace(
+        /[&<>"']/g,
+        (character) =>
+          ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;',
+          })[character] as string
+      )
+    const compact = (value: number) =>
+      new Intl.NumberFormat('zh-CN', {
+        notation: 'compact',
+        maximumFractionDigits: 1,
+      }).format(value)
+    const parseRepo = (value: string) => {
+      const normalized = value.trim().replace(/\.git$/, '').replace(/\/$/, '')
+      const match = normalized.match(
+        /^(?:https?:\/\/github\.com\/)?([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+)$/
+      )
+      return match ? `${match[1]}/${match[2]}` : ''
+    }
+    const showStatus = (message: string, error = false) => {
+      status.hidden = false
+      status.classList.toggle('is-error', error)
+      status.innerHTML = error
+        ? `<span class="i-ri-error-warning-line"></span>${escapeHtml(message)}`
+        : `<span class="agent-tool-pulse"></span>${escapeHtml(message)}`
+    }
+
+    function inspect(items: TreeItem[]): Check[] {
+      const paths = items.filter((item) => item.type === 'blob').map((item) => item.path.toLowerCase())
+      const count = (pattern: RegExp) => paths.filter((path) => pattern.test(path)).length
+      const build = (title: string, detail: string, matches: number, strict = false): Check => ({
+        title,
+        detail,
+        count: matches,
+        level: matches > (strict ? 0 : 2) ? 'attention' : 'pass',
+      })
+      return [
+        build('安装与生命周期脚本', '检查 install、postinstall、setup 与 bootstrap 等入口。', count(/(^|\/)(postinstall|preinstall|install|setup|bootstrap)[._-]/), true),
+        build('可执行文件', '定位 shell、PowerShell、batch 和其他直接执行文件。', count(/\.(sh|bash|zsh|fish|ps1|bat|cmd)$/)),
+        build('凭据与密钥面', '检查 credential、token、secret、private key 相关路径。', count(/(credential|secret|token|private[_-]?key|\.pem$|\.p12$|\.key$)/), true),
+        build('网络与远程连接', '识别 proxy、socket、webhook、tunnel 和远程传输组件。', count(/(proxy|socket|webhook|tunnel|remote|network)/)),
+        build('二进制与打包产物', '统计可执行二进制、归档包和 vendor 产物。', count(/\.(exe|dll|dylib|so|bin|jar|zip|tar|gz|7z)$/), true),
+        build('混淆或压缩代码', '定位 minified、bundle、vendor 等难以审查的源码。', count(/(\.min\.[a-z]+$|bundle\.|\/vendor\/|\/dist\/)/)),
+        build('权限与容器边界', '检查 sudo、privileged、Docker、Kubernetes 与权限声明。', count(/(sudo|privileged|dockerfile|docker-compose|kubernetes|\/k8s\/)/)),
+        build('文件系统修改能力', '定位 patch、migration、delete、cleanup 等批量修改入口。', count(/(patch|migration|migrate|cleanup|delete|remove)/)),
+        build('CI / CD 与自动化', '检查 GitHub Actions、release、deploy 与机器人自动化。', count(/(^\.github\/workflows\/|deploy|release|bot|automation)/)),
+        build('鉴权与安全边界', '识别 auth、oauth、permission、sandbox 与 security 组件。', count(/(auth|oauth|permission|sandbox|security|policy)/)),
+        build('文档与治理', '检查 LICENSE、SECURITY、CONTRIBUTING 与架构文档是否完整。', Math.max(0, 4 - count(/(^|\/)(license|security|contributing|architecture)(\.|$)/)), true),
+      ]
+    }
+
+    function render(repo: string, meta: RepoMeta, checks: Check[]) {
+      const attention = checks.filter((check) => check.level === 'attention').length
+      const ageDays = Math.max(0, (Date.now() - new Date(meta.updatedAt).getTime()) / 86_400_000)
+      const score = Math.max(
+        18,
+        Math.min(
+          98,
+          Math.round(
+            74 - attention * 5 + (meta.license ? 7 : -5) + Math.min(Math.log10(meta.stars + 1) * 4, 13) - (meta.archived ? 20 : 0) - Math.min(ageDays / 180, 8)
+          )
+        )
+      )
+      const trust = score >= 82 ? '高信任' : score >= 65 ? '可评估' : '需谨慎'
+      result.innerHTML = `<div class="agent-result-summary">
+        <div class="agent-result-score"><strong>${score}</strong></div>
+        <div class="agent-result-title"><h2>${escapeHtml(meta.fullName)}</h2><p>${escapeHtml(meta.description || '暂无仓库简介')}</p></div>
+        <div class="agent-result-metric"><span>信任层级</span><strong>${trust}</strong></div>
+        <div class="agent-result-metric"><span>需确认信号</span><strong>${attention} / ${checks.length}</strong></div>
+        <div class="agent-result-metric"><span>社区热度</span><strong>${compact(meta.stars)} Stars</strong></div>
+      </div><div class="agent-check-grid">${checks
+        .map(
+          (check) => `<article class="agent-check-card ${check.level === 'attention' ? 'is-attention' : ''}"><span class="${check.level === 'attention' ? 'i-ri-alert-line' : 'i-ri-check-line'}"></span><div><h3>${escapeHtml(check.title)}</h3><p>${escapeHtml(check.detail)}</p></div><small>${check.level === 'attention' ? `${check.count} 个信号` : '通过'}</small></article>`
+        )
+        .join('')}</div><div class="agent-tool-examples"><a href="/agent/${escapeHtml(repo)}/">打开站内详情 <span class="i-ri-arrow-right-line"></span></a></div>`
+      result.hidden = false
+      status.hidden = true
+    }
+
+    async function analyze(value: string) {
+      const repo = parseRepo(value)
+      if (!repo) {
+        showStatus('请输入 owner/repository 或完整的 GitHub 仓库地址。', true)
+        return
+      }
+      const [owner, name] = repo.split('/')
+      result.hidden = true
+      showStatus('正在读取 GitHub 元数据与完整文件树…')
+      try {
+        const overviewResponse = await fetch(`/api/github/${owner}/${name}/overview`)
+        const overview = (await overviewResponse.json()) as {
+          repo?: RepoMeta
+          error?: string
+        }
+        if (!overviewResponse.ok || !overview.repo)
+          throw new Error(overview.error || '仓库不可访问')
+        const treeResponse = await fetch(
+          `/api/github/${owner}/${name}/tree?ref=${encodeURIComponent(overview.repo.defaultBranch)}`
+        )
+        const tree = (await treeResponse.json()) as {
+          items?: TreeItem[]
+          error?: string
+        }
+        if (!treeResponse.ok || !tree.items)
+          throw new Error(tree.error || '文件树不可用')
+        render(repo, overview.repo, inspect(tree.items))
+      } catch (error) {
+        showStatus(error instanceof Error ? error.message : '分析失败，请稍后重试。', true)
+      }
+    }
+
+    form.addEventListener(
+      'submit',
+      (event) => {
+        event.preventDefault()
+        void analyze(input.value)
+      },
+      { signal: controller.signal }
+    )
+    root.querySelectorAll<HTMLButtonElement>('[data-example]').forEach((button) => {
+      button.addEventListener(
+        'click',
+        () => {
+          input.value = button.dataset.example || ''
+          void analyze(input.value)
+        },
+        { signal: controller.signal }
+      )
+    })
+  }
+
+  mountAnalyzer()
+  document.addEventListener('astro:page-load', mountAnalyzer)
+</script>

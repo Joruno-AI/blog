@@ -39,8 +39,8 @@ export const UI: Ui = {
       icon: 'i-ri-code-box-line',
     },
     {
-      path: '/skills',
-      title: 'Skills',
+      path: '/agent',
+      title: 'Agent',
       displayMode: 'alwaysIcon',
       icon: 'i-ri-shapes-line',
     },

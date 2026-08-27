@@ -28,6 +28,8 @@ pnpm-debug.log*
 
 # build cache
 .cache/
+.wrangler/
+.dev.vars
 .venv-music-align/
 scripts/__pycache__/
 

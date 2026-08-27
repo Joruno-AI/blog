@@ -45,9 +45,9 @@ const masters: MasterRow[] = Object.values(
 ---
 
 <BaseLayout
-  title="技能大师 - Skills"
+  title="创作者 - Agent 能力目录"
   description="按作者聚合的 Agent Skills 创作者排行榜"
-  bgType={false}
+  bgType="dot"
 >
   <StandardLayout
     class="max-w-300"
@@ -56,15 +56,42 @@ const masters: MasterRow[] = Object.values(
     isCentered={true}
   >
     <SkillsNav active="masters" slot="head" />
+    <section class="masters-podium slide-enter" aria-label="前三名创作者">
+      {
+        masters.slice(0, 3).map((master, index) => (
+          <article class={`masters-podium-card is-${index + 1}`}>
+            <span class="masters-podium-rank">
+              {String(index + 1).padStart(2, '0')}
+            </span>
+            <img
+              src={githubAvatar(master.author, 144)}
+              alt={master.author}
+              loading="lazy"
+              decoding="async"
+            />
+            <Link
+              href={withBasePath(
+                `/agent/all/?q=${encodeURIComponent(master.author)}`
+              )}
+            >
+              {master.author}
+            </Link>
+            <p>
+              {master.repoCount} 个项目 · {formatCount(master.totalStars)} Stars
+            </p>
+            <div>
+              <span>平均质量</span>
+              <strong>{master.avgQuality}</strong>
+            </div>
+          </article>
+        ))
+      }
+    </section>
     <ol class="masters-list slide-enter" style="--enter-stage: 0">
       {
-        masters.map((master, index) => (
+        masters.slice(3).map((master, index) => (
           <li class="masters-row">
-            <span
-              class:list={['masters-rank', { 'is-top': index < 3 }]}
-            >
-              {index + 1}
-            </span>
+            <span class="masters-rank">{index + 4}</span>
             <img
               class="masters-avatar"
               src={githubAvatar(master.author, 96)}
@@ -75,8 +102,9 @@ const masters: MasterRow[] = Object.values(
             <div class="masters-info">
               <Link
                 class="masters-name"
-                href={`https://github.com/${master.author}`}
-                external={true}
+                href={withBasePath(
+                  `/agent/all/?q=${encodeURIComponent(master.author)}`
+                )}
               >
                 {master.author}
               </Link>
@@ -84,7 +112,7 @@ const masters: MasterRow[] = Object.values(
                 {master.topRepos.map((repo, repoIdx) => (
                   <>
                     {repoIdx > 0 && ' · '}
-                    <Link href={withBasePath(`/skills/${repo.id}/`)}>
+                    <Link href={withBasePath(`/agent/${repo.id}/`)}>
                       {repo.name}
                     </Link>
                   </>
@@ -121,10 +149,10 @@ const masters: MasterRow[] = Object.values(
 <style is:global>
   .masters-list {
     list-style: none;
-    margin: 1.4rem 0 3rem;
+    margin: 0.9rem 0 3rem;
     padding: 0;
-    border: 1px solid var(--c-border-soft);
-    border-radius: 0.75rem;
+    border: 1px solid var(--skills-border);
+    border-radius: var(--skills-radius-lg);
     background: var(--c-bg);
     overflow: hidden;
   }
@@ -134,8 +162,8 @@ const masters: MasterRow[] = Object.values(
     grid-template-columns: 2.2rem 2.6rem minmax(0, 1fr) auto;
     align-items: center;
     gap: 0.8rem;
-    padding: 0.7rem 1rem;
-    border-top: 1px solid var(--c-border-soft);
+    padding: 0.78rem 1rem;
+    border-top: 1px solid var(--skills-border);
     transition: background 0.2s ease;
   }
 
@@ -158,10 +186,91 @@ const masters: MasterRow[] = Object.values(
     color: var(--c-text);
   }
 
+  .masters-podium {
+    display: grid;
+    grid-template-columns: 1.16fr 1fr 1fr;
+    gap: 0.65rem;
+    margin-top: 2rem;
+  }
+
+  .masters-podium-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-height: 14rem;
+    padding: 1.15rem;
+    overflow: hidden;
+    border: 1px solid var(--skills-border);
+    border-radius: var(--skills-radius-lg);
+    background: var(--c-bg);
+  }
+
+  .masters-podium-card.is-1 {
+    background: var(--c-text);
+    color: var(--c-bg);
+  }
+
+  .masters-podium-rank {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.64rem;
+    opacity: 0.55;
+  }
+
+  .masters-podium-card img {
+    width: 3.4rem;
+    height: 3.4rem;
+    border: 1px solid var(--c-border-soft);
+    border-radius: var(--skills-radius-sm);
+  }
+
+  .masters-podium-card > a {
+    max-width: 100%;
+    margin-top: 1rem;
+    overflow: hidden;
+    color: inherit;
+    font-size: 1rem;
+    font-weight: 680;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    opacity: 1 !important;
+  }
+
+  .masters-podium-card > p {
+    margin: 0.22rem 0 0;
+    color: inherit;
+    font-size: 0.68rem;
+    opacity: 0.6;
+  }
+
+  .masters-podium-card > div {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: auto;
+    padding-top: 0.75rem;
+    border-top: 1px solid currentColor;
+    border-color: color-mix(in srgb, currentColor 14%, transparent);
+  }
+
+  .masters-podium-card > div span {
+    font-size: 0.64rem;
+    opacity: 0.58;
+  }
+
+  .masters-podium-card > div strong {
+    font-size: 1.5rem;
+    letter-spacing: -0.045em;
+  }
+
   .masters-avatar {
     width: 2.4rem;
     height: 2.4rem;
-    border-radius: 0.55rem;
+    border-radius: var(--skills-radius-sm);
     background: var(--c-surface-soft);
   }
 
@@ -218,6 +327,10 @@ const masters: MasterRow[] = Object.values(
   }
 
   @media (max-width: 640px) {
+    .masters-podium {
+      grid-template-columns: 1fr;
+    }
+
     .masters-row {
       grid-template-columns: 1.6rem 2.2rem minmax(0, 1fr);
     }

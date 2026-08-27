@@ -9,6 +9,7 @@ import { readFileSync, existsSync } from 'node:fs'
 
 import { UI } from './src/config'
 import projecstData from './src/content/projects/data.json'
+import { CATEGORY_ICONS } from './src/utils/skills'
 
 import type { PresetWind3Theme } from 'unocss'
 import type {
@@ -163,6 +164,7 @@ export default defineConfig<PresetWind3Theme>({
     ...navIcons,
     ...socialIcons,
     ...projectIcons,
+    ...Object.values(CATEGORY_ICONS).filter(Boolean),
     ...blogIcons,
 
     /* BaseLayout */
@@ -179,6 +181,29 @@ export default defineConfig<PresetWind3Theme>({
     /* Toc */
     'i-ri-menu-2-fill',
     'i-ri-menu-3-fill',
+
+    /* Agent repository reader (rendered dynamically in the browser) */
+    'i-ri-folder-3-line',
+    'i-ri-folder-open-line',
+    'i-ri-markdown-line',
+    'i-ri-image-line',
+    'i-ri-braces-line',
+    'i-ri-file-code-line',
+    'i-ri-palette-line',
+    'i-ri-book-2-line',
+    'i-ri-arrow-right-s-line',
+    'i-ri-flow-chart',
+    'i-ri-subtract-line',
+    'i-ri-add-line',
+    'i-ri-fullscreen-line',
+    'i-ri-collapse-diagonal-line',
+    'i-ri-node-tree',
+    'i-ri-file-download-line',
+    'i-ri-code-box-line',
+    'i-ri-error-warning-line',
+    'i-ri-checkbox-circle-line',
+    'i-ri-sparkling-2-line',
+    'i-ri-arrow-right-line',
 
     /* Nav Panel */
     'i-ri-close-line',

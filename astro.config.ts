@@ -1,5 +1,6 @@
 import { defineConfig, fontProviders, logHandlers } from 'astro/config'
 import sitemap from '@astrojs/sitemap'
+import react from '@astrojs/react'
 import robotsTxt from 'astro-robots-txt'
 import unocss from 'unocss/astro'
 import astroExpressiveCode from 'astro-expressive-code'
@@ -50,8 +51,15 @@ export default defineConfig({
     inlineStylesheets: 'never',
   },
   integrations: [
-    sitemap(),
+    sitemap({
+      serialize(item) {
+        if (item.url.includes('/skills/'))
+          item.url = item.url.replace('/skills/', '/agent/')
+        return item
+      },
+    }),
     robotsTxt(),
+    react(),
     unocss({ injectReset: true }),
     astroExpressiveCode(),
     mdx(),

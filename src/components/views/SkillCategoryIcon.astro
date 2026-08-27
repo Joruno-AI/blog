@@ -1,0 +1,131 @@
+---
+import { CATEGORY_ICONS, CATEGORY_LABELS } from '~/utils/skills'
+
+import type { SkillCategory } from '~/utils/skills'
+
+interface Props {
+  category: SkillCategory
+  size?: 'sm' | 'md' | 'lg'
+  class?: string
+}
+
+const { category, size = 'md', class: className } = Astro.props
+---
+
+<span
+  class:list={[
+    'skill-category-icon',
+    `is-${size}`,
+    `is-${category}`,
+    className,
+  ]}
+  title={CATEGORY_LABELS[category]}
+  aria-hidden="true"
+>
+  {
+    category === 'codex-skill' ? (
+      <img src="/images/skills/codex-color.svg" alt="" />
+    ) : (
+      <span class={CATEGORY_ICONS[category]} />
+    )
+  }
+</span>
+
+<style>
+  .skill-category-icon {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    overflow: hidden;
+    border: 1px solid transparent;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 8%);
+  }
+
+  .skill-category-icon > span,
+  .skill-category-icon > img {
+    display: block;
+    width: 64%;
+    height: 64%;
+  }
+
+  .skill-category-icon.is-sm {
+    width: 1.45rem;
+    height: 1.45rem;
+    border-radius: 0.4rem;
+  }
+
+  .skill-category-icon.is-md {
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 0.6rem;
+  }
+
+  .skill-category-icon.is-lg {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 0.78rem;
+  }
+
+  .skill-category-icon.is-claude-skill {
+    border-color: #ead8d1;
+    background: #fbf2ee;
+    color: #d97757;
+  }
+
+  .skill-category-icon.is-codex-skill {
+    border: 0;
+    background: #fff;
+  }
+
+  .skill-category-icon.is-codex-skill > img {
+    width: 100%;
+    height: 100%;
+  }
+
+  .skill-category-icon.is-mcp-server {
+    border-color: #1c1c1c;
+    background: #1c1c1c;
+    color: #fff;
+  }
+
+  .skill-category-icon.is-agent-tool {
+    border-color: #f2b62f;
+    background: #f2b62f;
+    color: #171717;
+  }
+
+  .skill-category-icon.is-ai-skill {
+    border-color: #bfd9ff;
+    background: #eaf3ff;
+    color: #2467c9;
+  }
+
+  .skill-category-icon.is-llm-plugin {
+    border-color: #d8c8f3;
+    background: #f2edfb;
+    color: #7951ad;
+  }
+
+  .skill-category-icon.is-uncategorized {
+    border-color: var(--c-border-soft);
+    background: var(--c-surface-soft);
+    color: var(--c-text-muted);
+  }
+
+  :global(.dark) .skill-category-icon.is-claude-skill {
+    border-color: #704538;
+    background: #2b211e;
+  }
+
+  :global(.dark) .skill-category-icon.is-mcp-server {
+    border-color: #555;
+    background: #f4f4f2;
+    color: #141414;
+  }
+
+  :global(.dark) .skill-category-icon.is-ai-skill,
+  :global(.dark) .skill-category-icon.is-llm-plugin {
+    border-color: var(--c-border-strong);
+    background: var(--c-surface-soft);
+  }
+</style>

@@ -29,7 +29,8 @@ const pageTitle = rawTitle.length > 60 ? title || SITE.title : rawTitle
 const pageDescription = description || SITE.description
 
 const siteName = new URL(SITE.website).hostname
-const canonicalURL = new URL(Astro.url.pathname, Astro.site)
+const publicPathname = Astro.url.pathname.replace(/^\/skills(?=\/|$)/, '/agent')
+const canonicalURL = new URL(publicPathname, Astro.site)
 const ogImageConfig = getOgImageConfig()
 const ogImagePathname = ogImageConfig
   ? resolveOgImagePathname({
@@ -44,7 +45,7 @@ const ogImageURL = ogImagePathname
   ? new URL(withBasePath(ogImagePathname), Astro.url).href
   : undefined
 
-const pathSegments = Astro.url.pathname.split('/').filter(Boolean)
+const pathSegments = publicPathname.split('/').filter(Boolean)
 const breadcrumbItems = pathSegments.map((segment, index) => ({
   '@type': 'ListItem',
   'position': index + 1,

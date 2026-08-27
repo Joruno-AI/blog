@@ -1,0 +1,131 @@
+---
+import { githubAvatar } from '~/utils/skills'
+
+interface Props {
+  author: string
+  size?: number
+  class?: string
+}
+
+const { author, size = 80, class: className } = Astro.props
+const initial = author.trim().charAt(0).toUpperCase() || '?'
+---
+
+<span
+  class:list={['skill-avatar-lazy', className]}
+  data-avatar-src={githubAvatar(author, size)}
+  role="img"
+  aria-label={`${author} 的 GitHub 头像`}
+>
+  <span class="skill-avatar-fallback" aria-hidden="true">{initial}</span>
+  <img
+    class="skill-avatar-image"
+    src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
+    alt=""
+    decoding="async"
+  />
+</span>
+
+<script>
+  type AvatarWindow = Window & {
+    __skillAvatarObserver?: IntersectionObserver
+    __mountSkillAvatars?: () => void
+  }
+
+  const avatarWindow = window as AvatarWindow
+
+  const loadAvatar = (avatar: HTMLElement) => {
+    if (avatar.dataset.avatarState) return
+    avatar.dataset.avatarState = 'loading'
+    const image = avatar.querySelector<HTMLImageElement>('.skill-avatar-image')
+    const src = avatar.dataset.avatarSrc
+    if (!image || !src) return
+
+    image.addEventListener(
+      'load',
+      () => {
+        avatar.dataset.avatarState = 'loaded'
+      },
+      { once: true }
+    )
+    image.addEventListener(
+      'error',
+      () => {
+        avatar.dataset.avatarState = 'error'
+        image.removeAttribute('src')
+      },
+      { once: true }
+    )
+    image.src = src
+  }
+
+  if (!avatarWindow.__skillAvatarObserver && 'IntersectionObserver' in window) {
+    avatarWindow.__skillAvatarObserver = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue
+          const avatar = entry.target as HTMLElement
+          avatarWindow.__skillAvatarObserver?.unobserve(avatar)
+          loadAvatar(avatar)
+        }
+      },
+      { rootMargin: '160px 0px' }
+    )
+  }
+
+  avatarWindow.__mountSkillAvatars = () => {
+    const avatars = document.querySelectorAll<HTMLElement>(
+      '[data-avatar-src]:not([data-avatar-observed])'
+    )
+    for (const avatar of avatars) {
+      avatar.dataset.avatarObserved = 'true'
+      if (avatarWindow.__skillAvatarObserver)
+        avatarWindow.__skillAvatarObserver.observe(avatar)
+      else loadAvatar(avatar)
+    }
+  }
+
+  avatarWindow.__mountSkillAvatars()
+  document.addEventListener('astro:page-load', () =>
+    avatarWindow.__mountSkillAvatars?.()
+  )
+</script>
+
+<style is:global>
+  .skill-avatar-lazy {
+    position: relative;
+    display: grid;
+    overflow: hidden;
+    place-items: center;
+    isolation: isolate;
+  }
+
+  .skill-avatar-fallback {
+    color: var(--c-text-faint);
+    font-size: 0.72em;
+    font-weight: 680;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .skill-avatar-image {
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 160ms ease;
+  }
+
+  .skill-avatar-lazy[data-avatar-state='loaded'] .skill-avatar-image {
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .skill-avatar-image {
+      transition: none;
+    }
+  }
+</style>

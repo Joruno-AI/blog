@@ -1,0 +1,120 @@
+.agent-graph-canvas .react-flow {
+  --xy-background-color: transparent;
+  --xy-edge-stroke: color-mix(in srgb, var(--c-text) 30%, transparent);
+  --xy-edge-stroke-selected: var(--c-text);
+  --xy-connectionline-stroke: var(--c-text);
+  --xy-controls-button-background-color: color-mix(
+    in srgb,
+    var(--c-bg) 94%,
+    transparent
+  );
+  --xy-controls-button-background-color-hover: var(--agent-soft);
+  --xy-controls-button-color: var(--agent-muted);
+  --xy-controls-button-color-hover: var(--c-text);
+  --xy-controls-button-border-color: var(--agent-line);
+}
+
+.agent-dependency-flow .react-flow__edge-path {
+  stroke-width: 1.35;
+}
+
+.agent-dependency-flow .react-flow__edge.selected .react-flow__edge-path {
+  stroke-width: 1.8;
+}
+
+.agent-dependency-flow .react-flow__node-package {
+  width: 13.375rem;
+  border: 0;
+  background: transparent;
+}
+
+.agent-flow-node {
+  min-height: 4.25rem;
+  padding: 0.72rem 0.78rem;
+  display: grid;
+  grid-template-columns: 0.5rem minmax(0, 1fr);
+  gap: 0.48rem;
+  align-items: center;
+  border: 1px solid var(--agent-line);
+  border-radius: 0.72rem;
+  background: color-mix(in srgb, var(--c-bg) 96%, transparent);
+  box-shadow: 0 8px 24px color-mix(in srgb, #000 7%, transparent);
+  color: var(--c-text);
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.agent-flow-node:hover,
+.agent-flow-node.is-selected {
+  border-color: color-mix(in srgb, var(--c-text) 50%, transparent);
+  box-shadow: 0 13px 32px color-mix(in srgb, #000 12%, transparent);
+  transform: translateY(-1px);
+}
+
+.agent-flow-node > span {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: #8a72c6;
+  box-shadow: 0 0 0 4px color-mix(in srgb, #8a72c6 14%, transparent);
+}
+
+.agent-flow-node > div {
+  min-width: 0;
+  display: grid;
+  gap: 0.24rem;
+}
+
+.agent-flow-node strong,
+.agent-flow-node small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.agent-flow-node strong {
+  font-size: 0.73rem;
+  font-weight: 650;
+}
+
+.agent-flow-node small {
+  color: var(--agent-muted);
+  font-family: var(--font-mono);
+  font-size: 0.59rem;
+}
+
+.agent-flow-node .react-flow__handle {
+  width: 0.38rem;
+  height: 0.38rem;
+  border: 1px solid var(--c-bg);
+  background: color-mix(in srgb, var(--c-text) 54%, transparent);
+}
+
+.agent-flow-controls {
+  overflow: hidden;
+  border: 1px solid var(--agent-line) !important;
+  border-radius: 0.62rem !important;
+  box-shadow: 0 8px 26px color-mix(in srgb, #000 10%, transparent) !important;
+}
+
+.agent-flow-controls button {
+  width: 2.15rem;
+  height: 2.15rem;
+  border-bottom-color: var(--agent-line) !important;
+}
+
+.agent-flow-controls button:last-child {
+  border-bottom: 0;
+}
+
+.agent-flow-controls svg {
+  max-width: 0.92rem;
+  max-height: 0.92rem;
+  fill: currentColor;
+}
+
+.agent-flow-background circle {
+  fill: color-mix(in srgb, var(--c-text) 18%, transparent);
+}

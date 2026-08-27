@@ -8,7 +8,13 @@ import prettier from 'eslint-config-prettier/flat'
 export default defineConfig(
   {
     // https://eslint.org/docs/latest/use/configure/configuration-files#globally-ignoring-files-with-ignores
-    ignores: ['dist/', '.astro/', '.local/', '.venv-music-align/'],
+    ignores: [
+      'dist/',
+      '.astro/',
+      '.local/',
+      '.wrangler/',
+      '.venv-music-align/',
+    ],
   },
   {
     // https://eslint.org/docs/latest/use/configure/language-options

@@ -1,0 +1,3663 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro'
+import Link from '~/components/base/Link.astro'
+import { withBasePath } from '~/utils/path'
+import {
+  formatCount,
+  githubAvatar,
+  installCommand,
+  INSTALLABLE_CATEGORIES,
+} from '~/utils/skills'
+
+import type { CollectionEntry } from 'astro:content'
+
+type Skill = CollectionEntry<'skills'>['data']
+
+interface Props {
+  skill?: Skill
+}
+
+const { skill } = Astro.props
+const repo = skill?.id ?? ''
+const installable = skill ? INSTALLABLE_CATEGORIES.has(skill.category) : false
+const command = skill
+  ? installable
+    ? installCommand(skill.id)
+    : `git clone https://github.com/${skill.id}.git`
+  : ''
+const description = skill?.descZh || skill?.desc || ''
+const agentBase = withBasePath('/agent/')
+const bootstrapJson = JSON.stringify({
+  repo,
+  skill: skill
+    ? {
+        name: skill.name,
+        author: skill.author,
+        description,
+        stars: skill.stars,
+        language: skill.language,
+        command,
+      }
+    : null,
+}).replace(/</g, '\\u003c')
+---
+
+<BaseLayout
+  title={skill ? `${skill.name} - Agent 知识库` : 'Agent 知识库'}
+  description={description ||
+    '基于仓库源码生成的站内知识库、架构地图与文件浏览器'}
+  bgType={false}
+  hideFooter={true}
+  stableNavigation={true}
+>
+  <div
+    class="agent-knowledge"
+    data-agent-knowledge
+    data-agent-base={agentBase}
+    data-atlas-open="false"
+  >
+    <header class="agent-knowledge-head">
+      <div class="agent-knowledge-brand">
+        <Link
+          class="agent-back"
+          href={withBasePath('/agent/')}
+          aria-label="返回 Agent 目录"
+        >
+          <span class="i-ri-arrow-left-line" aria-hidden="true"></span>
+        </Link>
+        <img
+          src={skill ? githubAvatar(skill.author, 96) : ''}
+          alt=""
+          data-repo-avatar
+          hidden={!skill}
+        />
+        <div>
+          <p>
+            <span data-repo-owner>{skill?.author ?? 'GitHub'}</span><i>/</i>
+          </p>
+          <h1 data-repo-title>{skill?.name ?? '正在读取仓库…'}</h1>
+        </div>
+        <span class="agent-source-state" data-source-state>
+          <i></i><span>连接中</span>
+        </span>
+      </div>
+
+      <div class="agent-knowledge-actions">
+        <button
+          type="button"
+          class="agent-mobile-nav"
+          data-mobile-nav
+          aria-label="打开文档目录"
+        >
+          <span class="i-ri-menu-2-line" aria-hidden="true"></span>
+          目录
+        </button>
+        <button
+          type="button"
+          data-copy-command
+          data-copy={command}
+          hidden={!command}
+        >
+          <span class="i-ri-terminal-box-line" aria-hidden="true"></span>
+          <span data-command-label>{installable ? '安装' : '克隆'}</span>
+        </button>
+        <button type="button" class="agent-atlas-launch" data-atlas-launch>
+          <span class="i-ri-node-tree" aria-hidden="true"></span>
+          仓库地图
+        </button>
+        <a
+          href={repo ? `https://github.com/${repo}` : 'https://github.com'}
+          data-github-link
+          target="_blank"
+          rel="noopener"
+          aria-label="在 GitHub 查看"
+        >
+          <span class="i-uil-github-alt" aria-hidden="true"></span>
+        </a>
+      </div>
+    </header>
+
+    <div class="agent-reader-shell">
+      <aside class="agent-wiki-nav" data-wiki-nav aria-label="知识库目录">
+        <div class="agent-wiki-nav-head">
+          <div>
+            <span>KNOWLEDGE BASE</span>
+            <strong>仓库文档</strong>
+          </div>
+          <button type="button" data-mobile-nav-close aria-label="关闭文档目录">
+            <span class="i-ri-close-line" aria-hidden="true"></span>
+          </button>
+        </div>
+        <label class="agent-nav-search">
+          <span class="i-ri-search-line" aria-hidden="true"></span>
+          <input
+            type="search"
+            data-doc-search
+            placeholder="搜索章节"
+            autocomplete="off"
+          />
+          <kbd>/</kbd>
+        </label>
+        <nav class="agent-wiki-pages" data-wiki-pages>
+          <div class="agent-list-skeleton">
+            <span></span><span></span><span></span><span></span>
+          </div>
+        </nav>
+        <div class="agent-nav-repo-card">
+          <span>仓库</span>
+          <strong data-repo-full-name>{repo || '读取中…'}</strong>
+          <small data-repo-description
+            >{description || '正在读取仓库信息'}</small
+          >
+          <div>
+            <span
+              ><i class="i-ri-star-line"></i><b data-repo-stars
+                >{skill ? formatCount(skill.stars) : '—'}</b
+              ></span
+            >
+            <span data-language>{skill?.language ?? '—'}</span>
+          </div>
+        </div>
+      </aside>
+
+      <main class="agent-wiki-main">
+        <div class="agent-reader-status" data-reader-status>
+          <span class="agent-pulse"></span>
+          正在生成源码知识库…
+        </div>
+
+        <article class="agent-wiki-article prose" data-wiki-content>
+          <div class="agent-article-skeleton" aria-label="正在读取文档">
+            <span></span><span></span><span></span><span></span><span
+            ></span><span></span>
+          </div>
+        </article>
+
+        <section
+          class="agent-answer"
+          data-answer-panel
+          hidden
+          aria-live="polite"
+        >
+          <header>
+            <div>
+              <span class="i-ri-sparkling-2-line"></span><strong
+                >DeepWiki 回答</strong
+              >
+            </div>
+            <button type="button" data-answer-close aria-label="关闭回答"
+              ><span class="i-ri-close-line"></span></button
+            >
+          </header>
+          <div class="agent-answer-question" data-answer-question></div>
+          <article class="prose" data-answer-content></article>
+        </section>
+      </main>
+
+      <aside class="agent-page-toc" aria-label="本页目录">
+        <div class="agent-page-toc-inner">
+          <span>ON THIS PAGE</span>
+          <strong>本页目录</strong>
+          <nav data-page-toc>
+            <p>正文加载后显示标题</p>
+          </nav>
+          <div class="agent-page-links">
+            <a
+              href={repo
+                ? `https://deepwiki.com/${repo}`
+                : 'https://deepwiki.com'}
+              data-deepwiki-link
+              target="_blank"
+              rel="noopener"
+              >DeepWiki 原文<span class="i-ri-arrow-right-up-line"></span></a
+            >
+            <button type="button" data-atlas-launch
+              ><span>打开仓库地图</span><i class="i-ri-arrow-right-line"
+              ></i></button
+            >
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <form class="agent-ask" data-ask-form>
+      <span class="i-ri-sparkling-2-line" aria-hidden="true"></span>
+      <input
+        type="text"
+        name="question"
+        data-ask-input
+        maxlength="1200"
+        placeholder="向 DeepWiki 询问这个仓库…"
+        autocomplete="off"
+      />
+      <kbd>Enter</kbd>
+      <button type="submit" data-ask-submit>
+        <span>提问</span><i class="i-ri-arrow-up-line"></i>
+      </button>
+    </form>
+
+    <button
+      class="agent-atlas-scrim"
+      data-atlas-close
+      type="button"
+      aria-label="关闭仓库地图"></button>
+    <aside
+      class="agent-atlas"
+      data-atlas
+      aria-label="仓库地图"
+      aria-hidden="true"
+    >
+      <header class="agent-atlas-head">
+        <div class="agent-atlas-title">
+          <span class="i-ri-git-repository-line"></span>
+          <div>
+            <strong data-atlas-repo>{repo || 'Repository'}</strong>
+            <small
+              ><span data-default-branch>HEAD</span><i>·</i><span
+                data-updated-at>读取中</span
+              ></small
+            >
+          </div>
+        </div>
+        <div>
+          <a
+            href={repo ? `https://github.com/${repo}` : 'https://github.com'}
+            data-atlas-github
+            target="_blank"
+            rel="noopener"
+          >
+            GitHub<span class="i-ri-arrow-right-up-line"></span>
+          </a>
+          <button type="button" data-atlas-close aria-label="关闭仓库地图"
+            ><span class="i-ri-close-line"></span></button
+          >
+        </div>
+      </header>
+
+      <nav class="agent-atlas-tabs" aria-label="仓库地图视图">
+        <button type="button" class="is-active" data-atlas-tab="overview"
+          ><span class="i-ri-node-tree"></span>概览</button
+        >
+        <button type="button" data-atlas-tab="docs"
+          ><span class="i-ri-book-2-line"></span>文档</button
+        >
+        <button type="button" data-atlas-tab="files"
+          ><span class="i-ri-file-code-line"></span>文件</button
+        >
+      </nav>
+
+      <div class="agent-atlas-body">
+        <section data-atlas-panel="overview">
+          <div class="agent-atlas-intro">
+            <div>
+              <h2>先建立边界，再沿入口阅读关键流程</h2>
+              <p data-atlas-summary>正在核对仓库结构与模块边界…</p>
+            </div>
+            <button type="button" data-first-document
+              >开始阅读<span class="i-ri-arrow-right-line"></span></button
+            >
+          </div>
+
+          <div class="agent-overview-facts" data-overview-facts>
+            <div><span>Stars</span><strong data-atlas-stars>—</strong></div>
+            <div><span>Forks</span><strong data-atlas-forks>—</strong></div>
+            <div>
+              <span>Watchers</span><strong data-atlas-watchers>—</strong>
+            </div>
+            <div>
+              <span>主要语言</span><strong data-atlas-language>—</strong>
+            </div>
+            <div><span>许可证</span><strong data-atlas-license>—</strong></div>
+            <div><span>默认分支</span><strong data-atlas-branch>—</strong></div>
+            <div><span>最近更新</span><strong data-atlas-update>—</strong></div>
+            <div><span>仓库状态</span><strong data-atlas-state>—</strong></div>
+          </div>
+          <div class="agent-overview-topics" data-atlas-topics></div>
+
+          <section class="agent-map-section">
+            <header>
+              <div>
+                <h3>项目依赖总览</h3><p>
+                  从 workspace 与 package.json 重建模块之间的真实依赖关系
+                </p>
+              </div><small data-tree-count>读取中</small>
+            </header>
+            <div class="agent-repo-map" data-repo-map>
+              <div class="agent-graph-hint">拖动画布 · 滚轮缩放</div>
+              <button
+                class="agent-graph-fullscreen"
+                type="button"
+                data-graph-action="fullscreen"
+                aria-label="全屏查看依赖图"
+                ><span class="i-ri-fullscreen-line"></span></button
+              >
+              <div class="agent-graph-viewport" data-graph-viewport>
+                <div class="agent-graph-canvas" data-graph-canvas>
+                  <div class="agent-list-skeleton">
+                    <span></span><span></span><span></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="agent-module-detail" data-module-detail hidden></div>
+          </section>
+
+          <section class="agent-map-section">
+            <header>
+              <div>
+                <span>READING PATH</span><h3>建议从这里开始读</h3>
+              </div><small>按结构重要度排序</small>
+            </header>
+            <div class="agent-start-files" data-start-files>
+              <div class="agent-list-skeleton"><span></span><span></span></div>
+            </div>
+          </section>
+        </section>
+
+        <section data-atlas-panel="docs" hidden>
+          <div class="agent-atlas-section-head">
+            <h2>代码库文档</h2>
+            <p>
+              这里展示仓库中的
+              README、贡献指南与架构文档。选择后会切换到文件视图并直接回显内容。
+            </p>
+            <small data-repository-doc-count>正在整理文档…</small>
+          </div>
+          <div class="agent-atlas-docs" data-atlas-docs></div>
+        </section>
+
+        <section data-atlas-panel="files" hidden>
+          <div class="agent-files-shell">
+            <aside class="agent-file-browser">
+              <div class="agent-file-browser-head">
+                <div>
+                  <strong>文件浏览器</strong><small data-file-count
+                    >读取中</small
+                  >
+                </div>
+                <button
+                  type="button"
+                  data-collapse-tree
+                  aria-label="折叠全部目录"
+                  ><span class="i-ri-collapse-diagonal-line"></span></button
+                >
+              </div>
+              <label class="agent-file-search">
+                <span class="i-ri-search-line"></span>
+                <input
+                  type="search"
+                  data-file-search
+                  placeholder="搜索文件路径"
+                />
+                <kbd>/</kbd>
+              </label>
+              <div class="agent-file-list" data-file-list></div>
+            </aside>
+            <article class="agent-file-viewer">
+              <header>
+                <div>
+                  <span class="i-ri-file-code-line"></span><strong
+                    data-file-breadcrumb>选择一个文件</strong
+                  >
+                </div>
+                <a
+                  href={repo
+                    ? `https://github.com/${repo}`
+                    : 'https://github.com'}
+                  data-file-github
+                  target="_blank"
+                  rel="noopener"
+                  hidden
+                  >查看源文件<span class="i-ri-arrow-right-up-line"></span></a
+                >
+              </header>
+              <div class="agent-file-content" data-file-content>
+                <div class="agent-file-empty">
+                  <span class="i-ri-code-box-line"></span><h3>
+                    选择文件开始阅读
+                  </h3><p>源码、Markdown 和图片都会留在博客内打开。</p>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+      </div>
+    </aside>
+
+    <button
+      class="agent-mobile-scrim"
+      data-mobile-nav-close
+      type="button"
+      aria-label="关闭目录"></button>
+  </div>
+
+  <script
+    is:inline
+    type="application/json"
+    data-agent-bootstrap
+    set:html={bootstrapJson}
+  />
+</BaseLayout>
+
+<script>
+  import DOMPurify from 'dompurify'
+  import { Marked } from 'marked'
+
+  interface Bootstrap {
+    repo: string
+    skill: null | {
+      name: string
+      author: string
+      description: string
+      stars: number
+      language: string | null
+      command: string
+    }
+  }
+  interface RepoMeta {
+    fullName: string
+    name: string
+    owner: string
+    description: string
+    stars: number
+    forks: number
+    watchers: number
+    language: string | null
+    defaultBranch: string
+    updatedAt: string
+    license: string | null
+    topics: string[]
+    archived: boolean
+    homepage: string | null
+  }
+  interface WikiItem {
+    depth: number
+    id: string
+    title: string
+  }
+  interface TreeItem {
+    path: string
+    type: 'blob' | 'tree'
+    size: number | null
+  }
+  interface FileResponse {
+    type: 'file'
+    name: string
+    path: string
+    content: string | null
+    downloadUrl: string | null
+  }
+  interface ManifestNode {
+    id: string
+    name: string
+    path: string
+    dependencies: string[]
+    incoming: string[]
+    workspace: boolean
+  }
+
+  const marked = new Marked({ gfm: true, breaks: false })
+  let mermaidLoader: Promise<typeof import('mermaid').default> | null = null
+  let shikiLoader: Promise<typeof import('shiki/bundle/full')> | null = null
+  let dependencyGraphLoader: Promise<
+    typeof import('./agent/AgentDependencyGraph')
+  > | null = null
+  let codeViewerLoader: Promise<
+    typeof import('./agent/agent-code-viewer')
+  > | null = null
+  let mermaidSequence = 0
+
+  const mountAgentKnowledge = () => {
+    const rootElement = document.querySelector<HTMLElement>(
+      '[data-agent-knowledge]'
+    )
+    const dataElement = document.querySelector<HTMLScriptElement>(
+      '[data-agent-bootstrap]'
+    )
+    if (!rootElement || !dataElement || rootElement.dataset.bound === 'true')
+      return
+    const root = rootElement
+    const data = dataElement
+    root.dataset.bound = 'true'
+
+    const bootstrap = JSON.parse(data.textContent || '{}') as Bootstrap
+    const agentBase = root.dataset.agentBase || '/agent/'
+    const basePath = agentBase.replace(/\/$/, '')
+    const path = location.pathname.startsWith(basePath)
+      ? location.pathname.slice(basePath.length)
+      : location.pathname
+    const pathParts = path.split('/').filter(Boolean).map(decodeURIComponent)
+    const repo =
+      bootstrap.repo ||
+      new URLSearchParams(location.search).get('repo') ||
+      (pathParts.length >= 2 && pathParts[0] !== 'repository'
+        ? `${pathParts[0]}/${pathParts[1]}`
+        : '')
+    const [owner = '', repoName = ''] = repo.split('/')
+    const blobIndex = pathParts.indexOf('blob')
+    let activeRef = blobIndex >= 0 ? pathParts[blobIndex + 1] || 'HEAD' : 'HEAD'
+    const requestedFile =
+      blobIndex >= 0 ? pathParts.slice(blobIndex + 2).join('/') : ''
+    const requestedLine = Number(location.hash.match(/^#L(\d+)/i)?.[1] || 0)
+    const controller = new AbortController()
+    const get = <T extends Element>(selector: string) =>
+      root.querySelector<T>(selector)
+    const getAll = <T extends Element>(selector: string) => [
+      ...root.querySelectorAll<T>(selector),
+    ]
+    const wikiContent = get<HTMLElement>('[data-wiki-content]')!
+    const fileList = get<HTMLElement>('[data-file-list]')!
+    const fileContent = get<HTMLElement>('[data-file-content]')!
+    const fileSearch = get<HTMLInputElement>('[data-file-search]')!
+    const status = get<HTMLElement>('[data-reader-status]')!
+    let meta: RepoMeta | null = null
+    let wikiItems: WikiItem[] = []
+    let treeItems: TreeItem[] = []
+    let currentPage = 'Overview'
+    let currentTheme = document.documentElement.classList.contains('dark')
+    let currentFilePath = ''
+    let manifestNodes: ManifestNode[] = []
+    const treeChildren = new Map<string, TreeItem[]>()
+    const expandedFolders = new Set<string>()
+    const fileCache = new Map<string, FileResponse>()
+    let fileLoadSequence = 0
+    let dependencyGraph:
+      import('./agent/AgentDependencyGraph').AgentDependencyGraphApi | null =
+      null
+    let codeViewer: import('./agent/agent-code-viewer').AgentCodeViewer | null =
+      null
+
+    document.addEventListener('astro:before-swap', () => controller.abort(), {
+      once: true,
+    })
+    controller.signal.addEventListener(
+      'abort',
+      () => {
+        dependencyGraph?.destroy()
+        dependencyGraph = null
+        codeViewer?.destroy()
+        codeViewer = null
+      },
+      { once: true }
+    )
+
+    const escapeHtml = (value: string) =>
+      value.replace(
+        /[&<>"']/g,
+        (character) =>
+          ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;',
+          })[character] as string
+      )
+    const compact = (value: number) =>
+      new Intl.NumberFormat('zh-CN', {
+        notation: 'compact',
+        maximumFractionDigits: 1,
+      }).format(value)
+    const slug = (value: string) =>
+      value
+        .toLowerCase()
+        .normalize('NFKD')
+        .replace(/[^\p{L}\p{N}]+/gu, '-')
+        .replace(/^-|-$/g, '')
+    const githubUrl = (suffix = '') => `https://github.com/${repo}${suffix}`
+    const repoFileUrl = (file: string, ref = activeRef) =>
+      `${agentBase}${repo}/blob/${encodeURIComponent(ref || meta?.defaultBranch || 'HEAD')}/${file}`
+    const api = (
+      kind: 'github' | 'deepwiki',
+      action: string,
+      params: Record<string, string> = {}
+    ) => {
+      const url = new URL(
+        `/api/${kind}/${encodeURIComponent(owner)}/${encodeURIComponent(repoName)}/${action}`,
+        location.origin
+      )
+      Object.entries(params).forEach(
+        ([key, value]) => value && url.searchParams.set(key, value)
+      )
+      return url.toString()
+    }
+    const loadMermaid = () => {
+      mermaidLoader ??= import('mermaid').then((module) => module.default)
+      return mermaidLoader
+    }
+    async function fetchJson<T>(url: string, options: RequestInit = {}) {
+      const response = await fetch(url, {
+        ...options,
+        headers: { Accept: 'application/json', ...(options.headers || {}) },
+        signal: controller.signal,
+      })
+      const payload = (await response.json().catch(() => null)) as
+        (T & { error?: string }) | null
+      if (!response.ok)
+        throw new Error(payload?.error || `请求失败 (${response.status})`)
+      return payload as T
+    }
+    const decodeBase64 = (value: string) => {
+      const binary = atob(value.replace(/\s/g, ''))
+      return new TextDecoder().decode(
+        Uint8Array.from(binary, (character) => character.charCodeAt(0))
+      )
+    }
+    const showStatus = (
+      message: string,
+      kind: 'loading' | 'error' = 'loading'
+    ) => {
+      status.hidden = false
+      status.dataset.kind = kind
+      status.innerHTML = `${kind === 'loading' ? '<span class="agent-pulse"></span>' : '<span class="i-ri-error-warning-line"></span>'}${escapeHtml(message)}`
+    }
+    const hideStatus = () => {
+      status.hidden = true
+    }
+
+    function applyMeta(next: RepoMeta) {
+      meta = next
+      if (activeRef === 'HEAD') activeRef = next.defaultBranch
+      const values: [string, string][] = [
+        ['[data-repo-owner]', next.owner],
+        ['[data-repo-title]', next.name],
+        ['[data-repo-full-name]', next.fullName],
+        [
+          '[data-repo-description]',
+          next.description || '这个仓库暂时没有填写简介。',
+        ],
+        ['[data-repo-stars]', compact(next.stars)],
+        ['[data-language]', next.language || '—'],
+        ['[data-atlas-repo]', next.fullName],
+        ['[data-default-branch]', next.defaultBranch],
+        ['[data-atlas-stars]', compact(next.stars)],
+        ['[data-atlas-forks]', compact(next.forks)],
+        ['[data-atlas-watchers]', compact(next.watchers)],
+        ['[data-atlas-language]', next.language || '未标注'],
+        ['[data-atlas-license]', next.license || '未声明'],
+        ['[data-atlas-branch]', next.defaultBranch],
+        ['[data-atlas-state]', next.archived ? '已归档' : '活跃维护'],
+      ]
+      values.forEach(([selector, value]) => {
+        const element = get<HTMLElement>(selector)
+        if (element) element.textContent = value
+      })
+      const updated = get<HTMLElement>('[data-updated-at]')
+      const updatedLabel = new Intl.DateTimeFormat('zh-CN', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      }).format(new Date(next.updatedAt))
+      if (updated) updated.textContent = updatedLabel
+      const atlasUpdate = get<HTMLElement>('[data-atlas-update]')
+      if (atlasUpdate) atlasUpdate.textContent = updatedLabel
+      const topics = get<HTMLElement>('[data-atlas-topics]')
+      if (topics) {
+        const topicMarkup = next.topics
+          .slice(0, 12)
+          .map((topic) => `<span>${escapeHtml(topic)}</span>`)
+          .join('')
+        const homepageMarkup = next.homepage
+          ? `<a href="${escapeHtml(next.homepage)}" target="_blank" rel="noopener">项目主页<span class="i-ri-arrow-right-up-line"></span></a>`
+          : ''
+        topics.innerHTML =
+          topicMarkup || homepageMarkup
+            ? `${topicMarkup}${homepageMarkup}`
+            : '<span>暂无主题标签</span>'
+      }
+      const avatar = get<HTMLImageElement>('[data-repo-avatar]')
+      if (avatar) {
+        avatar.src = `https://github.com/${encodeURIComponent(next.owner)}.png?size=96`
+        avatar.hidden = false
+      }
+      getAll<HTMLAnchorElement>(
+        '[data-github-link], [data-atlas-github]'
+      ).forEach((link) => {
+        link.href = githubUrl()
+      })
+      const deepwiki = get<HTMLAnchorElement>('[data-deepwiki-link]')
+      if (deepwiki) deepwiki.href = `https://deepwiki.com/${next.fullName}`
+      const copy = get<HTMLButtonElement>('[data-copy-command]')
+      if (copy && !copy.dataset.copy) {
+        copy.dataset.copy = `git clone https://github.com/${repo}.git`
+        copy.hidden = false
+      }
+      document.title = `${next.name} - Agent 知识库`
+    }
+
+    function setSourceState(label: string, ready: boolean) {
+      const state = get<HTMLElement>('[data-source-state]')
+      if (!state) return
+      state.classList.toggle('is-ready', ready)
+      const labelElement = state.querySelector('span')
+      if (labelElement) labelElement.textContent = label
+    }
+
+    function mermaidConfig() {
+      const dark = document.documentElement.classList.contains('dark')
+      return {
+        startOnLoad: false,
+        securityLevel: 'strict' as const,
+        suppressErrorRendering: true,
+        theme: 'base' as const,
+        fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif',
+        flowchart: {
+          htmlLabels: false,
+          useMaxWidth: true,
+          curve: 'basis' as const,
+        },
+        themeVariables: dark
+          ? {
+              background: '#0b0b0b',
+              primaryColor: '#171717',
+              primaryBorderColor: '#525252',
+              primaryTextColor: '#f5f5f5',
+              secondaryColor: '#202020',
+              tertiaryColor: '#111111',
+              lineColor: '#a3a3a3',
+              clusterBkg: '#111111',
+              clusterBorder: '#404040',
+              edgeLabelBackground: '#0b0b0b',
+              fontSize: '14px',
+            }
+          : {
+              background: '#ffffff',
+              primaryColor: '#fafafa',
+              primaryBorderColor: '#b8b8b8',
+              primaryTextColor: '#171717',
+              secondaryColor: '#f4f4f4',
+              tertiaryColor: '#ffffff',
+              lineColor: '#666666',
+              clusterBkg: '#fafafa',
+              clusterBorder: '#d4d4d4',
+              edgeLabelBackground: '#ffffff',
+              fontSize: '14px',
+            },
+      }
+    }
+    function normalizeMermaidSource(source: string) {
+      const identifiers = new Map<string, string>()
+      let sequence = 0
+      const resolveIdentifier = (label: string) => {
+        const existing = identifiers.get(label)
+        if (existing) return existing
+        const identifier = `node_${sequence++}`
+        identifiers.set(label, identifier)
+        return identifier
+      }
+
+      let normalized = source.replace(
+        /"([^"\n]+)"(?=\s*(?:\[|\(|\{))/g,
+        (_, label: string) => resolveIdentifier(label)
+      )
+      for (const [label, identifier] of identifiers) {
+        const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+        normalized = normalized
+          .replace(
+            new RegExp(`"${escaped}"(?=\\s*(?:-->|---|-.->|==>|~~~))`, 'g'),
+            identifier
+          )
+          .replace(
+            new RegExp(
+              `((?:-->|---|-.->|==>|~~~)(?:\\|[^|]*\\|)?\\s*)"${escaped}"`,
+              'g'
+            ),
+            `$1${identifier}`
+          )
+      }
+      return normalized
+    }
+    function prepareMermaid(container: HTMLElement) {
+      container
+        .querySelectorAll<HTMLElement>('pre > code.language-mermaid')
+        .forEach((code) => {
+          const pre = code.parentElement
+          const source = code.textContent?.trim()
+          if (!pre || !source) return
+          const figure = document.createElement('figure')
+          figure.className = 'agent-mermaid'
+          figure.dataset.mermaidSource = normalizeMermaidSource(source)
+          figure.innerHTML = `<div class="agent-mermaid-toolbar"><span><i class="i-ri-flow-chart"></i> 交互图表</span><div><button type="button" data-diagram-action="out" aria-label="缩小"><i class="i-ri-subtract-line"></i></button><button type="button" data-diagram-action="reset">100%</button><button type="button" data-diagram-action="in" aria-label="放大"><i class="i-ri-add-line"></i></button></div></div><div class="agent-mermaid-viewport"><div class="agent-mermaid-canvas"><span class="agent-pulse"></span></div></div>`
+          pre.replaceWith(figure)
+        })
+    }
+    async function renderMermaid(container: HTMLElement) {
+      prepareMermaid(container)
+      const figures = [
+        ...container.querySelectorAll<HTMLElement>('[data-mermaid-source]'),
+      ]
+      if (!figures.length) return
+      try {
+        const mermaid = await loadMermaid()
+        mermaid.initialize(mermaidConfig())
+        for (const figure of figures) {
+          const source = figure.dataset.mermaidSource || ''
+          const viewport = figure.querySelector<HTMLElement>(
+            '.agent-mermaid-viewport'
+          )
+          if (!source || !viewport) continue
+          const canvas = document.createElement('div')
+          canvas.className = 'agent-mermaid-canvas'
+          canvas.style.setProperty('--diagram-scale', '1')
+          figure.dataset.diagramScale = '1'
+          try {
+            const { svg, bindFunctions } = await mermaid.render(
+              `agent-mermaid-${Date.now()}-${mermaidSequence++}`,
+              source
+            )
+            canvas.innerHTML = DOMPurify.sanitize(svg, {
+              USE_PROFILES: { svg: true, svgFilters: true },
+            })
+            viewport.replaceChildren(canvas)
+            bindFunctions?.(canvas)
+          } catch {
+            canvas.innerHTML = `<details><summary>图表语法暂未兼容，查看源码</summary><pre><code>${escapeHtml(source)}</code></pre></details>`
+            viewport.replaceChildren(canvas)
+          }
+        }
+      } catch {
+        figures.forEach((figure) => {
+          const viewport = figure.querySelector<HTMLElement>(
+            '.agent-mermaid-viewport'
+          )
+          if (viewport) viewport.textContent = '图表组件加载失败'
+        })
+      }
+    }
+
+    function resolveWikiTitle(raw: string, label = '') {
+      if (raw.trim().toLowerCase() === 'overview' && wikiItems.length) {
+        return wikiItems[0]?.title || 'Overview'
+      }
+      const decoded =
+        decodeURIComponent(raw).split('/').filter(Boolean).pop() || ''
+      const candidates = [
+        label,
+        decoded,
+        decoded.replace(/^\d+(?:\.\d+)*-/, '').replace(/-/g, ' '),
+      ]
+      return (
+        wikiItems.find((item) =>
+          candidates.some(
+            (candidate) =>
+              item.title.toLowerCase() === candidate.trim().toLowerCase() ||
+              slug(item.title) === slug(candidate)
+          )
+        )?.title ||
+        label ||
+        decoded
+      )
+    }
+
+    function repositoryFileReference(raw: string, sourcePath = '') {
+      const lineMatch = raw.match(/(?:#L|:)(\d+)(?:-\d+)?$/i)
+      const line = lineMatch ? Number(lineMatch[1]) : 0
+      const candidate = raw.trim().replace(/(?:#L|:)(\d+)(?:-\d+)?$/i, '')
+      try {
+        const url = new URL(
+          candidate,
+          `https://github.com/${repo}/blob/${activeRef}/${sourcePath}`
+        )
+        const prefix = `/${owner}/${repoName}/blob/`
+        if (url.hostname === 'github.com' && url.pathname.startsWith(prefix)) {
+          const parts = url.pathname.slice(prefix.length).split('/')
+          const ref = decodeURIComponent(parts.shift() || activeRef)
+          const path = parts.map(decodeURIComponent).join('/')
+          return path ? { path, ref, line } : null
+        }
+      } catch {
+        return null
+      }
+
+      if (
+        /^(?:\.\.\/|\.\/)?[\w@.-][\w@./ -]*\.[a-z0-9]{1,8}(?:#L\d+)?$/i.test(
+          candidate
+        )
+      ) {
+        const sourceDirectory = sourcePath.includes('/')
+          ? sourcePath.slice(0, sourcePath.lastIndexOf('/') + 1)
+          : ''
+        const path = new URL(
+          candidate,
+          `https://local/${sourceDirectory}`
+        ).pathname.slice(1)
+        return { path, ref: activeRef, line }
+      }
+      return null
+    }
+
+    function markRepositoryFileLink(
+      link: HTMLAnchorElement,
+      reference: { path: string; ref: string; line: number }
+    ) {
+      link.href = repoFileUrl(reference.path, reference.ref)
+      link.dataset.openFile = reference.path
+      link.dataset.fileRef = reference.ref
+      if (reference.line) link.dataset.fileLine = String(reference.line)
+      link.classList.add('agent-file-reference')
+      link.removeAttribute('target')
+      link.removeAttribute('rel')
+    }
+
+    function rewriteInlineFileReferences(container: HTMLElement) {
+      const pattern =
+        /^((?:\.{0,2}\/)?[\w@.+ -]+(?:\/[\w@.+ -]+)*\.(?:astro|c|cc|cpp|css|go|h|hpp|html|java|js|jsx|json|jsonc|kt|md|mdx|mjs|py|rb|rs|scss|sh|sql|svelte|toml|ts|tsx|txt|vue|xml|ya?ml))(?:[:#]L?(\d+)(?:-\d+)?)?$/i
+      container
+        .querySelectorAll<HTMLElement>('code:not(pre code)')
+        .forEach((code) => {
+          if (code.closest('a')) return
+          const value = (code.textContent || '').trim()
+          const match = value.match(pattern)
+          if (!match?.[1]) return
+          const path = match[1].replace(/^\.\//, '')
+          const line = Number(match[2] || 0)
+          const link = document.createElement('a')
+          link.append(code.cloneNode(true))
+          markRepositoryFileLink(link, { path, ref: activeRef, line })
+          code.replaceWith(link)
+        })
+    }
+
+    function rewriteWikiLinks(container: HTMLElement, sourcePath = '') {
+      container
+        .querySelectorAll<HTMLAnchorElement>('a[href]')
+        .forEach((link) => {
+          const raw = link.getAttribute('href') || ''
+          if (raw.startsWith('#')) {
+            const id = raw.slice(1)
+            const wikiTarget = wikiItems.find((item) => item.id === id)
+            if (wikiTarget) {
+              link.dataset.wikiPage = wikiTarget.title
+              link.href = '#'
+            }
+            return
+          }
+          if (/^(javascript|data|vbscript|file):/i.test(raw)) {
+            link.removeAttribute('href')
+            return
+          }
+          if (
+            raw.startsWith('/wiki/') ||
+            (raw.includes('deepwiki.com/') && raw.includes('/wiki/'))
+          ) {
+            link.dataset.wikiPage = resolveWikiTitle(
+              raw,
+              link.textContent || ''
+            )
+            link.href = '#'
+            return
+          }
+          const reference = repositoryFileReference(
+            raw || (link.textContent || '').trim(),
+            sourcePath
+          )
+          if (reference) {
+            markRepositoryFileLink(link, reference)
+            return
+          }
+          if (/^https?:/i.test(raw)) {
+            link.target = '_blank'
+            link.rel = 'noopener nofollow'
+            return
+          }
+          link.href = repoFileUrl(raw.replace(/^\.\//, ''))
+        })
+    }
+
+    function languageForPath(path: string) {
+      const name = path.split('/').pop()?.toLowerCase() || ''
+      if (name === 'dockerfile') return 'dockerfile'
+      if (name === 'makefile') return 'makefile'
+      const extension = name.split('.').pop() || ''
+      return (
+        (
+          {
+            js: 'javascript',
+            jsx: 'jsx',
+            mjs: 'javascript',
+            cjs: 'javascript',
+            ts: 'typescript',
+            tsx: 'tsx',
+            vue: 'vue',
+            astro: 'astro',
+            svelte: 'svelte',
+            css: 'css',
+            scss: 'scss',
+            less: 'less',
+            html: 'html',
+            xml: 'xml',
+            svg: 'xml',
+            json: 'json',
+            jsonc: 'jsonc',
+            yaml: 'yaml',
+            yml: 'yaml',
+            toml: 'toml',
+            md: 'markdown',
+            mdx: 'mdx',
+            py: 'python',
+            rb: 'ruby',
+            php: 'php',
+            java: 'java',
+            kt: 'kotlin',
+            kts: 'kotlin',
+            go: 'go',
+            rs: 'rust',
+            swift: 'swift',
+            c: 'c',
+            h: 'c',
+            cpp: 'cpp',
+            hpp: 'cpp',
+            cs: 'csharp',
+            sh: 'shellscript',
+            bash: 'shellscript',
+            zsh: 'shellscript',
+            sql: 'sql',
+            graphql: 'graphql',
+            gql: 'graphql',
+          } as Record<string, string>
+        )[extension] || 'text'
+      )
+    }
+
+    async function highlightCode(source: string, language: string) {
+      shikiLoader ??= import('shiki/bundle/full')
+      const { codeToHtml } = await shikiLoader
+      const candidates = [language, 'text']
+      for (const candidate of candidates) {
+        try {
+          const html = await codeToHtml(source, {
+            lang: candidate,
+            themes: { light: 'vitesse-light', dark: 'vitesse-dark' },
+            defaultColor: false,
+          })
+          const template = document.createElement('template')
+          template.innerHTML = html
+          const pre = template.content.querySelector('pre')
+          if (!pre) continue
+          pre.classList.add('agent-shiki-code')
+          pre.querySelectorAll<HTMLElement>('.line').forEach((line, index) => {
+            line.dataset.line = String(index + 1)
+          })
+          return template.innerHTML
+        } catch {
+          // Try the plain-text grammar next.
+        }
+      }
+      return `<pre class="agent-code-fallback"><code>${escapeHtml(source)}</code></pre>`
+    }
+
+    async function decorateMarkdownCode(container: HTMLElement) {
+      const blocks = [...container.querySelectorAll<HTMLPreElement>('pre')]
+      for (const pre of blocks) {
+        if (pre.closest('.agent-mermaid')) continue
+        const code = pre.querySelector('code')
+        const source = code?.textContent || pre.textContent || ''
+        const languageClass = [...(code?.classList || [])].find((value) =>
+          value.startsWith('language-')
+        )
+        const language = languageClass?.slice('language-'.length) || 'text'
+        const wrapper = document.createElement('div')
+        wrapper.className = 'agent-highlighted-block'
+        wrapper.innerHTML = await highlightCode(
+          source.replace(/\n+$/, ''),
+          language
+        )
+        pre.replaceWith(wrapper)
+      }
+    }
+    function renderToc() {
+      const toc = get<HTMLElement>('[data-page-toc]')
+      if (!toc) return
+      const headings = [...wikiContent.querySelectorAll<HTMLElement>('h2, h3')]
+      headings.forEach((heading, index) => {
+        heading.id ||= `section-${index + 1}-${slug(heading.textContent || '')}`
+      })
+      toc.innerHTML = headings.length
+        ? headings
+            .map(
+              (heading) =>
+                `<a href="#${escapeHtml(heading.id)}" data-toc-target="${escapeHtml(heading.id)}" data-level="${heading.tagName === 'H3' ? '3' : '2'}">${escapeHtml(heading.textContent || '')}</a>`
+            )
+            .join('')
+        : '<p>当前页面没有二级标题</p>'
+    }
+    async function renderMarkdown(
+      container: HTMLElement,
+      markdown: string,
+      wiki = false,
+      sourcePath = ''
+    ) {
+      const cleaned = markdown.replace(/^# Page:\s*.+\n+/i, '')
+      container.innerHTML = DOMPurify.sanitize(await marked.parse(cleaned), {
+        USE_PROFILES: { html: true },
+        ADD_ATTR: ['target', 'rel'],
+      })
+      if (wiki) {
+        rewriteWikiLinks(container, sourcePath)
+        rewriteInlineFileReferences(container)
+        container
+          .querySelectorAll('details')
+          .forEach((details) => details.classList.add('agent-source-files'))
+      }
+      await renderMermaid(container)
+      await decorateMarkdownCode(container)
+    }
+    function updateDocumentUrl(title: string) {
+      if (requestedFile) return
+      const url = new URL(location.href)
+      if (title === 'Overview') url.searchParams.delete('doc')
+      else url.searchParams.set('doc', title)
+      history.replaceState(
+        history.state,
+        '',
+        `${url.pathname}${url.search}${url.hash}`
+      )
+    }
+    function setActiveDocument(title: string) {
+      getAll<HTMLElement>('[data-wiki-page]').forEach((element) => {
+        element.classList.toggle(
+          'is-active',
+          element.dataset.wikiPage === title
+        )
+        if (element instanceof HTMLButtonElement)
+          element.setAttribute(
+            'aria-current',
+            element.dataset.wikiPage === title ? 'page' : 'false'
+          )
+      })
+    }
+    async function loadWikiPage(title = 'Overview', updateUrl = true) {
+      currentPage = title
+      setActiveDocument(title)
+      showStatus(`正在读取“${title === 'Overview' ? 'Overview' : title}”…`)
+      wikiContent.innerHTML =
+        '<div class="agent-article-skeleton"><span></span><span></span><span></span><span></span><span></span></div>'
+      try {
+        const action = title === 'Overview' ? 'overview' : 'page'
+        const page = await fetchJson<{ markdown: string }>(
+          api('deepwiki', action, { title })
+        )
+        await renderMarkdown(wikiContent, page.markdown, true)
+        renderToc()
+        setSourceState('DeepWiki', true)
+        hideStatus()
+        if (updateUrl) updateDocumentUrl(title)
+        root.dataset.mobileNavOpen = 'false'
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      } catch (error) {
+        const message = error instanceof Error ? error.message : '文档读取失败'
+        wikiContent.innerHTML = `<div class="agent-wiki-error"><span class="i-ri-book-open-line"></span><h2>文档暂时没有生成完成</h2><p>${escapeHtml(message)}</p><button type="button" data-retry-wiki>重新读取</button></div>`
+        showStatus('DeepWiki 暂时没有返回该章节。', 'error')
+        renderToc()
+      }
+    }
+    function renderWikiStructure(items: WikiItem[]) {
+      wikiItems = items
+      const pages = get<HTMLElement>('[data-wiki-pages]')
+      const markup = items.length
+        ? items
+            .map(
+              (item) =>
+                `<button type="button" data-wiki-page="${escapeHtml(item.title)}" data-search="${escapeHtml(`${item.id} ${item.title}`.toLowerCase())}" style="--depth:${Math.min(item.depth, 3)}"><span>${escapeHtml(item.id)}</span><strong>${escapeHtml(item.title)}</strong></button>`
+            )
+            .join('')
+        : '<p class="agent-empty">DeepWiki 暂无目录</p>'
+      if (pages) pages.innerHTML = markup
+      setActiveDocument(currentPage)
+    }
+    async function loadWikiStructure() {
+      try {
+        const response = await fetchJson<{ items: WikiItem[] }>(
+          api('deepwiki', 'structure')
+        )
+        renderWikiStructure(response.items)
+        setSourceState('DeepWiki', true)
+      } catch {
+        renderWikiStructure([{ depth: 0, id: '1', title: 'Overview' }])
+        setSourceState('本地索引', false)
+      }
+    }
+
+    function importantFiles(items: TreeItem[]) {
+      const score = (path: string) => {
+        const value = path.toLowerCase()
+        let points = 0
+        if (
+          /^(package\.json|pyproject\.toml|cargo\.toml|go\.mod|composer\.json)$/.test(
+            value
+          )
+        )
+          points += 100
+        if (/(^|\/)src\/(index|main)\.[^/]+$/.test(value)) points += 90
+        if (
+          /(^|\/)(architecture|contributing|development|security)\.(md|mdx)$/i.test(
+            path
+          )
+        )
+          points += 80
+        if (/(^|\/)readme\.(md|mdx)$/i.test(path)) points += 55
+        if (/(^|\/)(index|main)\.[jt]sx?$/.test(value)) points += 45
+        return points - path.split('/').length * 2
+      }
+      return items
+        .filter((item) => item.type === 'blob')
+        .map((item) => ({ item, score: score(item.path) }))
+        .filter((entry) => entry.score > 20)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 10)
+        .map((entry) => entry.item)
+    }
+    function renderAtlas(items: TreeItem[]) {
+      const top = items
+        .filter(
+          (item) =>
+            item.type === 'tree' &&
+            !item.path.includes('/') &&
+            !item.path.startsWith('.')
+        )
+        .slice(0, 12)
+      const start = get<HTMLElement>('[data-start-files]')
+      const summary = get<HTMLElement>('[data-atlas-summary]')
+      const count = get<HTMLElement>('[data-tree-count]')
+      const modules = items.filter((item) => item.type === 'tree').length
+      const files = items.filter((item) => item.type === 'blob').length
+      if (summary)
+        summary.textContent = `${meta?.description || '这是一个开源代码库。'} 当前索引覆盖 ${files} 个文件、${modules} 个目录与 ${top.length} 个顶层边界。`
+      if (count) count.textContent = '正在分析 package.json…'
+      const recommended = importantFiles(items)
+      if (start)
+        start.innerHTML = recommended.length
+          ? recommended
+              .map(
+                (item, index) =>
+                  `<button type="button" data-open-file="${escapeHtml(item.path)}"><span>${String(index + 1).padStart(2, '0')}</span><i class="i-ri-file-code-line"></i><strong>${escapeHtml(item.path)}</strong><b class="i-ri-arrow-right-s-line"></b></button>`
+              )
+              .join('')
+          : '<p class="agent-empty">暂无推荐入口文件</p>'
+      buildTreeIndex(items)
+      renderRepositoryTree()
+      renderRepositoryDocs(items)
+      void buildManifestGraph(items)
+    }
+
+    function buildTreeIndex(items: TreeItem[]) {
+      treeChildren.clear()
+      for (const item of items) {
+        const parent = item.path.includes('/')
+          ? item.path.slice(0, item.path.lastIndexOf('/'))
+          : ''
+        const children = treeChildren.get(parent) || []
+        children.push(item)
+        treeChildren.set(parent, children)
+      }
+      for (const children of treeChildren.values()) {
+        children.sort((a, b) => {
+          if (a.type !== b.type) return a.type === 'tree' ? -1 : 1
+          return a.path.localeCompare(b.path)
+        })
+      }
+    }
+
+    function treeIcon(item: TreeItem) {
+      if (item.type === 'tree') return 'i-ri-folder-3-line'
+      if (/\.(md|mdx)$/i.test(item.path)) return 'i-ri-markdown-line'
+      if (/\.(png|jpe?g|gif|webp|avif|svg)$/i.test(item.path))
+        return 'i-ri-image-line'
+      if (/\.(json|jsonc|ya?ml|toml)$/i.test(item.path))
+        return 'i-ri-braces-line'
+      if (/\.(css|scss|less)$/i.test(item.path)) return 'i-ri-palette-line'
+      return 'i-ri-file-code-line'
+    }
+
+    function renderTreeLevel(parent: string): string {
+      const children = treeChildren.get(parent) || []
+      return children
+        .map((item) => {
+          const name = item.path.split('/').pop() || item.path
+          if (item.type === 'tree') {
+            const expanded = expandedFolders.has(item.path)
+            return `<div class="agent-tree-entry is-directory" data-tree-entry="${escapeHtml(item.path)}"><button type="button" data-tree-folder="${escapeHtml(item.path)}" aria-expanded="${expanded}"><i class="agent-tree-chevron i-ri-arrow-right-s-line"></i><span class="${treeIcon(item)}"></span><strong>${escapeHtml(name)}</strong></button><div class="agent-tree-group" data-tree-group="${escapeHtml(item.path)}" ${expanded ? '' : 'hidden'}>${expanded ? renderTreeLevel(item.path) : ''}</div></div>`
+          }
+          return `<div class="agent-tree-entry is-file" data-tree-entry="${escapeHtml(item.path)}"><button type="button" data-entry-path="${escapeHtml(item.path)}" data-entry-type="file"><i class="agent-tree-spacer"></i><span class="${treeIcon(item)}"></span><strong>${escapeHtml(name)}</strong></button></div>`
+        })
+        .join('')
+    }
+
+    function renderRepositoryTree() {
+      fileList.innerHTML =
+        renderTreeLevel('') || '<p class="agent-empty">仓库文件树为空</p>'
+      fileList.dataset.loaded = 'true'
+      const count = get<HTMLElement>('[data-file-count]')
+      if (count)
+        count.textContent = `${treeItems.length.toLocaleString('zh-CN')} 个条目`
+    }
+
+    function renderRepositoryDocs(items: TreeItem[]) {
+      const docs = items
+        .filter(
+          (item) => item.type === 'blob' && /\.(md|mdx)$/i.test(item.path)
+        )
+        .filter(
+          (item) =>
+            /(^|\/)(readme|contributing|architecture|development|security|code_of_conduct|maintenance|changelog)[^/]*\.(md|mdx)$/i.test(
+              item.path
+            ) || /^(docs?|documentation)\//i.test(item.path)
+        )
+        .sort((a, b) => {
+          const score = (path: string) => {
+            let value = 0
+            if (/^readme\.mdx?$/i.test(path)) value += 1000
+            if (/(^|\/)readme\.mdx?$/i.test(path)) value += 500
+            if (/^(docs?|documentation)\//i.test(path)) value += 180
+            if (/(contributing|architecture|development|security)/i.test(path))
+              value += 120
+            return value - path.split('/').length * 10
+          }
+          return score(b.path) - score(a.path) || a.path.localeCompare(b.path)
+        })
+        .slice(0, 120)
+      const target = get<HTMLElement>('[data-atlas-docs]')
+      const count = get<HTMLElement>('[data-repository-doc-count]')
+      if (count) count.textContent = `${docs.length} 份仓库文档`
+      if (!target) return
+      target.innerHTML = docs.length
+        ? docs
+            .map((item, index) => {
+              const minutes = Math.max(1, Math.round((item.size || 900) / 3800))
+              const kind = /readme/i.test(item.path)
+                ? 'readme'
+                : /contributing/i.test(item.path)
+                  ? 'contributing'
+                  : 'document'
+              return `<button type="button" data-open-file="${escapeHtml(item.path)}"><span>${String(index + 1).padStart(2, '0')}</span><i class="i-ri-book-2-line"></i><div><strong>${escapeHtml(item.path)}</strong><small><b>${kind}</b>约 ${minutes} 分钟</small></div><b class="i-ri-arrow-right-line"></b></button>`
+            })
+            .join('')
+        : '<p class="agent-empty">当前代码库没有检索到 Markdown 文档</p>'
+    }
+
+    async function fetchRepositoryFile(path: string) {
+      const cacheKey = `${activeRef}:${path}`
+      const cached = fileCache.get(cacheKey)
+      if (cached) return cached
+      const file = await fetchJson<FileResponse>(
+        api('github', 'contents', { path, ref: activeRef })
+      )
+      if (file.type !== 'file') throw new Error('这不是可读取的文件。')
+      fileCache.set(cacheKey, file)
+      return file
+    }
+
+    async function buildManifestGraph(items: TreeItem[]) {
+      const indexedManifests = items
+        .filter(
+          (item) =>
+            item.type === 'blob' &&
+            /(^|\/)package\.json$/i.test(item.path) &&
+            !item.path.includes('node_modules/')
+        )
+      const manifests = (
+        indexedManifests.some((item) => item.path === 'package.json')
+          ? indexedManifests
+          : [
+              { path: 'package.json', type: 'blob', size: null } as TreeItem,
+              ...indexedManifests,
+            ]
+      )
+        .sort((a, b) => {
+          if (a.path === 'package.json') return -1
+          if (b.path === 'package.json') return 1
+          return (
+            a.path.split('/').length - b.path.split('/').length ||
+            a.path.localeCompare(b.path)
+          )
+        })
+        .slice(0, 24)
+
+      const parsed = await Promise.all(
+        manifests.map(async (manifest) => {
+          try {
+            const file = await fetchRepositoryFile(manifest.path)
+            const json = JSON.parse(
+              file.content ? decodeBase64(file.content) : '{}'
+            ) as Record<string, unknown>
+            const dependencies = {
+              ...((json.dependencies as Record<string, string>) || {}),
+              ...((json.peerDependencies as Record<string, string>) || {}),
+              ...((json.optionalDependencies as Record<string, string>) || {}),
+            }
+            return {
+              id: manifest.path,
+              name:
+                typeof json.name === 'string'
+                  ? json.name
+                  : manifest.path === 'package.json'
+                    ? repoName
+                    : manifest.path.split('/').at(-2) || manifest.path,
+              path: manifest.path,
+              dependencyNames: Object.keys(dependencies),
+            }
+          } catch {
+            return null
+          }
+        })
+      )
+      const valid = parsed.filter((item): item is NonNullable<typeof item> =>
+        Boolean(item)
+      )
+      const names = new Map(valid.map((item) => [item.name, item.id]))
+      manifestNodes = valid.map((item) => ({
+        id: item.id,
+        name: item.name,
+        path: item.path,
+        dependencies: item.dependencyNames
+          .map((name) => names.get(name))
+          .filter((value): value is string => Boolean(value)),
+        incoming: [],
+        workspace: item.path !== 'package.json',
+      }))
+      let edgeCount = manifestNodes.reduce(
+        (total, node) => total + node.dependencies.length,
+        0
+      )
+      const rootManifest = manifestNodes.find(
+        (node) => node.path === 'package.json'
+      )
+      if (edgeCount === 0 && rootManifest && manifestNodes.length > 1) {
+        rootManifest.dependencies = manifestNodes
+          .filter((node) => node !== rootManifest)
+          .map((node) => node.id)
+        edgeCount = rootManifest.dependencies.length
+      }
+      const byId = new Map(manifestNodes.map((node) => [node.id, node]))
+      manifestNodes.forEach((node) =>
+        node.dependencies.forEach((dependency) =>
+          byId.get(dependency)?.incoming.push(node.id)
+        )
+      )
+      await renderManifestGraph(manifestNodes)
+      const count = get<HTMLElement>('[data-tree-count]')
+      if (count)
+        count.textContent = `${manifestNodes.length} 个项目 · ${edgeCount} 条关系`
+    }
+
+    async function renderManifestGraph(nodes: ManifestNode[]) {
+      const canvas = get<HTMLElement>('[data-graph-canvas]')
+      if (!canvas) return
+      dependencyGraph?.destroy()
+      dependencyGraph = null
+      if (!nodes.length) {
+        canvas.innerHTML =
+          '<div class="agent-graph-empty"><span class="i-ri-node-tree"></span><strong>没有检测到 package.json</strong><p>当前仓库可能使用其他包管理格式，文件浏览器仍可正常使用。</p></div>'
+        return
+      }
+      canvas.innerHTML = ''
+      dependencyGraphLoader ??= import('./agent/AgentDependencyGraph')
+      const { mountAgentDependencyGraph } = await dependencyGraphLoader
+      if (controller.signal.aborted) return
+      dependencyGraph = mountAgentDependencyGraph(canvas, nodes, (id) =>
+        showModuleDetail(id)
+      )
+      showModuleDetail(nodes[0]?.id || '')
+    }
+
+    function fitGraph() {
+      dependencyGraph?.fit()
+    }
+
+    function showModuleDetail(id: string, focus = false) {
+      const node = manifestNodes.find((entry) => entry.id === id)
+      const target = get<HTMLElement>('[data-module-detail]')
+      if (!node || !target) return
+      const byId = new Map(manifestNodes.map((entry) => [entry.id, entry.name]))
+      target.hidden = false
+      target.innerHTML = `<div><h3>${escapeHtml(node.name)}</h3><span>${escapeHtml(node.path.replace(/\/package\.json$/, '') || '/')}</span></div><div><span>它依赖</span><p>${node.dependencies.length ? node.dependencies.map((item) => `<button type="button" data-graph-node="${escapeHtml(item)}">${escapeHtml(byId.get(item) || item)}</button>`).join('') : '—'}</p></div><div><span>依赖它</span><p>${node.incoming.length ? node.incoming.map((item) => `<button type="button" data-graph-node="${escapeHtml(item)}">${escapeHtml(byId.get(item) || item)}</button>`).join('') : '—'}</p></div><button type="button" data-open-file="${escapeHtml(node.path)}">打开 package.json<span class="i-ri-arrow-right-line"></span></button>`
+      getAll<HTMLElement>('[data-graph-node]').forEach((element) =>
+        element.classList.toggle('is-active', element.dataset.graphNode === id)
+      )
+      dependencyGraph?.select(id, focus)
+    }
+
+    async function loadGitHub() {
+      const overview = await fetchJson<{ repo: RepoMeta }>(
+        api('github', 'overview')
+      )
+      applyMeta(overview.repo)
+      const tree = await fetchJson<{ items: TreeItem[] }>(
+        api('github', 'tree', { ref: overview.repo.defaultBranch })
+      )
+      treeItems = tree.items
+      renderAtlas(tree.items)
+      if (requestedFile) {
+        setAtlas(true)
+        activateAtlasTab('files')
+        await loadFile(requestedFile, false, requestedLine)
+      }
+    }
+
+    function activateAtlasTab(tab: 'overview' | 'docs' | 'files') {
+      getAll<HTMLButtonElement>('[data-atlas-tab]').forEach((button) => {
+        button.classList.toggle('is-active', button.dataset.atlasTab === tab)
+      })
+      getAll<HTMLElement>('[data-atlas-panel]').forEach((panel) => {
+        panel.hidden = panel.dataset.atlasPanel !== tab
+      })
+      if (
+        tab === 'files' &&
+        fileList.dataset.loaded !== 'true' &&
+        treeItems.length
+      )
+        renderRepositoryTree()
+    }
+    function setAtlas(open: boolean) {
+      root.dataset.atlasOpen = String(open)
+      get<HTMLElement>('[data-atlas]')?.setAttribute(
+        'aria-hidden',
+        String(!open)
+      )
+      document.documentElement.classList.toggle('agent-atlas-lock', open)
+      if (!open) {
+        get<HTMLElement>('[data-repo-map]')?.classList.remove('is-fullscreen')
+        document.documentElement.classList.remove('agent-graph-lock')
+      }
+    }
+    function toggleTreeFolder(button: HTMLButtonElement, force?: boolean) {
+      const path = button.dataset.treeFolder || ''
+      const entry = button.closest<HTMLElement>('.agent-tree-entry')
+      const group = entry?.querySelector<HTMLElement>(
+        ':scope > [data-tree-group]'
+      )
+      if (!path || !group) return
+      const open = force ?? button.getAttribute('aria-expanded') !== 'true'
+      button.setAttribute('aria-expanded', String(open))
+      if (open) {
+        expandedFolders.add(path)
+        if (!group.dataset.rendered) {
+          group.innerHTML = renderTreeLevel(path)
+          group.dataset.rendered = 'true'
+        }
+        group.hidden = false
+      } else {
+        expandedFolders.delete(path)
+        group.hidden = true
+      }
+    }
+
+    function revealTreePath(path: string) {
+      if (!fileList.dataset.loaded) renderRepositoryTree()
+      const segments = path.split('/').slice(0, -1)
+      let current = ''
+      for (const segment of segments) {
+        current = current ? `${current}/${segment}` : segment
+        const button = fileList.querySelector<HTMLButtonElement>(
+          `[data-tree-folder="${CSS.escape(current)}"]`
+        )
+        if (button) toggleTreeFolder(button, true)
+      }
+      getAll<HTMLElement>('[data-tree-entry]').forEach((entry) => {
+        entry.classList.toggle('is-active', entry.dataset.treeEntry === path)
+      })
+      fileList
+        .querySelector<HTMLElement>(`[data-tree-entry="${CSS.escape(path)}"]`)
+        ?.scrollIntoView({ block: 'nearest' })
+    }
+
+    const isText = (path: string) =>
+      /\.(md|mdx|txt|js|jsx|mjs|cjs|ts|tsx|astro|css|scss|less|html|vue|svelte|json|ya?ml|toml|xml|svg|py|rb|php|java|kt|kts|go|rs|swift|c|h|cpp|hpp|cs|sh|bash|zsh|sql|graphql|gql|env|gitignore|dockerfile)$/i.test(
+        path
+      ) || !path.split('/').pop()?.includes('.')
+
+    function destroyCodeViewer() {
+      codeViewer?.destroy()
+      codeViewer = null
+      fileContent.classList.remove('is-code-viewer')
+    }
+
+    async function showCodeFile(
+      path: string,
+      source: string,
+      language: string
+    ) {
+      let host = fileContent.querySelector<HTMLElement>('[data-code-host]')
+      if (!codeViewer || !host) {
+        destroyCodeViewer()
+        fileContent.innerHTML =
+          '<div class="agent-code-host" data-code-host></div>'
+        fileContent.classList.add('is-code-viewer')
+        host = fileContent.querySelector<HTMLElement>('[data-code-host]')!
+        codeViewerLoader ??= import('./agent/agent-code-viewer')
+        const { mountAgentCodeViewer } = await codeViewerLoader
+        if (controller.signal.aborted) return
+        codeViewer = mountAgentCodeViewer(host, currentTheme)
+      }
+      codeViewer.showFile(path, source, language)
+    }
+
+    function revealFileLine(line: number) {
+      if (!line) return
+      if (codeViewer) codeViewer.revealLine(line)
+      else
+        fileContent
+          .querySelector<HTMLElement>(`.line[data-line="${line}"]`)
+          ?.scrollIntoView({ block: 'center' })
+    }
+
+    async function loadFile(path: string, updateHistory = true, line = 0) {
+      if (!path) return
+      const sequence = ++fileLoadSequence
+      setAtlas(true)
+      activateAtlasTab('files')
+      revealTreePath(path)
+      const breadcrumb = get<HTMLElement>('[data-file-breadcrumb]')
+      const github = get<HTMLAnchorElement>('[data-file-github]')
+      if (breadcrumb) breadcrumb.textContent = path
+      if (github) {
+        github.href = githubUrl(`/blob/${activeRef}/${path}`)
+        github.hidden = false
+      }
+      if (currentFilePath === path && fileContent.dataset.ready === 'true') {
+        revealFileLine(line)
+        return
+      }
+      if (!codeViewer)
+        fileContent.innerHTML =
+          '<div class="agent-list-skeleton"><span></span><span></span><span></span></div>'
+      fileContent.dataset.loading = 'true'
+      fileContent.dataset.ready = 'false'
+      try {
+        const file = await fetchRepositoryFile(path)
+        if (sequence !== fileLoadSequence) return
+        if (!file.content) {
+          destroyCodeViewer()
+          fileContent.innerHTML =
+            '<div class="agent-file-empty"><span class="i-ri-file-download-line"></span><h3>这个文件不适合在线预览</h3><p>文件可能过大或使用了二进制格式。</p></div>'
+        } else {
+          const text = decodeBase64(file.content)
+          if (/\.(md|mdx)$/i.test(path)) {
+            destroyCodeViewer()
+            fileContent.innerHTML =
+              '<article class="agent-file-markdown prose"></article>'
+            const article = fileContent.querySelector<HTMLElement>('article')!
+            await renderMarkdown(article, text, true, path)
+          } else if (
+            /\.(png|jpe?g|gif|webp|svg)$/i.test(path) &&
+            file.downloadUrl
+          ) {
+            destroyCodeViewer()
+            fileContent.innerHTML = `<figure class="agent-file-image"><img src="${escapeHtml(file.downloadUrl)}" alt="${escapeHtml(file.name)}"><figcaption>${escapeHtml(path)}</figcaption></figure>`
+          } else if (isText(path)) {
+            const source = text.split('\n').slice(0, 1800).join('\n')
+            await showCodeFile(path, source, languageForPath(path))
+            fileContent.dataset.truncated = String(
+              text.split('\n').length > 1800
+            )
+          } else {
+            destroyCodeViewer()
+            fileContent.innerHTML = `<div class="agent-file-empty"><span class="i-ri-file-code-line"></span><h3>暂不支持预览这个文件</h3><p>${escapeHtml(path)}</p></div>`
+          }
+        }
+        currentFilePath = path
+        fileContent.dataset.loading = 'false'
+        fileContent.dataset.ready = 'true'
+        revealFileLine(line)
+        if (updateHistory)
+          history.replaceState(
+            history.state,
+            '',
+            `${repoFileUrl(path, activeRef)}${line ? `#L${line}` : ''}`
+          )
+      } catch (error) {
+        destroyCodeViewer()
+        fileContent.dataset.loading = 'false'
+        fileContent.innerHTML = `<p class="agent-empty">${escapeHtml(error instanceof Error ? error.message : '文件加载失败')}</p>`
+      }
+    }
+    async function searchTree(query: string) {
+      const value = query.trim().toLowerCase()
+      if (!value) {
+        renderRepositoryTree()
+        if (currentFilePath) revealTreePath(currentFilePath)
+        return
+      }
+      const matches = treeItems
+        .filter((item) => item.path.toLowerCase().includes(value))
+        .slice(0, 100)
+      fileList.innerHTML = matches.length
+        ? matches
+            .map(
+              (item) =>
+                `<button type="button" class="agent-search-result" ${item.type === 'tree' ? `data-search-folder="${escapeHtml(item.path)}"` : `data-entry-path="${escapeHtml(item.path)}" data-entry-type="file"`}><span class="${treeIcon(item)}"></span><strong>${escapeHtml(item.path)}</strong></button>`
+            )
+            .join('')
+        : '<p class="agent-empty">没有匹配的文件</p>'
+    }
+
+    async function askRepository(question: string) {
+      const panel = get<HTMLElement>('[data-answer-panel]')!
+      const content = get<HTMLElement>('[data-answer-content]')!
+      const label = get<HTMLElement>('[data-answer-question]')!
+      const submit = get<HTMLButtonElement>('[data-ask-submit]')!
+      panel.hidden = false
+      label.textContent = question
+      content.innerHTML =
+        '<div class="agent-article-skeleton"><span></span><span></span><span></span></div>'
+      submit.disabled = true
+      submit.querySelector('span')!.textContent = '思考中'
+      try {
+        const response = await fetchJson<{ markdown: string }>(
+          api('deepwiki', 'ask'),
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ question }),
+          }
+        )
+        await renderMarkdown(content, response.markdown, true)
+        panel.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      } catch (error) {
+        content.innerHTML = `<p class="agent-empty">${escapeHtml(error instanceof Error ? error.message : '回答生成失败')}</p>`
+      } finally {
+        submit.disabled = false
+        submit.querySelector('span')!.textContent = '提问'
+      }
+    }
+
+    root.addEventListener(
+      'click',
+      (event) => {
+        const target = event.target as HTMLElement
+        const launch = target.closest('[data-atlas-launch]')
+        if (launch) {
+          setAtlas(true)
+          return
+        }
+        const close = target.closest('[data-atlas-close]')
+        if (close) {
+          setAtlas(false)
+          return
+        }
+        const tab = target.closest<HTMLButtonElement>('[data-atlas-tab]')
+        if (tab) {
+          activateAtlasTab(
+            tab.dataset.atlasTab as 'overview' | 'docs' | 'files'
+          )
+          return
+        }
+        const wiki = target.closest<HTMLElement>('[data-wiki-page]')
+        if (wiki) {
+          event.preventDefault()
+          setAtlas(false)
+          void loadWikiPage(wiki.dataset.wikiPage || 'Overview')
+          return
+        }
+        const toc = target.closest<HTMLAnchorElement>('[data-toc-target]')
+        if (toc) {
+          event.preventDefault()
+          document
+            .getElementById(toc.dataset.tocTarget || '')
+            ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          return
+        }
+        const diagram = target.closest<HTMLButtonElement>(
+          '[data-diagram-action]'
+        )
+        if (diagram) {
+          const figure = diagram.closest<HTMLElement>('.agent-mermaid')
+          const canvas = figure?.querySelector<HTMLElement>(
+            '.agent-mermaid-canvas'
+          )
+          if (!figure || !canvas) return
+          const current = Number(figure.dataset.diagramScale || '1')
+          const next =
+            diagram.dataset.diagramAction === 'in'
+              ? Math.min(2, current + 0.2)
+              : diagram.dataset.diagramAction === 'out'
+                ? Math.max(0.6, current - 0.2)
+                : 1
+          figure.dataset.diagramScale = String(next)
+          canvas.style.setProperty('--diagram-scale', String(next))
+          const reset = figure.querySelector<HTMLButtonElement>(
+            '[data-diagram-action="reset"]'
+          )
+          if (reset) reset.textContent = `${Math.round(next * 100)}%`
+          return
+        }
+        const graphAction = target.closest<HTMLButtonElement>(
+          '[data-graph-action]'
+        )
+        if (graphAction) {
+          const action = graphAction.dataset.graphAction
+          if (action === 'fit') fitGraph()
+          else if (action === 'fullscreen') {
+            const map = get<HTMLElement>('[data-repo-map]')
+            map?.classList.toggle('is-fullscreen')
+            document.documentElement.classList.toggle(
+              'agent-graph-lock',
+              Boolean(map?.classList.contains('is-fullscreen'))
+            )
+            window.setTimeout(fitGraph, 80)
+          } else if (action === 'in') dependencyGraph?.zoomIn()
+          else if (action === 'out') dependencyGraph?.zoomOut()
+          return
+        }
+        const graphNode = target.closest<HTMLElement>('[data-graph-node]')
+        if (graphNode) {
+          showModuleDetail(graphNode.dataset.graphNode || '', true)
+          return
+        }
+        const treeFolder =
+          target.closest<HTMLButtonElement>('[data-tree-folder]')
+        if (treeFolder) {
+          toggleTreeFolder(treeFolder)
+          return
+        }
+        const searchFolder = target.closest<HTMLButtonElement>(
+          '[data-search-folder]'
+        )
+        if (searchFolder) {
+          fileSearch.value = ''
+          renderRepositoryTree()
+          const folderPath = searchFolder.dataset.searchFolder || ''
+          const parts = folderPath.split('/')
+          let current = ''
+          for (const part of parts) {
+            current = current ? `${current}/${part}` : part
+            const button = fileList.querySelector<HTMLButtonElement>(
+              `[data-tree-folder="${CSS.escape(current)}"]`
+            )
+            if (button) toggleTreeFolder(button, true)
+          }
+          return
+        }
+        const recommended = target.closest<HTMLElement>('[data-open-file]')
+        if (recommended) {
+          event.preventDefault()
+          const ref = recommended.dataset.fileRef
+          if (ref) activeRef = ref
+          void loadFile(
+            recommended.dataset.openFile || '',
+            true,
+            Number(recommended.dataset.fileLine || 0)
+          )
+          return
+        }
+        const entry = target.closest<HTMLButtonElement>('[data-entry-path]')
+        if (entry) {
+          void loadFile(entry.dataset.entryPath || '')
+          return
+        }
+        if (target.closest('[data-collapse-tree]')) {
+          expandedFolders.clear()
+          renderRepositoryTree()
+          return
+        }
+        if (target.closest('[data-first-document]')) {
+          setAtlas(false)
+          void loadWikiPage(wikiItems[0]?.title || 'Overview')
+          return
+        }
+        if (target.closest('[data-mobile-nav]')) {
+          root.dataset.mobileNavOpen = 'true'
+          return
+        }
+        if (target.closest('[data-mobile-nav-close]')) {
+          root.dataset.mobileNavOpen = 'false'
+          return
+        }
+        if (target.closest('[data-answer-close]')) {
+          const panel = get<HTMLElement>('[data-answer-panel]')
+          if (panel) panel.hidden = true
+          return
+        }
+        if (target.closest('[data-retry-wiki]'))
+          void loadWikiPage(currentPage, false)
+      },
+      { signal: controller.signal }
+    )
+
+    let fileSearchTimer = 0
+    fileSearch.addEventListener(
+      'input',
+      () => {
+        window.clearTimeout(fileSearchTimer)
+        fileSearchTimer = window.setTimeout(
+          () => void searchTree(fileSearch.value),
+          160
+        )
+      },
+      { signal: controller.signal }
+    )
+    get<HTMLInputElement>('[data-doc-search]')?.addEventListener(
+      'input',
+      (event) => {
+        const value = (event.currentTarget as HTMLInputElement).value
+          .trim()
+          .toLowerCase()
+        getAll<HTMLElement>('[data-wiki-pages] [data-wiki-page]').forEach(
+          (button) => {
+            button.hidden =
+              Boolean(value) && !(button.dataset.search || '').includes(value)
+          }
+        )
+      },
+      { signal: controller.signal }
+    )
+    get<HTMLFormElement>('[data-ask-form]')?.addEventListener(
+      'submit',
+      (event) => {
+        event.preventDefault()
+        const input = get<HTMLInputElement>('[data-ask-input]')!
+        const question = input.value.trim()
+        if (question) {
+          input.value = ''
+          void askRepository(question)
+        }
+      },
+      { signal: controller.signal }
+    )
+    get<HTMLButtonElement>('[data-copy-command]')?.addEventListener(
+      'click',
+      async (event) => {
+        const button = event.currentTarget as HTMLButtonElement
+        if (!button.dataset.copy) return
+        await navigator.clipboard.writeText(button.dataset.copy)
+        const label = button.querySelector<HTMLElement>('[data-command-label]')!
+        const previous = label.textContent
+        label.textContent = '已复制'
+        window.setTimeout(() => {
+          label.textContent = previous
+        }, 1300)
+      },
+      { signal: controller.signal }
+    )
+    document.addEventListener(
+      'keydown',
+      (event) => {
+        if (event.key === 'Escape') {
+          if (root.dataset.atlasOpen === 'true') setAtlas(false)
+          else root.dataset.mobileNavOpen = 'false'
+        }
+        if (
+          event.key === '/' &&
+          !(event.target instanceof HTMLInputElement) &&
+          !(event.target instanceof HTMLTextAreaElement)
+        ) {
+          event.preventDefault()
+          if (
+            root.dataset.atlasOpen === 'true' &&
+            get<HTMLElement>('[data-atlas-panel="files"]')?.hidden === false
+          )
+            fileSearch.focus()
+          else get<HTMLInputElement>('[data-doc-search]')?.focus()
+        }
+      },
+      { signal: controller.signal }
+    )
+
+    const observer = new MutationObserver(() => {
+      const dark = document.documentElement.classList.contains('dark')
+      if (dark === currentTheme) return
+      currentTheme = dark
+      codeViewer?.setTheme(dark)
+      void renderMermaid(root)
+    })
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    })
+    document.addEventListener(
+      'astro:before-swap',
+      () => observer.disconnect(),
+      { once: true }
+    )
+
+    if (!repo || !owner || !repoName) {
+      showStatus('仓库地址不完整，请从 Agent 目录重新进入。', 'error')
+      return
+    }
+    const requestedDocument =
+      new URLSearchParams(location.search).get('doc') || 'Overview'
+    void (async () => {
+      await loadWikiStructure()
+      await loadWikiPage(
+        resolveWikiTitle(requestedDocument) || 'Overview',
+        false
+      )
+    })()
+    void loadGitHub().catch((error) => {
+      showStatus(
+        error instanceof Error ? error.message : '仓库信息加载失败。',
+        'error'
+      )
+    })
+  }
+
+  mountAgentKnowledge()
+  document.addEventListener('astro:page-load', mountAgentKnowledge)
+</script>
+
+<style is:global>
+  html.agent-atlas-lock {
+    overflow: hidden;
+  }
+  #main:has(.agent-knowledge) {
+    padding: 0;
+    max-width: none;
+  }
+  .agent-knowledge {
+    --agent-line: color-mix(in srgb, var(--c-text) 14%, transparent);
+    --agent-line-strong: color-mix(in srgb, var(--c-text) 24%, transparent);
+    --agent-soft: color-mix(in srgb, var(--c-text) 4%, var(--c-bg));
+    --agent-muted: var(--c-text-muted);
+    min-height: calc(100vh - var(--navbar-height, 4rem));
+    color: var(--c-text);
+    background: var(--c-bg);
+  }
+  .agent-knowledge button,
+  .agent-knowledge input {
+    font: inherit;
+  }
+  .agent-knowledge button {
+    color: inherit;
+  }
+  .agent-knowledge-head {
+    position: sticky;
+    top: var(--navbar-height, 4rem);
+    z-index: 30;
+    height: 4.25rem;
+    padding: 0 clamp(1rem, 2.2vw, 2rem);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    border-bottom: 1px solid var(--agent-line);
+    background: color-mix(in srgb, var(--c-bg) 91%, transparent);
+    backdrop-filter: blur(18px) saturate(130%);
+  }
+  .agent-knowledge-brand,
+  .agent-knowledge-actions,
+  .agent-atlas-title,
+  .agent-atlas-head > div,
+  .agent-file-viewer > header > div {
+    display: flex;
+    align-items: center;
+  }
+  .agent-knowledge-brand {
+    gap: 0.7rem;
+    min-width: 0;
+  }
+  .agent-back {
+    width: 2rem;
+    height: 2rem;
+    display: grid;
+    place-items: center;
+    border-radius: 0.55rem;
+    color: var(--agent-muted);
+  }
+  .agent-back:hover {
+    color: var(--c-text);
+    background: var(--agent-soft);
+  }
+  .agent-knowledge-brand img {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.55rem;
+    background: var(--agent-soft);
+  }
+  .agent-knowledge-brand > div {
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
+    min-width: 0;
+  }
+  .agent-knowledge-brand p {
+    display: contents;
+  }
+  .agent-knowledge-brand p span,
+  .agent-knowledge-brand p i {
+    color: var(--agent-muted);
+    font-size: 0.86rem;
+    font-style: normal;
+  }
+  .agent-knowledge-brand h1 {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .agent-source-state {
+    margin-left: 0.35rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.7rem;
+    color: var(--agent-muted);
+  }
+  .agent-source-state > i {
+    width: 0.38rem;
+    height: 0.38rem;
+    border-radius: 50%;
+    background: #d89b25;
+    box-shadow: 0 0 0 4px color-mix(in srgb, #d89b25 15%, transparent);
+  }
+  .agent-source-state.is-ready > i {
+    background: #22a06b;
+    box-shadow: 0 0 0 4px color-mix(in srgb, #22a06b 15%, transparent);
+  }
+  .agent-knowledge-actions {
+    gap: 0.45rem;
+  }
+  .agent-knowledge-actions > button,
+  .agent-knowledge-actions > a {
+    min-height: 2.35rem;
+    padding: 0 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    border: 1px solid var(--agent-line);
+    border-radius: 0.65rem;
+    background: var(--c-bg);
+    color: var(--agent-muted);
+    font-size: 0.8rem;
+  }
+  .agent-knowledge-actions > a {
+    width: 2.35rem;
+    padding: 0;
+    justify-content: center;
+    font-size: 1.1rem;
+  }
+  .agent-knowledge-actions > button:hover,
+  .agent-knowledge-actions > a:hover {
+    border-color: var(--agent-line-strong);
+    color: var(--c-text);
+    background: var(--agent-soft);
+  }
+  .agent-knowledge-actions .agent-atlas-launch {
+    background: var(--c-text);
+    color: var(--c-bg);
+    border-color: var(--c-text);
+  }
+  .agent-mobile-nav {
+    display: none !important;
+  }
+
+  .agent-reader-shell {
+    display: grid;
+    grid-template-columns: 17rem minmax(0, 54rem) 14rem;
+    justify-content: center;
+    min-height: calc(100vh - 8.25rem);
+  }
+  .agent-wiki-nav {
+    position: sticky;
+    top: calc(var(--navbar-height, 4rem) + 4.25rem);
+    align-self: start;
+    height: calc(100vh - var(--navbar-height, 4rem) - 4.25rem);
+    padding: 1.5rem 1rem 6.5rem;
+    border-right: 1px solid var(--agent-line);
+    overflow-y: auto;
+  }
+  .agent-wiki-nav-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 0.35rem 0.9rem;
+  }
+  .agent-wiki-nav-head div {
+    display: grid;
+    gap: 0.15rem;
+  }
+  .agent-wiki-nav-head span,
+  .agent-page-toc-inner > span,
+  .agent-atlas-intro span,
+  .agent-map-section header span,
+  .agent-atlas-section-head > span,
+  .agent-file-browser-head span {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.64rem;
+    letter-spacing: 0.13em;
+    color: var(--agent-muted);
+  }
+  .agent-wiki-nav-head strong {
+    font-size: 0.86rem;
+  }
+  .agent-wiki-nav-head > button {
+    display: none;
+    border: 0;
+    background: transparent;
+    font-size: 1.1rem;
+  }
+  .agent-nav-search,
+  .agent-file-search {
+    height: 2.55rem;
+    padding: 0 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    border-radius: 0.65rem;
+    background: var(--agent-soft);
+    color: var(--agent-muted);
+  }
+  .agent-nav-search input,
+  .agent-file-search input {
+    min-width: 0;
+    flex: 1;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--c-text);
+    font-size: 0.78rem;
+  }
+  .agent-nav-search kbd,
+  .agent-file-search kbd {
+    font-size: 0.65rem;
+    border: 1px solid var(--agent-line);
+    border-radius: 0.3rem;
+    padding: 0.05rem 0.3rem;
+    background: var(--c-bg);
+  }
+  .agent-wiki-pages {
+    margin-top: 1rem;
+    display: grid;
+    gap: 0.15rem;
+  }
+  .agent-wiki-pages button {
+    width: 100%;
+    min-height: 2.15rem;
+    padding: 0.45rem 0.6rem 0.45rem calc(0.6rem + var(--depth) * 0.7rem);
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 0.55rem;
+    align-items: start;
+    text-align: left;
+    border: 0;
+    border-radius: 0.5rem;
+    background: transparent;
+    color: var(--agent-muted);
+    font-size: 0.76rem;
+  }
+  .agent-wiki-pages button:hover {
+    color: var(--c-text);
+    background: var(--agent-soft);
+  }
+  .agent-wiki-pages button.is-active {
+    color: var(--c-text);
+    background: color-mix(in srgb, var(--c-text) 8%, var(--c-bg));
+  }
+  .agent-wiki-pages button span {
+    font-family: ui-monospace, monospace;
+    font-size: 0.64rem;
+    color: var(--c-text-faint);
+    padding-top: 0.1rem;
+  }
+  .agent-wiki-pages button strong {
+    font-weight: 540;
+    line-height: 1.35;
+  }
+  .agent-nav-repo-card {
+    margin-top: 1.25rem;
+    padding: 0.9rem;
+    border-top: 1px solid var(--agent-line);
+    display: grid;
+    gap: 0.35rem;
+  }
+  .agent-nav-repo-card > span {
+    font-size: 0.66rem;
+    color: var(--agent-muted);
+  }
+  .agent-nav-repo-card > strong {
+    font-size: 0.78rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .agent-nav-repo-card > small {
+    color: var(--agent-muted);
+    font-size: 0.68rem;
+    line-height: 1.45;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .agent-nav-repo-card > div {
+    margin-top: 0.3rem;
+    display: flex;
+    gap: 0.65rem;
+    color: var(--agent-muted);
+    font-size: 0.67rem;
+  }
+  .agent-nav-repo-card > div span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+  }
+
+  .agent-wiki-main {
+    min-width: 0;
+    padding: 2.5rem clamp(1.4rem, 4vw, 4rem) 10rem;
+    border-right: 1px solid var(--agent-line);
+  }
+  .agent-reader-status {
+    min-height: 2rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    color: var(--agent-muted);
+    font-size: 0.75rem;
+  }
+  .agent-reader-status[data-kind='error'] {
+    color: #b45309;
+  }
+  .agent-pulse {
+    width: 0.48rem;
+    height: 0.48rem;
+    border-radius: 50%;
+    background: var(--c-text);
+    animation: agent-pulse 1.2s ease-in-out infinite;
+  }
+  @keyframes agent-pulse {
+    50% {
+      opacity: 0.2;
+      transform: scale(0.76);
+    }
+  }
+  .agent-wiki-article {
+    max-width: none;
+    color: var(--c-text);
+  }
+  .agent-wiki-article > h1:first-child {
+    margin-top: 0;
+    font-size: clamp(2rem, 3.3vw, 2.85rem);
+    letter-spacing: -0.045em;
+    line-height: 1.08;
+  }
+  .agent-wiki-article h2 {
+    margin-top: 3rem;
+    scroll-margin-top: 9rem;
+    letter-spacing: -0.025em;
+  }
+  .agent-wiki-article h3 {
+    margin-top: 2rem;
+    scroll-margin-top: 9rem;
+  }
+  .agent-wiki-article p,
+  .agent-wiki-article li {
+    line-height: 1.82;
+  }
+  .agent-wiki-article a,
+  .agent-answer a,
+  .agent-file-markdown a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--c-text) 28%, transparent);
+    text-underline-offset: 0.2em;
+  }
+  .agent-wiki-article a.agent-file-reference,
+  .agent-answer a.agent-file-reference,
+  .agent-file-markdown a.agent-file-reference {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.08rem 0.34rem;
+    border: 1px solid var(--agent-line);
+    border-radius: 0.38rem;
+    background: var(--agent-soft);
+    font-family: var(--font-mono);
+    font-size: 0.88em;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .agent-file-reference::before {
+    content: '';
+    width: 0.72em;
+    height: 0.82em;
+    border: 1px solid currentColor;
+    border-radius: 0.12em;
+    opacity: 0.55;
+  }
+  .agent-file-reference:hover {
+    border-color: var(--agent-line-strong);
+    background: color-mix(in srgb, var(--c-text) 8%, var(--c-bg));
+  }
+  .agent-wiki-article code:not(pre code),
+  .agent-answer code:not(pre code) {
+    border-radius: 0.35rem;
+    background: var(--agent-soft);
+    padding: 0.13em 0.35em;
+  }
+  .agent-wiki-article pre,
+  .agent-answer pre,
+  .agent-file-markdown pre {
+    border: 1px solid var(--agent-line);
+    border-radius: 0.75rem;
+    background: color-mix(in srgb, var(--c-text) 4%, var(--c-bg));
+  }
+  .agent-source-files {
+    margin: 0 0 2rem;
+    padding: 0;
+    border: 1px solid var(--agent-line);
+    border-radius: 0.75rem;
+    background: var(--agent-soft);
+    overflow: hidden;
+  }
+  .agent-source-files summary {
+    padding: 0.8rem 1rem;
+    cursor: pointer;
+    font-size: 0.78rem;
+    font-weight: 650;
+  }
+  .agent-source-files > *:not(summary) {
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+  .agent-article-skeleton {
+    display: grid;
+    gap: 0.9rem;
+  }
+  .agent-article-skeleton span {
+    height: 0.8rem;
+    border-radius: 999px;
+    background: linear-gradient(
+      90deg,
+      var(--agent-soft),
+      color-mix(in srgb, var(--c-text) 9%, var(--c-bg)),
+      var(--agent-soft)
+    );
+    background-size: 220% 100%;
+    animation: agent-shimmer 1.4s linear infinite;
+  }
+  .agent-article-skeleton span:first-child {
+    width: 62%;
+    height: 2.8rem;
+    margin-bottom: 1rem;
+  }
+  .agent-article-skeleton span:nth-child(3) {
+    width: 88%;
+  }
+  .agent-article-skeleton span:nth-child(5) {
+    width: 72%;
+  }
+  @keyframes agent-shimmer {
+    to {
+      background-position: -220% 0;
+    }
+  }
+  .agent-wiki-error {
+    min-height: 50vh;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    text-align: center;
+  }
+  .agent-wiki-error > span {
+    font-size: 2rem;
+    color: var(--agent-muted);
+  }
+  .agent-wiki-error h2 {
+    margin: 0.8rem 0 0;
+  }
+  .agent-wiki-error p {
+    color: var(--agent-muted);
+  }
+  .agent-wiki-error button {
+    padding: 0.6rem 0.9rem;
+    border: 1px solid var(--agent-line);
+    border-radius: 0.6rem;
+    background: var(--c-text);
+    color: var(--c-bg);
+  }
+
+  .agent-page-toc {
+    position: sticky;
+    top: calc(var(--navbar-height, 4rem) + 4.25rem);
+    align-self: start;
+    height: calc(100vh - var(--navbar-height, 4rem) - 4.25rem);
+    padding: 2rem 1.2rem 7rem;
+    overflow-y: auto;
+  }
+  .agent-page-toc-inner {
+    display: grid;
+  }
+  .agent-page-toc-inner > strong {
+    margin-top: 0.2rem;
+    font-size: 0.82rem;
+  }
+  .agent-page-toc nav {
+    margin-top: 1rem;
+    display: grid;
+    gap: 0.1rem;
+    border-left: 1px solid var(--agent-line);
+  }
+  .agent-page-toc nav a {
+    padding: 0.42rem 0.7rem;
+    color: var(--agent-muted);
+    font-size: 0.7rem;
+    line-height: 1.4;
+  }
+  .agent-page-toc nav a[data-level='3'] {
+    padding-left: 1.2rem;
+    font-size: 0.66rem;
+  }
+  .agent-page-toc nav a:hover {
+    color: var(--c-text);
+  }
+  .agent-page-toc nav p {
+    padding-left: 0.7rem;
+    color: var(--agent-muted);
+    font-size: 0.68rem;
+  }
+  .agent-page-links {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--agent-line);
+    display: grid;
+    gap: 0.35rem;
+  }
+  .agent-page-links a,
+  .agent-page-links button {
+    min-height: 2rem;
+    padding: 0.35rem 0.15rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 0;
+    background: transparent;
+    color: var(--agent-muted);
+    font-size: 0.7rem;
+    text-align: left;
+  }
+  .agent-page-links a:hover,
+  .agent-page-links button:hover {
+    color: var(--c-text);
+  }
+
+  .agent-ask {
+    position: fixed;
+    z-index: 25;
+    left: 50%;
+    bottom: 1.15rem;
+    transform: translateX(-50%);
+    width: min(42rem, calc(100vw - 2rem));
+    min-height: 3.4rem;
+    padding: 0.4rem 0.45rem 0.4rem 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    border: 1px solid var(--agent-line-strong);
+    border-radius: 0.9rem;
+    background: color-mix(in srgb, var(--c-bg) 92%, transparent);
+    box-shadow: 0 18px 60px color-mix(in srgb, #000 18%, transparent);
+    backdrop-filter: blur(18px);
+  }
+  .agent-ask > span {
+    color: var(--agent-muted);
+  }
+  .agent-ask input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--c-text);
+    font-size: 0.84rem;
+  }
+  .agent-ask kbd {
+    color: var(--agent-muted);
+    font-size: 0.65rem;
+  }
+  .agent-ask button {
+    min-height: 2.55rem;
+    padding: 0 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    border: 0;
+    border-radius: 0.65rem;
+    background: var(--c-text);
+    color: var(--c-bg);
+    font-size: 0.75rem;
+  }
+  .agent-ask button:disabled {
+    opacity: 0.55;
+  }
+  .agent-answer {
+    margin-top: 3rem;
+    scroll-margin-top: 9rem;
+    border-top: 1px solid var(--agent-line-strong);
+    padding-top: 1rem;
+  }
+  .agent-answer > header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .agent-answer > header div {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+  .agent-answer > header button {
+    width: 2rem;
+    height: 2rem;
+    border: 0;
+    border-radius: 0.5rem;
+    background: var(--agent-soft);
+  }
+  .agent-answer-question {
+    margin: 1rem 0;
+    padding: 0.75rem 1rem;
+    border-left: 2px solid var(--c-text);
+    background: var(--agent-soft);
+    font-weight: 600;
+  }
+
+  .agent-atlas-scrim,
+  .agent-mobile-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    border: 0;
+    background: rgb(0 0 0 / 0.48);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s ease;
+  }
+  .agent-atlas {
+    position: fixed;
+    z-index: 70;
+    inset: 0 0 0 auto;
+    width: min(86rem, 96vw);
+    display: flex;
+    flex-direction: column;
+    background: var(--c-bg);
+    box-shadow: -28px 0 80px rgb(0 0 0 / 0.22);
+    transform: translateX(102%);
+    transition: transform 0.28s cubic-bezier(0.2, 0.75, 0.25, 1);
+  }
+  .agent-knowledge[data-atlas-open='true'] .agent-atlas {
+    transform: none;
+  }
+  .agent-knowledge[data-atlas-open='true'] .agent-atlas-scrim {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .agent-atlas-head {
+    min-height: 4.6rem;
+    padding: 0.75rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--agent-line);
+  }
+  .agent-atlas-title {
+    gap: 0.75rem;
+  }
+  .agent-atlas-title > span {
+    font-size: 1.35rem;
+  }
+  .agent-atlas-title div {
+    display: grid;
+    gap: 0.15rem;
+  }
+  .agent-atlas-title strong {
+    font-size: 0.92rem;
+  }
+  .agent-atlas-title small {
+    color: var(--agent-muted);
+    font-size: 0.68rem;
+  }
+  .agent-atlas-title small i {
+    padding: 0 0.35rem;
+    font-style: normal;
+  }
+  .agent-atlas-head > div:last-child {
+    gap: 0.55rem;
+  }
+  .agent-atlas-head a,
+  .agent-atlas-head button {
+    min-height: 2.25rem;
+    padding: 0 0.7rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    border: 1px solid var(--agent-line);
+    border-radius: 0.6rem;
+    background: var(--c-bg);
+    color: var(--agent-muted);
+    font-size: 0.74rem;
+  }
+  .agent-atlas-head button {
+    width: 2.25rem;
+    padding: 0;
+    justify-content: center;
+    font-size: 1.1rem;
+  }
+  .agent-atlas-tabs {
+    min-height: 3.4rem;
+    padding: 0 1.25rem;
+    display: flex;
+    align-items: end;
+    gap: 1.35rem;
+    border-bottom: 1px solid var(--agent-line);
+  }
+  .agent-atlas-tabs button {
+    height: 3.4rem;
+    padding: 0 0.1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    color: var(--agent-muted);
+    font-size: 0.78rem;
+  }
+  .agent-atlas-tabs button.is-active {
+    color: var(--c-text);
+    border-bottom-color: var(--c-text);
+  }
+  .agent-atlas-body {
+    flex: 1;
+    overflow: auto;
+    padding: 2rem clamp(1rem, 3vw, 2.5rem) 4rem;
+  }
+  .agent-atlas-body > section {
+    max-width: 78rem;
+    margin: 0 auto;
+  }
+  .agent-atlas-intro {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+  .agent-atlas-intro h2,
+  .agent-atlas-section-head h2 {
+    max-width: 46rem;
+    margin: 0 0 0.65rem;
+    font-size: clamp(1.65rem, 3vw, 2.6rem);
+    letter-spacing: -0.04em;
+    line-height: 1.12;
+  }
+  .agent-atlas-intro p,
+  .agent-atlas-section-head p {
+    max-width: 50rem;
+    color: var(--agent-muted);
+    line-height: 1.65;
+  }
+  .agent-atlas-intro button {
+    min-height: 2.8rem;
+    padding: 0 1rem;
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 0;
+    border-radius: 0.7rem;
+    background: var(--c-text);
+    color: var(--c-bg);
+  }
+  .agent-overview-facts {
+    margin-top: 2rem;
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    border-block: 1px solid var(--agent-line);
+  }
+  .agent-overview-facts > div {
+    min-width: 0;
+    padding: 1rem 0.85rem;
+    border-right: 1px solid var(--agent-line);
+    display: grid;
+    gap: 0.35rem;
+  }
+  .agent-overview-facts > div:last-child {
+    border-right: 0;
+  }
+  .agent-overview-facts span {
+    color: var(--agent-muted);
+    font-size: 0.66rem;
+  }
+  .agent-overview-facts strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .agent-overview-topics {
+    min-height: 2.4rem;
+    padding-top: 0.8rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .agent-overview-topics span,
+  .agent-overview-topics a {
+    padding: 0.22rem 0.48rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    border-radius: 0.35rem;
+    background: var(--agent-soft);
+    color: var(--agent-muted);
+    font-size: 0.64rem;
+  }
+  .agent-overview-topics a:hover {
+    color: var(--c-text);
+  }
+  .agent-map-section {
+    margin-top: 2.7rem;
+  }
+  .agent-map-section > header {
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .agent-map-section header h3 {
+    margin: 0;
+    font-size: 1rem;
+  }
+  .agent-map-section header p {
+    margin: 0.25rem 0 0;
+    color: var(--agent-muted);
+    font-size: 0.7rem;
+  }
+  .agent-map-section header small {
+    color: var(--agent-muted);
+    font-size: 0.68rem;
+  }
+  .agent-repo-map {
+    position: relative;
+    min-height: 34rem;
+    border: 1px solid var(--agent-line);
+    border-radius: 1rem;
+    background-color: color-mix(in srgb, var(--c-text) 2.4%, var(--c-bg));
+    background-image: radial-gradient(
+      var(--agent-line) 0.7px,
+      transparent 0.7px
+    );
+    background-size: 16px 16px;
+    overflow: hidden;
+  }
+  .agent-repo-map.is-fullscreen {
+    position: fixed;
+    z-index: 100;
+    inset: 1rem;
+    min-height: 0;
+    border-color: var(--agent-line-strong);
+    background-color: var(--c-bg);
+    box-shadow: 0 28px 90px rgb(0 0 0 / 0.3);
+  }
+  html.agent-graph-lock {
+    overflow: hidden;
+  }
+  .agent-graph-hint,
+  .agent-graph-fullscreen {
+    position: absolute;
+    z-index: 4;
+    border: 1px solid var(--agent-line);
+    background: color-mix(in srgb, var(--c-bg) 92%, transparent);
+    backdrop-filter: blur(16px);
+  }
+  .agent-graph-hint {
+    inset: 0.8rem 3.55rem auto auto;
+    padding: 0.52rem 0.72rem;
+    border-radius: 0.55rem;
+    color: var(--agent-muted);
+    font-size: 0.66rem;
+    pointer-events: none;
+  }
+  .agent-graph-fullscreen {
+    inset: 0.8rem 0.8rem auto auto;
+    width: 2.35rem;
+    height: 2.35rem;
+    display: grid;
+    place-items: center;
+    border-radius: 0.55rem;
+    color: var(--agent-muted);
+    font-size: 0.9rem;
+  }
+  .agent-graph-fullscreen:hover {
+    background: var(--agent-soft);
+    color: var(--c-text);
+  }
+  .agent-graph-viewport {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+  .agent-graph-canvas {
+    position: absolute;
+    inset: 0;
+  }
+  .agent-graph-empty {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 0.4rem;
+    color: var(--agent-muted);
+    text-align: center;
+  }
+  .agent-graph-empty > span {
+    font-size: 1.6rem;
+  }
+  .agent-graph-empty p {
+    max-width: 26rem;
+    margin: 0;
+    font-size: 0.72rem;
+  }
+  .agent-module-detail {
+    margin-top: 1rem;
+    padding: 1.2rem 0;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1fr auto;
+    gap: 1.2rem;
+    align-items: start;
+    border-block: 1px solid var(--agent-line);
+  }
+  .agent-module-detail > div {
+    min-width: 0;
+    display: grid;
+    gap: 0.38rem;
+  }
+  .agent-module-detail h3 {
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 1.05rem;
+  }
+  .agent-module-detail span,
+  .agent-module-detail > div > span {
+    color: var(--agent-muted);
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+  }
+  .agent-module-detail p {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    color: var(--agent-muted);
+    font-size: 0.7rem;
+  }
+  .agent-module-detail p button {
+    padding: 0.12rem 0.35rem;
+    border: 0;
+    border-radius: 0.3rem;
+    background: var(--agent-soft);
+    font-size: 0.66rem;
+  }
+  .agent-module-detail > button {
+    min-height: 2.4rem;
+    padding: 0 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    border: 1px solid var(--agent-line);
+    border-radius: 0.55rem;
+    background: var(--c-bg);
+    font-size: 0.7rem;
+  }
+  .agent-start-files {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-top: 1px solid var(--agent-line);
+  }
+  .agent-start-files button {
+    min-width: 0;
+    min-height: 3.4rem;
+    padding: 0.55rem 0.75rem;
+    display: grid;
+    grid-template-columns: 2rem 1.5rem minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.5rem;
+    border: 0;
+    border-bottom: 1px solid var(--agent-line);
+    background: transparent;
+    text-align: left;
+  }
+  .agent-start-files button:nth-child(odd) {
+    border-right: 1px solid var(--agent-line);
+  }
+  .agent-start-files button > span {
+    color: var(--agent-muted);
+    font-family: ui-monospace, monospace;
+    font-size: 0.68rem;
+  }
+  .agent-start-files button > i {
+    color: var(--agent-muted);
+  }
+  .agent-start-files button strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: ui-monospace, monospace;
+    font-size: 0.72rem;
+  }
+  .agent-start-files button:hover {
+    background: var(--agent-soft);
+  }
+  .agent-atlas-section-head {
+    position: relative;
+    margin-bottom: 2rem;
+  }
+  .agent-atlas-section-head > small {
+    position: absolute;
+    right: 0;
+    bottom: 0.15rem;
+    color: var(--agent-muted);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+  }
+  .agent-atlas-docs {
+    border-top: 1px solid var(--agent-line);
+  }
+  .agent-atlas-docs button {
+    width: 100%;
+    min-height: 4.6rem;
+    padding: 0.75rem 0.5rem;
+    display: grid;
+    grid-template-columns: 2rem 2rem minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.65rem;
+    border: 0;
+    border-bottom: 1px solid var(--agent-line);
+    background: transparent;
+    text-align: left;
+  }
+  .agent-atlas-docs button > span {
+    color: var(--agent-muted);
+    font-family: ui-monospace, monospace;
+    font-size: 0.68rem;
+  }
+  .agent-atlas-docs button > i {
+    color: var(--agent-muted);
+  }
+  .agent-atlas-docs button div {
+    display: grid;
+    gap: 0.25rem;
+  }
+  .agent-atlas-docs button strong {
+    font-size: 0.82rem;
+  }
+  .agent-atlas-docs button small {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--agent-muted);
+    font-size: 0.68rem;
+  }
+  .agent-atlas-docs button small b {
+    padding: 0.12rem 0.34rem;
+    border-radius: 0.3rem;
+    background: var(--agent-soft);
+    color: var(--agent-muted);
+    font-weight: 500;
+  }
+  .agent-atlas-docs button:hover {
+    background: var(--agent-soft);
+  }
+
+  .agent-files-shell {
+    height: calc(100vh - 12.5rem);
+    min-height: 36rem;
+    display: grid;
+    grid-template-columns: 22rem minmax(0, 1fr);
+    border: 1px solid var(--agent-line);
+    border-radius: 0.9rem;
+    overflow: hidden;
+  }
+  .agent-file-browser {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--agent-line);
+  }
+  .agent-file-browser-head {
+    min-height: 4.2rem;
+    padding: 0.8rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--agent-line);
+  }
+  .agent-file-browser-head div {
+    display: grid;
+    gap: 0.2rem;
+    min-width: 0;
+  }
+  .agent-file-browser-head strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.82rem;
+  }
+  .agent-file-browser-head small {
+    color: var(--agent-muted);
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+  }
+  .agent-file-browser-head button {
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid var(--agent-line);
+    border-radius: 0.5rem;
+    background: var(--c-bg);
+  }
+  .agent-file-search {
+    margin: 0.75rem;
+  }
+  .agent-file-list {
+    flex: 1;
+    padding: 0 0.55rem 0.75rem;
+    overflow: auto;
+  }
+  .agent-tree-group {
+    margin-left: 0.76rem;
+    padding-left: 0.38rem;
+    border-left: 1px solid var(--agent-line);
+  }
+  .agent-file-list button {
+    width: 100%;
+    min-height: 2.15rem;
+    padding: 0.35rem 0.45rem;
+    display: grid;
+    grid-template-columns: 0.9rem 1.15rem minmax(0, 1fr);
+    align-items: center;
+    gap: 0.38rem;
+    border: 0;
+    border-radius: 0.42rem;
+    background: transparent;
+    text-align: left;
+  }
+  .agent-file-list button:hover {
+    background: var(--agent-soft);
+  }
+  .agent-tree-entry.is-active > button {
+    background: color-mix(in srgb, #a56a32 17%, var(--c-bg));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, #a56a32 38%, transparent);
+  }
+  .agent-file-list button > span {
+    color: var(--agent-muted);
+    font-size: 0.92rem;
+  }
+  .agent-file-list button > span.i-ri-folder-3-line {
+    color: #d09a22;
+  }
+  .agent-file-list button > span.i-ri-markdown-line {
+    color: #4285a8;
+  }
+  .agent-file-list button > span.i-ri-braces-line {
+    color: #a56a32;
+  }
+  .agent-file-list button > span.i-ri-palette-line {
+    color: #b45a87;
+  }
+  .agent-file-list button > span.i-ri-image-line {
+    color: #5d9a68;
+  }
+  .agent-tree-chevron {
+    color: var(--agent-muted);
+    font-size: 0.85rem;
+    transition: transform 0.16s ease;
+  }
+  [data-tree-folder][aria-expanded='true'] > .agent-tree-chevron {
+    transform: rotate(90deg);
+  }
+  .agent-tree-spacer {
+    width: 0.8rem;
+  }
+  .agent-file-list button > strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: ui-monospace, monospace;
+    font-size: 0.7rem;
+    font-weight: 500;
+  }
+  .agent-file-list .agent-search-result {
+    grid-template-columns: 1.15rem minmax(0, 1fr);
+  }
+  .agent-file-viewer {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .agent-file-viewer > header {
+    min-height: 4.2rem;
+    padding: 0.8rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    border-bottom: 1px solid var(--agent-line);
+  }
+  .agent-file-viewer > header > div {
+    min-width: 0;
+    gap: 0.55rem;
+  }
+  .agent-file-viewer > header strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: ui-monospace, monospace;
+    font-size: 0.75rem;
+  }
+  .agent-file-viewer > header a {
+    flex: 0 0 auto;
+    color: var(--agent-muted);
+    font-size: 0.68rem;
+  }
+  .agent-file-content {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+  }
+  .agent-file-content.is-code-viewer {
+    position: relative;
+    overflow: hidden;
+    background: var(--c-bg);
+  }
+  .agent-code-host {
+    position: absolute;
+    inset: 0;
+  }
+  .agent-file-content.is-code-viewer[data-loading='true']::after {
+    content: '正在切换文件…';
+    position: absolute;
+    z-index: 2;
+    inset: 0.75rem 0.9rem auto auto;
+    padding: 0.35rem 0.55rem;
+    border: 1px solid var(--agent-line);
+    border-radius: 0.45rem;
+    background: color-mix(in srgb, var(--c-bg) 90%, transparent);
+    color: var(--agent-muted);
+    font-size: 0.64rem;
+    backdrop-filter: blur(12px);
+    pointer-events: none;
+  }
+  .agent-file-content.is-code-viewer[data-truncated='true']::before {
+    content: '大文件仅预览前 1800 行';
+    position: absolute;
+    z-index: 2;
+    inset: auto 0.9rem 0.75rem auto;
+    padding: 0.3rem 0.5rem;
+    border-radius: 0.4rem;
+    background: color-mix(in srgb, var(--c-text) 82%, transparent);
+    color: var(--c-bg);
+    font-size: 0.6rem;
+    pointer-events: none;
+  }
+  .agent-code-host,
+  .agent-code-host .cm-editor {
+    width: 100%;
+    height: 100%;
+  }
+  .agent-file-empty {
+    height: 100%;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    text-align: center;
+    color: var(--agent-muted);
+  }
+  .agent-file-empty > span {
+    font-size: 2rem;
+  }
+  .agent-file-empty h3 {
+    margin: 0.6rem 0 0.15rem;
+    color: var(--c-text);
+    font-size: 1rem;
+  }
+  .agent-file-empty p {
+    margin: 0;
+    font-size: 0.74rem;
+  }
+  .agent-file-markdown {
+    padding: 1.5rem 2rem 4rem;
+    max-width: 56rem;
+  }
+  .agent-file-image {
+    min-height: 100%;
+    margin: 0;
+    padding: 2rem;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 1rem;
+  }
+  .agent-file-image img {
+    max-width: 100%;
+    max-height: 70vh;
+  }
+  .agent-file-image figcaption {
+    color: var(--agent-muted);
+    font-size: 0.7rem;
+  }
+  .agent-highlighted-block {
+    min-width: max-content;
+  }
+  .agent-highlighted-block .shiki,
+  .agent-code-fallback {
+    min-width: max-content;
+    margin: 0;
+    padding: 1rem 0 4rem;
+    border: 0;
+    border-radius: 0;
+    background: transparent !important;
+    font-family: var(--font-mono);
+    font-size: 0.76rem;
+    line-height: 1.72;
+  }
+  .agent-highlighted-block {
+    margin: 1.5rem 0;
+    overflow: auto;
+    border: 1px solid var(--agent-line);
+    border-radius: 0.7rem;
+    background: var(--agent-soft);
+  }
+  .agent-highlighted-block .shiki {
+    padding-bottom: 1rem;
+  }
+  .agent-highlighted-block .shiki,
+  .agent-highlighted-block .shiki span {
+    color: var(--shiki-light);
+  }
+  .dark .agent-highlighted-block .shiki,
+  .dark .agent-highlighted-block .shiki span {
+    color: var(--shiki-dark);
+  }
+  .agent-highlighted-block .line {
+    position: relative;
+    display: block;
+    width: 100%;
+    min-height: 1.3rem;
+    padding: 0 1.5rem 0 4.1rem;
+  }
+  .agent-highlighted-block .line::before {
+    content: attr(data-line);
+    position: absolute;
+    left: 0;
+    width: 3.2rem;
+    padding-right: 0.8rem;
+    color: var(--c-text-faint);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    user-select: none;
+  }
+  .agent-highlighted-block .line:hover {
+    background: var(--agent-soft);
+  }
+  .agent-empty {
+    padding: 1rem;
+    color: var(--agent-muted);
+    font-size: 0.75rem;
+  }
+  .agent-list-skeleton {
+    padding: 0.5rem;
+    display: grid;
+    gap: 0.65rem;
+  }
+  .agent-list-skeleton span {
+    height: 2rem;
+    border-radius: 0.45rem;
+    background: var(--agent-soft);
+    animation: agent-pulse 1.4s ease-in-out infinite;
+  }
+
+  .agent-mermaid {
+    margin: 2rem 0;
+    border: 1px solid var(--agent-line);
+    border-radius: 0.85rem;
+    overflow: hidden;
+    background: var(--c-bg);
+  }
+  .agent-mermaid-toolbar {
+    min-height: 2.8rem;
+    padding: 0.45rem 0.55rem 0.45rem 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--agent-line);
+  }
+  .agent-mermaid-toolbar > span {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--agent-muted);
+    font-size: 0.7rem;
+  }
+  .agent-mermaid-toolbar > div {
+    display: flex;
+    gap: 0.25rem;
+  }
+  .agent-mermaid-toolbar button {
+    min-width: 2rem;
+    height: 1.9rem;
+    padding: 0 0.45rem;
+    border: 1px solid var(--agent-line);
+    border-radius: 0.45rem;
+    background: var(--c-bg);
+    font-size: 0.68rem;
+  }
+  .agent-mermaid-toolbar button:hover {
+    border-color: var(--agent-line-strong);
+  }
+  .agent-mermaid-viewport {
+    min-height: 22rem;
+    padding: 1rem;
+    overflow: auto;
+    display: grid;
+    place-items: center;
+  }
+  .agent-mermaid-canvas {
+    min-width: 100%;
+    display: grid;
+    place-items: center;
+    transform: scale(var(--diagram-scale, 1));
+    transform-origin: center;
+    transition: transform 0.18s ease;
+  }
+  .agent-mermaid-canvas > svg {
+    max-width: none !important;
+    width: max(100%, 42rem);
+    height: auto;
+  }
+  .agent-mermaid :is(svg text, svg .nodeLabel, svg .label) {
+    fill: var(--c-text) !important;
+    color: var(--c-text) !important;
+  }
+  .agent-mermaid svg .edgeLabel {
+    color: var(--agent-muted) !important;
+    background: var(--c-bg) !important;
+  }
+
+  @media (max-width: 1180px) {
+    .agent-reader-shell {
+      grid-template-columns: 14rem minmax(0, 1fr) 11rem;
+    }
+  }
+  @media (max-width: 980px) {
+    .agent-reader-shell {
+      grid-template-columns: 14rem minmax(0, 1fr);
+    }
+    .agent-page-toc {
+      display: none;
+    }
+    .agent-wiki-main {
+      border-right: 0;
+    }
+    .agent-overview-facts {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .agent-overview-facts > div:nth-child(4) {
+      border-right: 0;
+    }
+    .agent-overview-facts > div:nth-child(-n + 4) {
+      border-bottom: 1px solid var(--agent-line);
+    }
+    .agent-module-detail {
+      grid-template-columns: 1.2fr 1fr;
+    }
+    .agent-module-detail > button {
+      justify-self: start;
+    }
+  }
+  @media (max-width: 760px) {
+    .agent-knowledge-head {
+      top: var(--navbar-height, 3.5rem);
+      height: 3.8rem;
+      padding-inline: 0.75rem;
+    }
+    .agent-knowledge-brand p,
+    .agent-source-state,
+    .agent-knowledge-actions
+      > button:not(.agent-mobile-nav):not(.agent-atlas-launch),
+    .agent-knowledge-actions > a {
+      display: none;
+    }
+    .agent-knowledge-brand h1 {
+      max-width: 7.5rem;
+    }
+    .agent-mobile-nav {
+      display: inline-flex !important;
+    }
+    .agent-knowledge-actions .agent-atlas-launch {
+      padding-inline: 0.65rem;
+    }
+    .agent-reader-shell {
+      display: block;
+    }
+    .agent-wiki-nav {
+      position: fixed;
+      z-index: 55;
+      inset: 0 auto 0 0;
+      width: min(20rem, 88vw);
+      height: auto;
+      background: var(--c-bg);
+      transform: translateX(-102%);
+      transition: transform 0.24s ease;
+    }
+    .agent-wiki-nav-head > button {
+      display: grid;
+      place-items: center;
+    }
+    .agent-knowledge[data-mobile-nav-open='true'] .agent-wiki-nav {
+      transform: none;
+    }
+    .agent-knowledge[data-mobile-nav-open='true'] .agent-mobile-scrim {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .agent-wiki-main {
+      padding: 1.5rem 1rem 8rem;
+    }
+    .agent-wiki-article > h1:first-child {
+      font-size: 2rem;
+    }
+    .agent-ask {
+      bottom: 0.7rem;
+      width: calc(100vw - 1rem);
+    }
+    .agent-ask kbd,
+    .agent-ask button span {
+      display: none;
+    }
+    .agent-ask button {
+      width: 2.55rem;
+      padding: 0;
+      justify-content: center;
+    }
+    .agent-atlas {
+      width: 100vw;
+    }
+    .agent-atlas-head {
+      min-height: 4rem;
+      padding-inline: 0.8rem;
+    }
+    .agent-atlas-head a {
+      display: none;
+    }
+    .agent-atlas-tabs {
+      padding-inline: 0.9rem;
+    }
+    .agent-atlas-body {
+      padding: 1.25rem 0.75rem 3rem;
+    }
+    .agent-atlas-intro {
+      display: grid;
+      gap: 1rem;
+    }
+    .agent-atlas-intro button {
+      justify-self: start;
+    }
+    .agent-overview-facts {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .agent-overview-facts > div:nth-child(4) {
+      border-right: 1px solid var(--agent-line);
+    }
+    .agent-overview-facts > div:nth-child(even) {
+      border-right: 0;
+    }
+    .agent-overview-facts > div:nth-child(-n + 6) {
+      border-bottom: 1px solid var(--agent-line);
+    }
+    .agent-repo-map {
+      min-height: 30rem;
+      padding: 0;
+      display: block;
+    }
+    .agent-graph-hint {
+      display: none;
+    }
+    .agent-module-detail {
+      grid-template-columns: 1fr;
+      gap: 0.85rem;
+    }
+    .agent-start-files {
+      grid-template-columns: 1fr;
+    }
+    .agent-start-files button:nth-child(odd) {
+      border-right: 0;
+    }
+    .agent-files-shell {
+      height: auto;
+      min-height: 0;
+      grid-template-columns: 1fr;
+      border-radius: 0.7rem;
+    }
+    .agent-file-browser {
+      min-height: 25rem;
+      border-right: 0;
+      border-bottom: 1px solid var(--agent-line);
+    }
+    .agent-file-viewer {
+      min-height: 34rem;
+    }
+    .agent-file-markdown {
+      padding-inline: 1rem;
+    }
+    .agent-mermaid-viewport {
+      min-height: 16rem;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .agent-atlas,
+    .agent-wiki-nav,
+    .agent-atlas-scrim,
+    .agent-mobile-scrim {
+      transition: none;
+    }
+    .agent-pulse,
+    .agent-article-skeleton span,
+    .agent-list-skeleton span {
+      animation: none;
+    }
+  }
+</style>

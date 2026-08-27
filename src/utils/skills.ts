@@ -3,6 +3,9 @@ export const SKILL_CATEGORIES = [
   'codex-skill',
   'mcp-server',
   'agent-tool',
+  'ai-skill',
+  'llm-plugin',
+  'uncategorized',
 ] as const
 
 export type SkillCategory = (typeof SKILL_CATEGORIES)[number]
@@ -12,13 +15,19 @@ export const CATEGORY_LABELS: Record<SkillCategory, string> = {
   'codex-skill': 'Codex Skills',
   'mcp-server': 'MCP Servers',
   'agent-tool': 'Agent Tools',
+  'ai-skill': 'AI Skills',
+  'llm-plugin': 'Prompt / LLM Plugins',
+  uncategorized: '其他工具',
 }
 
 export const CATEGORY_ICONS: Record<SkillCategory, string> = {
-  'claude-skill': 'i-ri-sparkling-2-line',
-  'codex-skill': 'i-ri-terminal-box-line',
-  'mcp-server': 'i-ri-plug-line',
-  'agent-tool': 'i-ri-robot-2-line',
+  'claude-skill': 'i-logos-claude-icon',
+  'codex-skill': '',
+  'mcp-server': 'i-simple-icons-modelcontextprotocol',
+  'agent-tool': 'i-simple-icons-agentskills',
+  'ai-skill': 'i-ri-sparkling-2-line',
+  'llm-plugin': 'i-ri-puzzle-2-line',
+  uncategorized: 'i-ri-box-3-line',
 }
 
 /** npx skills add 仅适用于 skill 类目, 其余类目引导到 GitHub */
@@ -38,14 +47,12 @@ export function formatCount(value: number | null | undefined) {
   return String(value)
 }
 
-export const SECURITY_GRADES: Record<
-  string,
-  { label: string; color: string }
-> = {
-  safe: { label: '安全', color: '#22c55e' },
-  caution: { label: '谨慎', color: '#f59e0b' },
-  unknown: { label: '未评级', color: '#9ca3af' },
-}
+export const SECURITY_GRADES: Record<string, { label: string; color: string }> =
+  {
+    safe: { label: '安全', color: '#22c55e' },
+    caution: { label: '谨慎', color: '#f59e0b' },
+    unknown: { label: '未评级', color: '#9ca3af' },
+  }
 
 export function githubAvatar(author: string, size = 96) {
   return `https://github.com/${author}.png?size=${size}`

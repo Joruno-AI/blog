@@ -1,0 +1,209 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro'
+import StandardLayout from '~/layouts/StandardLayout.astro'
+import SkillsNav from '~/components/views/SkillsNav.astro'
+import '~/styles/agent-tools.css'
+---
+
+<BaseLayout
+  title="项目对比 - Agent 能力目录"
+  description="将 2–3 个 Agent 项目的社区热度、活跃度、许可证与技术栈放在一个页面中比较"
+  bgType="dot"
+>
+  <StandardLayout
+    class="max-w-300"
+    title="项目对比"
+    subtitle="从社区信号、活跃度与使用边界中选择更合适的工具"
+    isCentered={true}
+  >
+    <SkillsNav active="compare" slot="head" />
+
+    <div class="agent-tool-page" data-agent-compare>
+      <section class="agent-tool-hero">
+        <div>
+          <span class="agent-tool-kicker">HEAD-TO-HEAD</span>
+          <h1>不凭印象选工具</h1>
+        </div>
+        <p>
+          最多同时对比 3 个 GitHub 仓库。数据现场读取，不把 Stars 当成唯一答案，同时展示 Forks、更新时间、许可证与站内文档入口。
+        </p>
+      </section>
+
+      <form class="agent-tool-form" data-compare-form>
+        <div class="agent-compare-fields">
+          <label class="agent-tool-field">
+            <span>01</span>
+            <input type="text" value="openclaw/openclaw" aria-label="第一个仓库" data-compare-input />
+          </label>
+          <label class="agent-tool-field">
+            <span>02</span>
+            <input type="text" value="obra/superpowers" aria-label="第二个仓库" data-compare-input />
+          </label>
+          <label class="agent-tool-field">
+            <span>03</span>
+            <input type="text" placeholder="可选：owner/repository" aria-label="第三个仓库" data-compare-input />
+          </label>
+        </div>
+        <button class="agent-tool-primary" type="submit">生成对比</button>
+      </form>
+
+      <div class="agent-tool-status" data-compare-status hidden></div>
+      <section class="agent-tool-result" data-compare-result hidden></section>
+
+      <section class="agent-method-section">
+        <div class="agent-method-head">
+          <div>
+            <span class="agent-tool-kicker">DECISION RULE</span>
+            <h2>把选择拆成可检查的信号</h2>
+          </div>
+          <p>
+            先看是否适配任务，再看活跃性与维护成本，最后才用 Stars 判断社区规模。
+          </p>
+        </div>
+      </section>
+    </div>
+  </StandardLayout>
+</BaseLayout>
+
+<script>
+  interface RepoMeta {
+    fullName: string
+    name: string
+    owner: string
+    description: string
+    stars: number
+    forks: number
+    watchers: number
+    language: string | null
+    defaultBranch: string
+    updatedAt: string
+    license: string | null
+    topics: string[]
+    archived: boolean
+  }
+
+  const mountCompare = () => {
+    const root = document.querySelector<HTMLElement>('[data-agent-compare]')
+    if (!root || root.dataset.bound === 'true') return
+    root.dataset.bound = 'true'
+    const form = root.querySelector<HTMLFormElement>('[data-compare-form]')!
+    const inputs = [
+      ...root.querySelectorAll<HTMLInputElement>('[data-compare-input]'),
+    ]
+    const status = root.querySelector<HTMLElement>('[data-compare-status]')!
+    const result = root.querySelector<HTMLElement>('[data-compare-result]')!
+    const controller = new AbortController()
+    document.addEventListener('astro:before-swap', () => controller.abort(), {
+      once: true,
+    })
+
+    const escapeHtml = (value: string) =>
+      value.replace(
+        /[&<>"']/g,
+        (character) =>
+          ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;',
+          })[character] as string
+      )
+    const compact = (value: number) =>
+      new Intl.NumberFormat('zh-CN', {
+        notation: 'compact',
+        maximumFractionDigits: 1,
+      }).format(value)
+    const parseRepo = (value: string) => {
+      const normalized = value.trim().replace(/\.git$/, '').replace(/\/$/, '')
+      const match = normalized.match(
+        /^(?:https?:\/\/github\.com\/)?([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+)$/
+      )
+      return match ? `${match[1]}/${match[2]}` : ''
+    }
+    const showStatus = (message: string, error = false) => {
+      status.hidden = false
+      status.classList.toggle('is-error', error)
+      status.innerHTML = error
+        ? `<span class="i-ri-error-warning-line"></span>${escapeHtml(message)}`
+        : `<span class="agent-tool-pulse"></span>${escapeHtml(message)}`
+    }
+    const activityLabel = (date: string) => {
+      const days = Math.max(0, (Date.now() - new Date(date).getTime()) / 86_400_000)
+      return days < 30 ? '活跃' : days < 120 ? '稳定' : days < 365 ? '放缓' : '低活跃'
+    }
+    const formatDate = (value: string) =>
+      new Intl.DateTimeFormat('zh-CN', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      }).format(new Date(value))
+
+    function render(repos: RepoMeta[]) {
+      const rows: [string, (repo: RepoMeta) => string][] = [
+        ['定位', (repo) => escapeHtml(repo.description || '暂无简介')],
+        ['Stars', (repo) => compact(repo.stars)],
+        ['Forks', (repo) => compact(repo.forks)],
+        ['活跃度', (repo) => `${activityLabel(repo.updatedAt)} · ${formatDate(repo.updatedAt)}`],
+        ['主要语言', (repo) => escapeHtml(repo.language || '未知')],
+        ['许可证', (repo) => escapeHtml(repo.license || '未声明')],
+        ['默认分支', (repo) => escapeHtml(repo.defaultBranch)],
+        ['项目状态', (repo) => (repo.archived ? '已归档' : '持续维护')],
+        ['站内操作', (repo) => `<a href="/agent/${escapeHtml(repo.fullName)}/">阅读文档 <span class="i-ri-arrow-right-line"></span></a>`],
+      ]
+      result.innerHTML = `<table class="agent-compare-table"><thead><tr><th>指标</th>${repos
+        .map((repo) => `<th>${escapeHtml(repo.fullName)}</th>`)
+        .join('')}</tr></thead><tbody>${rows
+        .map(
+          ([label, value]) => `<tr><td>${label}</td>${repos
+            .map((repo) => `<td>${value(repo)}</td>`)
+            .join('')}</tr>`
+        )
+        .join('')}</tbody></table>`
+      result.hidden = false
+      status.hidden = true
+    }
+
+    async function compare() {
+      const repoNames = [...new Set(inputs.map((input) => parseRepo(input.value)).filter(Boolean))]
+      if (repoNames.length < 2) {
+        showStatus('请至少输入 2 个有效的 GitHub 仓库。', true)
+        return
+      }
+      result.hidden = true
+      showStatus(`正在同时读取 ${repoNames.length} 个仓库的实时数据…`)
+      try {
+        const repos = await Promise.all(
+          repoNames.map(async (repoName) => {
+            const [owner, repo] = repoName.split('/')
+            const response = await fetch(`/api/github/${owner}/${repo}/overview`, {
+              signal: controller.signal,
+            })
+            const payload = (await response.json()) as {
+              repo?: RepoMeta
+              error?: string
+            }
+            if (!response.ok || !payload.repo)
+              throw new Error(`${repoName}: ${payload.error || '仓库不可访问'}`)
+            return payload.repo
+          })
+        )
+        render(repos)
+      } catch (error) {
+        showStatus(error instanceof Error ? error.message : '对比失败，请稍后重试。', true)
+      }
+    }
+
+    form.addEventListener(
+      'submit',
+      (event) => {
+        event.preventDefault()
+        void compare()
+      },
+      { signal: controller.signal }
+    )
+  }
+
+  mountCompare()
+  document.addEventListener('astro:page-load', mountCompare)
+</script>

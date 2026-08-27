@@ -1,0 +1,2488 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro'
+import Link from '~/components/base/Link.astro'
+import { withBasePath } from '~/utils/path'
+import {
+  CATEGORY_LABELS,
+  INSTALLABLE_CATEGORIES,
+  SECURITY_GRADES,
+  formatCount,
+  githubAvatar,
+  installCommand,
+} from '~/utils/skills'
+
+import type { CollectionEntry } from 'astro:content'
+
+type Skill = CollectionEntry<'skills'>['data']
+
+interface Props {
+  skill?: Skill
+}
+
+const { skill } = Astro.props
+const repo = skill?.id ?? ''
+const grade = skill
+  ? (SECURITY_GRADES[skill.securityGrade] ?? SECURITY_GRADES.unknown)
+  : SECURITY_GRADES.unknown
+const installable = skill ? INSTALLABLE_CATEGORIES.has(skill.category) : false
+const command = skill
+  ? installable
+    ? installCommand(skill.id)
+    : `git clone https://github.com/${skill.id}.git`
+  : ''
+const displayDesc = skill?.descZh || skill?.desc || ''
+const bootstrapJson = JSON.stringify({
+  repo,
+  skill: skill
+    ? {
+        name: skill.name,
+        author: skill.author,
+        description: displayDesc,
+        category: skill.category,
+        stars: skill.stars,
+        installs: skill.installs,
+        qualityScore: skill.qualityScore,
+        securityGrade: skill.securityGrade,
+        official: skill.official,
+        language: skill.language,
+        tags: [...new Set([...skill.platforms, ...skill.tags])],
+        command,
+      }
+    : null,
+}).replace(/</g, '\\u003c')
+const agentBase = withBasePath('/agent/')
+---
+
+<BaseLayout
+  title={skill ? `${skill.name} - Agent 文档` : 'Agent 仓库文档'}
+  description={displayDesc || '通过 DeepWiki 在站内阅读仓库架构、重要文档与源代码'}
+  bgType={false}
+  hideFooter={true}
+  stableNavigation={true}
+>
+  <div
+    class="agent-repo"
+    data-agent-repo
+    data-agent-base={agentBase}
+    data-drawer-open="true"
+  >
+    <div class="agent-repo-crumbs">
+      <Link href={withBasePath('/agent/')}>
+        <span class="i-ri-arrow-left-line" aria-hidden="true"></span>
+        Agent
+      </Link>
+      <span aria-hidden="true">/</span>
+      <span data-repo-crumb>{repo || '仓库文档'}</span>
+    </div>
+
+    <header class="agent-repo-head">
+      <div class="agent-repo-identity">
+        <img
+          class="agent-repo-avatar"
+          data-repo-avatar
+          src={skill ? githubAvatar(skill.author, 160) : ''}
+          alt={skill?.author ?? ''}
+          hidden={!skill}
+        />
+        <div>
+          <p class="agent-repo-owner" data-repo-owner>
+            {skill?.author ?? 'GitHub Repository'}
+          </p>
+          <h1 data-repo-title>{skill?.name ?? '正在读取仓库…'}</h1>
+          <p class="agent-repo-description" data-repo-description>
+            {displayDesc || '正在获取仓库信息与 DeepWiki 文档。'}
+          </p>
+        </div>
+      </div>
+
+      <div class="agent-repo-actions">
+        <button
+          type="button"
+          data-copy-command
+          data-copy={command}
+          hidden={!command}
+        >
+          <span class="i-ri-terminal-box-line" aria-hidden="true"></span>
+          <span data-command-label>
+            {installable ? '复制安装命令' : '复制克隆命令'}
+          </span>
+        </button>
+        <a
+          data-github-link
+          href={repo ? `https://github.com/${repo}` : 'https://github.com'}
+          target="_blank"
+          rel="noopener"
+        >
+          <span class="i-uil-github-alt" aria-hidden="true"></span>
+          GitHub
+          <span class="i-ri-arrow-right-up-line" aria-hidden="true"></span>
+        </a>
+      </div>
+    </header>
+
+    <div class="agent-repo-meta" data-repo-metrics>
+      {
+        skill && (
+          <>
+            <span>
+              <span class="i-ri-star-line" aria-hidden="true" />
+              {formatCount(skill.stars)} Stars
+            </span>
+            {skill.installs !== null && (
+              <span>
+                <span class="i-ri-download-2-line" aria-hidden="true" />
+                {formatCount(skill.installs)} 安装
+              </span>
+            )}
+            <span>{CATEGORY_LABELS[skill.category]}</span>
+            <span>{`质量分 ${skill.qualityScore}`}</span>
+            <span class="agent-repo-grade" style={`--grade:${grade.color}`}>
+              {grade.label}
+            </span>
+          </>
+        )
+      }
+    </div>
+
+    <nav class="agent-repo-tabs" aria-label="仓库阅读视图">
+      <button type="button" class="is-active" data-repo-tab="overview">
+        <span class="i-ri-node-tree" aria-hidden="true"></span>
+        概览
+      </button>
+      <button type="button" data-repo-tab="docs">
+        <span class="i-ri-book-2-line" aria-hidden="true"></span>
+        文档
+      </button>
+      <button type="button" data-repo-tab="files">
+        <span class="i-ri-file-code-line" aria-hidden="true"></span>
+        文件
+      </button>
+      <span class="agent-repo-source-state" data-source-state>
+        <i></i> DeepWiki 连接中
+      </span>
+    </nav>
+
+    <div class="agent-repo-workspace">
+      <main class="agent-repo-main">
+        <div class="agent-repo-status" data-reader-status>
+          <span class="agent-repo-pulse"></span>
+          正在读取仓库索引…
+        </div>
+
+        <section data-repo-panel="overview">
+          <div class="agent-repo-intro">
+            <div>
+              <span class="agent-repo-kicker">AI REPOSITORY GUIDE</span>
+              <h2 data-wiki-page-title>项目架构概览</h2>
+              <p>
+                正文由 DeepWiki 基于仓库源码生成，不再把 README 当作详情页。
+              </p>
+            </div>
+            <a
+              data-deepwiki-link
+              href={repo ? `https://deepwiki.com/${repo}` : 'https://deepwiki.com'}
+              target="_blank"
+              rel="noopener"
+            >
+              查看原始文档
+              <span class="i-ri-arrow-right-up-line" aria-hidden="true"></span>
+            </a>
+          </div>
+
+          <div class="agent-architecture" data-architecture hidden>
+            <div class="agent-section-heading">
+              <div>
+                <span>ARCHITECTURE MAP</span>
+                <h3>仓库边界</h3>
+              </div>
+              <small>基于顶层目录实时生成</small>
+            </div>
+            <div class="agent-architecture-flow" data-architecture-flow></div>
+          </div>
+
+          <article class="agent-wiki-content prose" data-wiki-content>
+            <div class="agent-wiki-skeleton" aria-label="正在生成文档">
+              <span></span><span></span><span></span><span></span><span></span>
+            </div>
+          </article>
+        </section>
+
+        <section data-repo-panel="docs" hidden>
+          <div class="agent-panel-heading">
+            <div>
+              <span class="agent-repo-kicker">DOCUMENTATION MAP</span>
+              <h2>按优先级阅读</h2>
+              <p>DeepWiki 从源码中重建的文档结构，点击后继续在站内阅读。</p>
+            </div>
+          </div>
+          <div class="agent-doc-list" data-doc-list>
+            <div class="agent-list-skeleton"><span></span><span></span><span></span></div>
+          </div>
+        </section>
+
+        <section data-repo-panel="files" hidden>
+          <div class="agent-files-shell">
+            <aside class="agent-file-browser">
+              <div class="agent-file-browser-head">
+                <div>
+                  <span class="agent-repo-kicker">FILE BROWSER</span>
+                  <strong data-current-folder>/</strong>
+                </div>
+                <button type="button" data-folder-up title="返回上级目录" hidden>
+                  <span class="i-ri-corner-left-up-line" aria-hidden="true"></span>
+                </button>
+              </div>
+              <label class="agent-file-search">
+                <span class="i-ri-search-line" aria-hidden="true"></span>
+                <input type="search" data-file-search placeholder="搜索文件路径" />
+                <kbd>/</kbd>
+              </label>
+              <div class="agent-file-list" data-file-list>
+                <div class="agent-list-skeleton"><span></span><span></span><span></span></div>
+              </div>
+            </aside>
+            <article class="agent-file-viewer">
+              <div class="agent-filebar" data-filebar>
+                <div>
+                  <span class="i-ri-file-code-line" aria-hidden="true"></span>
+                  <strong data-file-breadcrumb>选择一个文件</strong>
+                </div>
+                <a
+                  data-file-github
+                  href={repo ? `https://github.com/${repo}` : 'https://github.com'}
+                  target="_blank"
+                  rel="noopener"
+                  hidden
+                >
+                  查看源文件
+                  <span class="i-ri-arrow-right-up-line" aria-hidden="true"></span>
+                </a>
+              </div>
+              <div class="agent-file-content" data-file-content>
+                <div class="agent-file-empty">
+                  <span class="i-ri-code-box-line" aria-hidden="true"></span>
+                  <h3>选择文件开始阅读</h3>
+                  <p>源码、Markdown 和图片都会优先在博客内打开。</p>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+      </main>
+
+      <aside class="agent-repo-drawer" data-repo-drawer aria-label="AI 阅读导航">
+        <button
+          type="button"
+          class="agent-drawer-toggle"
+          data-drawer-toggle
+          aria-label="收起阅读导航"
+          aria-expanded="true"
+        >
+          <span class="i-ri-side-bar-line" aria-hidden="true"></span>
+        </button>
+        <div class="agent-drawer-body">
+          <div class="agent-drawer-head">
+            <div>
+              <span class="agent-repo-kicker">DEEPWIKI</span>
+              <h2>阅读导航</h2>
+            </div>
+            <span class="agent-drawer-live"><i></i>AI 生成</span>
+          </div>
+
+          <section class="agent-drawer-section">
+            <div class="agent-drawer-label">
+              <span>文档大纲</span>
+              <small data-outline-count>读取中</small>
+            </div>
+            <nav class="agent-wiki-outline" data-wiki-outline>
+              <div class="agent-list-skeleton"><span></span><span></span><span></span></div>
+            </nav>
+          </section>
+
+          <section class="agent-drawer-section">
+            <div class="agent-drawer-label">
+              <span>建议从这里开始</span>
+              <small>按结构重要度</small>
+            </div>
+            <div class="agent-recommended-files" data-recommended-files>
+              <div class="agent-list-skeleton"><span></span><span></span></div>
+            </div>
+          </section>
+
+          <div class="agent-repo-facts">
+            <div><span>默认分支</span><strong data-default-branch>—</strong></div>
+            <div><span>主要语言</span><strong data-language>{skill?.language ?? '—'}</strong></div>
+            <div><span>许可证</span><strong data-license>—</strong></div>
+            <div><span>最近更新</span><strong data-updated-at>—</strong></div>
+          </div>
+        </div>
+      </aside>
+      <button
+        type="button"
+        class="agent-drawer-scrim"
+        data-drawer-scrim
+        aria-label="关闭阅读导航"
+        tabindex="-1"
+      ></button>
+    </div>
+  </div>
+
+  <script
+    is:inline
+    type="application/json"
+    data-agent-bootstrap
+    set:html={bootstrapJson}
+  />
+</BaseLayout>
+
+<script>
+  import DOMPurify from 'dompurify'
+  import { Marked } from 'marked'
+
+  interface SkillBootstrap {
+    name: string
+    author: string
+    description: string
+    category: string
+    stars: number
+    installs: number | null
+    qualityScore: number
+    securityGrade: string
+    official: boolean
+    language: string | null
+    tags: string[]
+    command: string
+  }
+
+  interface Bootstrap {
+    repo: string
+    skill: SkillBootstrap | null
+  }
+
+  interface RepoMeta {
+    fullName: string
+    name: string
+    owner: string
+    description: string
+    stars: number
+    forks: number
+    watchers: number
+    language: string | null
+    defaultBranch: string
+    updatedAt: string
+    license: string | null
+    topics: string[]
+    archived: boolean
+    homepage: string | null
+  }
+
+  interface RepoItem {
+    name: string
+    path: string
+    type: 'file' | 'dir' | 'symlink' | 'submodule'
+    size: number
+    downloadUrl: string | null
+  }
+
+  interface TreeItem {
+    path: string
+    type: 'blob' | 'tree'
+    size: number | null
+  }
+
+  interface DirectoryResponse {
+    type: 'dir'
+    path: string
+    items: RepoItem[]
+  }
+
+  interface FileResponse {
+    type: 'file'
+    name: string
+    path: string
+    size: number
+    content: string | null
+    encoding: string | null
+    downloadUrl: string | null
+  }
+
+  interface TreeResponse {
+    items: TreeItem[]
+    truncated: boolean
+  }
+
+  interface WikiItem {
+    depth: number
+    id: string
+    title: string
+  }
+
+  interface WikiStructureResponse {
+    repo: string
+    sourceUrl: string
+    items: WikiItem[]
+  }
+
+  interface WikiPageResponse {
+    repo: string
+    sourceUrl: string
+    page: string
+    markdown: string
+  }
+
+  const marked = new Marked({ gfm: true, breaks: false })
+  let mermaidLoader: Promise<typeof import('mermaid').default> | null = null
+  let mermaidSequence = 0
+
+  const loadMermaid = () => {
+    mermaidLoader ??= import('mermaid').then((module) => module.default)
+    return mermaidLoader
+  }
+
+  const mountAgentRepository = () => {
+    const root = document.querySelector<HTMLElement>('[data-agent-repo]')
+    const bootstrapElement = document.querySelector<HTMLScriptElement>(
+      '[data-agent-bootstrap]'
+    )
+    if (!root || !bootstrapElement || root.dataset.readerBound === 'true') return
+    root.dataset.readerBound = 'true'
+
+    const bootstrap = JSON.parse(
+      bootstrapElement.textContent || '{}'
+    ) as Bootstrap
+    const agentBase = root.dataset.agentBase || '/agent/'
+    const get = <T extends Element>(selector: string) =>
+      root.querySelector<T>(selector)
+    const getAll = <T extends Element>(selector: string) => [
+      ...root.querySelectorAll<T>(selector),
+    ]
+    const controller = new AbortController()
+    document.addEventListener('astro:before-swap', () => controller.abort(), {
+      once: true,
+    })
+
+    const basePath = agentBase.replace(/\/$/, '')
+    const pathname = location.pathname.startsWith(basePath)
+      ? location.pathname.slice(basePath.length)
+      : location.pathname
+    const parts = pathname.split('/').filter(Boolean).map(decodeURIComponent)
+    const queryRepo = new URLSearchParams(location.search).get('repo') || ''
+    const repo =
+      bootstrap.repo ||
+      queryRepo ||
+      (parts.length >= 2 && parts[0] !== 'repository'
+        ? `${parts[0]}/${parts[1]}`
+        : '')
+    const [owner = '', repoName = ''] = repo.split('/')
+    const blobIndex = parts.indexOf('blob')
+    let activeRef = blobIndex >= 0 ? parts[blobIndex + 1] || 'HEAD' : 'HEAD'
+    const requestedPath =
+      blobIndex >= 0 ? parts.slice(blobIndex + 2).join('/') : ''
+    let meta: RepoMeta | null = null
+    let treeItems: TreeItem[] | null = null
+    let folderPath = ''
+
+    const status = get<HTMLElement>('[data-reader-status]')!
+    const wikiContent = get<HTMLElement>('[data-wiki-content]')!
+    const fileList = get<HTMLElement>('[data-file-list]')!
+    const fileContent = get<HTMLElement>('[data-file-content]')!
+    const fileSearch = get<HTMLInputElement>('[data-file-search]')!
+    const folderUp = get<HTMLButtonElement>('[data-folder-up]')!
+
+    const escapeHtml = (value: string) =>
+      value.replace(
+        /[&<>"']/g,
+        (character) =>
+          ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;',
+          })[character] as string
+      )
+    const compact = (value: number) =>
+      new Intl.NumberFormat('zh-CN', {
+        notation: 'compact',
+        maximumFractionDigits: 1,
+      }).format(value)
+    const githubUrl = (path = '') =>
+      `https://github.com/${repo}${path ? `/${path.replace(/^\/+/, '')}` : ''}`
+    const repoFileUrl = (path: string, ref = activeRef) =>
+      `${agentBase}${repo}/blob/${encodeURIComponent(ref || meta?.defaultBranch || 'HEAD')}/${path}`
+    const apiUrl = (action: string, params: Record<string, string> = {}) => {
+      const url = new URL(
+        `/api/github/${encodeURIComponent(owner)}/${encodeURIComponent(repoName)}/${action}`,
+        location.origin
+      )
+      Object.entries(params).forEach(([key, value]) => {
+        if (value) url.searchParams.set(key, value)
+      })
+      return url.toString()
+    }
+    const wikiApiUrl = (action: string, title = '') => {
+      const url = new URL(
+        `/api/deepwiki/${encodeURIComponent(owner)}/${encodeURIComponent(repoName)}/${action}`,
+        location.origin
+      )
+      if (title) url.searchParams.set('title', title)
+      return url.toString()
+    }
+
+    async function fetchJson<T>(url: string): Promise<T> {
+      const response = await fetch(url, {
+        headers: { Accept: 'application/json' },
+        signal: controller.signal,
+      })
+      const payload = (await response.json().catch(() => null)) as
+        | (T & { error?: string })
+        | null
+      if (!response.ok)
+        throw new Error(payload?.error || `请求失败 (${response.status})`)
+      return payload as T
+    }
+
+    const decodeBase64 = (value: string) => {
+      const binary = atob(value.replace(/\s/g, ''))
+      const bytes = Uint8Array.from(binary, (character) =>
+        character.charCodeAt(0)
+      )
+      return new TextDecoder().decode(bytes)
+    }
+
+    const showStatus = (
+      message: string,
+      kind: 'loading' | 'error' | 'success' = 'loading'
+    ) => {
+      status.hidden = false
+      status.dataset.kind = kind
+      status.innerHTML = `${
+        kind === 'loading'
+          ? '<span class="agent-repo-pulse"></span>'
+          : `<span class="${kind === 'error' ? 'i-ri-error-warning-line' : 'i-ri-checkbox-circle-line'}"></span>`
+      }${escapeHtml(message)}`
+    }
+    const hideStatus = () => {
+      status.hidden = true
+    }
+
+    function activateTab(tab: 'overview' | 'docs' | 'files') {
+      getAll<HTMLButtonElement>('[data-repo-tab]').forEach((button) => {
+        const active = button.dataset.repoTab === tab
+        button.classList.toggle('is-active', active)
+        button.setAttribute('aria-selected', String(active))
+      })
+      getAll<HTMLElement>('[data-repo-panel]').forEach((panel) => {
+        panel.hidden = panel.dataset.repoPanel !== tab
+      })
+      if (tab === 'files' && fileList.dataset.loaded !== 'true') {
+        void loadDirectory('')
+      }
+    }
+
+    function setSourceState(label: string, ok: boolean) {
+      const sourceState = get<HTMLElement>('[data-source-state]')
+      if (!sourceState) return
+      sourceState.classList.toggle('is-ready', ok)
+      sourceState.innerHTML = `<i></i>${escapeHtml(label)}`
+    }
+
+    function applyMeta(next: RepoMeta) {
+      meta = next
+      if (activeRef === 'HEAD') activeRef = next.defaultBranch
+      const text: [string, string][] = [
+        ['[data-repo-title]', next.name],
+        ['[data-repo-description]', next.description || '这个仓库暂时没有填写简介。'],
+        ['[data-repo-owner]', next.owner],
+        ['[data-repo-crumb]', next.fullName],
+        ['[data-default-branch]', next.defaultBranch],
+        ['[data-language]', next.language || '—'],
+        ['[data-license]', next.license || '未声明'],
+      ]
+      text.forEach(([selector, value]) => {
+        const element = get<HTMLElement>(selector)
+        if (element) element.textContent = value
+      })
+      const updated = get<HTMLElement>('[data-updated-at]')
+      if (updated)
+        updated.textContent = new Intl.DateTimeFormat('zh-CN', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+        }).format(new Date(next.updatedAt))
+      const avatar = get<HTMLImageElement>('[data-repo-avatar]')
+      if (avatar) {
+        avatar.src = `https://github.com/${encodeURIComponent(next.owner)}.png?size=160`
+        avatar.alt = next.owner
+        avatar.hidden = false
+      }
+      const github = get<HTMLAnchorElement>('[data-github-link]')
+      if (github) github.href = githubUrl()
+      const deepWiki = get<HTMLAnchorElement>('[data-deepwiki-link]')
+      if (deepWiki) deepWiki.href = `https://deepwiki.com/${next.fullName}`
+      document.title = `${next.name} - Agent 文档`
+
+      if (!bootstrap.skill) {
+        const metrics = get<HTMLElement>('[data-repo-metrics]')
+        if (metrics) {
+          metrics.innerHTML = `<span><span class="i-ri-star-line"></span>${compact(next.stars)} Stars</span><span><span class="i-ri-git-fork-line"></span>${compact(next.forks)} Forks</span>${next.language ? `<span>${escapeHtml(next.language)}</span>` : ''}${next.archived ? '<span>已归档</span>' : ''}`
+        }
+        const copyButton = get<HTMLButtonElement>('[data-copy-command]')
+        if (copyButton) {
+          copyButton.dataset.copy = `git clone https://github.com/${repo}.git`
+          copyButton.hidden = false
+        }
+      }
+    }
+
+    function rewriteRepoLinks(container: HTMLElement, sourcePath = '') {
+      const sourceDir = sourcePath.includes('/')
+        ? sourcePath.slice(0, sourcePath.lastIndexOf('/') + 1)
+        : ''
+      container.querySelectorAll<HTMLAnchorElement>('a[href]').forEach((link) => {
+        const raw = link.getAttribute('href') || ''
+        if (!raw || raw.startsWith('#')) return
+        if (/^(javascript|data|vbscript|file):/i.test(raw)) {
+          link.removeAttribute('href')
+          return
+        }
+        if (/^https?:/i.test(raw)) {
+          link.target = '_blank'
+          link.rel = 'noopener nofollow'
+          return
+        }
+        const normalized = new URL(raw, `https://local/${sourceDir}`).pathname.slice(1)
+        link.href = repoFileUrl(normalized)
+      })
+    }
+
+    async function renderWiki(markdown: string, title: string) {
+      const cleaned = markdown
+        .replace(/^# Page:\s*.+\n+/i, '')
+        .replace(/\]\(\/wiki\/[^)]+\)/g, ']()')
+      const html = await marked.parse(cleaned)
+      wikiContent.innerHTML = DOMPurify.sanitize(html, {
+        USE_PROFILES: { html: true },
+        ADD_ATTR: ['target', 'rel'],
+      })
+      const heading = get<HTMLElement>('[data-wiki-page-title]')
+      if (heading) heading.textContent = title === 'Overview' ? '项目架构概览' : title
+      wikiContent.querySelectorAll<HTMLAnchorElement>('a[href]').forEach((link) => {
+        const raw = link.getAttribute('href') || ''
+        if (!raw) link.replaceWith(document.createTextNode(link.textContent || ''))
+        else if (/^https?:/i.test(raw)) {
+          link.target = '_blank'
+          link.rel = 'noopener nofollow'
+        } else if (!raw.startsWith('#')) {
+          link.href = repoFileUrl(raw.replace(/^\.\//, ''))
+        }
+      })
+      wikiContent.querySelectorAll('details').forEach((details) => {
+        details.classList.add('agent-source-details')
+      })
+      await renderMermaidDiagrams(wikiContent)
+    }
+
+    function prepareMermaidFigures(container: HTMLElement) {
+      container
+        .querySelectorAll<HTMLElement>('pre > code.language-mermaid')
+        .forEach((code) => {
+          const pre = code.parentElement
+          const source = code.textContent?.trim()
+          if (!pre || !source) return
+          const figure = document.createElement('figure')
+          figure.className = 'agent-mermaid'
+          figure.dataset.mermaidSource = source
+          figure.innerHTML = `<div class="agent-mermaid-toolbar" aria-label="图表工具栏">
+            <span><i class="i-ri-flow-chart"></i> 交互图表</span>
+            <div>
+              <button type="button" data-diagram-action="out" aria-label="缩小图表"><i class="i-ri-subtract-line"></i></button>
+              <button type="button" data-diagram-action="reset" aria-label="重置图表缩放">100%</button>
+              <button type="button" data-diagram-action="in" aria-label="放大图表"><i class="i-ri-add-line"></i></button>
+            </div>
+          </div><div class="agent-mermaid-viewport"><div class="agent-mermaid-canvas"><span class="agent-repo-pulse"></span><small>正在绘制图表…</small></div></div>`
+          pre.replaceWith(figure)
+        })
+    }
+
+    function mermaidConfig() {
+      const dark = document.documentElement.classList.contains('dark')
+      return {
+        startOnLoad: false,
+        securityLevel: 'strict' as const,
+        suppressErrorRendering: true,
+        theme: 'base' as const,
+        fontFamily:
+          'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif',
+        flowchart: { htmlLabels: false, useMaxWidth: true, curve: 'basis' as const },
+        themeVariables: dark
+          ? {
+              background: '#0b0b0b',
+              primaryColor: '#171717',
+              primaryBorderColor: '#525252',
+              primaryTextColor: '#f5f5f5',
+              secondaryColor: '#202020',
+              tertiaryColor: '#111111',
+              lineColor: '#a3a3a3',
+              clusterBkg: '#111111',
+              clusterBorder: '#404040',
+              edgeLabelBackground: '#0b0b0b',
+              fontSize: '14px',
+            }
+          : {
+              background: '#ffffff',
+              primaryColor: '#fafafa',
+              primaryBorderColor: '#b8b8b8',
+              primaryTextColor: '#171717',
+              secondaryColor: '#f4f4f4',
+              tertiaryColor: '#ffffff',
+              lineColor: '#666666',
+              clusterBkg: '#fafafa',
+              clusterBorder: '#d4d4d4',
+              edgeLabelBackground: '#ffffff',
+              fontSize: '14px',
+            },
+      }
+    }
+
+    async function renderMermaidFigures(container: HTMLElement) {
+      const figures = [
+        ...container.querySelectorAll<HTMLElement>('[data-mermaid-source]'),
+      ]
+      if (!figures.length) return
+      try {
+        const mermaid = await loadMermaid()
+        mermaid.initialize(mermaidConfig())
+        for (const figure of figures) {
+          const source = figure.dataset.mermaidSource || ''
+          const viewport = figure.querySelector<HTMLElement>(
+            '.agent-mermaid-viewport'
+          )
+          if (!source || !viewport) continue
+          const canvas = document.createElement('div')
+          canvas.className = 'agent-mermaid-canvas'
+          canvas.style.setProperty('--diagram-scale', '1')
+          figure.dataset.diagramScale = '1'
+          try {
+            const id = `agent-mermaid-${Date.now()}-${mermaidSequence++}`
+            const { svg, bindFunctions } = await mermaid.render(id, source)
+            canvas.innerHTML = DOMPurify.sanitize(svg, {
+              USE_PROFILES: { svg: true, svgFilters: true },
+            })
+            viewport.replaceChildren(canvas)
+            bindFunctions?.(canvas)
+            figure.classList.add('is-ready')
+          } catch {
+            canvas.innerHTML = `<details class="agent-mermaid-error"><summary>图表语法暂未兼容，查看源码</summary><pre><code>${escapeHtml(source)}</code></pre></details>`
+            viewport.replaceChildren(canvas)
+            figure.classList.add('has-error')
+          }
+        }
+      } catch {
+        figures.forEach((figure) => {
+          const source = figure.dataset.mermaidSource || ''
+          const viewport = figure.querySelector<HTMLElement>(
+            '.agent-mermaid-viewport'
+          )
+          if (viewport)
+            viewport.innerHTML = `<details class="agent-mermaid-error"><summary>图表组件加载失败，查看源码</summary><pre><code>${escapeHtml(source)}</code></pre></details>`
+        })
+      }
+    }
+
+    async function renderMermaidDiagrams(container: HTMLElement) {
+      prepareMermaidFigures(container)
+      await renderMermaidFigures(container)
+    }
+
+    function localOverview(errorMessage = '') {
+      const topDirectories = (treeItems || [])
+        .filter((item) => item.type === 'tree' && !item.path.includes('/'))
+        .slice(0, 8)
+      const topics = meta?.topics?.slice(0, 8) || bootstrap.skill?.tags.slice(0, 8) || []
+      wikiContent.innerHTML = `<div class="agent-local-overview">
+        <span class="agent-repo-kicker">STRUCTURE FALLBACK</span>
+        <h2>${escapeHtml(meta?.name || bootstrap.skill?.name || repoName)}</h2>
+        <p>${escapeHtml(meta?.description || bootstrap.skill?.description || '这是一个开源 Agent 相关仓库。')}</p>
+        ${errorMessage ? `<p class="agent-local-note">DeepWiki：${escapeHtml(errorMessage)}</p>` : ''}
+        <h3>仓库组成</h3>
+        <div class="agent-local-grid">${topDirectories.map((item) => `<button type="button" data-local-folder="${escapeHtml(item.path)}"><span class="i-ri-folder-3-line"></span><strong>${escapeHtml(item.path)}</strong><small>顶层模块</small></button>`).join('')}</div>
+        ${topics.length ? `<h3>技术标签</h3><div class="agent-local-tags">${topics.map((topic) => `<span>${escapeHtml(topic)}</span>`).join('')}</div>` : ''}
+      </div>`
+    }
+
+    function renderArchitecture(items: TreeItem[]) {
+      const top = items
+        .filter((item) => item.type === 'tree' && !item.path.includes('/'))
+        .filter((item) => !item.path.startsWith('.'))
+        .slice(0, 7)
+      const architecture = get<HTMLElement>('[data-architecture]')
+      const flow = get<HTMLElement>('[data-architecture-flow]')
+      if (!architecture || !flow || !top.length) return
+      flow.innerHTML = `<div class="agent-architecture-root"><span class="i-ri-git-repository-line"></span><strong>${escapeHtml(repoName)}</strong><small>repository</small></div><span class="agent-architecture-arrow i-ri-arrow-right-line"></span><div class="agent-architecture-nodes">${top.map((item) => `<button type="button" data-local-folder="${escapeHtml(item.path)}"><span class="i-ri-folder-3-line"></span><strong>${escapeHtml(item.path)}</strong></button>`).join('')}</div>`
+      architecture.hidden = false
+    }
+
+    function importantFiles(items: TreeItem[]) {
+      const score = (path: string) => {
+        const name = path.toLowerCase()
+        let value = 0
+        if (/^(package\.json|pyproject\.toml|cargo\.toml|go\.mod|composer\.json)$/.test(name)) value += 100
+        if (/(^|\/)src\/(index|main)\.[^/]+$/.test(name)) value += 90
+        if (/(^|\/)(architecture|contributing|development|security)\.(md|mdx)$/i.test(path)) value += 80
+        if (/(^|\/)readme\.(md|mdx)$/i.test(path)) value += 55
+        if (/(^|\/)(index|main)\.[jt]sx?$/.test(name)) value += 45
+        value -= path.split('/').length * 2
+        return value
+      }
+      return items
+        .filter((item) => item.type === 'blob')
+        .map((item) => ({ item, score: score(item.path) }))
+        .filter((entry) => entry.score > 20)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 8)
+        .map((entry) => entry.item)
+    }
+
+    function renderRecommended(items: TreeItem[]) {
+      const target = get<HTMLElement>('[data-recommended-files]')
+      if (!target) return
+      const files = importantFiles(items)
+      target.innerHTML = files.length
+        ? files
+            .slice(0, 6)
+            .map(
+              (item, index) => `<button type="button" data-open-file="${escapeHtml(item.path)}"><span>${String(index + 1).padStart(2, '0')}</span><strong>${escapeHtml(item.path)}</strong><i class="i-ri-arrow-right-s-line"></i></button>`
+            )
+            .join('')
+        : '<p class="agent-drawer-empty">暂无可推荐文件</p>'
+    }
+
+    function renderWikiStructure(items: WikiItem[]) {
+      const outline = get<HTMLElement>('[data-wiki-outline]')
+      const docList = get<HTMLElement>('[data-doc-list]')
+      const count = get<HTMLElement>('[data-outline-count]')
+      if (count) count.textContent = `${items.length} 章`
+      if (outline) {
+        outline.innerHTML = items
+          .slice(0, 26)
+          .map(
+            (item) => `<button type="button" style="--depth:${Math.min(item.depth, 2)}" data-wiki-page="${escapeHtml(item.title)}"><span>${escapeHtml(item.id)}</span><strong>${escapeHtml(item.title)}</strong></button>`
+          )
+          .join('')
+      }
+      if (docList) {
+        docList.innerHTML = items.length
+          ? items
+              .map(
+                (item, index) => `<button type="button" data-wiki-page="${escapeHtml(item.title)}"><span class="agent-doc-index">${String(index + 1).padStart(2, '0')}</span><span class="i-ri-book-2-line agent-doc-icon"></span><span class="agent-doc-copy"><strong>${escapeHtml(item.id)} ${escapeHtml(item.title)}</strong><small>DeepWiki 生成 · 架构文档</small></span><span class="i-ri-arrow-right-line agent-doc-arrow"></span></button>`
+              )
+              .join('')
+          : '<div class="agent-panel-empty">当前仓库还没有 DeepWiki 文档结构。</div>'
+      }
+    }
+
+    async function loadWikiStructure() {
+      try {
+        const structure = await fetchJson<WikiStructureResponse>(
+          wikiApiUrl('structure')
+        )
+        renderWikiStructure(structure.items)
+        setSourceState('DeepWiki 已连接', true)
+      } catch {
+        renderWikiStructure([])
+        setSourceState('DeepWiki 暂未收录', false)
+      }
+    }
+
+    async function loadWikiPage(title = 'Overview') {
+      activateTab('overview')
+      showStatus(`正在从 DeepWiki 读取${title === 'Overview' ? '项目概览' : `“${title}”`}…`)
+      wikiContent.innerHTML = '<div class="agent-wiki-skeleton"><span></span><span></span><span></span><span></span><span></span></div>'
+      try {
+        const page = await fetchJson<WikiPageResponse>(
+          wikiApiUrl(title === 'Overview' ? 'overview' : 'page', title)
+        )
+        await renderWiki(page.markdown, title)
+        setSourceState('DeepWiki 已连接', true)
+        hideStatus()
+      } catch (error) {
+        const message = error instanceof Error ? error.message : '文档读取失败'
+        localOverview(message)
+        showStatus('已切换为仓库结构导览，DeepWiki 可稍后重试。', 'error')
+      }
+    }
+
+    async function loadGitHub() {
+      const overview = await fetchJson<{ repo: RepoMeta }>(apiUrl('overview'))
+      applyMeta(overview.repo)
+      const tree = await fetchJson<TreeResponse>(
+        apiUrl('tree', { ref: overview.repo.defaultBranch })
+      )
+      treeItems = tree.items
+      renderArchitecture(tree.items)
+      renderRecommended(tree.items)
+      if (requestedPath) {
+        activateTab('files')
+        await loadDirectory(
+          requestedPath.includes('/')
+            ? requestedPath.slice(0, requestedPath.lastIndexOf('/'))
+            : ''
+        )
+        await loadFile(requestedPath, false)
+      }
+    }
+
+    function fileIcon(item: RepoItem | TreeItem) {
+      if (item.type === 'dir' || item.type === 'tree') return 'i-ri-folder-3-line'
+      const path = item.path
+      if (/\.(md|mdx)$/i.test(path)) return 'i-ri-markdown-line'
+      if (/\.(png|jpe?g|gif|webp|svg)$/i.test(path)) return 'i-ri-image-line'
+      if (/\.(json|ya?ml|toml)$/i.test(path)) return 'i-ri-braces-line'
+      return 'i-ri-file-code-line'
+    }
+
+    function renderDirectory(items: RepoItem[]) {
+      const ordered = [...items].sort((a, b) => {
+        if (a.type === b.type) return a.name.localeCompare(b.name)
+        return a.type === 'dir' ? -1 : 1
+      })
+      fileList.innerHTML = ordered.length
+        ? ordered
+            .map((item) => {
+              const directory = item.type === 'dir'
+              return `<button type="button" data-entry-path="${escapeHtml(item.path)}" data-entry-type="${item.type}"><span class="${fileIcon(item)}"></span><strong>${escapeHtml(item.name)}</strong>${directory ? '<span class="i-ri-arrow-right-s-line"></span>' : ''}</button>`
+            })
+            .join('')
+        : '<div class="agent-panel-empty">这个目录是空的</div>'
+      const current = get<HTMLElement>('[data-current-folder]')
+      if (current) current.textContent = folderPath ? `/${folderPath}` : '/'
+      folderUp.hidden = !folderPath
+      fileList.dataset.loaded = 'true'
+    }
+
+    async function loadDirectory(path: string) {
+      folderPath = path
+      fileList.innerHTML = '<div class="agent-list-skeleton"><span></span><span></span><span></span></div>'
+      try {
+        const directory = await fetchJson<DirectoryResponse>(
+          apiUrl('contents', { path, ref: activeRef })
+        )
+        renderDirectory(directory.items)
+      } catch (error) {
+        fileList.innerHTML = `<div class="agent-panel-empty">${escapeHtml(error instanceof Error ? error.message : '目录加载失败')}</div>`
+      }
+    }
+
+    function isText(path: string) {
+      return (
+        /\.(md|mdx|txt|js|jsx|mjs|cjs|ts|tsx|astro|css|scss|less|html|vue|svelte|json|ya?ml|toml|xml|svg|py|rb|php|java|kt|kts|go|rs|swift|c|h|cpp|hpp|cs|sh|bash|zsh|sql|graphql|gql|env|gitignore|dockerfile)$/i.test(path) ||
+        !path.split('/').pop()?.includes('.')
+      )
+    }
+
+    function renderCode(text: string) {
+      const lines = text.split('\n').slice(0, 1600)
+      return `<pre class="agent-code-view">${lines.map((line, index) => `<span><i>${index + 1}</i><code>${escapeHtml(line || ' ')}</code></span>`).join('')}</pre>${text.split('\n').length > 1600 ? '<p class="agent-code-note">文件较长，已显示前 1600 行。</p>' : ''}`
+    }
+
+    async function loadFile(path: string, updateHistory = true) {
+      activateTab('files')
+      const breadcrumb = get<HTMLElement>('[data-file-breadcrumb]')
+      const githubFile = get<HTMLAnchorElement>('[data-file-github]')
+      if (breadcrumb) breadcrumb.textContent = path
+      if (githubFile) {
+        githubFile.href = githubUrl(`/blob/${activeRef}/${path}`)
+        githubFile.hidden = false
+      }
+      fileContent.innerHTML = '<div class="agent-list-skeleton is-file"><span></span><span></span><span></span></div>'
+      try {
+        const file = await fetchJson<FileResponse | DirectoryResponse>(
+          apiUrl('contents', { path, ref: activeRef })
+        )
+        if (file.type === 'dir') {
+          await loadDirectory(path)
+          return
+        }
+        if (!file.content) {
+          fileContent.innerHTML = '<div class="agent-file-empty"><span class="i-ri-file-download-line"></span><h3>这个文件不适合在线预览</h3><p>文件可能过大或使用了二进制格式。</p></div>'
+        } else {
+          const text = decodeBase64(file.content)
+          if (/\.(md|mdx)$/i.test(path)) {
+            const html = await marked.parse(text)
+            fileContent.innerHTML = `<article class="agent-file-markdown prose">${DOMPurify.sanitize(html, { USE_PROFILES: { html: true } })}</article>`
+            const article = fileContent.querySelector<HTMLElement>('article')
+            if (article) {
+              rewriteRepoLinks(article, path)
+              await renderMermaidDiagrams(article)
+            }
+          } else if (/\.(png|jpe?g|gif|webp|svg)$/i.test(path) && file.downloadUrl) {
+            fileContent.innerHTML = `<figure class="agent-file-image"><img src="${escapeHtml(file.downloadUrl)}" alt="${escapeHtml(file.name)}"><figcaption>${escapeHtml(path)}</figcaption></figure>`
+          } else if (isText(path)) {
+            fileContent.innerHTML = renderCode(text)
+          } else {
+            fileContent.innerHTML = `<div class="agent-file-empty"><span class="i-ri-file-code-line"></span><h3>暂不支持预览这个文件</h3><p>${escapeHtml(path)}</p></div>`
+          }
+        }
+        if (updateHistory) {
+          history.replaceState(
+            history.state,
+            '',
+            repoFileUrl(path, activeRef)
+          )
+        }
+      } catch (error) {
+        fileContent.innerHTML = `<div class="agent-panel-empty">${escapeHtml(error instanceof Error ? error.message : '文件加载失败')}</div>`
+      }
+    }
+
+    async function searchTree(query: string) {
+      const normalized = query.trim().toLowerCase()
+      if (!normalized) {
+        await loadDirectory(folderPath)
+        return
+      }
+      fileList.innerHTML = '<div class="agent-list-skeleton"><span></span><span></span></div>'
+      try {
+        if (!treeItems && meta) {
+          const tree = await fetchJson<TreeResponse>(
+            apiUrl('tree', { ref: activeRef })
+          )
+          treeItems = tree.items
+        }
+        const matches = (treeItems || [])
+          .filter((item) => item.path.toLowerCase().includes(normalized))
+          .slice(0, 100)
+        fileList.innerHTML = matches.length
+          ? matches
+              .map(
+                (item) => `<button type="button" data-entry-path="${escapeHtml(item.path)}" data-entry-type="${item.type === 'tree' ? 'dir' : 'file'}"><span class="${fileIcon(item)}"></span><strong>${escapeHtml(item.path)}</strong></button>`
+              )
+              .join('')
+          : '<div class="agent-panel-empty">没有匹配的文件</div>'
+      } catch {
+        fileList.innerHTML = '<div class="agent-panel-empty">搜索失败</div>'
+      }
+    }
+
+    getAll<HTMLButtonElement>('[data-repo-tab]').forEach((button) => {
+      button.addEventListener(
+        'click',
+        () => activateTab(button.dataset.repoTab as 'overview' | 'docs' | 'files'),
+        { signal: controller.signal }
+      )
+    })
+
+    root.addEventListener(
+      'click',
+      (event) => {
+        const target = event.target as HTMLElement
+        const diagramButton = target.closest<HTMLButtonElement>(
+          '[data-diagram-action]'
+        )
+        if (diagramButton) {
+          const figure = diagramButton.closest<HTMLElement>('.agent-mermaid')
+          const canvas = figure?.querySelector<HTMLElement>(
+            '.agent-mermaid-canvas'
+          )
+          if (!figure || !canvas) return
+          const current = Number(figure.dataset.diagramScale || '1')
+          const action = diagramButton.dataset.diagramAction
+          const next =
+            action === 'in'
+              ? Math.min(2, current + 0.2)
+              : action === 'out'
+                ? Math.max(0.6, current - 0.2)
+                : 1
+          figure.dataset.diagramScale = String(next)
+          canvas.style.setProperty('--diagram-scale', String(next))
+          const reset = figure.querySelector<HTMLButtonElement>(
+            '[data-diagram-action="reset"]'
+          )
+          if (reset) reset.textContent = `${Math.round(next * 100)}%`
+          return
+        }
+        const wikiButton = target.closest<HTMLButtonElement>('[data-wiki-page]')
+        if (wikiButton) {
+          void loadWikiPage(wikiButton.dataset.wikiPage || 'Overview')
+          return
+        }
+        const folderButton = target.closest<HTMLButtonElement>('[data-local-folder]')
+        if (folderButton) {
+          activateTab('files')
+          void loadDirectory(folderButton.dataset.localFolder || '')
+          return
+        }
+        const recommended = target.closest<HTMLButtonElement>('[data-open-file]')
+        if (recommended) {
+          void loadFile(recommended.dataset.openFile || '')
+          return
+        }
+        const entry = target.closest<HTMLButtonElement>('[data-entry-path]')
+        if (entry) {
+          const path = entry.dataset.entryPath || ''
+          if (entry.dataset.entryType === 'dir') void loadDirectory(path)
+          else void loadFile(path)
+        }
+      },
+      { signal: controller.signal }
+    )
+
+    folderUp.addEventListener(
+      'click',
+      () => {
+        const parent = folderPath.includes('/')
+          ? folderPath.slice(0, folderPath.lastIndexOf('/'))
+          : ''
+        void loadDirectory(parent)
+      },
+      { signal: controller.signal }
+    )
+
+    let searchTimer = 0
+    fileSearch.addEventListener(
+      'input',
+      () => {
+        window.clearTimeout(searchTimer)
+        searchTimer = window.setTimeout(() => void searchTree(fileSearch.value), 160)
+      },
+      { signal: controller.signal }
+    )
+
+    const setDrawer = (open: boolean) => {
+      root.dataset.drawerOpen = String(open)
+      const toggle = get<HTMLButtonElement>('[data-drawer-toggle]')
+      toggle?.setAttribute('aria-expanded', String(open))
+      toggle?.setAttribute('aria-label', open ? '收起阅读导航' : '展开阅读导航')
+      try {
+        localStorage.setItem('agent-reader-drawer', String(open))
+      } catch {
+        // Storage can be disabled without affecting the drawer.
+      }
+    }
+    try {
+      const stored = localStorage.getItem('agent-reader-drawer')
+      if (stored) setDrawer(stored === 'true')
+    } catch {
+      // Use the server-rendered default.
+    }
+    get<HTMLButtonElement>('[data-drawer-toggle]')?.addEventListener(
+      'click',
+      () => setDrawer(root.dataset.drawerOpen !== 'true'),
+      { signal: controller.signal }
+    )
+    get<HTMLButtonElement>('[data-drawer-scrim]')?.addEventListener(
+      'click',
+      () => setDrawer(false),
+      { signal: controller.signal }
+    )
+
+    get<HTMLButtonElement>('[data-copy-command]')?.addEventListener(
+      'click',
+      async (event) => {
+        const button = event.currentTarget as HTMLButtonElement
+        const value = button.dataset.copy
+        if (!value) return
+        await navigator.clipboard.writeText(value)
+        const label = button.querySelector<HTMLElement>('[data-command-label]')
+        const previous = label?.textContent || ''
+        if (label) label.textContent = '已复制'
+        button.classList.add('is-copied')
+        window.setTimeout(() => {
+          button.classList.remove('is-copied')
+          if (label) label.textContent = previous
+        }, 1400)
+      },
+      { signal: controller.signal }
+    )
+
+    document.addEventListener(
+      'keydown',
+      (event) => {
+        if (event.key === 'Escape' && root.dataset.drawerOpen === 'true')
+          setDrawer(false)
+        if (
+          event.key === '/' &&
+          get<HTMLElement>('[data-repo-panel="files"]')?.hidden === false &&
+          !(event.target instanceof HTMLInputElement) &&
+          !(event.target instanceof HTMLTextAreaElement)
+        ) {
+          event.preventDefault()
+          fileSearch.focus()
+        }
+      },
+      { signal: controller.signal }
+    )
+
+    let currentDiagramTheme = document.documentElement.classList.contains('dark')
+    const diagramThemeObserver = new MutationObserver(() => {
+      const nextTheme = document.documentElement.classList.contains('dark')
+      if (nextTheme === currentDiagramTheme) return
+      currentDiagramTheme = nextTheme
+      void renderMermaidFigures(root)
+    })
+    diagramThemeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    })
+    document.addEventListener(
+      'astro:before-swap',
+      () => diagramThemeObserver.disconnect(),
+      { once: true }
+    )
+
+    if (!repo || !owner || !repoName) {
+      showStatus('仓库地址不完整，请从 Agent 目录重新进入。', 'error')
+      return
+    }
+
+    void loadWikiPage('Overview')
+    void loadWikiStructure()
+    void loadGitHub().catch((error) => {
+      if (!wikiContent.textContent?.trim()) localOverview()
+      showStatus(
+        error instanceof Error ? error.message : '仓库信息加载失败。',
+        'error'
+      )
+    })
+  }
+
+  mountAgentRepository()
+  document.addEventListener('astro:page-load', mountAgentRepository)
+</script>
+
+<style is:global>
+  #main:has(.agent-repo) {
+    padding: 1.1rem clamp(0.85rem, 2.4vw, 2.4rem) 2rem;
+  }
+
+  .agent-repo {
+    --agent-line: color-mix(in srgb, var(--c-text) 17%, transparent);
+    width: min(100%, 108rem);
+    margin: 0 auto;
+    color: var(--c-text);
+  }
+
+  .agent-repo [hidden] {
+    display: none !important;
+  }
+
+  .agent-repo button,
+  .agent-repo input {
+    font: inherit;
+  }
+
+  .agent-repo-crumbs {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    min-height: 2rem;
+    color: var(--c-text-faint);
+    font-size: 0.72rem;
+  }
+
+  .agent-repo-crumbs a {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 0.3rem;
+    color: var(--c-text-muted);
+    opacity: 1 !important;
+  }
+
+  .agent-repo-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 1rem 0 0.9rem;
+  }
+
+  .agent-repo-identity {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.9rem;
+    min-width: 0;
+  }
+
+  .agent-repo-avatar {
+    width: 3.35rem;
+    height: 3.35rem;
+    flex: none;
+    border: 1px solid var(--agent-line);
+    border-radius: 0.7rem;
+    background: var(--c-surface-soft);
+  }
+
+  .agent-repo-owner,
+  .agent-repo-description {
+    margin: 0;
+  }
+
+  .agent-repo-owner {
+    color: var(--c-text-faint);
+    font: 500 0.68rem/1.35 var(--font-mono);
+    letter-spacing: 0.045em;
+  }
+
+  .agent-repo-identity h1 {
+    margin: 0.1rem 0 0;
+    font-size: clamp(1.45rem, 2.2vw, 2rem);
+    line-height: 1.08;
+    letter-spacing: -0.04em;
+  }
+
+  .agent-repo-description {
+    max-width: 66ch;
+    margin-top: 0.45rem;
+    color: var(--c-text-muted);
+    font-size: 0.82rem;
+    line-height: 1.55;
+  }
+
+  .agent-repo-actions {
+    display: flex;
+    gap: 0.45rem;
+    flex: none;
+  }
+
+  .agent-repo-actions button,
+  .agent-repo-actions a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    min-height: 2.2rem;
+    padding: 0.42rem 0.65rem;
+    border: 1px solid var(--agent-line);
+    border-radius: 0.48rem;
+    background: var(--c-bg);
+    color: var(--c-text-muted);
+    font-size: 0.72rem;
+    opacity: 1;
+  }
+
+  .agent-repo-actions button:hover,
+  .agent-repo-actions a:hover {
+    background: var(--c-surface-soft);
+    color: var(--c-text);
+  }
+
+  .agent-repo-actions .is-copied {
+    color: #3c8b63;
+  }
+
+  .agent-repo-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.45rem 1rem;
+    min-height: 2.4rem;
+    color: var(--c-text-faint);
+    font-size: 0.68rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .agent-repo-meta > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .agent-repo-grade::before {
+    width: 0.38rem;
+    height: 0.38rem;
+    border-radius: 50%;
+    background: var(--grade);
+    content: '';
+  }
+
+  .agent-repo-tabs {
+    display: flex;
+    align-items: center;
+    gap: 0.1rem;
+    min-height: 3.25rem;
+    border-top: 1px solid var(--agent-line);
+    border-bottom: 1px solid var(--agent-line);
+  }
+
+  .agent-repo-tabs button {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.38rem;
+    height: 3.2rem;
+    padding: 0 0.8rem;
+    border: 0;
+    background: transparent;
+    color: var(--c-text-faint);
+    font-size: 0.76rem;
+  }
+
+  .agent-repo-tabs button::after {
+    position: absolute;
+    right: 0.7rem;
+    bottom: -1px;
+    left: 0.7rem;
+    height: 2px;
+    background: var(--c-text);
+    transform: scaleX(0);
+    content: '';
+  }
+
+  .agent-repo-tabs button:hover,
+  .agent-repo-tabs button.is-active {
+    color: var(--c-text);
+  }
+
+  .agent-repo-tabs button.is-active::after {
+    transform: scaleX(1);
+  }
+
+  .agent-repo-source-state {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-left: auto;
+    color: var(--c-text-faint);
+    font: 0.63rem/1 var(--font-mono);
+  }
+
+  .agent-repo-source-state i,
+  .agent-drawer-live i {
+    width: 0.38rem;
+    height: 0.38rem;
+    border-radius: 50%;
+    background: #c08457;
+  }
+
+  .agent-repo-source-state.is-ready i,
+  .agent-drawer-live i {
+    background: #4f9b72;
+  }
+
+  .agent-repo-workspace {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(18rem, 21rem);
+    align-items: start;
+    min-height: 68dvh;
+    transition: grid-template-columns 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .agent-repo[data-drawer-open='false'] .agent-repo-workspace {
+    grid-template-columns: minmax(0, 1fr) 2.75rem;
+  }
+
+  .agent-repo-main {
+    min-width: 0;
+    padding: 1.8rem clamp(0rem, 2.4vw, 2.4rem) 5rem 0;
+  }
+
+  .agent-repo-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding: 0.62rem 0.75rem;
+    border: 1px solid var(--agent-line);
+    border-radius: 0.5rem;
+    background: var(--c-surface-soft);
+    color: var(--c-text-muted);
+    font-size: 0.72rem;
+  }
+
+  .agent-repo-status[data-kind='error'] {
+    color: #bd5e5e;
+  }
+
+  .agent-repo-pulse {
+    width: 0.44rem;
+    height: 0.44rem;
+    border-radius: 50%;
+    background: var(--c-text-faint);
+    animation: agent-pulse 1.2s ease-in-out infinite;
+  }
+
+  .agent-repo-intro,
+  .agent-panel-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 1.4rem;
+    border-bottom: 1px solid var(--agent-line);
+  }
+
+  .agent-repo-kicker,
+  .agent-section-heading span,
+  .agent-panel-heading > div > span {
+    color: var(--c-text-faint);
+    font: 500 0.62rem/1.3 var(--font-mono);
+    letter-spacing: 0.1em;
+  }
+
+  .agent-repo-intro h2,
+  .agent-panel-heading h2 {
+    margin: 0.28rem 0 0;
+    font-size: clamp(1.55rem, 3vw, 2.45rem);
+    line-height: 1.05;
+    letter-spacing: -0.045em;
+  }
+
+  .agent-repo-intro p,
+  .agent-panel-heading p {
+    max-width: 48rem;
+    margin: 0.65rem 0 0;
+    color: var(--c-text-muted);
+    font-size: 0.78rem;
+    line-height: 1.65;
+  }
+
+  .agent-repo-intro > a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.5rem 0;
+    color: var(--c-text-faint);
+    font-size: 0.7rem;
+    white-space: nowrap;
+    opacity: 1 !important;
+  }
+
+  .agent-architecture {
+    margin: 1.6rem 0 2rem;
+    padding: 1rem;
+    border: 1px solid var(--agent-line);
+    border-radius: 0.65rem;
+    background-image: radial-gradient(var(--agent-line) 0.7px, transparent 0.7px);
+    background-size: 12px 12px;
+  }
+
+  .agent-section-heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+
+  .agent-section-heading h3 {
+    margin: 0.18rem 0 0;
+    font-size: 1rem;
+  }
+
+  .agent-section-heading small {
+    color: var(--c-text-faint);
+    font-size: 0.62rem;
+  }
+
+  .agent-architecture-flow {
+    display: grid;
+    grid-template-columns: minmax(7rem, 0.34fr) auto minmax(0, 1fr);
+    align-items: center;
+    gap: 0.8rem;
+    min-height: 10rem;
+    padding-top: 1rem;
+  }
+
+  .agent-architecture-root {
+    display: grid;
+    justify-items: center;
+    gap: 0.22rem;
+    padding: 0.85rem;
+    border: 1px solid var(--agent-line);
+    border-radius: 0.5rem;
+    background: var(--c-bg);
+    text-align: center;
+  }
+
+  .agent-architecture-root > span {
+    font-size: 1.2rem;
+  }
+
+  .agent-architecture-root strong,
+  .agent-architecture-nodes strong {
+    font: 600 0.7rem/1.25 var(--font-mono);
+  }
+
+  .agent-architecture-root small {
+    color: var(--c-text-faint);
+    font-size: 0.58rem;
+  }
+
+  .agent-architecture-arrow {
+    color: var(--c-text-faint);
+  }
+
+  .agent-architecture-nodes {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.45rem;
+  }
+
+  .agent-architecture-nodes button,
+  .agent-local-grid button {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-width: 0;
+    padding: 0.65rem;
+    border: 1px solid var(--agent-line);
+    border-radius: 0.45rem;
+    background: var(--c-bg);
+    color: var(--c-text-muted);
+    text-align: left;
+  }
+
+  .agent-architecture-nodes button:hover,
+  .agent-local-grid button:hover {
+    background: var(--c-surface-soft);
+    color: var(--c-text);
+  }
+
+  .agent-architecture-nodes strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .agent-wiki-content {
+    width: min(100%, 57rem);
+    max-width: 100% !important;
+    margin: 2rem auto 0;
+  }
+
+  .agent-wiki-content h1:first-child {
+    margin-top: 0;
+  }
+
+  .agent-wiki-content h1,
+  .agent-wiki-content h2,
+  .agent-wiki-content h3 {
+    letter-spacing: -0.025em;
+  }
+
+  .agent-wiki-content p,
+  .agent-wiki-content li {
+    line-height: 1.8;
+  }
+
+  .agent-wiki-content table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .agent-wiki-content pre {
+    border: 1px solid var(--agent-line);
+    border-radius: 0.5rem;
+  }
+
+  .agent-mermaid {
+    width: 100%;
+    margin: 1.5rem 0 2rem;
+    overflow: hidden;
+    border: 1px solid var(--agent-line);
+    border-radius: 0.7rem;
+    background:
+      radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--c-text) 11%, transparent) 1px, transparent 0) 0 0 / 18px 18px,
+      var(--c-bg);
+  }
+
+  .agent-mermaid-toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 2.8rem;
+    padding: 0.45rem 0.6rem 0.45rem 0.85rem;
+    border-bottom: 1px solid var(--agent-line);
+    background: color-mix(in srgb, var(--c-bg) 94%, transparent);
+    backdrop-filter: blur(12px);
+  }
+
+  .agent-mermaid-toolbar > span,
+  .agent-mermaid-toolbar > div {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .agent-mermaid-toolbar > span {
+    gap: 0.4rem;
+    color: var(--c-text-muted);
+    font-size: 0.68rem;
+    font-weight: 650;
+    letter-spacing: 0.04em;
+  }
+
+  .agent-mermaid-toolbar > div {
+    gap: 0.2rem;
+  }
+
+  .agent-mermaid-toolbar button {
+    display: inline-grid;
+    min-width: 2rem;
+    height: 1.9rem;
+    place-items: center;
+    padding: 0 0.45rem;
+    border: 0;
+    border-radius: 0.35rem;
+    background: transparent;
+    color: var(--c-text-muted);
+    font-size: 0.68rem;
+    cursor: pointer;
+  }
+
+  .agent-mermaid-toolbar button:hover {
+    background: var(--c-surface-soft);
+    color: var(--c-text);
+  }
+
+  .agent-mermaid-viewport {
+    min-height: 18rem;
+    max-height: min(68vh, 48rem);
+    overflow: auto;
+    overscroll-behavior: contain;
+  }
+
+  .agent-mermaid-canvas {
+    display: grid;
+    width: max-content;
+    min-width: 100%;
+    min-height: 18rem;
+    place-items: center;
+    padding: clamp(1.2rem, 3vw, 2.4rem);
+    zoom: var(--diagram-scale, 1);
+  }
+
+  .agent-mermaid-canvas > svg {
+    display: block;
+    width: auto !important;
+    min-width: min(46rem, 82vw);
+    max-width: none !important;
+    height: auto;
+    min-height: 14rem;
+  }
+
+  .agent-mermaid-canvas > small {
+    margin-left: 0.6rem;
+    color: var(--c-text-faint);
+    font-size: 0.7rem;
+  }
+
+  .agent-mermaid-error {
+    width: min(100%, 54rem);
+    color: var(--c-text-muted);
+    font-size: 0.75rem;
+  }
+
+  .agent-mermaid-error summary {
+    cursor: pointer;
+  }
+
+  .agent-mermaid-error pre {
+    max-height: 24rem;
+    overflow: auto;
+    white-space: pre;
+  }
+
+  @media (max-width: 640px) {
+    .agent-mermaid-toolbar > span {
+      font-size: 0.62rem;
+    }
+
+    .agent-mermaid-viewport,
+    .agent-mermaid-canvas {
+      min-height: 14rem;
+    }
+
+    .agent-mermaid-canvas {
+      padding: 1rem;
+    }
+  }
+
+  .agent-source-details {
+    margin: 1rem 0;
+    padding: 0.7rem 0.8rem;
+    border: 1px solid var(--agent-line);
+    border-radius: 0.5rem;
+    background: var(--c-surface-soft);
+    color: var(--c-text-muted);
+    font-size: 0.72rem;
+  }
+
+  .agent-wiki-skeleton,
+  .agent-list-skeleton {
+    display: grid;
+    gap: 0.65rem;
+  }
+
+  .agent-wiki-skeleton {
+    padding-top: 0.5rem;
+  }
+
+  .agent-wiki-skeleton span,
+  .agent-list-skeleton span {
+    height: 0.75rem;
+    border-radius: 0.2rem;
+    background: linear-gradient(90deg, var(--c-surface-soft), var(--c-surface-hover), var(--c-surface-soft));
+    background-size: 220% 100%;
+    animation: agent-shimmer 1.45s linear infinite;
+  }
+
+  .agent-wiki-skeleton span:first-child {
+    width: 48%;
+    height: 1.7rem;
+  }
+
+  .agent-wiki-skeleton span:nth-child(3) {
+    width: 88%;
+  }
+
+  .agent-wiki-skeleton span:last-child {
+    width: 67%;
+  }
+
+  .agent-local-note {
+    padding: 0.65rem 0.8rem;
+    border-left: 2px solid #c08457;
+    background: var(--c-surface-soft);
+    color: var(--c-text-muted);
+    font-size: 0.75rem;
+  }
+
+  .agent-local-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+
+  .agent-local-grid button {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .agent-local-grid small {
+    grid-column: 2;
+    color: var(--c-text-faint);
+    font-size: 0.62rem;
+  }
+
+  .agent-local-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .agent-local-tags span {
+    padding: 0.22rem 0.48rem;
+    border: 1px solid var(--agent-line);
+    border-radius: 0.35rem;
+    color: var(--c-text-muted);
+    font-size: 0.66rem;
+  }
+
+  .agent-doc-list {
+    margin-top: 0.5rem;
+  }
+
+  .agent-doc-list > button {
+    display: grid;
+    grid-template-columns: 2.2rem 1.4rem minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.65rem;
+    width: 100%;
+    min-height: 4.4rem;
+    padding: 0.7rem 0.2rem;
+    border: 0;
+    border-bottom: 1px solid var(--agent-line);
+    background: transparent;
+    color: var(--c-text-muted);
+    text-align: left;
+  }
+
+  .agent-doc-list > button:hover {
+    background: var(--c-surface-soft);
+    color: var(--c-text);
+  }
+
+  .agent-doc-index {
+    color: var(--c-text-faint);
+    font: 0.66rem/1 var(--font-mono);
+  }
+
+  .agent-doc-icon {
+    font-size: 1rem;
+  }
+
+  .agent-doc-copy strong,
+  .agent-doc-copy small {
+    display: block;
+  }
+
+  .agent-doc-copy strong {
+    color: var(--c-text);
+    font: 550 0.79rem/1.45 var(--font-mono);
+  }
+
+  .agent-doc-copy small {
+    margin-top: 0.15rem;
+    color: var(--c-text-faint);
+    font-size: 0.62rem;
+  }
+
+  .agent-doc-arrow {
+    color: var(--c-text-faint);
+  }
+
+  .agent-files-shell {
+    display: grid;
+    grid-template-columns: minmax(13rem, 18rem) minmax(0, 1fr);
+    min-height: 66dvh;
+    border: 1px solid var(--agent-line);
+    border-radius: 0.65rem;
+    overflow: hidden;
+  }
+
+  .agent-file-browser {
+    min-width: 0;
+    border-right: 1px solid var(--agent-line);
+    background: var(--c-bg);
+  }
+
+  .agent-file-browser-head,
+  .agent-filebar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+    min-height: 3.3rem;
+    padding: 0.6rem 0.75rem;
+    border-bottom: 1px solid var(--agent-line);
+  }
+
+  .agent-file-browser-head strong {
+    display: block;
+    max-width: 12rem;
+    margin-top: 0.18rem;
+    overflow: hidden;
+    font: 550 0.69rem/1.35 var(--font-mono);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .agent-file-browser-head button {
+    display: grid;
+    width: 1.8rem;
+    height: 1.8rem;
+    place-items: center;
+    border: 1px solid var(--agent-line);
+    border-radius: 0.4rem;
+    background: var(--c-bg);
+    color: var(--c-text-muted);
+  }
+
+  .agent-file-search {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin: 0.65rem;
+    padding: 0.45rem 0.5rem;
+    border: 1px solid var(--agent-line);
+    border-radius: 0.42rem;
+    color: var(--c-text-faint);
+  }
+
+  .agent-file-search:focus-within {
+    border-color: var(--c-text-muted);
+  }
+
+  .agent-file-search input {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--c-text);
+    font-size: 0.7rem;
+  }
+
+  .agent-file-search kbd {
+    padding: 0.04rem 0.28rem;
+    border: 1px solid var(--agent-line);
+    border-radius: 0.25rem;
+    font: 0.58rem/1.3 var(--font-mono);
+  }
+
+  .agent-file-list {
+    max-height: calc(100dvh - 17rem);
+    padding: 0 0.4rem 1rem;
+    overflow: auto;
+    scrollbar-width: thin;
+  }
+
+  .agent-file-list > button {
+    display: grid;
+    grid-template-columns: 1rem minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.38rem;
+    width: 100%;
+    padding: 0.4rem 0.42rem;
+    border: 0;
+    border-radius: 0.35rem;
+    background: transparent;
+    color: var(--c-text-muted);
+    text-align: left;
+  }
+
+  .agent-file-list > button:hover {
+    background: var(--c-surface-soft);
+    color: var(--c-text);
+  }
+
+  .agent-file-list strong {
+    overflow: hidden;
+    font: 500 0.66rem/1.35 var(--font-mono);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .agent-file-viewer {
+    min-width: 0;
+    background: color-mix(in srgb, var(--c-bg) 97%, var(--c-text) 3%);
+  }
+
+  .agent-filebar > div,
+  .agent-filebar a {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .agent-filebar strong {
+    overflow: hidden;
+    font: 550 0.7rem/1.3 var(--font-mono);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .agent-filebar a {
+    flex: none;
+    color: var(--c-text-faint);
+    font-size: 0.65rem;
+    opacity: 1 !important;
+  }
+
+  .agent-file-content {
+    max-height: calc(100dvh - 13rem);
+    overflow: auto;
+  }
+
+  .agent-file-empty {
+    display: grid;
+    justify-items: center;
+    gap: 0.45rem;
+    padding: 8rem 1rem;
+    color: var(--c-text-faint);
+    text-align: center;
+  }
+
+  .agent-file-empty > span {
+    font-size: 1.8rem;
+  }
+
+  .agent-file-empty h3,
+  .agent-file-empty p {
+    margin: 0;
+  }
+
+  .agent-file-empty h3 {
+    color: var(--c-text);
+    font-size: 0.95rem;
+  }
+
+  .agent-file-empty p {
+    font-size: 0.72rem;
+  }
+
+  .agent-code-view {
+    margin: 0;
+    padding: 0.85rem 0;
+    overflow: visible;
+    background: transparent;
+    color: var(--c-text-soft);
+    font: 0.68rem/1.65 var(--font-mono);
+  }
+
+  .agent-code-view > span {
+    display: grid;
+    grid-template-columns: 3.2rem minmax(max-content, 1fr);
+    min-height: 1.15rem;
+  }
+
+  .agent-code-view i {
+    padding-right: 0.8rem;
+    color: var(--c-text-faint);
+    font-style: normal;
+    text-align: right;
+    user-select: none;
+  }
+
+  .agent-code-view code {
+    padding-right: 1rem;
+    white-space: pre;
+  }
+
+  .agent-code-note,
+  .agent-panel-empty {
+    padding: 1rem;
+    color: var(--c-text-faint);
+    font-size: 0.7rem;
+  }
+
+  .agent-file-markdown {
+    width: min(100% - 2rem, 52rem);
+    max-width: 100% !important;
+    margin: 1.2rem auto 3rem;
+  }
+
+  .agent-file-image {
+    display: grid;
+    justify-items: center;
+    gap: 0.7rem;
+    margin: 0;
+    padding: 2rem;
+  }
+
+  .agent-file-image img {
+    max-width: 100%;
+    max-height: 70dvh;
+  }
+
+  .agent-file-image figcaption {
+    color: var(--c-text-faint);
+    font: 0.65rem/1.4 var(--font-mono);
+  }
+
+  .agent-repo-drawer {
+    position: sticky;
+    top: 4.8rem;
+    min-width: 0;
+    height: calc(100dvh - 5.7rem);
+    overflow: hidden;
+    border-left: 1px solid var(--agent-line);
+    background: var(--c-bg);
+  }
+
+  .agent-drawer-toggle {
+    position: absolute;
+    z-index: 2;
+    top: 0.75rem;
+    left: 0.48rem;
+    display: grid;
+    width: 1.8rem;
+    height: 1.8rem;
+    place-items: center;
+    border: 1px solid var(--agent-line);
+    border-radius: 0.4rem;
+    background: var(--c-bg);
+    color: var(--c-text-muted);
+  }
+
+  .agent-drawer-body {
+    width: min(21rem, 100%);
+    height: 100%;
+    padding: 0.8rem 0.8rem 2rem 3rem;
+    overflow: auto;
+    opacity: 1;
+    scrollbar-width: thin;
+    transition: opacity 120ms ease;
+  }
+
+  .agent-repo[data-drawer-open='false'] .agent-drawer-body {
+    pointer-events: none;
+    opacity: 0;
+  }
+
+  .agent-drawer-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.5rem;
+    min-height: 3.3rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--agent-line);
+  }
+
+  .agent-drawer-head h2 {
+    margin: 0.12rem 0 0;
+    font-size: 0.9rem;
+  }
+
+  .agent-drawer-live {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    color: var(--c-text-faint);
+    font-size: 0.6rem;
+  }
+
+  .agent-drawer-section {
+    margin-top: 1.1rem;
+  }
+
+  .agent-drawer-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    color: var(--c-text-muted);
+    font-size: 0.68rem;
+  }
+
+  .agent-drawer-label small {
+    color: var(--c-text-faint);
+    font-size: 0.58rem;
+  }
+
+  .agent-wiki-outline,
+  .agent-recommended-files {
+    display: grid;
+    gap: 0.08rem;
+    margin-top: 0.55rem;
+  }
+
+  .agent-wiki-outline button {
+    display: grid;
+    grid-template-columns: 1.7rem minmax(0, 1fr);
+    gap: 0.35rem;
+    width: 100%;
+    padding: 0.35rem 0.38rem 0.35rem calc(0.38rem + var(--depth) * 0.55rem);
+    border: 0;
+    border-radius: 0.35rem;
+    background: transparent;
+    color: var(--c-text-muted);
+    text-align: left;
+  }
+
+  .agent-wiki-outline button:hover,
+  .agent-recommended-files button:hover {
+    background: var(--c-surface-soft);
+    color: var(--c-text);
+  }
+
+  .agent-wiki-outline span,
+  .agent-recommended-files span {
+    color: var(--c-text-faint);
+    font: 0.6rem/1.4 var(--font-mono);
+  }
+
+  .agent-wiki-outline strong,
+  .agent-recommended-files strong {
+    overflow: hidden;
+    font-size: 0.65rem;
+    font-weight: 520;
+    line-height: 1.4;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .agent-recommended-files button {
+    display: grid;
+    grid-template-columns: 1.6rem minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.35rem;
+    width: 100%;
+    padding: 0.38rem;
+    border: 0;
+    border-radius: 0.35rem;
+    background: transparent;
+    color: var(--c-text-muted);
+    text-align: left;
+  }
+
+  .agent-drawer-empty {
+    color: var(--c-text-faint);
+    font-size: 0.65rem;
+  }
+
+  .agent-repo-facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.6rem;
+    margin-top: 1.2rem;
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--agent-line);
+  }
+
+  .agent-repo-facts div {
+    min-width: 0;
+  }
+
+  .agent-repo-facts span,
+  .agent-repo-facts strong {
+    display: block;
+  }
+
+  .agent-repo-facts span {
+    color: var(--c-text-faint);
+    font-size: 0.58rem;
+  }
+
+  .agent-repo-facts strong {
+    margin-top: 0.12rem;
+    overflow: hidden;
+    font: 550 0.62rem/1.4 var(--font-mono);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .agent-drawer-scrim {
+    display: none;
+  }
+
+  @keyframes agent-shimmer {
+    to { background-position: -220% 0; }
+  }
+
+  @keyframes agent-pulse {
+    50% { opacity: 0.32; transform: scale(0.72); }
+  }
+
+  @media (max-width: 70rem) {
+    .agent-repo-workspace,
+    .agent-repo[data-drawer-open='false'] .agent-repo-workspace {
+      grid-template-columns: minmax(0, 1fr) 2.75rem;
+    }
+
+    .agent-repo-drawer {
+      position: fixed;
+      z-index: 32;
+      top: 0;
+      right: 0;
+      width: min(88vw, 22rem);
+      height: 100dvh;
+      border-left: 1px solid var(--agent-line);
+      box-shadow: -1rem 0 3rem rgb(0 0 0 / 12%);
+      transform: translateX(0);
+      transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .agent-repo[data-drawer-open='false'] .agent-repo-drawer {
+      transform: translateX(calc(100% - 2.75rem));
+    }
+
+    .agent-drawer-body {
+      width: 100%;
+    }
+
+    .agent-repo[data-drawer-open='true'] .agent-drawer-scrim {
+      position: fixed;
+      z-index: 31;
+      inset: 0;
+      display: block;
+      border: 0;
+      background: rgb(0 0 0 / 22%);
+    }
+  }
+
+  @media (max-width: 48rem) {
+    #main:has(.agent-repo) {
+      padding-inline: 0.8rem;
+    }
+
+    .agent-repo-head {
+      display: grid;
+    }
+
+    .agent-repo-actions {
+      width: 100%;
+    }
+
+    .agent-repo-actions button,
+    .agent-repo-actions a {
+      flex: 1;
+    }
+
+    .agent-repo-main {
+      padding-right: 2.9rem;
+    }
+
+    .agent-repo-intro {
+      display: grid;
+    }
+
+    .agent-architecture-flow {
+      grid-template-columns: 1fr;
+    }
+
+    .agent-architecture-arrow {
+      transform: rotate(90deg);
+      justify-self: center;
+    }
+
+    .agent-architecture-nodes,
+    .agent-local-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .agent-files-shell {
+      display: block;
+    }
+
+    .agent-file-browser {
+      border-right: 0;
+      border-bottom: 1px solid var(--agent-line);
+    }
+
+    .agent-file-list {
+      max-height: 20rem;
+    }
+
+    .agent-file-content {
+      max-height: none;
+    }
+  }
+
+  @media (max-width: 34rem) {
+    .agent-repo-avatar {
+      width: 2.8rem;
+      height: 2.8rem;
+    }
+
+    .agent-repo-meta {
+      padding-block: 0.45rem;
+    }
+
+    .agent-repo-source-state {
+      font-size: 0;
+    }
+
+    .agent-repo-source-state i {
+      margin-right: 0.4rem;
+    }
+
+    .agent-architecture-nodes,
+    .agent-local-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .agent-doc-list > button {
+      grid-template-columns: 1.8rem 1rem minmax(0, 1fr);
+    }
+
+    .agent-doc-arrow {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .agent-repo-workspace,
+    .agent-repo-drawer,
+    .agent-repo-pulse,
+    .agent-wiki-skeleton span,
+    .agent-list-skeleton span {
+      transition: none;
+      animation: none;
+    }
+  }
+</style>

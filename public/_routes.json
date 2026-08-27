@@ -1,0 +1,5 @@
+{
+  "version": 1,
+  "include": ["/api/github/*", "/api/deepwiki/*", "/agent/*", "/skills/*"],
+  "exclude": ["/skills/full-index.json", "/skills/suggest-index.json"]
+}

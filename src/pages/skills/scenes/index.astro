@@ -23,9 +23,9 @@ const groups = scenesData.groups.map((group) => ({
 ---
 
 <BaseLayout
-  title="场景导航 - Skills"
+  title="场景导航 - Agent 能力目录"
   description="按使用场景浏览 Agent Skills 与 MCP 工具：数据库、浏览器自动化、内容创作等"
-  bgType={false}
+  bgType="dot"
 >
   <StandardLayout
     class="max-w-300"
@@ -40,16 +40,31 @@ const groups = scenesData.groups.map((group) => ({
           class="scene-group slide-enter"
           style={`--enter-stage: ${idx}`}
         >
-          <h2 class="scene-group-title">{group.label}</h2>
+          <div class="scene-group-head">
+            <div>
+              <span>
+                {String(idx + 1).padStart(2, '0')} /{' '}
+                {String(groups.length).padStart(2, '0')}
+              </span>
+              <h2 class="scene-group-title">{group.label}</h2>
+            </div>
+            <small>{group.scenes.length} 个场景</small>
+          </div>
           <div class="scene-grid">
-            {group.scenes.map((scene) => (
+            {group.scenes.map((scene, sceneIndex) => (
               <Link
                 class="scene-card"
-                href={withBasePath(`/skills/scenes/${scene.slug}/`)}
+                href={withBasePath(`/agent/scenes/${scene.slug}/`)}
               >
+                <span class="scene-card-index">
+                  {String(sceneIndex + 1).padStart(2, '0')}
+                </span>
                 <span class="scene-card-title">{scene.title}</span>
                 <span class="scene-card-desc">{scene.desc}</span>
-                <span class="scene-card-count">{scene.count} 个匹配项目</span>
+                <span class="scene-card-count">
+                  {scene.count.toLocaleString('zh-CN')} 个项目
+                  <i class="i-ri-arrow-right-up-line" aria-hidden="true" />
+                </span>
               </Link>
             ))}
           </div>
@@ -61,51 +76,86 @@ const groups = scenesData.groups.map((group) => ({
 
 <style is:global>
   .scene-group {
-    margin-top: 1.8rem;
+    margin-top: 3rem;
+  }
+
+  .scene-group-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .scene-group-head > div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .scene-group-head > div > span {
+    color: var(--c-text-faint);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+  }
+
+  .scene-group-head small {
+    color: var(--c-text-faint);
+    font-size: 0.68rem;
   }
 
   .scene-group-title {
-    margin: 0 0 0.8rem;
-    font-size: 1rem;
-    font-weight: 700;
+    margin: 0.18rem 0 0;
+    font-size: 1.5rem;
+    font-weight: 680;
+    letter-spacing: -0.035em;
     color: var(--c-text);
   }
 
   .scene-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr));
-    gap: 0.7rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.65rem;
   }
 
   .scene-card {
-    display: flex !important;
-    flex-direction: column;
-    gap: 0.3rem;
-    padding: 0.85rem 1rem;
-    border: 1px solid var(--c-border-soft);
-    border-radius: 0.6rem;
+    display: grid !important;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.3rem 0.7rem;
+    min-height: 9.5rem;
+    padding: 1rem;
+    border: 1px solid var(--skills-border);
+    border-radius: var(--skills-radius-lg);
     background: var(--c-bg);
     opacity: 1 !important;
     transition:
-      transform 0.22s ease,
-      border-color 0.22s ease,
-      box-shadow 0.22s ease;
+      background 160ms ease,
+      border-color 160ms ease;
   }
 
   .scene-card:hover {
-    transform: translateY(-2px);
-    border-color: var(--c-border-strong);
-    box-shadow: 0 8px 22px -14px rgba(0, 0, 0, 0.22);
+    border-color: var(--skills-border);
+    background: var(--c-surface-soft);
+  }
+
+  .scene-card-index {
+    color: var(--c-text-faint);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.62rem;
   }
 
   .scene-card-title {
-    font-weight: 600;
+    font-size: 0.88rem;
+    font-weight: 660;
     color: var(--c-text);
+    text-align: left;
   }
 
   .scene-card-desc {
-    font-size: 0.78rem;
-    line-height: 1.45;
+    grid-column: 2;
+    font-size: 0.72rem;
+    line-height: 1.6;
     color: var(--c-text-muted);
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -114,8 +164,27 @@ const groups = scenesData.groups.map((group) => ({
   }
 
   .scene-card-count {
-    margin-top: 0.2rem;
-    font-size: 0.7rem;
+    grid-column: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.4rem;
+    margin-top: auto;
+    padding-top: 0.7rem;
+    border-top: 1px solid var(--skills-border);
+    font-size: 0.65rem;
     color: var(--c-text-faint);
+  }
+
+  @media (max-width: 900px) {
+    .scene-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 560px) {
+    .scene-grid {
+      grid-template-columns: 1fr;
+    }
   }
 </style>

@@ -40,9 +40,9 @@ const groupLabel =
 ---
 
 <BaseLayout
-  title={`${scene.title} - Skills 场景`}
+  title={`${scene.title} - Agent 场景`}
   description={`${scene.title}: ${scene.desc}`}
-  bgType={false}
+  bgType="dot"
 >
   <StandardLayout
     class="max-w-300"
@@ -52,7 +52,7 @@ const groupLabel =
   >
     <SkillsNav active="scenes" slot="head" />
     <p class="scene-detail-meta slide-enter" style="--enter-stage: 0">
-      <Link href={withBasePath('/skills/scenes/')}>
+      <Link href={withBasePath('/agent/scenes/')}>
         <span class="i-ri-arrow-left-line" aria-hidden="true"></span>
         全部场景
       </Link>
@@ -124,7 +124,7 @@ const groupLabel =
   .scene-detail-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
-    gap: 0.8rem;
+    gap: 0.65rem;
     margin-top: 1.2rem;
     padding-bottom: 2.4rem;
   }

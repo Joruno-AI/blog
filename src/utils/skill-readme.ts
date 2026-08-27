@@ -19,16 +19,59 @@ function resolveUrl(
   href: string | null | undefined,
   repo: string,
   kind: 'link' | 'img'
-): string | null {
+): { url: string; external: boolean } | null {
   if (!href) return null
   const trimmed = href.trim()
   if (/^(javascript|data|vbscript|file):/i.test(trimmed)) return null
-  if (/^(https?:)?\/\//i.test(trimmed)) return trimmed
-  if (trimmed.startsWith('#') || trimmed.startsWith('mailto:')) return trimmed
+  if (trimmed.startsWith('#')) return { url: trimmed, external: false }
+  if (trimmed.startsWith('mailto:')) return { url: trimmed, external: true }
+
+  if (/^(https?:)?\/\//i.test(trimmed)) {
+    if (kind === 'link') {
+      try {
+        const absolute = new URL(
+          trimmed.startsWith('//') ? `https:${trimmed}` : trimmed
+        )
+        const [owner, name] = repo.split('/')
+        const parts = absolute.pathname.split('/').filter(Boolean)
+        if (
+          absolute.hostname === 'github.com' &&
+          parts[0]?.toLowerCase() === owner?.toLowerCase() &&
+          parts[1]?.toLowerCase() === name?.toLowerCase()
+        ) {
+          if (parts.length === 2) {
+            return {
+              url: `/agent/${repo}/`,
+              external: false,
+            }
+          }
+          if ((parts[2] !== 'blob' && parts[2] !== 'tree') || parts.length < 5)
+            return { url: trimmed, external: true }
+          const ref = parts[3]
+          const path = parts.slice(4).join('/')
+          return {
+            url: `/agent/${repo}/blob/${encodeURIComponent(ref)}/${path}`,
+            external: false,
+          }
+        }
+      } catch {
+        // Invalid absolute URLs are dropped below.
+        return null
+      }
+    }
+    return { url: trimmed, external: true }
+  }
+
   const path = trimmed.replace(/^\.\//, '').replace(/^\//, '')
   return kind === 'img'
-    ? `https://raw.githubusercontent.com/${repo}/HEAD/${path}`
-    : `https://github.com/${repo}/blob/HEAD/${path}`
+    ? {
+        url: `https://raw.githubusercontent.com/${repo}/HEAD/${path}`,
+        external: true,
+      }
+    : {
+        url: `/agent/${repo}/blob/HEAD/${path}`,
+        external: false,
+      }
 }
 
 export async function renderReadme(markdown: string, repoFullName: string) {
@@ -41,17 +84,20 @@ export async function renderReadme(markdown: string, repoFullName: string) {
         return escaped ? `${escaped} ` : ''
       },
       link({ href, title, tokens }) {
-        const url = resolveUrl(href, repoFullName, 'link')
+        const resolved = resolveUrl(href, repoFullName, 'link')
         const inner = this.parser.parseInline(tokens)
-        if (!url) return inner
+        if (!resolved) return inner
         const titleAttr = title ? ` title="${escapeHtml(title)}"` : ''
-        return `<a href="${escapeHtml(url)}"${titleAttr} target="_blank" rel="noopener nofollow">${inner}</a>`
+        const externalAttrs = resolved.external
+          ? ' target="_blank" rel="noopener nofollow"'
+          : ''
+        return `<a href="${escapeHtml(resolved.url)}"${titleAttr}${externalAttrs}>${inner}</a>`
       },
       image({ href, title, text }) {
-        const url = resolveUrl(href, repoFullName, 'img')
-        if (!url) return escapeHtml(text)
+        const resolved = resolveUrl(href, repoFullName, 'img')
+        if (!resolved) return escapeHtml(text)
         const titleAttr = title ? ` title="${escapeHtml(title)}"` : ''
-        return `<img src="${escapeHtml(url)}" alt="${escapeHtml(text)}"${titleAttr} loading="lazy" decoding="async">`
+        return `<img src="${escapeHtml(resolved.url)}" alt="${escapeHtml(text)}"${titleAttr} loading="lazy" decoding="async">`
       },
     },
   })
