@@ -1,5 +1,6 @@
 # Exclude formatting
 pnpm-lock.yaml
+public/agent/full-index.json
 *.md
 .venv-music-align/
 

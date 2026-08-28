@@ -90,10 +90,15 @@ const groupLabel =
       '[data-copy]'
     )
     if (!btn) return
-    navigator.clipboard.writeText(btn.dataset.copy!).then(() => {
-      btn.classList.add('is-copied')
-      setTimeout(() => btn.classList.remove('is-copied'), 1200)
-    })
+    navigator.clipboard
+      .writeText(btn.dataset.copy!)
+      .then(() => {
+        btn.classList.add('is-copied')
+        setTimeout(() => btn.classList.remove('is-copied'), 1200)
+      })
+      .catch(() => {
+        console.warn('[agent] 复制安装命令失败: 剪贴板不可用')
+      })
   })
 </script>
 

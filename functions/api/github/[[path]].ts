@@ -51,6 +51,8 @@ const GITHUB_API = 'https://api.github.com'
 const REPO_PART = /^[A-Za-z0-9_.-]{1,100}$/
 const CACHE_CONTROL =
   'public, max-age=300, s-maxage=3600, stale-while-revalidate=86400'
+const FALLBACK_CACHE_CONTROL = 'public, max-age=86400'
+const TRANSIENT_STATUSES = new Set([429, 500, 502, 503, 504])
 
 function json(payload: unknown, status = 200, cache = CACHE_CONTROL) {
   return new Response(JSON.stringify(payload), {
@@ -76,7 +78,24 @@ function safeQuery(value: string | null, maxLength: number) {
 }
 
 function encodeGitHubPath(value: string) {
-  return value.split('/').filter(Boolean).map(encodeURIComponent).join('/')
+  // 必须剔除 . 与 ..：encodeURIComponent 不转义点号，new URL 会规范化掉相对段，
+  // 导致请求逃出 /repos/{owner}/{repo}/ 前缀打到任意 GitHub API 端点
+  return value
+    .split('/')
+    .filter((segment) => segment && segment !== '.' && segment !== '..')
+    .map(encodeURIComponent)
+    .join('/')
+}
+
+function retryDelay(response: Response, attempt: number) {
+  const retryAfter = Number(response.headers.get('Retry-After') || 0)
+  if (Number.isFinite(retryAfter) && retryAfter > 0)
+    return Math.min(1500, retryAfter * 1000)
+  return attempt === 0 ? 180 : 480
+}
+
+function pause(milliseconds: number) {
+  return new Promise<void>((resolve) => setTimeout(resolve, milliseconds))
 }
 
 async function github<T>(
@@ -95,15 +114,64 @@ async function github<T>(
   }
   if (token) headers.Authorization = `Bearer ${token}`
 
-  const response = await fetch(url, { headers })
-  if (response.status === 404) return null
-  if (!response.ok) {
-    if (response.status === 403 || response.status === 429) {
-      throw new Error('GitHub 请求频率已达上限，请稍后重试。')
+  const maximumAttempts = 2
+  for (let attempt = 0; attempt < maximumAttempts; attempt += 1) {
+    let response: Response
+    try {
+      response = await fetch(url, { headers })
+    } catch (error) {
+      if (attempt + 1 < maximumAttempts) {
+        await pause(attempt === 0 ? 180 : 480)
+        continue
+      }
+      throw error
     }
-    throw new Error(`GitHub 返回 ${response.status}`)
+
+    if (response.status === 404) return null
+    if (response.ok) return (await response.json()) as T
+    if (
+      TRANSIENT_STATUSES.has(response.status) &&
+      attempt + 1 < maximumAttempts
+    ) {
+      await pause(retryDelay(response, attempt))
+      continue
+    }
+    if (response.status === 403 || response.status === 429)
+      throw new Error('GitHub 请求频率已达上限，请稍后重试。')
+    if (response.status >= 500)
+      throw new Error('GitHub 暂时没有响应，请稍后重试。')
+    throw new Error('GitHub 数据请求失败，请稍后重试。')
   }
-  return (await response.json()) as T
+  throw new Error('GitHub 暂时没有响应，请稍后重试。')
+}
+
+function fallbackCacheKey(request: Request) {
+  const url = new URL(request.url)
+  url.searchParams.set('__agent_stale_fallback', '1')
+  return new Request(url, { method: 'GET' })
+}
+
+function storeAsFallback(response: Response) {
+  const headers = new Headers(response.headers)
+  headers.set('Cache-Control', FALLBACK_CACHE_CONTROL)
+  headers.set('X-Agent-Cache', 'fallback')
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  })
+}
+
+function serveFallback(response: Response) {
+  const headers = new Headers(response.headers)
+  headers.set('Cache-Control', 'no-store')
+  headers.set('Warning', '110 - "Response is stale"')
+  headers.set('X-Agent-Cache', 'stale-fallback')
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  })
 }
 
 function repoPayload(repo: GitHubRepo) {
@@ -149,10 +217,8 @@ async function buildResponse(context: PagesContext, parts: string[]) {
   const requestUrl = new URL(context.request.url)
 
   if (action === 'overview') {
-    const [repository, readme] = await Promise.all([
-      github<GitHubRepo>(repoPath, token),
-      github<GitHubContent>(`${repoPath}/readme`, token),
-    ])
+    // readme 字段保留形状但不再拉取: 前端正文来自 DeepWiki, README 从未被消费, 省一次配额
+    const repository = await github<GitHubRepo>(repoPath, token)
     if (!repository)
       return json(
         { error: '仓库不存在或暂时不可访问。' },
@@ -161,13 +227,7 @@ async function buildResponse(context: PagesContext, parts: string[]) {
       )
     return json({
       repo: repoPayload(repository),
-      readme: readme
-        ? {
-            path: readme.path,
-            content: readme.content ?? '',
-            encoding: readme.encoding ?? 'base64',
-          }
-        : null,
+      readme: null,
     })
   }
 
@@ -223,14 +283,23 @@ export async function onRequestGet(context: PagesContext) {
   const cacheStorage = caches as CacheStorage & { default: Cache }
   const cache = cacheStorage.default
   const cacheKey = new Request(context.request.url, { method: 'GET' })
+  const staleKey = fallbackCacheKey(context.request)
   const cached = await cache.match(cacheKey)
   if (cached) return cached
 
   try {
     const response = await buildResponse(context, parts)
-    if (response.ok) context.waitUntil(cache.put(cacheKey, response.clone()))
+    if (response.ok)
+      context.waitUntil(
+        Promise.all([
+          cache.put(cacheKey, response.clone()),
+          cache.put(staleKey, storeAsFallback(response.clone())),
+        ])
+      )
     return response
   } catch (error) {
+    const fallback = await cache.match(staleKey)
+    if (fallback) return serveFallback(fallback)
     return json(
       {
         error:

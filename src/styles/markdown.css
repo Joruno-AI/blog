@@ -4,28 +4,31 @@
 
 /* Prose Complement */
 .prose {
-  --fg-light: #888;
-  --fg: #555;
-  --fg-deep: #222;
+  --fg-light: var(--c-text-faint);
+  --fg: var(--c-text-soft);
+  --fg-deep: var(--c-text);
   --fg-deeper: var(--c-text);
 
   color: var(--fg);
 }
 
 html.dark .prose {
-  --fg-light: #888;
-  --fg: #bbb;
-  --fg-deep: #ddd;
+  --fg-light: var(--c-text-faint);
+  --fg: var(--c-text-soft);
+  --fg-deep: var(--c-text);
   --fg-deeper: var(--c-text);
 }
 
 .prose a {
-  border-bottom: 1px solid rgba(125, 125, 125, 0.3);
-  transition: border 0.3s ease-in-out;
+  border-bottom: 1px solid var(--c-border-soft);
+  transition:
+    border-color var(--motion-fast) ease,
+    color var(--motion-fast) ease;
 }
 
 .prose a:hover {
-  border-bottom: 1px solid var(--fg);
+  border-bottom-color: var(--c-border-strong);
+  color: var(--c-text);
 }
 
 .prose a code {
@@ -96,13 +99,10 @@ html.dark .prose {
 }
 
 .prose code:not(.expressive-code code) {
-  border-radius: 0.25rem;
+  border: 1px solid var(--c-border-soft);
+  border-radius: 0.3rem;
   padding: 0.15rem 0.3rem;
-  background-color: #88888820;
-}
-
-html.dark .prose code:not(.expressive-code code) {
-  background-color: #88888830;
+  background-color: var(--c-surface-soft);
 }
 
 .prose div:has(> table) {

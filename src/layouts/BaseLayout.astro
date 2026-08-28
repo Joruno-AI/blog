@@ -33,6 +33,7 @@ interface Props {
   tags?: string[]
   category?: string
   stableNavigation?: boolean
+  disableReveal?: boolean
   hideFooter?: boolean
 }
 
@@ -46,6 +47,7 @@ const {
   tags,
   category,
   stableNavigation = false,
+  disableReveal = false,
   hideFooter = false,
 } = Astro.props
 
@@ -55,6 +57,10 @@ const { slideEnterAnim } = FEATURES
 const enableSlideEnterAnim = Array.isArray(slideEnterAnim) && slideEnterAnim[0]
 if (enableSlideEnterAnim)
   style['--enter-step'] = `${slideEnterAnim[1].enterStep}ms`
+if (enableSlideEnterAnim && slideEnterAnim[1].duration)
+  style['--enter-duration'] = `${slideEnterAnim[1].duration}ms`
+if (enableSlideEnterAnim && slideEnterAnim[1].distance)
+  style['--enter-distance'] = `${slideEnterAnim[1].distance}px`
 
 const {
   externalLink: { newTab, cursorType },
@@ -62,6 +68,22 @@ const {
 const hasCustomCursor =
   newTab && cursorType.length > 0 && cursorType !== 'pointer'
 if (hasCustomCursor) style['--external-link-cursor'] = cursorType
+
+const pathname = Astro.url.pathname
+const pageKind =
+  pathname === withBasePath('/')
+    ? 'home'
+    : pathname === withBasePath('/blog') || pathname === withBasePath('/blog/')
+      ? 'blog'
+      : pathname.startsWith(withBasePath('/blog/'))
+        ? 'article'
+        : pathname.startsWith(withBasePath('/docs'))
+          ? 'docs'
+          : pathname.startsWith(withBasePath('/agent'))
+            ? 'agent'
+            : pathname.startsWith(withBasePath('/music'))
+              ? 'music'
+              : 'default'
 ---
 
 <!doctype html>
@@ -82,10 +104,13 @@ if (hasCustomCursor) style['--external-link-cursor'] = cursorType
     class="relative flex flex-col min-h-screen
       font-sans text-gray-700 dark:text-gray-200"
     style={Object.keys(style).length !== 0 ? style : undefined}
-    data-no-sliding={stableNavigation || !enableSlideEnterAnim ? '' : undefined}
+    data-page-kind={pageKind}
+    data-stable-navigation={stableNavigation ? '' : undefined}
+    data-no-sliding={disableReveal || !enableSlideEnterAnim ? '' : undefined}
   >
-    <!-- Background -->
-    {bgType && <Background type={bgType} />}
+    <!-- Every standard route shares Light Rays in both themes. Music stays
+         independent because it owns an album-driven implementation. -->
+    {pageKind !== 'music' && <Background type={bgType} />}
 
     <!-- Skip Link -->
     <Link
@@ -130,24 +155,10 @@ if (hasCustomCursor) style['--external-link-cursor'] = cursorType
     <!-- Keyboard Shortcuts -->
     <KeyboardShortcuts />
 
-    <!-- A single persistent progress bar survives Astro page swaps, preventing
-         old and new page snapshots from rendering competing indicators. -->
-    <div
-      id="site-progress"
-      role="progressbar"
-      aria-label="页面加载进度"
-      aria-valuemin="0"
-      aria-valuemax="100"
-      aria-valuenow="0"
-      aria-hidden="true"
-      transition:persist="site-progress"
-    >
-    </div>
-
     <script>
-      import { bindNavigationProgress } from '~/scripts/progress'
+      import { bindSlideReveal } from '~/scripts/reveal'
 
-      bindNavigationProgress()
+      bindSlideReveal()
     </script>
 
     <!-- Immersive reading is scoped to the current article. Astro keeps the

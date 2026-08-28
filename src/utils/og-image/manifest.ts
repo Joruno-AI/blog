@@ -14,13 +14,13 @@ import {
 } from '~/utils/og-image/routing'
 
 import type { CollectionEntry } from 'astro:content'
-import type { BgType, OgImageCollectionConfig } from '~/types'
+import type { OgImageCollectionConfig, StaticBgType } from '~/types'
 
 export interface OgImageManifestItem {
   slug: string
   authorOrBrand: string
   title: string
-  bgType: BgType
+  bgType: StaticBgType
 }
 
 export interface PostEntry {
@@ -54,8 +54,8 @@ function timestamp() {
 /**
  * Checks if a value is a valid background type.
  */
-function isBgType(value: unknown): value is BgType {
-  return typeof value === 'string' && BG_TYPES.includes(value as BgType)
+function isBgType(value: unknown): value is StaticBgType {
+  return typeof value === 'string' && BG_TYPES.includes(value as StaticBgType)
 }
 
 /**
@@ -100,7 +100,7 @@ function addManifestItem(
   pathname: string,
   authorOrBrand: string,
   title: string,
-  bgType: BgType,
+  bgType: StaticBgType,
   context: 'fallback' | 'page' = 'page'
 ) {
   const slug =
@@ -161,7 +161,7 @@ function addPostManifestItem(
   collection: OgImageCollectionConfig,
   post: PostEntry,
   authorOrBrand: string,
-  fallbackBgType: BgType
+  fallbackBgType: StaticBgType
 ) {
   if (post.data.draft || post.data.redirect) return
   if (!shouldGenerateOgImage(authorOrBrand, post.data)) return
@@ -189,7 +189,7 @@ function addPageManifestItem(
   manifest: Map<string, OgImageManifestItem>,
   page: CollectionEntry<'pages'>,
   authorOrBrand: string,
-  fallbackBgType: BgType
+  fallbackBgType: StaticBgType
 ) {
   if (!shouldGenerateOgImage(authorOrBrand, page.data)) return
 
@@ -199,7 +199,7 @@ function addPageManifestItem(
     pathname,
     authorOrBrand,
     page.data.title,
-    page.data.bgType || fallbackBgType
+    isBgType(page.data.bgType) ? page.data.bgType : fallbackBgType
   )
 }
 

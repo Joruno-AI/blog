@@ -2,9 +2,9 @@
 .skills-stats,
 .skills-discovery,
 .skills-section,
-.skills-scenes,
-.skills-capabilities {
+.skills-scenes {
   --skills-ink: var(--c-text);
+  --skills-accent: var(--c-accent);
 }
 
 .skills-hero {
@@ -63,11 +63,11 @@
 }
 
 .skills-eyebrow > span {
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: 50%;
-  background: #4f9b72;
-  box-shadow: 0 0 0 0.28rem color-mix(in srgb, #4f9b72 16%, transparent);
+  width: 1.65rem;
+  height: 1px;
+  border-radius: 0;
+  background: var(--skills-accent);
+  box-shadow: none;
 }
 
 .skills-eyebrow small {
@@ -162,8 +162,8 @@
   border: 0;
   border-radius: 0.62rem;
   padding: 0.68rem 1rem;
-  background: var(--c-text);
-  color: var(--c-bg);
+  background: var(--skills-accent);
+  color: var(--c-accent-contrast);
   font-size: 0.78rem;
   font-weight: 650;
   cursor: pointer;
@@ -254,8 +254,9 @@
   width: 0.42rem;
   height: 0.42rem;
   border-radius: 50%;
-  background: #4f9b72;
-  box-shadow: 0 0 0 0.2rem color-mix(in srgb, #4f9b72 14%, transparent);
+  background: var(--skills-accent);
+  box-shadow: 0 0 0 0.2rem
+    color-mix(in srgb, var(--skills-accent) 16%, transparent);
 }
 
 .skills-pulse-score {
@@ -295,17 +296,22 @@
 }
 
 .skills-pulse-bars i {
-  height: 0.24rem;
+  height: 0.3rem;
   overflow: hidden;
-  border-radius: 99px;
-  background: var(--c-surface-active);
+  border: 1px solid var(--diagram-rule);
+  border-radius: 2px;
+  background: var(--diagram-paper-2);
 }
 
 .skills-pulse-bars b {
   display: block;
+  min-width: 1px;
   height: 100%;
-  border-radius: inherit;
-  background: var(--c-text-muted);
+  background: color-mix(in srgb, var(--diagram-muted) 36%, transparent);
+}
+
+.skills-pulse-bars a[data-focal='true'] b {
+  background: var(--diagram-accent);
 }
 
 .skills-pulse-bars strong {
@@ -391,6 +397,26 @@
 
 .skills-feature-lead:hover {
   transform: translateY(-3px);
+}
+
+.skills-feature-topline,
+.skills-feature-identity span,
+.skills-feature-lead > p,
+.skills-feature-metrics {
+  color: color-mix(in srgb, var(--c-bg) 72%, transparent);
+}
+
+.skills-feature-identity h2 {
+  color: var(--c-bg);
+}
+
+.skills-feature-identity img {
+  border-color: color-mix(in srgb, var(--c-bg) 24%, transparent);
+  background: color-mix(in srgb, var(--c-bg) 10%, transparent);
+}
+
+.skills-feature-metrics {
+  border-color: color-mix(in srgb, var(--c-bg) 18%, transparent);
 }
 
 .skills-feature-noise {
@@ -611,11 +637,11 @@
   width: 0.42rem;
   height: 0.42rem;
   border-radius: 50%;
-  background: #b78243;
+  background: var(--c-text-faint);
 }
 
 .skills-board-list li > i.is-safe {
-  background: #4f9b72;
+  background: var(--c-text);
 }
 
 .skills-board-value {
@@ -642,68 +668,8 @@
 }
 
 .skills-section,
-.skills-scenes,
-.skills-capabilities {
+.skills-scenes {
   margin-top: 4.5rem;
-}
-
-.skills-capability-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin-top: 1.2rem;
-  overflow: hidden;
-  border-top: 1px solid var(--skills-border);
-  border-bottom: 1px solid var(--skills-border);
-}
-
-.skills-capability-grid > a {
-  display: grid !important;
-  grid-template-columns: 2.2rem minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 0.75rem;
-  min-height: 5.2rem;
-  padding: 0.85rem 1rem;
-  border-top: 1px solid var(--skills-border);
-  border-left: 1px solid var(--skills-border);
-  color: var(--c-text-muted);
-  opacity: 1 !important;
-}
-
-.skills-capability-grid > a:nth-child(-n + 2) {
-  border-top: 0;
-}
-
-.skills-capability-grid > a:nth-child(odd) {
-  border-left: 0;
-}
-
-.skills-capability-grid > a:hover {
-  background: var(--c-surface-soft);
-  color: var(--c-text);
-}
-
-.skills-capability-grid > a > span {
-  font-size: 1.15rem;
-}
-
-.skills-capability-grid strong,
-.skills-capability-grid small {
-  display: block;
-}
-
-.skills-capability-grid strong {
-  color: var(--c-text);
-  font-size: 0.78rem;
-}
-
-.skills-capability-grid small {
-  margin-top: 0.18rem;
-  color: var(--c-text-faint);
-  font-size: 0.64rem;
-}
-
-.skills-capability-grid > a > i {
-  color: var(--c-text-faint);
 }
 
 .skills-section-head > p {
@@ -989,20 +955,8 @@
   }
 
   .skills-category-grid,
-  .skills-grid,
-  .skills-capability-grid {
+  .skills-grid {
     grid-template-columns: 1fr;
-  }
-
-  .skills-capability-grid > a,
-  .skills-capability-grid > a:nth-child(-n + 2),
-  .skills-capability-grid > a:nth-child(odd) {
-    border-top: 1px solid var(--skills-border);
-    border-left: 0;
-  }
-
-  .skills-capability-grid > a:first-child {
-    border-top: 0;
   }
 
   .skills-feature-lead {
@@ -1173,6 +1127,10 @@
   box-shadow: none;
 }
 
+.skills-eyebrow > span {
+  display: none;
+}
+
 .skills-hero h1 {
   max-width: 15ch;
   font-size: clamp(2.65rem, 5.2vw, 4.5rem);
@@ -1314,16 +1272,16 @@
 
 .skills-category-card {
   padding: 1.05rem;
-  border-color: var(--skills-border);
-  border-radius: var(--skills-radius-lg);
-  background: var(--c-bg);
+  border: 0;
+  border-top: 1px solid var(--skills-border);
+  border-radius: 0;
+  background: transparent;
   transition:
     background 160ms ease,
     border-color 160ms ease;
 }
 
 .skills-category-card:hover {
-  border-color: var(--skills-border);
   background: var(--c-surface-soft);
   transform: none;
 }
@@ -1373,5 +1331,440 @@
 
   .skills-feature-lead {
     min-height: 22rem;
+  }
+}
+
+/* Agent overview — stacking order and control details only. Depth comes from
+   the tonal surfaces and hairlines defined above; no atmosphere layer, no
+   decorative blur, no hover shadows (DESIGN.md: The No-Hover-Shadow Rule). */
+.skills-hero-main,
+.skills-hero-pulse {
+  position: relative;
+  z-index: 2;
+}
+
+.skills-eyebrow {
+  color: var(--c-text-soft);
+}
+
+.skills-eyebrow > span,
+.skills-live i {
+  background: var(--c-text);
+}
+
+.skills-eyebrow small {
+  color: var(--c-text-faint);
+}
+
+.skills-hero h1 {
+  color: var(--c-text);
+}
+
+.skills-hero-copy {
+  color: var(--c-text-muted);
+}
+
+.skills-search-shell {
+  max-width: 44rem;
+}
+
+.skills-hero-search {
+  min-height: 3.7rem;
+}
+
+.skills-hero-search > span,
+.skills-hero-search input,
+.skills-hero-search input::placeholder {
+  color: var(--c-text-muted);
+}
+
+.skills-hero-search input::placeholder {
+  opacity: 0.52;
+}
+
+.skills-hero-search kbd {
+  border-color: var(--c-border-soft);
+  color: var(--c-text-faint);
+}
+
+.skills-hero-search button {
+  background: var(--c-text);
+  color: var(--c-bg);
+}
+
+.skills-hero-search button:hover {
+  background: var(--c-text-soft);
+}
+
+.skills-quick-search > span {
+  color: var(--c-text-faint);
+}
+
+.skills-quick-search a,
+.skills-quick-search a:hover {
+  color: var(--c-text-muted);
+  text-decoration-color: var(--c-text-faint);
+}
+
+.skills-hero-pulse {
+  color: var(--c-text);
+}
+
+.skills-pulse-score > span,
+.skills-pulse-score small,
+.skills-live,
+.skills-pulse-bars a {
+  color: var(--c-text-muted);
+}
+
+.skills-pulse-bars i {
+  background: var(--diagram-paper-2);
+}
+
+.skills-pulse-bars b {
+  background: color-mix(in srgb, var(--diagram-muted) 36%, transparent);
+}
+
+.skills-pulse-bars a[data-focal='true'] b {
+  background: var(--diagram-accent);
+}
+
+.skills-stats {
+  position: relative;
+  z-index: 3;
+}
+
+.skills-stat-value {
+  color: var(--c-text-muted);
+}
+
+.skills-feature-lead {
+  background: var(--c-text);
+  color: var(--c-bg);
+}
+
+.skills-sort button.is-active {
+  background: var(--c-text);
+  color: var(--c-bg);
+}
+
+.skills-category-card:hover,
+.skills-scene-chips a:hover {
+  background: var(--c-surface-soft);
+}
+
+body:not([data-no-sliding]) .skills-hero.slide-enter.is-revealed {
+  transform: none;
+}
+
+.skills-hero-main {
+  z-index: 20;
+}
+
+.skills-search-shell {
+  z-index: 60;
+}
+
+.skills-hero-search {
+  grid-template-columns: auto minmax(0, 1fr) auto auto auto;
+}
+
+.skills-hero-search input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.skills-hero-search .skills-search-clear {
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--c-text) 7%, transparent);
+  box-shadow: none;
+  color: var(--c-text-muted);
+}
+
+.skills-hero-search .skills-search-clear[hidden] {
+  display: none;
+}
+
+.skills-hero-search .skills-search-clear:hover {
+  background: color-mix(in srgb, var(--c-text) 12%, transparent);
+  color: var(--c-text);
+}
+
+.skills-hero-search .skills-search-clear:active {
+  transform: scale(0.92);
+}
+
+.skills-hero-search kbd {
+  border: 0;
+  background: color-mix(in srgb, var(--c-text) 7%, transparent);
+}
+
+.skills-hero-search button,
+.skills-sort button,
+.skills-board-more,
+.skills-category-title > a,
+.skills-quick-search a,
+.skills-pulse-bars a,
+.skills-scene-chips a {
+  transition:
+    color 180ms ease,
+    background-color 180ms ease,
+    box-shadow 220ms ease,
+    transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.skills-hero-search button:active,
+.skills-sort button:active,
+.skills-category-title > a:active {
+  transform: scale(0.94);
+}
+
+.skills-quick-search a:hover,
+.skills-pulse-bars a:hover,
+.skills-board-more:hover {
+  color: var(--c-text);
+  transform: translateX(2px);
+}
+
+/* Suggestion list is a true overlay layer, so an ambient shadow is allowed
+   here (DESIGN.md: shadows belong to overlays only). */
+.skills-search-suggestions {
+  z-index: 80;
+  max-height: min(22rem, 38vh);
+  overflow: auto;
+  border: 1px solid var(--c-border-soft);
+  border-radius: var(--radius-md);
+  background: var(--c-surface-overlay);
+  box-shadow: var(--shadow-raised);
+  scrollbar-gutter: stable;
+}
+
+.skills-search-suggestions > a {
+  transition:
+    color 160ms ease,
+    background-color 160ms ease,
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.skills-search-suggestions > a:hover,
+.skills-search-suggestions > a.is-active {
+  transform: translateX(3px);
+}
+
+.skills-search-suggestions > a:hover .skills-search-avatar,
+.skills-search-suggestions > a.is-active .skills-search-avatar {
+  color: var(--c-text);
+}
+
+.skills-search-avatar {
+  border: 1px solid var(--c-border-soft);
+  background: var(--c-surface-soft);
+  transition: color 160ms ease;
+}
+
+.skills-stats {
+  gap: 0.45rem;
+  overflow: visible;
+}
+
+.skills-stat {
+  border-radius: var(--radius-sm);
+  background: var(--c-surface-sunken);
+  transition: background-color 180ms ease;
+}
+
+.skills-stat:hover {
+  background: var(--c-surface-hover);
+}
+
+.skills-category-card,
+.skills-scene-chips {
+  background: transparent;
+}
+
+@media (max-width: 680px) {
+  .skills-hero-search {
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+  }
+
+  .skills-hero-search .skills-search-clear {
+    padding: 0;
+    font-size: inherit;
+  }
+
+  .skills-hero-search .skills-search-clear::after {
+    content: none;
+  }
+
+  .skills-stats {
+    overflow: visible;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skills-hero-search,
+  .skills-hero-search button,
+  .skills-search-suggestions > a,
+  .skills-search-avatar,
+  .skills-stat,
+  .skills-sort button,
+  .skills-board-more,
+  .skills-category-card,
+  .skills-category-title > a,
+  .skills-quick-search a,
+  .skills-pulse-bars a,
+  .skills-scene-chips a {
+    transition: none;
+  }
+}
+
+/* Final atmosphere overrides live after the catalogue's responsive detail
+   rules so their action hierarchy stays consistent at every breakpoint. */
+.skills-hero-search button[type='submit'] {
+  background: var(--c-accent);
+  color: var(--c-accent-contrast);
+}
+
+.skills-hero-search button[type='submit']:hover {
+  background: var(--c-accent-strong);
+  color: var(--c-accent-contrast);
+}
+
+.skills-live i {
+  background: var(--c-accent);
+}
+
+.skills-quick-search a:hover,
+.skills-pulse-bars a:hover,
+.skills-board-more:hover {
+  color: var(--c-accent-strong);
+}
+
+/* Scene navigation should read as a collection of useful destinations, not
+   as one dense admin table. Each item owns its spacing and interaction while
+   the surrounding grid stays completely open. */
+.skills-scene-chips {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.7rem;
+  margin-top: 1.35rem;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+}
+
+.skills-scene-chips .skills-scene-link,
+.skills-scene-chips .skills-scene-link:nth-child(n) {
+  position: relative;
+  display: grid !important;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-rows: auto 1fr;
+  align-items: start;
+  gap: 0.48rem 0.7rem;
+  min-height: 7.25rem;
+  padding: 1rem 1.05rem;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--c-surface-sunken);
+  color: var(--c-text-soft);
+  cursor: pointer;
+  transition:
+    background-color 180ms ease,
+    color 180ms ease,
+    transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.skills-scene-chips .skills-scene-link > strong {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--c-text);
+  font-size: 0.82rem;
+  font-weight: 650;
+  line-height: 1.35;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.skills-scene-chips .skills-scene-link > small {
+  grid-column: 2 / -1;
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--c-text-muted);
+  font-size: 0.67rem;
+  line-height: 1.55;
+  text-align: left;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.skills-scene-chips .skills-scene-index {
+  padding-top: 0.08rem;
+  color: var(--c-text-faint);
+  font-size: 0.58rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+
+.skills-scene-chips .skills-scene-link > i {
+  margin-top: 0.08rem;
+  color: var(--c-text-faint);
+  font-size: 0.78rem;
+  transition:
+    color 180ms ease,
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.skills-scene-chips .skills-scene-link:hover,
+.skills-scene-chips .skills-scene-link:focus-visible {
+  background: var(--c-surface-hover);
+  color: var(--c-text);
+  transform: translateY(-2px);
+}
+
+.skills-scene-chips .skills-scene-link:hover > i,
+.skills-scene-chips .skills-scene-link:focus-visible > i {
+  color: var(--c-text);
+  transform: translate(2px, -2px);
+}
+
+.skills-scene-chips .skills-scene-link:focus-visible {
+  outline: 2px solid var(--c-focus-ring);
+  outline-offset: 2px;
+}
+
+@media (max-width: 1100px) {
+  .skills-scene-chips {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .skills-scene-chips {
+    grid-template-columns: 1fr;
+    gap: 0.55rem;
+  }
+
+  .skills-scene-chips .skills-scene-link,
+  .skills-scene-chips .skills-scene-link:nth-child(n) {
+    min-height: 6.6rem;
+    padding: 0.9rem 0.95rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skills-scene-chips .skills-scene-link,
+  .skills-scene-chips .skills-scene-link > i {
+    transition: none;
+  }
+
+  .skills-scene-chips .skills-scene-link:hover,
+  .skills-scene-chips .skills-scene-link:focus-visible,
+  .skills-scene-chips .skills-scene-link:hover > i,
+  .skills-scene-chips .skills-scene-link:focus-visible > i {
+    transform: none;
   }
 }

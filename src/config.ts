@@ -3,10 +3,9 @@ import type { Site, Ui, Features } from './types'
 export const SITE: Site = {
   website: 'https://wangshengliang.cn/',
   base: '/',
-  title: 'wangshengliang',
-  description:
-    '王胜亮的个人博客，记录前端开发、Web 技术与编程实践中的踩坑与思考。',
-  author: 'wangshengliang',
+  title: 'Joruno',
+  description: 'Joruno 的个人博客，记录 Web 开发、Agent 工具与编程实践。',
+  author: 'Joruno Jobāna',
   lang: 'zh-Hans',
   ogLocale: 'zh_CN',
   imageDomains: ['cdn.jsdelivr.net', '*.unsplash.com', 'github.com'],
@@ -152,11 +151,11 @@ export const UI: Ui = {
  *  - Set to `[true, {...}]` to enable and configure the feature.
  */
 export const FEATURES: Features = {
-  slideEnterAnim: [true, { enterStep: 1 }],
+  slideEnterAnim: [true, { enterStep: 46, duration: 560, distance: 18 }],
   ogImage: [
     true,
     {
-      authorOrBrand: 'wangshengliang',
+      authorOrBrand: 'Joruno',
       fallbackTitle: '技术博客',
       fallbackBgType: 'plum',
       collections: [

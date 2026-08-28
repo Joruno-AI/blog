@@ -2,10 +2,9 @@
 import { getCollection } from 'astro:content'
 
 import Warning from '~/components/base/Warning.astro'
-import DesktopAside from '~/components/base/DesktopAside.astro'
-import MobileControl from '~/components/base/MobileControl.astro'
 import Categorizer from '~/components/base/Categorizer.astro'
 import GroupItem from '~/components/views/GroupItem.astro'
+import ProjectAnchorNav from '~/components/views/ProjectAnchorNav.astro'
 import projectsData from '~/content/projects/data.json'
 import { FEATURES } from '~/config'
 
@@ -56,26 +55,53 @@ const tocEnabled = Array.isArray(toc) && toc[0] && pageToc
   isEmpty ? (
     <Warning html={WARNING} />
   ) : (
-    <>
-      {tocEnabled && (
-        <>
-          <DesktopAside
-            anchors={Object.keys(data)}
-            style={
-              toc[1].displayPosition === 'right'
-                ? 'left: calc(100vw - 15.625rem + 5rem)'
-                : undefined
-            }
-          />
-          <MobileControl anchors={Object.keys(data)} />
-        </>
-      )}
-      {Object.keys(data).map((key, idx) => (
-        <div class="slide-enter" style={{ '--enter-stage': idx }}>
-          <Categorizer text={key} needId={tocEnabled} wide={true} />
-          <GroupItem items={data[key]} />
-        </div>
-      ))}
-    </>
+    <div
+      class:list={[
+        'project-directory-layout',
+        { 'has-anchor-nav': tocEnabled },
+      ]}
+    >
+      {tocEnabled && <ProjectAnchorNav anchors={Object.keys(data)} />}
+      <div class="project-directory-groups">
+        {Object.keys(data).map((key, idx) => (
+          <div class="slide-enter" style={{ '--enter-stage': idx }}>
+            <Categorizer text={key} needId={tocEnabled} wide={true} />
+            <GroupItem items={data[key]} />
+          </div>
+        ))}
+      </div>
+    </div>
   )
 }
+
+<style>
+  .project-directory-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    min-width: 0;
+  }
+
+  .project-directory-layout.has-anchor-nav {
+    grid-template-columns: 8.75rem minmax(0, 1fr);
+    gap: 1.5rem;
+  }
+
+  .project-directory-groups {
+    min-width: 0;
+  }
+
+  :global(.project-directory-groups .toc-heading) {
+    scroll-margin-top: calc(var(--navbar-height, 4rem) + 1rem);
+  }
+
+  @media (max-width: 820px) {
+    .project-directory-layout.has-anchor-nav {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+    }
+
+    :global(.project-directory-groups .toc-heading) {
+      scroll-margin-top: calc(var(--navbar-height, 4rem) + 4rem);
+    }
+  }
+</style>

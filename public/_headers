@@ -1,5 +1,5 @@
-/skills/full-index.json
+/agent/full-index.json
   Cache-Control: public, max-age=3600, stale-while-revalidate=86400
 
-/skills/suggest-index.json
+/agent/suggest-index.json
   Cache-Control: public, max-age=3600, stale-while-revalidate=86400

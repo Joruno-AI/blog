@@ -73,6 +73,9 @@ const categorySections = SKILL_CATEGORIES.map((category) => {
     items: items.slice(0, 3),
   }
 })
+const pulseFocalCategory = categorySections.reduce((highest, category) =>
+  category.count > highest.count ? category : highest
+).key
 
 const categorySelectOptions = [
   { value: 'all', label: '全部分类', icon: 'i-ri-apps-2-line' },
@@ -80,10 +83,6 @@ const categorySelectOptions = [
     value: category,
     label: CATEGORY_LABELS[category],
     icon: CATEGORY_ICONS[category] || undefined,
-    iconSrc:
-      category === 'codex-skill'
-        ? withBasePath('/images/skills/codex-color.svg')
-        : undefined,
   })),
 ]
 
@@ -159,7 +158,6 @@ const searchSeed = ranked.slice(0, 180).map((skill) => ({
 <section class="skills-hero slide-enter" style="--enter-stage: 0">
   <div class="skills-hero-main">
     <p class="skills-eyebrow">
-      <span aria-hidden="true"></span>
       Agent 能力索引
       <small>更新于 {updatedAt}</small>
     </p>
@@ -184,6 +182,15 @@ const searchSeed = ranked.slice(0, 180).map((skill) => ({
           role="combobox"
           data-agent-search-input
         />
+        <button
+          type="button"
+          class="skills-search-clear"
+          data-agent-search-clear
+          aria-label="清空 Agent 搜索"
+          hidden
+        >
+          <span class="i-ri-close-line" aria-hidden="true"></span>
+        </button>
         <kbd>/</kbd>
         <button type="submit">开始搜索</button>
       </form>
@@ -194,10 +201,11 @@ const searchSeed = ranked.slice(0, 180).map((skill) => ({
         aria-label="搜索联想"
         data-agent-suggestions
         hidden
-      ></div>
+      >
+      </div>
     </div>
 
-    <div class="skills-quick-search" aria-label="热门搜索">
+    <div class="skills-quick-search" role="group" aria-label="热门搜索">
       <span>常用入口</span>
       {
         [
@@ -217,7 +225,6 @@ const searchSeed = ranked.slice(0, 180).map((skill) => ({
   <aside class="skills-hero-pulse" aria-label="Skills 索引状态">
     <div class="skills-pulse-head">
       <div>
-        <span class="skills-pulse-kicker">INDEX PULSE</span>
         <strong>索引状态</strong>
       </div>
       <span class="skills-live"><i></i>已同步</span>
@@ -230,11 +237,16 @@ const searchSeed = ranked.slice(0, 180).map((skill) => ({
     <div class="skills-pulse-bars">
       {
         categorySections.map((category) => (
-          <Link href={`${allPath}?cat=${category.key}`}>
+          <Link
+            href={`${allPath}?cat=${category.key}`}
+            data-focal={
+              category.key === pulseFocalCategory ? 'true' : undefined
+            }
+          >
             <span>{category.label}</span>
-            <i>
+            <i aria-hidden="true">
               <b
-                style={`width:${Math.max((category.count / fullIndex.length) * 100, 5)}%`}
+                style={`width:${(category.count / fullIndex.length) * 100}%`}
               />
             </i>
             <strong>{formatCount(category.count)}</strong>
@@ -295,7 +307,6 @@ const searchSeed = ranked.slice(0, 180).map((skill) => ({
   <div class="skills-board">
     <div class="skills-board-head">
       <div>
-        <span class="skills-section-kicker">LIVE RANKING</span>
         <h2>实时榜单</h2>
       </div>
       <div class="skills-board-controls">
@@ -341,7 +352,6 @@ const searchSeed = ranked.slice(0, 180).map((skill) => ({
 <section class="skills-section slide-enter" style="--enter-stage: 3">
   <div class="skills-section-head">
     <div>
-      <span class="skills-section-kicker">START WITH A TYPE</span>
       <h2>按工具类型开始</h2>
     </div>
     <p>先选生态，再看其中真正活跃的项目</p>
@@ -367,9 +377,7 @@ const searchSeed = ranked.slice(0, 180).map((skill) => ({
             {category.items.map((skill, index) => (
               <li>
                 <span>{String(index + 1).padStart(2, '0')}</span>
-                <Link href={withBasePath(`/agent/${skill.f}/`)}>
-                  {skill.n}
-                </Link>
+                <Link href={withBasePath(`/agent/${skill.f}/`)}>{skill.n}</Link>
                 <small>{formatCount(skill.s)}</small>
               </li>
             ))}
@@ -383,7 +391,6 @@ const searchSeed = ranked.slice(0, 180).map((skill) => ({
 <section class="skills-section slide-enter" style="--enter-stage: 4">
   <div class="skills-section-head">
     <div>
-      <span class="skills-section-kicker">CURATED & SAFE</span>
       <h2>高质量精选</h2>
     </div>
     <Link class="skills-section-more" href={`${allPath}?sort=q&safe=1`}>
@@ -408,7 +415,6 @@ const searchSeed = ranked.slice(0, 180).map((skill) => ({
 <section class="skills-scenes slide-enter" style="--enter-stage: 5">
   <div class="skills-section-head">
     <div>
-      <span class="skills-section-kicker">FIND BY JOB</span>
       <h2>按场景找工具</h2>
     </div>
     <Link class="skills-section-more" href={withBasePath('/agent/scenes/')}>
@@ -419,45 +425,19 @@ const searchSeed = ranked.slice(0, 180).map((skill) => ({
   <div class="skills-scene-chips">
     {
       sceneChips.map((scene, index) => (
-        <Link href={withBasePath(`/agent/scenes/${scene.slug}/`)}>
-          <span>{String(index + 1).padStart(2, '0')}</span>
-          {scene.title}
+        <Link
+          class="skills-scene-link"
+          href={withBasePath(`/agent/scenes/${scene.slug}/`)}
+        >
+          <span class="skills-scene-index">
+            {String(index + 1).padStart(2, '0')}
+          </span>
+          <strong>{scene.title}</strong>
           <i class="i-ri-arrow-right-up-line" aria-hidden="true" />
+          <small>{scene.desc}</small>
         </Link>
       ))
     }
-  </div>
-</section>
-
-<section class="skills-capabilities slide-enter" style="--enter-stage: 6">
-  <div class="skills-section-head">
-    <div>
-      <span class="skills-section-kicker">DECIDE WITH CONTEXT</span>
-      <h2>从发现到决策</h2>
-    </div>
-    <p>搜索不是终点，对比、分析、阅读和更新订阅都在博客内串起来。</p>
-  </div>
-  <div class="skills-capability-grid">
-    <Link href={withBasePath('/agent/compare/')}>
-      <span class="i-ri-scales-3-line" aria-hidden="true"></span>
-      <div><strong>项目对比</strong><small>同时比较 2–3 个仓库</small></div>
-      <i class="i-ri-arrow-right-line" aria-hidden="true"></i>
-    </Link>
-    <Link href={withBasePath('/agent/analyzer/')}>
-      <span class="i-ri-shield-search-line" aria-hidden="true"></span>
-      <div><strong>仓库分析器</strong><small>11 类安装前结构信号</small></div>
-      <i class="i-ri-arrow-right-line" aria-hidden="true"></i>
-    </Link>
-    <Link href={withBasePath('/agent/about/')}>
-      <span class="i-ri-flask-line" aria-hidden="true"></span>
-      <div><strong>方法与边界</strong><small>查看数据来源与评分维度</small></div>
-      <i class="i-ri-arrow-right-line" aria-hidden="true"></i>
-    </Link>
-    <Link href={withBasePath('/rss.xml')}>
-      <span class="i-ri-rss-line" aria-hidden="true"></span>
-      <div><strong>订阅更新</strong><small>通过 RSS 跟踪博客新内容</small></div>
-      <i class="i-ri-arrow-right-line" aria-hidden="true"></i>
-    </Link>
   </div>
 </section>
 
@@ -570,12 +550,17 @@ const searchSeed = ranked.slice(0, 180).map((skill) => ({
     )
     renderBoard()
 
-    const searchRoot = document.querySelector<HTMLElement>('[data-agent-search]')
+    const searchRoot = document.querySelector<HTMLElement>(
+      '[data-agent-search]'
+    )
     const heroSearch = searchRoot?.querySelector<HTMLInputElement>(
       '[data-agent-search-input]'
     )
     const suggestions = searchRoot?.querySelector<HTMLElement>(
       '[data-agent-suggestions]'
+    )
+    const searchClear = searchRoot?.querySelector<HTMLButtonElement>(
+      '[data-agent-search-clear]'
     )
     const searchForm = searchRoot?.querySelector<HTMLFormElement>('form')
     const searchConfig = skillsBoardWindow.__AGENT_SEARCH__
@@ -586,7 +571,7 @@ const searchSeed = ranked.slice(0, 180).map((skill) => ({
       'agent-tool': 'Agent Tool',
       'ai-skill': 'AI Skill',
       'llm-plugin': 'Prompt / LLM Plugin',
-      uncategorized: '其他工具',
+      'uncategorized': '其他工具',
     }
     let visibleSuggestions: SuggestionItem[] = []
     let activeSuggestion = -1
@@ -600,19 +585,20 @@ const searchSeed = ranked.slice(0, 180).map((skill) => ({
           const name = item.n.toLowerCase()
           const author = item.a.toLowerCase()
           const repo = item.f.toLowerCase()
-          const score = name === needle
-            ? 0
-            : name.startsWith(needle)
-              ? 1
-              : author.startsWith(needle)
-                ? 2
-                : repo.includes(needle)
-                  ? 3
-                  : name.includes(needle)
-                    ? 4
-                    : author.includes(needle)
-                      ? 5
-                      : 99
+          const score =
+            name === needle
+              ? 0
+              : name.startsWith(needle)
+                ? 1
+                : author.startsWith(needle)
+                  ? 2
+                  : repo.includes(needle)
+                    ? 3
+                    : name.includes(needle)
+                      ? 4
+                      : author.includes(needle)
+                        ? 5
+                        : 99
           return { item, score }
         })
         .filter((entry) => entry.score < 99)
@@ -646,7 +632,10 @@ const searchSeed = ranked.slice(0, 180).map((skill) => ({
       suggestions.innerHTML = visibleSuggestions.length
         ? visibleSuggestions
             .map(
-              (item, index) => `<a id="agent-suggestion-${index}" role="option" href="${escapeHtml(`${searchConfig.allPath.replace(/all\/$/, '')}${item.f}/`)}" data-suggestion-index="${index}">
+              (
+                item,
+                index
+              ) => `<a id="agent-suggestion-${index}" role="option" href="${escapeHtml(`${searchConfig.allPath.replace(/all\/$/, '')}${item.f}/`)}" data-suggestion-index="${index}">
                 <span class="skills-search-avatar" aria-hidden="true">${escapeHtml(item.n.charAt(0).toUpperCase())}</span>
                 <span class="skills-search-result-copy"><strong>${escapeHtml(item.n)}</strong><small>${escapeHtml(item.a)} · ${escapeHtml(categoryLabels[item.c] || item.c)}</small></span>
                 <span class="skills-search-result-stars"><i class="i-ri-star-line"></i>${compact(item.s)}</span>
@@ -663,6 +652,10 @@ const searchSeed = ranked.slice(0, 180).map((skill) => ({
       suggestions.hidden = true
       heroSearch.setAttribute('aria-expanded', 'false')
       setActiveSuggestion(-1)
+    }
+
+    const syncSearchClear = () => {
+      if (searchClear) searchClear.hidden = !heroSearch?.value
     }
 
     const loadSuggestionIndex = async () => {
@@ -689,13 +682,16 @@ const searchSeed = ranked.slice(0, 180).map((skill) => ({
     let suggestionTimer = 0
     heroSearch?.addEventListener(
       'focus',
-      () => searchConfig && renderSuggestions(searchConfig.searchSeed, heroSearch.value),
+      () =>
+        searchConfig &&
+        renderSuggestions(searchConfig.searchSeed, heroSearch.value),
       { signal: pageController.signal }
     )
     heroSearch?.addEventListener(
       'input',
       () => {
         if (!searchConfig) return
+        syncSearchClear()
         const query = heroSearch.value
         renderSuggestions(searchConfig.searchSeed, query)
         window.clearTimeout(suggestionTimer)
@@ -705,6 +701,17 @@ const searchSeed = ranked.slice(0, 180).map((skill) => ({
             if (heroSearch.value === query) renderSuggestions(items, query)
           }, 120)
         }
+      },
+      { signal: pageController.signal }
+    )
+    searchClear?.addEventListener(
+      'click',
+      () => {
+        if (!heroSearch || !searchConfig) return
+        heroSearch.value = ''
+        syncSearchClear()
+        renderSuggestions(searchConfig.searchSeed)
+        heroSearch.focus()
       },
       { signal: pageController.signal }
     )
@@ -760,10 +767,15 @@ const searchSeed = ranked.slice(0, 180).map((skill) => ({
           '[data-copy]'
         )
         if (!button) return
-        navigator.clipboard.writeText(button.dataset.copy ?? '').then(() => {
-          button.classList.add('is-copied')
-          window.setTimeout(() => button.classList.remove('is-copied'), 1200)
-        })
+        navigator.clipboard
+          .writeText(button.dataset.copy ?? '')
+          .then(() => {
+            button.classList.add('is-copied')
+            window.setTimeout(() => button.classList.remove('is-copied'), 1200)
+          })
+          .catch(() => {
+            console.warn('[agent] 复制安装命令失败: 剪贴板不可用')
+          })
       },
       { signal: pageController.signal }
     )

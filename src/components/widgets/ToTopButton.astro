@@ -53,17 +53,21 @@
 </style>
 
 <script>
+  let toTopController: AbortController | null = null
+  let scrollFrame = 0
+
   function initToTopButton() {
     const toTopButton = document.getElementById('to-top-button')
-    if (!toTopButton || toTopButton.dataset.ready === 'true') return
-    toTopButton.dataset.ready = 'true'
+    if (!toTopButton) return
+    toTopController?.abort()
+    toTopController = new AbortController()
+    const { signal } = toTopController
 
     const updateVisibility = () => {
       const scrollY = window.scrollY || document.documentElement.scrollTop
       toTopButton.toggleAttribute('data-visible', scrollY > 300)
     }
 
-    let scrollFrame = 0
     const handleScroll = () => {
       if (scrollFrame) return
       scrollFrame = window.requestAnimationFrame(() => {
@@ -72,15 +76,24 @@
       })
     }
 
-    toTopButton.addEventListener('click', () => {
-      const reduceMotion = window.matchMedia(
-        '(prefers-reduced-motion: reduce)'
-      ).matches
-      window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' })
-    })
-    window.addEventListener('scroll', handleScroll, { passive: true })
+    toTopButton.addEventListener(
+      'click',
+      () => {
+        const reduceMotion = window.matchMedia(
+          '(prefers-reduced-motion: reduce)'
+        ).matches
+        window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' })
+      },
+      { signal }
+    )
+    window.addEventListener('scroll', handleScroll, { passive: true, signal })
     updateVisibility()
   }
 
   document.addEventListener('astro:page-load', initToTopButton)
+  document.addEventListener('astro:before-swap', () => {
+    toTopController?.abort()
+    if (scrollFrame) window.cancelAnimationFrame(scrollFrame)
+    scrollFrame = 0
+  })
 </script>

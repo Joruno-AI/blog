@@ -32,14 +32,25 @@ export function toggleFadeEffect(
 ) {
   const element = document.getElementById(elementId)
   if (!element) return
+  const nextVersion = Number(element.dataset.fadeVersion || 0) + 1
+  element.dataset.fadeVersion = String(nextVersion)
+  const reduceMotion = window.matchMedia(
+    '(prefers-reduced-motion: reduce)'
+  ).matches
 
   if (visible) {
     element.classList.remove(hiddenClass)
+    element.classList.remove('fade-out')
     if (elementId === 'backdrop') lockScroll()
-    if (window.matchMedia('(prefers-reduced-motion)').matches) return
+    if (reduceMotion) {
+      element.classList.remove('fade-in')
+      return
+    }
     element.classList.add('fade-in')
   } else {
-    if (window.matchMedia('(prefers-reduced-motion)').matches) {
+    element.classList.remove('fade-in')
+    if (reduceMotion) {
+      element.classList.remove('fade-out')
       element.classList.add(hiddenClass)
       if (elementId === 'backdrop') unlockScroll()
       return
@@ -48,6 +59,7 @@ export function toggleFadeEffect(
     element.addEventListener(
       'animationend',
       () => {
+        if (element.dataset.fadeVersion !== String(nextVersion)) return
         element.classList.remove('fade-in', 'fade-out')
         element.classList.add(hiddenClass)
         if (elementId === 'backdrop') unlockScroll()

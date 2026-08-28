@@ -118,4 +118,12 @@ export interface CMSLoaderOptions {
    * @default 100
    */
   batchSize?: number
+
+  /**
+   * Keep the last successful Astro content-store entries when the CMS cannot
+   * be reached. Intended for local development only; production builds should
+   * continue to fail so an empty site is never deployed accidentally.
+   * @default false
+   */
+  allowStaleOnError?: boolean
 }

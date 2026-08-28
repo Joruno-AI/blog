@@ -16,7 +16,7 @@ import '~/styles/agent-tools.css'
     subtitle="从社区信号、活跃度与使用边界中选择更合适的工具"
     isCentered={true}
   >
-    <SkillsNav active="compare" slot="head" />
+    <SkillsNav active="overview" slot="head" />
 
     <div class="agent-tool-page" data-agent-compare>
       <section class="agent-tool-hero">
@@ -25,7 +25,8 @@ import '~/styles/agent-tools.css'
           <h1>不凭印象选工具</h1>
         </div>
         <p>
-          最多同时对比 3 个 GitHub 仓库。数据现场读取，不把 Stars 当成唯一答案，同时展示 Forks、更新时间、许可证与站内文档入口。
+          最多同时对比 3 个 GitHub 仓库。数据现场读取，不把 Stars
+          当成唯一答案，同时展示 Forks、更新时间、许可证与站内文档入口。
         </p>
       </section>
 
@@ -33,21 +34,43 @@ import '~/styles/agent-tools.css'
         <div class="agent-compare-fields">
           <label class="agent-tool-field">
             <span>01</span>
-            <input type="text" value="openclaw/openclaw" aria-label="第一个仓库" data-compare-input />
+            <input
+              type="text"
+              value="openclaw/openclaw"
+              aria-label="第一个仓库"
+              data-compare-input
+            />
           </label>
           <label class="agent-tool-field">
             <span>02</span>
-            <input type="text" value="obra/superpowers" aria-label="第二个仓库" data-compare-input />
+            <input
+              type="text"
+              value="obra/superpowers"
+              aria-label="第二个仓库"
+              data-compare-input
+            />
           </label>
           <label class="agent-tool-field">
             <span>03</span>
-            <input type="text" placeholder="可选：owner/repository" aria-label="第三个仓库" data-compare-input />
+            <input
+              type="text"
+              placeholder="可选：owner/repository"
+              aria-label="第三个仓库"
+              data-compare-input
+            />
           </label>
         </div>
         <button class="agent-tool-primary" type="submit">生成对比</button>
       </form>
 
-      <div class="agent-tool-status" data-compare-status hidden></div>
+      <div
+        class="agent-tool-status"
+        data-compare-status
+        role="status"
+        aria-live="polite"
+        hidden
+      >
+      </div>
       <section class="agent-tool-result" data-compare-result hidden></section>
 
       <section class="agent-method-section">
@@ -57,7 +80,8 @@ import '~/styles/agent-tools.css'
             <h2>把选择拆成可检查的信号</h2>
           </div>
           <p>
-            先看是否适配任务，再看活跃性与维护成本，最后才用 Stars 判断社区规模。
+            先看是否适配任务，再看活跃性与维护成本，最后才用 Stars
+            判断社区规模。
           </p>
         </div>
       </section>
@@ -97,6 +121,16 @@ import '~/styles/agent-tools.css'
       once: true,
     })
 
+    /* 目录页勾选后通过 ?repos=a/b,c/d 跳来, 这里承接为预填并自动对比,
+       两处对比入口因此共用同一套结果视图。 */
+    const requestedRepos = (
+      new URLSearchParams(window.location.search).get('repos') ?? ''
+    )
+      .split(',')
+      .map((value) => value.trim())
+      .filter(Boolean)
+      .slice(0, inputs.length)
+
     const escapeHtml = (value: string) =>
       value.replace(
         /[&<>"']/g,
@@ -115,7 +149,10 @@ import '~/styles/agent-tools.css'
         maximumFractionDigits: 1,
       }).format(value)
     const parseRepo = (value: string) => {
-      const normalized = value.trim().replace(/\.git$/, '').replace(/\/$/, '')
+      const normalized = value
+        .trim()
+        .replace(/\.git$/, '')
+        .replace(/\/$/, '')
       const match = normalized.match(
         /^(?:https?:\/\/github\.com\/)?([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+)$/
       )
@@ -129,8 +166,17 @@ import '~/styles/agent-tools.css'
         : `<span class="agent-tool-pulse"></span>${escapeHtml(message)}`
     }
     const activityLabel = (date: string) => {
-      const days = Math.max(0, (Date.now() - new Date(date).getTime()) / 86_400_000)
-      return days < 30 ? '活跃' : days < 120 ? '稳定' : days < 365 ? '放缓' : '低活跃'
+      const days = Math.max(
+        0,
+        (Date.now() - new Date(date).getTime()) / 86_400_000
+      )
+      return days < 30
+        ? '活跃'
+        : days < 120
+          ? '稳定'
+          : days < 365
+            ? '放缓'
+            : '低活跃'
     }
     const formatDate = (value: string) =>
       new Intl.DateTimeFormat('zh-CN', {
@@ -144,28 +190,60 @@ import '~/styles/agent-tools.css'
         ['定位', (repo) => escapeHtml(repo.description || '暂无简介')],
         ['Stars', (repo) => compact(repo.stars)],
         ['Forks', (repo) => compact(repo.forks)],
-        ['活跃度', (repo) => `${activityLabel(repo.updatedAt)} · ${formatDate(repo.updatedAt)}`],
+        [
+          '活跃度',
+          (repo) =>
+            `${activityLabel(repo.updatedAt)} · ${formatDate(repo.updatedAt)}`,
+        ],
         ['主要语言', (repo) => escapeHtml(repo.language || '未知')],
         ['许可证', (repo) => escapeHtml(repo.license || '未声明')],
         ['默认分支', (repo) => escapeHtml(repo.defaultBranch)],
         ['项目状态', (repo) => (repo.archived ? '已归档' : '持续维护')],
-        ['站内操作', (repo) => `<a href="/agent/${escapeHtml(repo.fullName)}/">阅读文档 <span class="i-ri-arrow-right-line"></span></a>`],
+        [
+          '站内操作',
+          (repo) =>
+            `<a href="/agent/${escapeHtml(repo.fullName)}/">阅读文档 <span class="i-ri-arrow-right-line"></span></a>`,
+        ],
       ]
       result.innerHTML = `<table class="agent-compare-table"><thead><tr><th>指标</th>${repos
         .map((repo) => `<th>${escapeHtml(repo.fullName)}</th>`)
         .join('')}</tr></thead><tbody>${rows
         .map(
-          ([label, value]) => `<tr><td>${label}</td>${repos
-            .map((repo) => `<td>${value(repo)}</td>`)
-            .join('')}</tr>`
+          ([label, value]) =>
+            `<tr><td>${label}</td>${repos
+              .map((repo) => `<td>${value(repo)}</td>`)
+              .join('')}</tr>`
         )
         .join('')}</tbody></table>`
       result.hidden = false
       status.hidden = true
     }
 
+    /* 接口在异常情况下可能返回 HTML(如网关错误页), 直接 json() 会抛出
+       SyntaxError 并把英文技术细节透传给访客, 这里统一拦成业务错误。 */
+    async function readJson(response: Response) {
+      try {
+        return await response.json()
+      } catch {
+        throw new Error('SERVICE_UNAVAILABLE')
+      }
+    }
+
+    function toReadableError(error: unknown, action: string) {
+      if (error instanceof DOMException && error.name === 'AbortError')
+        return `${action}已取消。`
+      const message = error instanceof Error ? error.message : ''
+      if (message === 'SERVICE_UNAVAILABLE' || error instanceof TypeError)
+        return 'GitHub 数据服务暂时不可用，请稍后重试。'
+      return message || `${action}失败，请稍后重试。`
+    }
+
     async function compare() {
-      const repoNames = [...new Set(inputs.map((input) => parseRepo(input.value)).filter(Boolean))]
+      const repoNames = [
+        ...new Set(
+          inputs.map((input) => parseRepo(input.value)).filter(Boolean)
+        ),
+      ]
       if (repoNames.length < 2) {
         showStatus('请至少输入 2 个有效的 GitHub 仓库。', true)
         return
@@ -176,21 +254,28 @@ import '~/styles/agent-tools.css'
         const repos = await Promise.all(
           repoNames.map(async (repoName) => {
             const [owner, repo] = repoName.split('/')
-            const response = await fetch(`/api/github/${owner}/${repo}/overview`, {
-              signal: controller.signal,
-            })
-            const payload = (await response.json()) as {
+            const response = await fetch(
+              `/api/github/${owner}/${repo}/overview`,
+              {
+                signal: controller.signal,
+              }
+            )
+            const payload = (await readJson(response)) as {
               repo?: RepoMeta
               error?: string
             }
             if (!response.ok || !payload.repo)
-              throw new Error(`${repoName}: ${payload.error || '仓库不可访问'}`)
+              throw new Error(`${repoName}：${payload.error || '仓库不可访问'}`)
             return payload.repo
           })
         )
         render(repos)
       } catch (error) {
-        showStatus(error instanceof Error ? error.message : '对比失败，请稍后重试。', true)
+        console.error('[agent/compare] 仓库对比失败', {
+          repos: repoNames,
+          error,
+        })
+        showStatus(toReadableError(error, '对比'), true)
       }
     }
 
@@ -202,6 +287,13 @@ import '~/styles/agent-tools.css'
       },
       { signal: controller.signal }
     )
+
+    if (requestedRepos.length >= 2) {
+      inputs.forEach((input, index) => {
+        input.value = requestedRepos[index] ?? ''
+      })
+      void compare()
+    }
   }
 
   mountCompare()

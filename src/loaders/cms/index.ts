@@ -58,7 +58,8 @@ async function fetchJsonWithRetry<T>(
  */
 export function cmsLoader(options: CMSLoaderOptions): Loader {
   // Larger batch size for faster loading (200 posts per request)
-  const { apiBaseUrl, batchSize = 200 } = options
+  const { apiBaseUrl, batchSize = 200, allowStaleOnError = false } = options
+  const maxRetries = allowStaleOnError ? 1 : 3
   // Number of parallel requests
   const parallelRequests = 4
 
@@ -68,17 +69,18 @@ export function cmsLoader(options: CMSLoaderOptions): Loader {
       logger.info('Fetching posts from CMS...')
 
       try {
-        // Clear existing entries
-        store.clear()
-
         // First, get total count
         const countUrl = `${apiBaseUrl}/api/public/posts?limit=1&offset=0`
-        const countData = await fetchJsonWithRetry<{ total: number }>(countUrl, {
-          headers: {
-            'Accept': 'application/json',
-            'User-Agent': 'AstroBlog/1.0 (Build Process)',
+        const countData = await fetchJsonWithRetry<{ total: number }>(
+          countUrl,
+          {
+            headers: {
+              'Accept': 'application/json',
+              'User-Agent': 'AstroBlog/1.0 (Build Process)',
+            },
           },
-        })
+          maxRetries
+        )
 
         const total = countData.total
 
@@ -119,7 +121,8 @@ export function cmsLoader(options: CMSLoaderOptions): Loader {
                   'Connection': 'keep-alive',
                   'User-Agent': 'AstroBlog/1.0 (Build Process)',
                 },
-              }
+              },
+              maxRetries
             ).then((data) => data.posts)
 
             batchPromises.push(promise)
@@ -133,6 +136,11 @@ export function cmsLoader(options: CMSLoaderOptions): Loader {
         }
 
         logger.info(`Fetched ${allPosts.length} posts, processing...`)
+
+        // Only replace the last successful snapshot after every remote batch
+        // has arrived. A transient CMS failure must not destroy usable local
+        // preview data.
+        store.clear()
 
         // Process all posts
         let totalFetched = 0
@@ -166,6 +174,13 @@ export function cmsLoader(options: CMSLoaderOptions): Loader {
 
         logger.info(`Successfully loaded ${totalFetched} posts from CMS`)
       } catch (err) {
+        if (allowStaleOnError) {
+          logger.warn(
+            `CMS unavailable; continuing with the last successful local content snapshot. ${err}`
+          )
+          return
+        }
+
         logger.error(`CMS loader error: ${err}`)
         throw err
       }

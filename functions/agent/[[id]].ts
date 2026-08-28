@@ -8,6 +8,18 @@ interface PagesContext {
 
 const REPO_PART = /^[A-Za-z0-9_.-]{1,100}$/
 
+// 板块静态路径, 不允许被误判为 GitHub owner (如 /agent/scenes/打错的slug)
+const RESERVED_SEGMENTS = new Set([
+  'all',
+  'about',
+  'analyzer',
+  'compare',
+  'masters',
+  'repository',
+  'scenes',
+  'trending',
+])
+
 function pathParts(value: string | string[] | undefined) {
   if (Array.isArray(value)) return value
   return value ? value.split('/').filter(Boolean) : []
@@ -20,16 +32,15 @@ function assetRequest(request: Request, pathname: string) {
 }
 
 export async function onRequestGet(context: PagesContext) {
-  const source = new URL(context.request.url)
-  const legacyPath = source.pathname.replace(/^\/agent(?=\/|$)/, '/skills')
-  const asset = await context.env.ASSETS.fetch(
-    assetRequest(context.request, legacyPath)
-  )
+  // 静态资产（预渲染页面、JSON 等）优先
+  const asset = await context.env.ASSETS.fetch(context.request)
   if (asset.status !== 404) return asset
 
+  // 未预渲染的 owner/repo 详情页回退到仓库阅读器 SPA 壳
   const parts = pathParts(context.params.id)
   if (
     parts.length < 2 ||
+    RESERVED_SEGMENTS.has(parts[0] ?? '') ||
     !REPO_PART.test(parts[0] ?? '') ||
     !REPO_PART.test(parts[1] ?? '')
   ) {
@@ -37,7 +48,7 @@ export async function onRequestGet(context: PagesContext) {
   }
 
   const shell = await context.env.ASSETS.fetch(
-    assetRequest(context.request, '/skills/repository/')
+    assetRequest(context.request, '/agent/repository/')
   )
   const headers = new Headers(shell.headers)
   headers.set('Cache-Control', 'public, max-age=300, s-maxage=3600')

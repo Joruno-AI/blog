@@ -25,18 +25,14 @@ const getLinkKind = (link: string) => {
     if (hostname === 'github.com' || hostname.endsWith('.github.com')) {
       return 'GitHub'
     }
-    return 'Site'
+    return '网站'
   } catch {
-    return 'Link'
+    return '链接'
   }
 }
 ---
 
-<div
-  class={`project-items-grid grid gap-3
-    py-5 mx-auto lt-lgp:max-w-[712px]! lt-md:max-w-full!`}
-  style={`max-width: calc(350px * ${maxGroupColumns} + ${maxGroupColumns - 1} * 0.75rem);`}
->
+<div class="project-items-grid" style={`--project-columns:${maxGroupColumns};`}>
   {
     items.map((item) => (
       <Link
@@ -75,11 +71,22 @@ const getLinkKind = (link: string) => {
 
 <style>
   .project-items-grid {
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+    display: grid;
+    gap: 0.75rem;
+    width: 100%;
+    padding-block: 1.25rem;
+    margin-inline: auto;
+    grid-template-columns: repeat(var(--project-columns, 3), minmax(0, 1fr));
   }
 
   :global(.project-item-link) {
+    position: relative;
+    display: flex !important;
+    align-items: center;
+    min-height: 5.75rem;
+    padding: 0.75rem 0.875rem 0.875rem;
     border: 1px solid transparent;
+    border-radius: var(--radius-md);
     color: var(--c-text-soft);
     min-width: 0;
     transition:
@@ -87,15 +94,41 @@ const getLinkKind = (link: string) => {
       border-color 0.2s ease,
       color 0.2s ease,
       opacity 0.2s ease,
-      transform 0.2s ease;
+      transform var(--motion-fast) var(--ease-out-quart);
   }
 
   :global(.project-item-link:hover),
   :global(.project-item-link:focus-visible) {
     background: var(--c-surface-hover) !important;
-    border-color: var(--c-border-soft);
+    border-color: transparent;
     color: var(--c-text);
     transform: translateY(-1px);
+  }
+
+  :global(.project-item-link img),
+  :global(.project-item-link > div[class*='i-']) {
+    filter: saturate(0.42);
+    opacity: 0.78;
+  }
+
+  :global(.project-item-link:nth-child(3n + 1) > div[class*='i-']) {
+    color: var(--c-accent);
+  }
+
+  :global(.project-item-link:nth-child(3n + 2) > div[class*='i-']) {
+    color: var(--c-accent-alt);
+  }
+
+  :global(.project-item-link:nth-child(3n) > div[class*='i-']) {
+    color: var(--c-accent-gold);
+  }
+
+  :global(.project-item-link:hover img),
+  :global(.project-item-link:focus-visible img),
+  :global(.project-item-link:hover > div[class*='i-']),
+  :global(.project-item-link:focus-visible > div[class*='i-']) {
+    filter: saturate(1);
+    opacity: 1;
   }
 
   .project-item-head {
@@ -115,22 +148,22 @@ const getLinkKind = (link: string) => {
 
   .project-item-kind {
     flex: none;
-    border: 1px solid var(--c-border-soft);
-    border-radius: 999px;
-    padding: 0.05rem 0.4rem;
+    border-left: 1px solid var(--c-border-soft);
+    padding-left: 0.5rem;
     color: var(--c-text-faint);
     font-size: 0.675rem;
     line-height: 1.35;
     font-weight: 500;
-    transition:
-      border-color 0.2s ease,
-      color 0.2s ease;
+    transition: color 0.2s ease;
   }
 
   :global(.project-item-link:hover) .project-item-kind,
   :global(.project-item-link:focus-visible) .project-item-kind {
-    border-color: var(--c-border-strong);
-    color: var(--c-text-muted);
+    color: var(--c-accent-strong);
+  }
+
+  :global(.project-item-link:active) {
+    transform: translateY(0) scale(0.99);
   }
 
   .project-item-desc {
@@ -145,6 +178,10 @@ const getLinkKind = (link: string) => {
   }
 
   @media (max-width: 480px) {
+    .project-items-grid {
+      grid-template-columns: 1fr;
+    }
+
     :global(.project-item-link) {
       align-items: flex-start !important;
       gap: 1rem;
@@ -166,6 +203,12 @@ const getLinkKind = (link: string) => {
       flex-direction: row;
       flex-wrap: wrap;
       gap: 0.4rem;
+    }
+  }
+
+  @media (min-width: 481px) and (max-width: 980px) {
+    .project-items-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 </style>

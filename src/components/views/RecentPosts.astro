@@ -1,0 +1,65 @@
+---
+import { getFilteredPosts, getSortedPosts } from '~/utils/data'
+import { withBasePath } from '~/utils/path'
+
+const posts = getSortedPosts(await getFilteredPosts('blog')).slice(0, 4)
+---
+
+{
+  posts.length > 0 && (
+    <section aria-labelledby="recent-posts-heading">
+      <h2 id="recent-posts-heading">最近在写</h2>
+      <ul class="recent-posts-list">
+        {posts.map((post) => (
+          <li class="recent-posts-item">
+            <a href={withBasePath(`/blog/${post.id}/`)}>{post.data.title}</a>
+            <time
+              class="recent-posts-date"
+              datetime={post.data.pubDate.toISOString()}
+            >
+              {post.data.pubDate.toISOString().slice(0, 10)}
+            </time>
+          </li>
+        ))}
+      </ul>
+      <p>
+        <a href={withBasePath('/blog/')}>查看全部文章</a>
+      </p>
+    </section>
+  )
+}
+
+<style>
+  .recent-posts-list {
+    padding-left: 0;
+    list-style: none;
+  }
+
+  .recent-posts-item {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.45rem 0;
+    border-bottom: 1px solid var(--c-border-soft);
+  }
+
+  .recent-posts-item:last-child {
+    border-bottom: none;
+  }
+
+  .recent-posts-item > a {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .recent-posts-date {
+    flex-shrink: 0;
+    color: var(--c-text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    font-variant-numeric: tabular-nums;
+  }
+</style>

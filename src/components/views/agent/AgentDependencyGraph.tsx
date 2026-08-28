@@ -1,7 +1,5 @@
 import dagre from '@dagrejs/dagre'
 import {
-  Background,
-  BackgroundVariant,
   Controls,
   Handle,
   MarkerType,
@@ -46,6 +44,8 @@ interface PackageNodeData extends Record<string, unknown> {
   label: string
   path: string
   workspace: boolean
+  fanIn: number
+  focal: boolean
 }
 
 type PackageNode = Node<PackageNodeData, 'package'>
@@ -62,21 +62,24 @@ interface GraphProps {
   onSelect: (id: string) => void
 }
 
-const NODE_WIDTH = 214
-const NODE_HEIGHT = 68
+const NODE_WIDTH = 180
+const NODE_HEIGHT = 80
 
 function PackageNodeView({ data, selected }: NodeProps<PackageNode>) {
   const directory = data.path.replace(/\/package\.json$/, '') || '/'
 
   return (
-    <div className={`agent-flow-node${selected ? ' is-selected' : ''}`}>
-      <Handle type="target" position={Position.Left} isConnectable={false} />
-      <span aria-hidden="true" />
-      <div>
-        <strong title={data.label}>{data.label}</strong>
-        <small title={directory}>{directory}</small>
+    <div
+      className={`agent-flow-node${selected ? ' is-selected' : ''}${data.focal ? ' is-focal' : ''}`}
+    >
+      <Handle type="target" position={Position.Top} isConnectable={false} />
+      <div className="agent-flow-node-meta" aria-hidden="true">
+        <span>{data.workspace ? 'WORKSPACE' : 'ROOT'}</span>
+        <span>{data.fanIn} IN</span>
       </div>
-      <Handle type="source" position={Position.Right} isConnectable={false} />
+      <strong title={data.label}>{data.label}</strong>
+      <small title={directory}>{directory}</small>
+      <Handle type="source" position={Position.Bottom} isConnectable={false} />
     </div>
   )
 }
@@ -89,6 +92,15 @@ function layoutGraph(items: AgentDependencyItem[]) {
       )
       .map((dependency) => ({ source: item.id, target: dependency }))
   )
+  const fanInById = new Map(items.map((item) => [item.id, 0]))
+  links.forEach(({ target }) =>
+    fanInById.set(target, (fanInById.get(target) ?? 0) + 1)
+  )
+  const maxFanIn = Math.max(0, ...fanInById.values())
+  const focalId =
+    (maxFanIn > 1
+      ? items.find((item) => fanInById.get(item.id) === maxFanIn)?.id
+      : items[0]?.id) ?? ''
   const linkedIds = new Set(
     links.flatMap(({ source, target }) => [source, target])
   )
@@ -97,12 +109,12 @@ function layoutGraph(items: AgentDependencyItem[]) {
   const graph = new dagre.graphlib.Graph()
   graph.setDefaultEdgeLabel(() => ({}))
   graph.setGraph({
-    rankdir: 'LR',
+    rankdir: 'TB',
     align: 'UL',
-    nodesep: 36,
-    ranksep: 92,
-    marginx: 42,
-    marginy: 42,
+    nodesep: 48,
+    ranksep: 120,
+    marginx: 40,
+    marginy: 40,
   })
 
   linkedItems.forEach((item) =>
@@ -176,9 +188,12 @@ function layoutGraph(items: AgentDependencyItem[]) {
         label: item.name,
         path: item.path,
         workspace: item.workspace,
+        fanIn: fanInById.get(item.id) ?? 0,
+        focal: item.id === focalId,
       },
-      sourcePosition: Position.Right,
-      targetPosition: Position.Left,
+      sourcePosition: Position.Bottom,
+      targetPosition: Position.Top,
+      ariaLabel: `${item.name}，${fanInById.get(item.id) ?? 0} 个模块依赖它`,
     }
   })
 
@@ -249,15 +264,8 @@ const DependencyGraph = forwardRef<GraphHandle, GraphProps>(
         zoomOnDoubleClick={false}
         minZoom={0.22}
         maxZoom={1.8}
-        proOptions={{ hideAttribution: true }}
         fitView
       >
-        <Background
-          variant={BackgroundVariant.Dots}
-          gap={18}
-          size={1}
-          className="agent-flow-background"
-        />
         <Controls
           position="bottom-left"
           showInteractive={false}

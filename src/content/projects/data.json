@@ -2,147 +2,147 @@
   {
     "id": "OutfitAI",
     "link": "https://www.outfit-mksaas.site/",
-    "desc": "OutfitAI - AI 驱动的虚拟试衣体验平台",
+    "desc": "用 AI 生成虚拟试衣效果，快速预览不同服装的上身表现",
     "icon": "i-ph-dress-duotone",
     "category": "SaaS"
   },
   {
     "id": "TypeCN",
     "link": "https://type-cn-supabase.vercel.app/",
-    "desc": "TypeCN - 通过互动练习和游戏化学习掌握中文打字",
+    "desc": "通过互动练习和游戏化反馈，循序渐进地掌握中文打字",
     "icon": "i-ph-translate-duotone",
     "category": "SaaS"
   },
   {
     "id": "Travel China Guide",
     "link": "https://www.wangshengliang.site/",
-    "desc": "Travel China Guide - 中国旅游指南网站",
+    "desc": "面向旅行者的中国城市、路线与实用信息指南",
     "icon": "i-ph-map-trifold-duotone",
     "category": "SaaS"
   },
   {
     "id": "ui-comp-cli",
     "link": "https://github.com/Joruno-AI/ui-comp-cli",
-    "desc": "ui-comp-cli - 用于创建 UI 组件或模板的命令行工具",
+    "desc": "快速创建 UI 组件和项目模板的命令行工具",
     "icon": "i-ph-squares-four-duotone",
     "category": "npm"
   },
   {
     "id": "ai-tool-navigation-website",
     "link": "https://github.com/Joruno-AI/ai-tool-navigation-website",
-    "desc": "ai-tool-navigation-website - AI 工具导航网站",
+    "desc": "按用途整理和发现 AI 产品的工具导航站",
     "icon": "i-ph-compass-rose-duotone",
     "category": "导航站"
   },
   {
     "id": "qrcode-stitch",
     "link": "https://qrcode-stitch.vercel.app/",
-    "desc": "qrcode-stitch - 二维码拼接工具网站",
+    "desc": "在浏览器中完成二维码拼接与导出的轻量工具",
     "icon": "i-ph-qr-code-duotone",
     "category": "工具站"
   },
   {
     "id": "vibe-guide",
     "link": "https://vibe-guide-seven.vercel.app/",
-    "desc": "vibe-guide - 创建 Vibe 编码规范文档的工具",
+    "desc": "帮助团队生成和维护 Vibe Coding 规范文档",
     "icon": "i-ph-notebook-duotone",
     "category": "工具站"
   },
   {
     "id": "midjourney-supabase-app",
     "link": "https://github.com/Joruno-AI/midjourney-supabase-app",
-    "desc": "midjourney-supabase-app - Midjourney 图片生成应用",
+    "desc": "围绕 Midjourney 图片生成与作品管理构建的应用",
     "icon": "i-ph-sparkle-duotone",
     "category": "工具站"
   },
   {
     "id": "chrome-extension-zhihu",
     "link": "https://github.com/Joruno-AI/chrome-extension-zhihu",
-    "desc": "chrome-extension-zhihu - 知乎浏览器扩展插件",
+    "desc": "改善知乎阅读和浏览体验的浏览器扩展",
     "icon": "i-ph-puzzle-piece-duotone",
     "category": "浏览器插件"
   },
   {
     "id": "ai-gallery",
     "link": "https://github.com/Joruno-AI/ai-gallery",
-    "desc": "ai-gallery - AI 图片画廊小程序",
+    "desc": "用于浏览、整理和展示 AI 图片的小程序",
     "icon": "i-ph-images-duotone",
     "category": "小程序"
   },
   {
     "id": "todo-supabase-app",
     "link": "https://github.com/Joruno-AI/todo-supabase-app",
-    "desc": "todo-supabase-app - 待办事项管理应用",
+    "desc": "基于 Supabase 构建的轻量待办事项管理应用",
     "icon": "i-ph-check-circle-duotone",
     "category": "工具站"
   },
   {
     "id": "vscode-git-user-config",
     "link": "https://github.com/Joruno-AI/vscode-git-user-config",
-    "desc": "vscode-git-user-config - Git 用户配置管理的 VSCode 插件",
+    "desc": "在 VS Code 中快速查看和切换 Git 用户配置",
     "icon": "i-skill-icons-vscode-dark",
     "category": "vscode插件"
   },
   {
     "id": "weather-ootd",
     "link": "https://github.com/Joruno-AI/weather-ootd",
-    "desc": "weather-ootd - 天气穿搭推荐小程序",
+    "desc": "结合实时天气给出每日穿搭建议的小程序",
     "icon": "i-ph-rainbow-cloud-duotone",
     "category": "小程序"
   },
   {
     "id": "happyaicoding",
     "link": "https://github.com/Joruno-AI/happyaicoding-template",
-    "desc": "happyaicoding - AI 编程学习网站",
+    "desc": "面向初学者的 AI 编程学习与实践网站",
     "icon": "i-ph-code-block-duotone",
     "category": "工具站"
   },
   {
     "id": "deps-cli",
     "link": "https://github.com/Joruno-AI/deps-cli",
-    "desc": "deps-cli - 依赖管理命令行工具",
+    "desc": "在终端中检查、整理和维护项目依赖",
     "icon": "i-ph-package-duotone",
     "category": "npm"
   },
   {
     "id": "vistoso",
     "link": "https://github.com/Joruno-AI/vistoso",
-    "desc": "vistoso - 颜色查询命令行工具",
+    "desc": "面向开发者的颜色查询与转换命令行工具",
     "icon": "i-ph-paint-bucket-duotone",
     "category": "npm"
   },
   {
     "id": "use-fns",
     "link": "https://github.com/Joruno-AI/use-fns",
-    "desc": "use-fns - Hooks 函数集合库",
+    "desc": "沉淀常用逻辑的 Hooks 与函数集合库",
     "icon": "i-ph-webhooks-logo-duotone",
     "category": "npm"
   },
   {
     "id": "locale-pkg",
     "link": "https://github.com/Joruno-AI/locale-pkg",
-    "desc": "locale-pkg - 显示本地包信息的工具",
+    "desc": "快速查看本地依赖包版本与元信息",
     "icon": "i-ph-globe-hemisphere-east-duotone",
     "category": "npm"
   },
   {
     "id": "pkg-installer",
     "link": "https://github.com/Joruno-AI/pkg-installer",
-    "desc": "pkg-installer - 包安装器命令行工具",
+    "desc": "统一不同包管理器操作的命令行安装工具",
     "icon": "i-ph-terminal-window-duotone",
     "category": "npm"
   },
   {
     "id": "VoiceAccountClient",
     "link": "https://github.com/Joruno-AI/VoiceAccountClient",
-    "desc": "VoiceAccountClient - 语音记账 iOS 客户端",
+    "desc": "通过自然语言快速记录收支的 iOS 客户端",
     "icon": "i-ph-waveform-duotone",
     "category": "iOS"
   },
   {
     "id": "VoiceAccountServer",
     "link": "https://github.com/Joruno-AI/VoiceAccountServer",
-    "desc": "VoiceAccountServer - 语音记账服务端",
+    "desc": "为语音记账提供解析、同步与数据服务的后端",
     "icon": "i-ph-coins-duotone",
     "category": "iOS"
   }

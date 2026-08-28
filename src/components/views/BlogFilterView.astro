@@ -4,7 +4,6 @@ import { render } from 'astro:content'
 import Categorizer from '~/components/base/Categorizer.astro'
 import BlogCatalog from '~/components/blog/BlogCatalog.astro'
 import ListItem from '~/components/views/ListItem.astro'
-import Warning from '~/components/base/Warning.astro'
 
 import {
   getFilteredPosts,
@@ -15,8 +14,6 @@ import {
 } from '~/utils/data'
 
 import type { CollectionEntry } from 'astro:content'
-
-const WARNING = `No content available for display.`
 
 /* Posts */
 const blogItems = await getFilteredPosts('blog')
@@ -127,7 +124,13 @@ const postsWithReadTime: PostWithReadTime[] = await processPostsInBatches(
 
 {
   isEmpty ? (
-    <Warning html={WARNING} />
+    <section class="blog-empty-state" role="status" aria-live="polite">
+      <span class="i-ri-article-line" aria-hidden="true" />
+      <div>
+        <h2>文章暂时无法显示</h2>
+        <p>内容服务恢复后，文章会自动出现在这里。</p>
+      </div>
+    </section>
   ) : (
     <blog-filter-view data-categories={JSON.stringify(allCategoryPaths)}>
       <BlogCatalog posts={blogItems} mode="filter" />
@@ -149,11 +152,7 @@ const postsWithReadTime: PostWithReadTime[] = await processPostsInBatches(
             return (
               <div class="post-item" data-category={categoryPath}>
                 {isFirstInCategory && (
-                  <Categorizer
-                    idx={globalIdx}
-                    needId={true}
-                    text={displayCategory}
-                  />
+                  <Categorizer idx={0} needId={true} text={displayCategory} />
                 )}
                 <ListItem
                   idx={globalIdx}
@@ -178,11 +177,44 @@ const postsWithReadTime: PostWithReadTime[] = await processPostsInBatches(
 }
 
 <style>
+  .blog-empty-state {
+    display: flex;
+    width: min(100%, 48rem);
+    min-height: clamp(12rem, 28vh, 20rem);
+    align-items: flex-start;
+    gap: 1rem;
+    margin-inline: auto;
+    padding-top: clamp(2.5rem, 7vw, 5rem);
+    color: var(--c-text-muted);
+  }
+
+  .blog-empty-state > span {
+    flex: 0 0 auto;
+    margin-top: 0.15rem;
+    color: var(--c-text-faint);
+    font-size: 1.4rem;
+  }
+
+  .blog-empty-state h2 {
+    margin: 0 0 0.35rem;
+    color: var(--c-text);
+    font-size: clamp(1.15rem, 2vw, 1.35rem);
+    letter-spacing: -0.025em;
+  }
+
+  .blog-empty-state p {
+    margin: 0;
+    color: var(--c-text-muted);
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
   blog-filter-view {
     display: grid;
     grid-template-columns: minmax(13rem, 15rem) minmax(0, 1fr);
     gap: clamp(2.25rem, 4vw, 5rem);
     align-items: start;
+    padding-top: clamp(1rem, 2vw, 2rem);
   }
 
   blog-filter-view > :global(blog-catalog) {
@@ -190,6 +222,8 @@ const postsWithReadTime: PostWithReadTime[] = await processPostsInBatches(
     top: 5.5rem;
     min-width: 0;
     max-height: calc(100vh - 7rem);
+    padding-right: clamp(0.75rem, 1.5vw, 1.25rem);
+    border-right: 1px solid var(--c-border-soft);
   }
 
   #blog-post-list {
@@ -209,9 +243,13 @@ const postsWithReadTime: PostWithReadTime[] = await processPostsInBatches(
   }
 
   #blog-post-list :global(.toc-heading) {
+    display: flex;
     grid-column: 1 / -1;
-    height: 4.5rem;
-    margin-top: 1.25rem;
+    height: auto;
+    min-height: 3.25rem;
+    align-items: center;
+    gap: 0.85rem;
+    margin-top: 1.75rem;
     overflow: hidden;
   }
 
@@ -220,10 +258,23 @@ const postsWithReadTime: PostWithReadTime[] = await processPostsInBatches(
   }
 
   #blog-post-list :global(.toc-heading > span) {
-    top: 0.45rem;
-    left: 0.5rem;
-    font-size: clamp(2.75rem, 5vw, 4.5rem);
-    opacity: 0.07;
+    position: static !important;
+    color: var(--c-text-muted) !important;
+    font-size: 0.72rem !important;
+    font-weight: 650;
+    letter-spacing: 0.12em;
+    line-height: 1;
+    opacity: 1 !important;
+    -webkit-text-stroke: 0 !important;
+    text-transform: uppercase;
+    transform: none !important;
+  }
+
+  #blog-post-list :global(.toc-heading)::after {
+    content: '';
+    height: 1px;
+    flex: 1;
+    background: linear-gradient(90deg, var(--c-border-strong), transparent);
   }
 
   #blog-post-list :global(.slide-enter:not(.toc-heading)) {
@@ -267,6 +318,8 @@ const postsWithReadTime: PostWithReadTime[] = await processPostsInBatches(
     blog-filter-view > :global(blog-catalog) {
       position: static;
       max-height: none;
+      padding-right: 0;
+      border-right: 0;
     }
 
     #blog-post-list {
@@ -281,13 +334,8 @@ const postsWithReadTime: PostWithReadTime[] = await processPostsInBatches(
     }
 
     #blog-post-list :global(.toc-heading) {
-      height: 3.75rem;
-      margin-top: 0.75rem;
-    }
-
-    #blog-post-list :global(.toc-heading > span) {
-      left: 0.625rem;
-      font-size: 2.75rem;
+      min-height: 3rem;
+      margin-top: 1.25rem;
     }
   }
 

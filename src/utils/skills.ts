@@ -17,17 +17,17 @@ export const CATEGORY_LABELS: Record<SkillCategory, string> = {
   'agent-tool': 'Agent Tools',
   'ai-skill': 'AI Skills',
   'llm-plugin': 'Prompt / LLM Plugins',
-  uncategorized: '其他工具',
+  'uncategorized': '其他工具',
 }
 
 export const CATEGORY_ICONS: Record<SkillCategory, string> = {
-  'claude-skill': 'i-logos-claude-icon',
-  'codex-skill': '',
+  'claude-skill': 'i-simple-icons-claude',
+  'codex-skill': 'i-simple-icons-openai',
   'mcp-server': 'i-simple-icons-modelcontextprotocol',
   'agent-tool': 'i-simple-icons-agentskills',
   'ai-skill': 'i-ri-sparkling-2-line',
   'llm-plugin': 'i-ri-puzzle-2-line',
-  uncategorized: 'i-ri-box-3-line',
+  'uncategorized': 'i-ri-box-3-line',
 }
 
 /** npx skills add 仅适用于 skill 类目, 其余类目引导到 GitHub */
@@ -58,7 +58,7 @@ export function githubAvatar(author: string, size = 96) {
   return `https://github.com/${author}.png?size=${size}`
 }
 
-/* 全量索引条目 (public/skills/full-index.json 的 items) */
+/* 全量索引条目 (public/agent/full-index.json 的 items) */
 export interface FullIndexItem {
   f: string
   n: string

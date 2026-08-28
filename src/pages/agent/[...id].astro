@@ -16,7 +16,6 @@ export async function getStaticPaths() {
 const { skill } = Astro.props as {
   skill: CollectionEntry<'skills'>['data']
 }
-
 ---
 
 <AgentKnowledgeReader {skill} />

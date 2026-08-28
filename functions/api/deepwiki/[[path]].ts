@@ -47,7 +47,7 @@ async function callDeepWiki(tool: string, arguments_: Record<string, string>) {
     const response = await fetch(MCP_ENDPOINT, {
       method: 'POST',
       headers: {
-        Accept: 'application/json, text/event-stream',
+        'Accept': 'application/json, text/event-stream',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -75,7 +75,8 @@ async function callDeepWiki(tool: string, arguments_: Record<string, string>) {
     const envelope = [...envelopes]
       .reverse()
       .find((entry) => entry.id === 1 || entry.error)
-    if (envelope?.error) throw new Error(envelope.error.message || 'DeepWiki 请求失败')
+    if (envelope?.error)
+      throw new Error(envelope.error.message || 'DeepWiki 请求失败')
     const result = envelope?.result
     const text =
       result?.structuredContent?.result ||
@@ -100,9 +101,8 @@ function parseOutline(markdown: string) {
         title: match[3]?.trim() ?? '',
       }
     })
-    .filter(
-      (item): item is { depth: number; id: string; title: string } =>
-        Boolean(item?.title)
+    .filter((item): item is { depth: number; id: string; title: string } =>
+      Boolean(item?.title)
     )
 }
 
@@ -204,50 +204,6 @@ export async function onRequestGet(context: PagesContext) {
   }
 }
 
-export async function onRequestPost(context: PagesContext) {
-  const [owner, repo, action] = pathParts(context.params.path)
-  if (
-    !owner ||
-    !repo ||
-    !REPO_PART.test(owner) ||
-    !REPO_PART.test(repo) ||
-    action !== 'ask'
-  ) {
-    return json({ error: '不支持的 DeepWiki 操作。' }, 404, 'no-store')
-  }
-
-  try {
-    const payload = (await context.request.json()) as { question?: unknown }
-    const question =
-      typeof payload.question === 'string' ? payload.question.trim() : ''
-    if (!question || question.length > 1200) {
-      return json(
-        { error: '请输入 1—1200 个字符的问题。' },
-        400,
-        'no-store'
-      )
-    }
-    const markdown = await callDeepWiki('ask_question', {
-      repoName: `${owner}/${repo}`,
-      question,
-    })
-    return json(
-      { repo: `${owner}/${repo}`, question, markdown },
-      200,
-      'no-store'
-    )
-  } catch (error) {
-    const timedOut = error instanceof Error && error.name === 'AbortError'
-    return json(
-      {
-        error: timedOut
-          ? 'DeepWiki 回答超时，请稍后重试。'
-          : error instanceof Error
-            ? error.message
-            : 'DeepWiki 回答失败。',
-      },
-      502,
-      'no-store'
-    )
-  }
+export function onRequest() {
+  return json({ error: '仅支持 GET 请求。' }, 405, 'no-store')
 }

@@ -46,9 +46,14 @@ const iconClass =
 const normalizedRedirect = redirect?.trim()
 const href =
   normalizedRedirect || withBasePath(`/${collectionType}/${postSlug}/`)
+const revealStage = idx % 5
 ---
 
-<div class="slide-enter" style={{ '--enter-stage': idx }} data-tags={tags}>
+<div
+  class="slide-enter"
+  style={{ '--enter-stage': revealStage }}
+  data-tags={tags}
+>
   <Link
     u-flex="~ items-center lt-md:(col items-start) gap-2"
     class="blog-list-link border-b-none! mb-5 mt-1.5 op-transition!"
@@ -58,20 +63,22 @@ const href =
     enableNewTabWarning={normalizedRedirect ? true : false}
   >
     <Fragment slot="title">
-      {
-        titleIcon &&
-          (isImageUrl ? (
-            <img
-              src={titleIcon}
-              alt=""
-              class="inline-block h-[1.2em] w-[1.2em] align-text-bottom object-contain"
-              aria-hidden="true"
-            />
-          ) : iconClass ? (
-            <span class={`${iconClass}`} aria-hidden="true" />
-          ) : null)
-      }
-      <span class="list-item-title ml-2.5">{title}</span>
+      <span class="list-item-title-row">
+        {
+          titleIcon &&
+            (isImageUrl ? (
+              <img
+                src={titleIcon}
+                alt=""
+                class="list-item-icon inline-block h-[1.2em] w-[1.2em] align-text-bottom object-contain"
+                aria-hidden="true"
+              />
+            ) : iconClass ? (
+              <span class={`list-item-icon ${iconClass}`} aria-hidden="true" />
+            ) : null)
+        }
+        <span class="list-item-title">{title}</span>
+      </span>
     </Fragment>
     <span slot="end" u-flex="~ gap-2 items-center" class="list-item-meta">
       {
@@ -106,43 +113,143 @@ const href =
         )
       }
       {platform && <span class="op-40 text-sm ws-nowrap">· {platform}</span>}
+      <span class="list-item-arrow i-ri-arrow-right-line" aria-hidden="true"
+      ></span>
     </span>
   </Link>
 </div>
 
 <style>
   :global(.blog-list-link) {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
     margin-inline-start: -0.5rem;
     padding: 0.35rem 0.5rem 0.45rem;
-    border-radius: 0.375rem;
+    border-radius: 0.55rem;
     color: var(--c-text-soft);
-    opacity: 0.86 !important;
+    opacity: 0.9 !important;
+    transform: translate3d(0, 0, 0);
     transition:
-      background-color 0.2s ease,
-      color 0.2s ease,
-      opacity 0.2s ease;
+      color 180ms ease,
+      opacity 180ms ease,
+      transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  :global(.blog-list-link)::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    border: 1px solid transparent;
+    border-radius: inherit;
+    background: var(--c-surface-soft);
+    opacity: 0;
+    transform: scaleX(0.985);
+    transform-origin: left center;
+    transition:
+      border-color 180ms ease,
+      opacity 180ms ease,
+      transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  :global(.blog-list-link)::after {
+    content: '';
+    position: absolute;
+    top: 0.75rem;
+    bottom: 0.75rem;
+    left: 0;
+    width: 2px;
+    border-radius: 2px;
+    background: var(--c-text);
+    opacity: 0;
+    transform: scaleY(0.35);
+    transition:
+      opacity 180ms ease,
+      transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   :global(.blog-list-link:hover),
   :global(.blog-list-link:focus-visible) {
-    background: var(--c-surface-hover);
     color: var(--c-text);
     opacity: 1 !important;
+    transform: translate3d(0.2rem, 0, 0);
+  }
+
+  :global(.blog-list-link:hover)::before,
+  :global(.blog-list-link:focus-visible)::before {
+    border-color: var(--c-border-soft);
+    opacity: 1;
+    transform: scaleX(1);
+  }
+
+  :global(.blog-list-link:hover)::after,
+  :global(.blog-list-link:focus-visible)::after {
+    opacity: 0.78;
+    transform: scaleY(1);
+  }
+
+  :global(.blog-list-link:active) {
+    transform: translate3d(0.1rem, 1px, 0) scale(0.995);
+  }
+
+  .list-item-title-row {
+    display: inline-flex;
+    min-width: 0;
+    align-items: center;
+    gap: 0.55rem;
+  }
+
+  .list-item-icon {
+    flex: none;
+    color: var(--c-text-muted);
+    opacity: 0.72;
+    transition:
+      color 180ms ease,
+      opacity 180ms ease,
+      transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .list-item-title {
-    font-weight: 500;
+    min-width: 0;
+    font-weight: 540;
+    letter-spacing: -0.012em;
     color: inherit;
   }
 
   .list-item-meta {
     color: var(--c-text-faint);
-    transition: color 0.2s ease;
+    font-variant-numeric: tabular-nums;
+    transition: color 180ms ease;
+  }
+
+  .list-item-arrow {
+    flex: none;
+    color: var(--c-text-muted);
+    font-size: 0.9rem;
+    opacity: 0;
+    transform: translateX(-0.3rem);
+    transition:
+      opacity 180ms ease,
+      transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   :global(.blog-list-link:hover) .list-item-meta,
   :global(.blog-list-link:focus-visible) .list-item-meta {
     color: var(--c-text-muted);
+  }
+
+  :global(.blog-list-link:hover) .list-item-icon,
+  :global(.blog-list-link:focus-visible) .list-item-icon {
+    color: var(--c-text);
+    opacity: 1;
+    transform: scale(1.04);
+  }
+
+  :global(.blog-list-link:hover) .list-item-arrow,
+  :global(.blog-list-link:focus-visible) .list-item-arrow {
+    opacity: 0.8;
+    transform: translateX(0);
   }
 
   @media (max-width: 767px) {
@@ -152,10 +259,25 @@ const href =
       padding: 0.55rem 0.625rem;
     }
 
-    /* Stacked layout: align title flush with the meta row below it
-       by dropping the icon gap margin that only makes sense inline. */
-    :global(.blog-list-link .list-item-title) {
-      margin-left: 0;
+    .list-item-arrow {
+      opacity: 0.58;
+      transform: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(.blog-list-link),
+    :global(.blog-list-link)::before,
+    :global(.blog-list-link)::after,
+    .list-item-icon,
+    .list-item-arrow {
+      transition: none;
+    }
+
+    :global(.blog-list-link:hover),
+    :global(.blog-list-link:focus-visible),
+    :global(.blog-list-link:active) {
+      transform: none;
     }
   }
 </style>

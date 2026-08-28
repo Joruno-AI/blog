@@ -539,16 +539,23 @@ export interface Ui {
 }
 
 /* FEATURES */
-export type BgType = 'plum' | 'dot' | 'rose' | 'particle'
+export type BgType = 'plum' | 'dot' | 'rose' | 'particle' | 'light-rays'
+export type StaticBgType = Exclude<BgType, 'light-rays'>
 export type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6
 type Mentioned = `@${string}` | `@${string}@${string}` | ''
 type FeatureConfig<T> = false | [boolean, T]
 
 interface slideEnterAnimConfig {
   /**
-   * Adjusts the animation speed (ms). Smaller values speed up; larger values slow down.
+   * Delay between adjacent reveal stages (ms).
    */
   enterStep: number
+
+  /** Duration of each reveal (ms). */
+  duration?: number
+
+  /** Initial vertical offset before an item enters (px). */
+  distance?: number
 }
 
 export interface OgImageCollectionConfig {
@@ -591,7 +598,7 @@ interface OgImageConfig {
    * Used by the fallback image endpoint, and when a page-specific image is
    * generated without a valid frontmatter `bgType`.
    */
-  fallbackBgType: BgType
+  fallbackBgType: StaticBgType
 
   /**
    * Sets the content collections collected by the OG image endpoint.

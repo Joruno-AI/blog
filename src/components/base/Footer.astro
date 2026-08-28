@@ -6,12 +6,11 @@ const currentYear = new Date().getFullYear()
 const copyrightText = `© ${currentYear} ${SITE.author}`
 ---
 
-<footer class="slide-enter animate-delay-1600! px-7 mt-auto mb-8">
-  <div class="prose mx-auto op-50">
-    <div class="flex lt-sm:flex-col items-center text-sm whitespace-nowrap">
-      <span>{copyrightText}</span>
-      <span class="lt-sm:hidden">&nbsp;|&nbsp;</span>
-      <span>
+<footer class="site-footer slide-enter px-7 mt-auto mb-8">
+  <div class="site-footer-inner prose mx-auto">
+    <div class="site-footer-content">
+      <span class="site-footer-copyright">{copyrightText}</span>
+      <span class="site-footer-credit">
         Powered by
         {' '}
         <Link
@@ -25,3 +24,49 @@ const copyrightText = `© ${currentYear} ${SITE.author}`
     </div>
   </div>
 </footer>
+
+<style>
+  .site-footer {
+    padding-top: clamp(2.5rem, 6vw, 5rem);
+  }
+
+  .site-footer-inner {
+    position: relative;
+    padding-top: 1rem;
+  }
+
+  .site-footer-inner::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      var(--c-border-strong),
+      var(--c-border-soft) 48%,
+      transparent
+    );
+  }
+
+  .site-footer-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    color: var(--c-text-muted);
+    font-size: 0.75rem;
+    letter-spacing: 0.015em;
+  }
+
+  .site-footer-credit {
+    color: var(--c-text-faint);
+  }
+
+  @media (max-width: 639px) {
+    .site-footer-content {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+  }
+</style>

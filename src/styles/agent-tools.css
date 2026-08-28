@@ -124,8 +124,10 @@
   font-size: 0.72rem;
 }
 
+/* Ink-only: error state is carried by ink weight and copy, not by hue. */
 .agent-tool-status.is-error {
-  color: #bd5e5e;
+  color: var(--c-text);
+  font-weight: 650;
 }
 
 .agent-tool-pulse {
@@ -222,12 +224,12 @@
   height: 2rem;
   place-items: center;
   border: 1px solid var(--agent-line);
-  border-radius: 0.45rem;
-  color: #4f9b72;
+  border-radius: 0.5rem;
+  color: var(--c-text);
 }
 
 .agent-check-card.is-attention > span:first-child {
-  color: #bd7549;
+  color: var(--c-text-muted);
 }
 
 .agent-check-card h3,
@@ -388,7 +390,10 @@
 }
 
 @keyframes agent-tool-pulse {
-  50% { opacity: 0.3; transform: scale(0.72); }
+  50% {
+    opacity: 0.3;
+    transform: scale(0.72);
+  }
 }
 
 @media (max-width: 800px) {

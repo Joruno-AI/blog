@@ -21,12 +21,13 @@ const maxItems = parseTuple(maxItemsPerPage, 'maxItemsPerPage')
 <search-panel
   role="dialog"
   id="search-panel"
-  class={`hidden z-200 fixed top-15% lt-lgp:(top-10%) left-0 right-0 mx-auto
+  class={`search-surface hidden z-200 fixed top-15% lt-lgp:(top-10%) left-0 right-0 mx-auto
     grid grid-rows-[auto_1fr_auto]
     w-42rem lt-lgp:(w-90%) max-h-70vh lt-lgp:(max-h-80vh) p-3 lt-lgp:(pb-1) rounded-lg
     text-[var(--c-text)] bg-[var(--c-bg)] shadow-custom_0_0_10_0`}
   style="view-transition-name: none;"
   aria-modal="true"
+  aria-hidden="true"
   aria-labelledby="search-label"
   aria-keyshortcuts="ArrowUp,ArrowDown,Enter,Esc"
   data-filter={filterEnabled}
@@ -35,6 +36,21 @@ const maxItems = parseTuple(maxItemsPerPage, 'maxItemsPerPage')
   data-dev-index={withBasePath('/search-index.json')}
 >
   <div class="flex flex-col gap-2">
+    <div class="search-panel-topbar">
+      <div class="search-panel-heading">
+        <span aria-hidden="true" u-i-ri-command-line></span>
+        <span>全站搜索</span>
+      </div>
+      <button
+        id="search-close-button"
+        class="search-close-button"
+        type="button"
+        aria-label="关闭搜索"
+        title="关闭搜索"
+      >
+        <span aria-hidden="true" u-i-ri-close-line></span>
+      </button>
+    </div>
     <!-- Tab list -->
     {
       filterEnabled && (
@@ -61,7 +77,7 @@ const maxItems = parseTuple(maxItemsPerPage, 'maxItemsPerPage')
     }
     <!-- Search Bar -->
     <div
-      class="grid grid-cols-[auto_1fr] items-center
+      class="search-input-shell grid grid-cols-[auto_1fr] items-center
         h-10 px-3 rounded-md
         bg-[#88888811] dark:bg-[#88888818]"
     >
@@ -149,8 +165,148 @@ const maxItems = parseTuple(maxItemsPerPage, 'maxItemsPerPage')
 </search-panel>
 
 <style>
+  #search-panel {
+    width: min(42rem, calc(100vw - 2rem));
+    max-height: min(72vh, 44rem);
+    padding: 0.85rem;
+    border: 1px solid var(--c-border-soft);
+    border-radius: var(--radius-xl);
+    background: var(--c-surface-overlay);
+    box-shadow:
+      inset 0 1px 0 var(--c-surface-highlight),
+      var(--shadow-raised);
+    -webkit-backdrop-filter: saturate(140%) blur(20px);
+    backdrop-filter: saturate(140%) blur(20px);
+  }
+
+  .search-panel-topbar {
+    min-height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 0.15rem 0.2rem 0.35rem;
+  }
+
+  .search-panel-heading {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--c-text-muted);
+    font-size: 0.72rem;
+    font-weight: 650;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .search-close-button {
+    width: 2rem;
+    height: 2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--c-text-muted);
+    cursor: pointer;
+    transition:
+      color var(--motion-fast) ease,
+      background-color var(--motion-fast) ease,
+      transform var(--motion-fast) var(--ease-out-quart);
+  }
+
+  .search-close-button:hover {
+    background: var(--c-surface-hover);
+    color: var(--c-text);
+  }
+
+  .search-close-button:active {
+    transform: scale(0.92);
+  }
+
+  #search-panel :global(.search-tabs button) {
+    border: 1px solid transparent;
+    background: var(--c-surface-soft);
+    color: var(--c-text-muted);
+    transition:
+      border-color var(--motion-fast) ease,
+      background-color var(--motion-fast) ease,
+      color var(--motion-fast) ease,
+      opacity var(--motion-fast) ease;
+  }
+
+  #search-panel :global(.search-tabs button[aria-selected='true']) {
+    border-color: var(--c-border-soft);
+    background: var(--c-surface-active);
+    color: var(--c-text);
+  }
+
+  #search-panel :global(#search-input) {
+    font-size: 1rem;
+  }
+
+  #search-panel :global(#search-input:focus-visible) {
+    box-shadow: none;
+  }
+
+  .search-input-shell {
+    border: 1px solid var(--c-border-soft);
+    border-radius: var(--radius-md);
+    background: var(--c-surface-sunken);
+    box-shadow: inset 0 1px 0 var(--c-surface-highlight);
+    transition:
+      border-color var(--motion-fast) ease,
+      box-shadow var(--motion-fast) ease;
+  }
+
+  .search-input-shell:focus-within {
+    border-color: var(--c-border-strong);
+    box-shadow:
+      0 0 0 3px color-mix(in srgb, var(--c-focus-ring) 28%, transparent),
+      inset 0 1px 0 var(--c-surface-highlight);
+  }
+
   :global(body:has(#search-panel:not(.hidden)) #backdrop) {
-    background-color: transparent;
+    background: var(--c-scrim);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    #search-panel.fade-in {
+      animation: search-enter 280ms var(--ease-out-expo) both;
+    }
+
+    #search-panel.fade-out {
+      animation: search-leave 170ms ease-in both;
+    }
+
+    @keyframes search-enter {
+      from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.985);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes search-leave {
+      to {
+        opacity: 0;
+        transform: translateY(6px) scale(0.99);
+      }
+    }
+  }
+
+  @media (max-width: 767px) {
+    #search-panel {
+      top: max(5rem, env(safe-area-inset-top));
+      width: calc(100vw - 1rem);
+      max-height: calc(100dvh - 6rem);
+      border-radius: var(--radius-lg);
+    }
   }
 </style>
 
@@ -159,6 +315,15 @@ const maxItems = parseTuple(maxItemsPerPage, 'maxItemsPerPage')
 
   /* Handle click on search switch to open or close */
   document.addEventListener('astro:page-load', () => {
+    const closeSearch = (restoreFocus = true) => {
+      const panel = document.getElementById('search-panel')
+      if (!panel || panel.classList.contains('hidden')) return
+      panel.setAttribute('aria-hidden', 'true')
+      toggleFadeEffect('search-panel', false, 'hidden')
+      toggleFadeEffect('backdrop', false, 'hidden')
+      if (restoreFocus) document.getElementById('search-switch')?.focus()
+    }
+
     const handleToggle = () => {
       const panel = document.getElementById('search-panel')
       const results = document.getElementById('search-results')
@@ -175,6 +340,7 @@ const maxItems = parseTuple(maxItemsPerPage, 'maxItemsPerPage')
 
       toggleFadeEffect('backdrop', true, 'hidden')
       toggleFadeEffect('search-panel', true, 'hidden')
+      panel?.setAttribute('aria-hidden', 'false')
 
       // auto-focus the search input after panel becomes visible
       requestAnimationFrame(() => {
@@ -184,7 +350,16 @@ const maxItems = parseTuple(maxItemsPerPage, 'maxItemsPerPage')
     }
 
     const searchSwitch = document.getElementById('search-switch')
-    searchSwitch?.addEventListener('click', handleToggle)
+    if (searchSwitch && searchSwitch.dataset.panelBound !== 'true') {
+      searchSwitch.dataset.panelBound = 'true'
+      searchSwitch.addEventListener('click', handleToggle)
+    }
+
+    const closeButton = document.getElementById('search-close-button')
+    if (closeButton && closeButton.dataset.panelBound !== 'true') {
+      closeButton.dataset.panelBound = 'true'
+      closeButton.addEventListener('click', () => closeSearch())
+    }
   })
 </script>
 
@@ -461,7 +636,10 @@ const maxItems = parseTuple(maxItemsPerPage, 'maxItemsPerPage')
         this.#resetView()
         if (this.#results) this.#results.scrollTop = 0
 
-        if (!window.matchMedia('(prefers-reduced-motion)').matches)
+        this.setAttribute('aria-hidden', 'true')
+        if (
+          !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        )
           this.classList.remove('fade-in')
         this.classList.add('hidden')
         toggleFadeEffect('backdrop', false, 'hidden')

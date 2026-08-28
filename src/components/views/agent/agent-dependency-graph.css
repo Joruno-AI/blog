@@ -1,108 +1,143 @@
+/* Runtime adaptation of cathrynlavery/diagram-design (MIT).
+   React Flow keeps the explorer interactive; this layer applies the
+   dependency-graph grammar with the blog's semantic theme tokens. */
 .agent-graph-canvas .react-flow {
-  --xy-background-color: transparent;
-  --xy-edge-stroke: color-mix(in srgb, var(--c-text) 30%, transparent);
-  --xy-edge-stroke-selected: var(--c-text);
-  --xy-connectionline-stroke: var(--c-text);
-  --xy-controls-button-background-color: color-mix(
-    in srgb,
-    var(--c-bg) 94%,
-    transparent
-  );
-  --xy-controls-button-background-color-hover: var(--agent-soft);
-  --xy-controls-button-color: var(--agent-muted);
-  --xy-controls-button-color-hover: var(--c-text);
-  --xy-controls-button-border-color: var(--agent-line);
+  --xy-background-color: var(--diagram-paper);
+  --xy-edge-stroke: var(--diagram-muted);
+  --xy-edge-stroke-selected: var(--diagram-accent);
+  --xy-connectionline-stroke: var(--diagram-ink);
+  --xy-controls-button-background-color: var(--diagram-paper);
+  --xy-controls-button-background-color-hover: var(--diagram-paper-2);
+  --xy-controls-button-color: var(--diagram-muted);
+  --xy-controls-button-color-hover: var(--diagram-ink);
+  --xy-controls-button-border-color: var(--diagram-rule);
+
+  background: var(--diagram-paper);
 }
 
 .agent-dependency-flow .react-flow__edge-path {
-  stroke-width: 1.35;
+  stroke-width: 1;
 }
 
 .agent-dependency-flow .react-flow__edge.selected .react-flow__edge-path {
-  stroke-width: 1.8;
+  stroke-width: 1.2;
 }
 
 .agent-dependency-flow .react-flow__node-package {
-  width: 13.375rem;
+  width: 11.25rem;
   border: 0;
   background: transparent;
 }
 
 .agent-flow-node {
-  min-height: 4.25rem;
-  padding: 0.72rem 0.78rem;
+  width: 100%;
+  min-height: 5rem;
+  padding: 12px;
   display: grid;
-  grid-template-columns: 0.5rem minmax(0, 1fr);
-  gap: 0.48rem;
-  align-items: center;
-  border: 1px solid var(--agent-line);
-  border-radius: 0.72rem;
-  background: color-mix(in srgb, var(--c-bg) 96%, transparent);
-  box-shadow: 0 8px 24px color-mix(in srgb, #000 7%, transparent);
-  color: var(--c-text);
+  grid-template-rows: auto auto auto;
+  gap: 8px;
+  border: 1px solid var(--diagram-rule-solid);
+  border-radius: var(--diagram-radius-node);
+  background: var(--diagram-paper);
+  color: var(--diagram-ink);
+  opacity: 1;
   transition:
-    border-color 160ms ease,
-    box-shadow 160ms ease,
-    transform 160ms ease;
+    opacity var(--diagram-motion-step) var(--diagram-motion-ease),
+    transform var(--diagram-motion-step) var(--diagram-motion-ease),
+    border-color var(--diagram-motion-fast) ease,
+    background-color var(--diagram-motion-fast) ease;
 }
 
-.agent-flow-node:hover,
+@starting-style {
+  .agent-flow-node {
+    opacity: 0.35;
+    transform: translateY(8px);
+  }
+}
+
+.agent-flow-node:hover {
+  border-color: var(--diagram-ink);
+}
+
+.agent-flow-node.is-focal {
+  border-color: var(--diagram-accent);
+  background: var(--diagram-accent-tint);
+}
+
 .agent-flow-node.is-selected {
-  border-color: color-mix(in srgb, var(--c-text) 50%, transparent);
-  box-shadow: 0 13px 32px color-mix(in srgb, #000 12%, transparent);
-  transform: translateY(-1px);
+  outline: 2px solid var(--diagram-accent);
+  outline-offset: 3px;
 }
 
-.agent-flow-node > span {
-  width: 0.4rem;
-  height: 0.4rem;
-  border-radius: 50%;
-  background: #8a72c6;
-  box-shadow: 0 0 0 4px color-mix(in srgb, #8a72c6 14%, transparent);
+.react-flow__node:focus-visible .agent-flow-node {
+  outline: 2px solid var(--diagram-accent);
+  outline-offset: 4px;
 }
 
-.agent-flow-node > div {
+.agent-flow-node-meta {
   min-width: 0;
-  display: grid;
-  gap: 0.24rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.agent-flow-node-meta span {
+  min-width: 0;
+  padding: 2px 4px;
+  overflow: hidden;
+  border: 0.8px solid var(--diagram-rule-solid);
+  border-radius: 2px;
+  color: var(--diagram-soft);
+  font-family: var(--diagram-font-mono);
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .agent-flow-node strong,
 .agent-flow-node small {
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .agent-flow-node strong {
-  font-size: 0.73rem;
-  font-weight: 650;
+  font-family: var(--diagram-font-node);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
 }
 
 .agent-flow-node small {
-  color: var(--agent-muted);
-  font-family: var(--font-mono);
-  font-size: 0.59rem;
+  color: var(--diagram-muted);
+  font-family: var(--diagram-font-mono);
+  font-size: 9px;
+  line-height: 1.2;
 }
 
 .agent-flow-node .react-flow__handle {
-  width: 0.38rem;
-  height: 0.38rem;
-  border: 1px solid var(--c-bg);
-  background: color-mix(in srgb, var(--c-text) 54%, transparent);
+  width: 6px;
+  height: 6px;
+  border: 1px solid var(--diagram-paper);
+  background: var(--diagram-muted);
 }
 
 .agent-flow-controls {
   overflow: hidden;
-  border: 1px solid var(--agent-line) !important;
-  border-radius: 0.62rem !important;
-  box-shadow: 0 8px 26px color-mix(in srgb, #000 10%, transparent) !important;
+  border: 1px solid var(--diagram-rule) !important;
+  border-radius: var(--diagram-radius-frame) !important;
+  box-shadow: none !important;
 }
 
 .agent-flow-controls button {
-  width: 2.15rem;
-  height: 2.15rem;
-  border-bottom-color: var(--agent-line) !important;
+  width: 44px;
+  height: 44px;
+  border-bottom-color: var(--diagram-rule) !important;
 }
 
 .agent-flow-controls button:last-child {
@@ -110,11 +145,25 @@
 }
 
 .agent-flow-controls svg {
-  max-width: 0.92rem;
-  max-height: 0.92rem;
+  max-width: 16px;
+  max-height: 16px;
   fill: currentColor;
 }
 
-.agent-flow-background circle {
-  fill: color-mix(in srgb, var(--c-text) 18%, transparent);
+.agent-dependency-flow .react-flow__attribution {
+  padding: 2px 4px;
+  background: var(--diagram-paper);
+  color: var(--diagram-soft);
+  font-family: var(--diagram-font-mono);
+  font-size: 8px;
+}
+
+.agent-dependency-flow .react-flow__attribution a {
+  color: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .agent-flow-node {
+    transition-duration: 0.001ms !important;
+  }
 }

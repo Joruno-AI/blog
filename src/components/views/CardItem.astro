@@ -114,12 +114,8 @@ if (images && images.length > 0) {
 }
 ---
 
-<section class={className} data-tags={tags}>
-  <div
-    class={`overflow-hidden flex flex-col
-      h-full b b-[#8884] rounded-lg bg-white dark:bg-black
-      shadow-transition-500`}
-  >
+<section class:list={['card-item', className]} data-tags={tags}>
+  <div class="card-surface overflow-hidden flex flex-col h-full">
     {
       ((images && images.length > 0) || video) && (
         <MediaContainer
@@ -313,6 +309,44 @@ if (images && images.length > 0) {
     </ContentContainer>
   </div>
 </section>
+
+<style>
+  .card-item {
+    min-width: 0;
+    transition: transform var(--motion-base) var(--ease-out-expo);
+  }
+
+  .card-surface {
+    border: 1px solid var(--c-border-soft);
+    border-radius: var(--radius-lg);
+    background: var(--c-bg);
+    transition:
+      border-color var(--motion-fast) ease,
+      background-color var(--motion-fast) ease;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .card-item:hover {
+      transform: translateY(-3px);
+    }
+
+    .card-item:hover .card-surface {
+      border-color: var(--c-border-strong);
+      background: var(--c-surface-soft);
+    }
+  }
+
+  .card-item:active {
+    transform: translateY(-1px) scale(0.995);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card-item,
+    .card-surface {
+      transition-duration: 0.01ms;
+    }
+  }
+</style>
 
 <script>
   class CollapsibleContent extends HTMLElement {

@@ -30,7 +30,7 @@ const specHeadings = generateToc(headings, minHeadingLevel, maxHeadingLevel)
 <!-- Greater than or equal to 1128px -->
 <nav
   id="toc-sidebar"
-  class="flex flex-col w-15.625rem max-h-[70vh] overflow-hidden
+  class="flex flex-col w-15.625rem h-full min-h-0 overflow-hidden
     op-0 op-transition-700 text-sm
     data-[display-mode=always]:op-100
     [.prose:hover_&[data-display-mode=content]]:op-60
@@ -47,7 +47,7 @@ const specHeadings = generateToc(headings, minHeadingLevel, maxHeadingLevel)
   >
     Skip toc
   </Link>
-  <ul class="h-full first-of-type:mt--2 overflow-y-auto">
+  <ul class="min-h-0 flex-1 first-of-type:mt--2 overflow-y-auto">
     {
       !!specHeadings.length &&
         specHeadings.map((heading) => <TocItem {heading} />)

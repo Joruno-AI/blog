@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro'
 
 import localAlbumsData from '~/content/music/data.json'
+import fallbackCatalog from '~/content/music/fallback-catalog.json'
 import { albumIntroductions } from '~/content/music/album-introductions'
 import audioQualityData from '~/content/music/audio-quality.json'
 import lyricAlignmentData from '~/content/music/lyric-alignment.json'
@@ -21,11 +22,16 @@ export async function loadAlbums(): Promise<CMSAlbum[]> {
       console.warn('[music] CMS fetch failed, fallback to local data.json:', e)
     }
   }
+  if (fallbackCatalog.length > 0)
+    return fallbackCatalog as unknown as CMSAlbum[]
   return localAlbumsData as unknown as CMSAlbum[]
 }
 
 function buildAlbumDescription(album: CMSAlbum): string | null {
-  const base = (albumIntroductions[album.id] ?? album.description ?? '').trim()
+  const introduction = albumIntroductions[album.id]?.trim()
+  if (!introduction) return album.description?.trim() || null
+
+  const base = introduction
   if (!base) return null
 
   const year = album.releaseDate?.slice(0, 4)

@@ -51,7 +51,7 @@ const masters: MasterRow[] = Object.values(
 >
   <StandardLayout
     class="max-w-300"
-    title="技能大师"
+    title="创作者"
     subtitle="按作者聚合的创作者排行榜 (Top 50)"
     isCentered={true}
   >
@@ -77,11 +77,11 @@ const masters: MasterRow[] = Object.values(
               {master.author}
             </Link>
             <p>
-              {master.repoCount} 个项目 · {formatCount(master.totalStars)} Stars
+              {master.repoCount} 个项目 · 平均质量 {master.avgQuality}
             </p>
             <div>
-              <span>平均质量</span>
-              <strong>{master.avgQuality}</strong>
+              <span>累计 Stars</span>
+              <strong>{formatCount(master.totalStars)}</strong>
             </div>
           </article>
         ))

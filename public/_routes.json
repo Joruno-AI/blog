@@ -1,5 +1,11 @@
 {
   "version": 1,
-  "include": ["/api/github/*", "/api/deepwiki/*", "/agent/*", "/skills/*"],
-  "exclude": ["/skills/full-index.json", "/skills/suggest-index.json"]
+  "include": [
+    "/api/github/*",
+    "/api/deepwiki/*",
+    "/api/zread/*",
+    "/agent/*",
+    "/skills/*"
+  ],
+  "exclude": ["/agent/full-index.json", "/agent/suggest-index.json"]
 }

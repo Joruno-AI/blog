@@ -17,6 +17,7 @@ import { cmsLoader } from '~/loaders/cms'
 import { mediaLoader } from '~/loaders/cms/media'
 
 const CMS_API_URL = import.meta.env.CMS_API_URL
+const allowStaleCmsInDev = import.meta.env.DEV
 
 const pages = defineCollection({
   loader: glob({ base: './src/pages', pattern: '**/*.mdx' }),
@@ -29,7 +30,10 @@ const home = defineCollection({
 
 const blog = defineCollection({
   loader: CMS_API_URL
-    ? cmsLoader({ apiBaseUrl: CMS_API_URL })
+    ? cmsLoader({
+        apiBaseUrl: CMS_API_URL,
+        allowStaleOnError: allowStaleCmsInDev,
+      })
     : glob({ base: './src/content/blog', pattern: '**/[^_]*.{md,mdx}' }),
   schema: postSchema,
 })
@@ -65,7 +69,10 @@ const projects = defineCollection({
 
 const photos = defineCollection({
   loader: CMS_API_URL
-    ? mediaLoader({ apiBaseUrl: CMS_API_URL })
+    ? mediaLoader({
+        apiBaseUrl: CMS_API_URL,
+        allowStaleOnError: allowStaleCmsInDev,
+      })
     : file('src/content/photos/data.json'),
   schema: photoSchema,
 })

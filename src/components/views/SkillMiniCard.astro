@@ -36,7 +36,7 @@ const installable = INSTALLABLE_CATEGORIES.has(item.c)
       </Link>
       <span class="skm-author">{item.a}</span>
     </div>
-    <span class="skm-grade" style={`--gc: ${grade.color}`}>{grade.label}</span>
+    <span class="skm-grade">{grade.label}</span>
   </div>
   <p class="skm-desc">{descZh || item.d || '暂无描述'}</p>
   <div class="skm-meta">
@@ -94,11 +94,12 @@ const installable = INSTALLABLE_CATEGORIES.has(item.c)
     display: flex;
     flex-direction: column;
     gap: 0.65rem;
-    padding: 1rem;
+    padding: 1rem 0.35rem;
     overflow: hidden;
-    border: 1px solid var(--skills-border, var(--c-border-strong));
-    border-radius: var(--skills-radius-lg, 0.75rem);
-    background: var(--c-bg);
+    border: 0;
+    border-top: 1px solid var(--skills-border, var(--c-border-strong));
+    border-radius: 0;
+    background: transparent;
     min-width: 0;
     transition:
       background 160ms ease,
@@ -110,7 +111,6 @@ const installable = INSTALLABLE_CATEGORIES.has(item.c)
   }
 
   .skm-card:hover {
-    border-color: var(--skills-border, var(--c-border-strong));
     background: var(--c-surface-soft);
   }
 
@@ -171,11 +171,7 @@ const installable = INSTALLABLE_CATEGORIES.has(item.c)
   }
 
   .skm-grade::before {
-    content: '';
-    width: 0.4rem;
-    height: 0.4rem;
-    border-radius: 999px;
-    background: var(--gc);
+    content: none;
   }
 
   .skm-desc {

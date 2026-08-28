@@ -407,19 +407,23 @@
   font-size: 0.64rem;
 }
 
+/* Ink-only: grade is carried by ink weight, not hue. A filled dot reads as
+   "checks passed", a hollow ring as "needs a look". */
 .ska-grade i {
   width: 0.42rem;
   height: 0.42rem;
   border-radius: 50%;
-  background: #8a8a8a;
+  background: var(--c-text-faint);
 }
 
 .ska-grade.is-safe i {
-  background: #4f9b72;
+  background: var(--c-text);
 }
 
 .ska-grade.is-caution i {
-  background: #b78243;
+  box-sizing: border-box;
+  border: 1.5px solid var(--c-text-muted);
+  background: transparent;
 }
 
 .ska-card-head {
@@ -567,8 +571,8 @@
 }
 
 .ska-card-install.is-copied {
-  border-color: #4f9b72;
-  color: #4f9b72;
+  border-color: var(--c-text);
+  color: var(--c-text);
 }
 
 .ska-card-more {
@@ -909,6 +913,20 @@
   color: var(--c-text-muted);
   font-size: 0.7rem;
   line-height: 1.55;
+}
+
+/* 弹窗内的对比是索引快照, 这里把选中项交接给对比页读实时数据。 */
+.ska-compare-handoff {
+  margin: 0.85rem 0 0;
+  font-size: 0.72rem;
+}
+
+.ska-compare-handoff a {
+  color: var(--c-text-muted);
+}
+
+.ska-compare-handoff a:hover {
+  color: var(--c-text);
 }
 
 .ska-compare-project {

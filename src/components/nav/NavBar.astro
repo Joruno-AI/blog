@@ -139,40 +139,106 @@ for (const item of new Set(left)) {
 </header>
 
 <style>
-  .logo-wrapper {
-    transition: all 0.5s ease-in-out;
-    width: auto;
-    opacity: 1;
-    overflow: hidden;
+  /* Keep the navigation structurally sound even while UnoCSS is being
+     replaced during an Astro page transition. Without these base rules the
+     utility-only grid briefly falls back to normal block flow, which stacks
+     every icon down the middle of narrow screens. */
+  .nav-header {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 50;
+    box-sizing: border-box;
+    min-height: 4rem;
+    display: flex;
+    align-items: center;
+    padding: 1rem 2rem;
+    border-radius: 0;
   }
 
-  /* Even hover/current highlight around each nav icon.
-     Padding is uniform on all sides; the grid gap is tightened and the
-     row is pulled out with negative margin so icons keep their original
-     visual positions while gaining a rounded-square hit area. */
+  .main-nav {
+    min-width: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 1.2rem;
+  }
+
+  .logo-wrapper {
+    transition:
+      width var(--motion-base) var(--ease-out-expo),
+      opacity var(--motion-base) ease,
+      transform var(--motion-base) var(--ease-out-expo);
+    width: auto;
+    opacity: 1;
+    overflow: visible;
+  }
+
+  /* Compact visual states sit inside a stable hit area, avoiding the heavy
+     block that previously dominated the otherwise quiet icon row. */
   .main-nav :global(.grid-flow-col) {
+    display: grid;
+    grid-auto-flow: column;
+    align-items: center;
     gap: 0.25rem;
     margin-inline: -0.5rem;
   }
 
   .main-nav :global(.grid-flow-col > a),
   .main-nav :global(.grid-flow-col > button) {
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0.5rem;
-    border-radius: 0.5rem;
+    min-width: 2.2rem;
+    min-height: 2.2rem;
+    padding: 0.45rem;
+    border-radius: 0.7rem;
     transition:
-      background-color 0.2s ease,
-      opacity 0.2s ease;
+      background-color var(--motion-fast) ease,
+      color var(--motion-fast) ease,
+      opacity var(--motion-fast) ease,
+      transform var(--motion-fast) var(--ease-out-quart);
   }
 
   .main-nav :global(.grid-flow-col > a:hover),
   .main-nav :global(.grid-flow-col > a:focus-visible),
   .main-nav :global(.grid-flow-col > button:hover),
-  .main-nav :global(.grid-flow-col > button:focus-visible),
-  .main-nav :global(.grid-flow-col > a[aria-current='page']) {
+  .main-nav :global(.grid-flow-col > button:focus-visible) {
     background: var(--c-surface-hover);
+  }
+
+  .main-nav :global(.grid-flow-col > a[aria-current='page']) {
+    background: var(--c-surface-soft);
+  }
+
+  .main-nav :global(.grid-flow-col > a:hover),
+  .main-nav :global(.grid-flow-col > a:focus-visible),
+  .main-nav :global(.grid-flow-col > button:hover),
+  .main-nav :global(.grid-flow-col > button:focus-visible) {
+    color: var(--c-accent);
+  }
+
+  .main-nav :global(.grid-flow-col > a[aria-current='page'])::after {
+    content: '';
+    position: absolute;
+    inset: auto 0.8rem 0.2rem;
+    height: 2px;
+    border-radius: 99px;
+    background: var(--c-accent);
+    opacity: 0.88;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .main-nav :global(.grid-flow-col > a:hover),
+    .main-nav :global(.grid-flow-col > button:hover) {
+      transform: translateY(-1px);
+    }
+  }
+
+  .main-nav :global(.grid-flow-col > a:active),
+  .main-nav :global(.grid-flow-col > button:active) {
+    transform: scale(0.94);
   }
 
   .main-nav :global(a[data-music-nav]) {
@@ -194,7 +260,7 @@ for (const item of new Set(left)) {
     z-index: 2;
     left: 52%;
     top: 40%;
-    color: var(--c-text-muted);
+    color: var(--c-accent);
     font-size: 0.72rem;
     line-height: 1;
     opacity: 0;
@@ -236,6 +302,12 @@ for (const item of new Set(left)) {
   }
 
   @media (max-width: 767px) {
+    .nav-header {
+      inset: 0 0 auto;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0;
+    }
+
     :global(.nav-header:has(#nav-panel.visible)) {
       z-index: 200;
     }
@@ -263,6 +335,27 @@ for (const item of new Set(left)) {
 
     .main-nav {
       gap: 0.25rem;
+    }
+  }
+
+  @media (max-width: 360px) {
+    .nav-header {
+      inset-inline: 0;
+      padding-inline: 1rem;
+    }
+
+    .logo-wrapper {
+      width: 2.75rem;
+      flex-basis: 2.75rem;
+      margin-right: 0.25rem !important;
+    }
+
+    .logo-wrapper :global(.logo-svg) {
+      width: 2.75rem;
+    }
+
+    .main-nav {
+      gap: 0.1rem;
     }
   }
 

@@ -5,46 +5,59 @@ import { SITE } from '~/config'
 ---
 
 <Link
-  class="select-none op-transition"
+  class="logo-link select-none"
   href={withBasePath('/')}
-  aria-label={SITE.author}
+  aria-label={`Joruno · ${SITE.author}`}
   aria-current={Astro.url.pathname === `${withBasePath('/')}` ? 'page' : false}
 >
   <div class="logo-container">
-    <!-- Animated WSL Signature Logo - Readable handwriting style -->
     <svg
-      width="150"
-      height="55"
-      viewBox="0 0 150 55"
+      viewBox="-120 -100 2480 900"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
       class="logo-svg"
     >
-      <!-- Mask for variable stroke width -->
-      <defs>
-        <mask id="logo-mask">
-          <!-- Fill shape for mask (bold signature style) -->
-          <!-- Continuous single stroke path for 'wsl' -->
+      <g class="logo-word" transform="translate(24 650) scale(1 -1)">
+        <g class="logo-base">
           <path
-            d="M 10 20 L 15 40 L 20 18 L 25 40 L 30 20 Q 35 18 40 20 Q 42 22 42 25 Q 42 30 48 30 Q 54 30 54 35 Q 54 42 48 42 Q 45 42 44 38 L 46 32 Q 50 28 56 30 L 62 16 L 60 38 Q 60 43 64 43"
-            fill="none"
-            stroke="white"
-            stroke-width="12"
-            stroke-linecap="round"
-            stroke-linejoin="round"></path>
-        </mask>
-      </defs>
-
-      <!-- Animated stroke path - single continuous line -->
-      <path
-        class="logo-path"
-        d="M 10 20 L 15 40 L 20 18 L 25 40 L 30 20 Q 35 18 40 20 Q 42 22 42 25 Q 42 30 48 30 Q 54 30 54 35 Q 54 42 48 42 Q 45 42 44 38 L 46 32 Q 50 28 56 30 L 62 16 L 60 38 Q 60 43 64 43"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="4"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        mask="url(#logo-mask)"></path>
+            d="M66 229C40 223 11 195 0 152C-23 66 20 -3 95 -16C176 -30 259 -6 336 122C391 213 488 412 521 490C546 549 541 593 528 615C521 627 512 628 504 616C472 567 386 396 332 285C265 146 192 -6 102 15C71 22 32 67 81 209C87 226 80 232 66 229Z"
+          ></path>
+          <path
+            d="M1093 85C1105 111 1101 138 1096 150C1092 159 1085 157 1081 148C1049 75 998 8 958 11C926 13 914 52 933 107C951 160 999 228 1046 281C1076 315 1051 362 1033 383C1025 393 1016 390 1003 381C965 355 930 338 895 333C915 386 933 459 898 458C858 457 760 325 834 293C813 255 784 236 756 231C756 237 758 242 758 247C763 320 734 326 710 357C689 384 673 394 643 391C583 386 520 330 482 261C439 182 424 95 467 36C506 -17 558 -19 594 -7C668 17 730 120 750 205C805 207 846 241 874 286C906 286 950 296 995 325C953 276 890 202 870 135C845 53 876 -14 953 -18C1008 -21 1066 25 1093 85ZM694 247C675 263 666 288 669 313C673 342 695 350 699 317C701 300 700 276 694 247ZM685 218C678 193 666 166 650 136C600 45 538 9 512 32C486 55 500 146 543 222C565 260 593 293 620 316C621 280 646 240 685 218Z"
+          ></path>
+          <path
+            d="M1266 81C1258 23 1284 -18 1349 -18C1408 -18 1470 33 1499 89C1513 117 1512 144 1508 152C1504 161 1495 160 1490 151C1451 81 1400 15 1358 13C1322 11 1318 53 1344 110C1367 161 1417 236 1439 281C1463 331 1455 375 1440 393C1432 403 1425 401 1415 387C1383 344 1354 275 1291 173C1237 86 1182 16 1143 19C1120 21 1117 57 1138 106C1159 154 1179 194 1216 253C1252 310 1257 355 1235 388C1227 397 1217 398 1209 387C1144 296 1093 198 1071 132C1049 66 1051 -8 1122 -13C1178 -17 1231 34 1266 81Z"
+          ></path>
+          <path
+            d="M1634 294C1645 330 1646 364 1631 389C1625 399 1617 400 1610 389C1547 296 1470 157 1450 94C1434 44 1440 11 1460 -9C1469 -18 1475 -14 1479 -5C1522 89 1566 185 1625 249C1689 319 1747 347 1757 343C1775 335 1687 229 1654 131C1625 44 1645 -18 1730 -18C1788 -18 1851 33 1878 89C1892 118 1894 141 1887 152C1882 160 1875 160 1870 151C1832 81 1783 15 1742 13C1706 11 1700 58 1726 116C1749 168 1798 242 1819 286C1844 338 1813 387 1780 392C1747 397 1679 342 1634 294Z"
+          ></path>
+          <path
+            d="M2200 215C2204 220 2204 225 2197 225C2189 225 2183 223 2177 223C2178 231 2178 238 2179 246C2185 318 2155 325 2132 356C2112 383 2095 392 2064 390C2004 386 1943 328 1905 260C1860 180 1845 93 1889 35C1929 -17 1979 -21 2015 -9C2089 16 2152 117 2173 202C2183 203 2193 207 2200 215ZM2114 242C2098 257 2087 286 2092 313C2097 342 2117 348 2122 316C2125 298 2122 273 2114 242ZM2107 215C2099 191 2087 163 2072 135C2023 43 1962 8 1934 31C1908 53 1923 145 1965 221C1986 259 2015 292 2042 315C2043 278 2067 243 2088 227C2094 222 2100 218 2107 215Z"
+          ></path>
+        </g>
+        <g class="logo-ink">
+          <path
+            pathLength="1"
+            d="M66 229C40 223 11 195 0 152C-23 66 20 -3 95 -16C176 -30 259 -6 336 122C391 213 488 412 521 490C546 549 541 593 528 615C521 627 512 628 504 616C472 567 386 396 332 285C265 146 192 -6 102 15C71 22 32 67 81 209C87 226 80 232 66 229Z"
+          ></path>
+          <path
+            pathLength="1"
+            d="M1093 85C1105 111 1101 138 1096 150C1092 159 1085 157 1081 148C1049 75 998 8 958 11C926 13 914 52 933 107C951 160 999 228 1046 281C1076 315 1051 362 1033 383C1025 393 1016 390 1003 381C965 355 930 338 895 333C915 386 933 459 898 458C858 457 760 325 834 293C813 255 784 236 756 231C756 237 758 242 758 247C763 320 734 326 710 357C689 384 673 394 643 391C583 386 520 330 482 261C439 182 424 95 467 36C506 -17 558 -19 594 -7C668 17 730 120 750 205C805 207 846 241 874 286C906 286 950 296 995 325C953 276 890 202 870 135C845 53 876 -14 953 -18C1008 -21 1066 25 1093 85ZM694 247C675 263 666 288 669 313C673 342 695 350 699 317C701 300 700 276 694 247ZM685 218C678 193 666 166 650 136C600 45 538 9 512 32C486 55 500 146 543 222C565 260 593 293 620 316C621 280 646 240 685 218Z"
+          ></path>
+          <path
+            pathLength="1"
+            d="M1266 81C1258 23 1284 -18 1349 -18C1408 -18 1470 33 1499 89C1513 117 1512 144 1508 152C1504 161 1495 160 1490 151C1451 81 1400 15 1358 13C1322 11 1318 53 1344 110C1367 161 1417 236 1439 281C1463 331 1455 375 1440 393C1432 403 1425 401 1415 387C1383 344 1354 275 1291 173C1237 86 1182 16 1143 19C1120 21 1117 57 1138 106C1159 154 1179 194 1216 253C1252 310 1257 355 1235 388C1227 397 1217 398 1209 387C1144 296 1093 198 1071 132C1049 66 1051 -8 1122 -13C1178 -17 1231 34 1266 81Z"
+          ></path>
+          <path
+            pathLength="1"
+            d="M1634 294C1645 330 1646 364 1631 389C1625 399 1617 400 1610 389C1547 296 1470 157 1450 94C1434 44 1440 11 1460 -9C1469 -18 1475 -14 1479 -5C1522 89 1566 185 1625 249C1689 319 1747 347 1757 343C1775 335 1687 229 1654 131C1625 44 1645 -18 1730 -18C1788 -18 1851 33 1878 89C1892 118 1894 141 1887 152C1882 160 1875 160 1870 151C1832 81 1783 15 1742 13C1706 11 1700 58 1726 116C1749 168 1798 242 1819 286C1844 338 1813 387 1780 392C1747 397 1679 342 1634 294Z"
+          ></path>
+          <path
+            pathLength="1"
+            d="M2200 215C2204 220 2204 225 2197 225C2189 225 2183 223 2177 223C2178 231 2178 238 2179 246C2185 318 2155 325 2132 356C2112 383 2095 392 2064 390C2004 386 1943 328 1905 260C1860 180 1845 93 1889 35C1929 -17 1979 -21 2015 -9C2089 16 2152 117 2173 202C2183 203 2193 207 2200 215ZM2114 242C2098 257 2087 286 2092 313C2097 342 2117 348 2122 316C2125 298 2122 273 2114 242ZM2107 215C2099 191 2087 163 2072 135C2023 43 1962 8 1934 31C1908 53 1923 145 1965 221C1986 259 2015 292 2042 315C2043 278 2067 243 2088 227C2094 222 2100 218 2107 215Z"
+          ></path>
+        </g>
+      </g>
     </svg>
   </div>
 </Link>
@@ -55,67 +68,82 @@ import { SITE } from '~/config'
     justify-content: center;
     align-items: center;
     gap: 0.8rem;
-    transform: scale(1.05);
+    overflow: visible;
   }
 
   @media (max-width: 767.9px) {
     .logo-container {
       margin-top: 0.125rem;
-      transform-origin: 0%;
-      transform: scale(0.95);
     }
   }
 
   .logo-svg {
-    height: 2rem;
+    display: block;
+    width: 7.25rem;
+    height: 2.15rem;
+    overflow: visible;
   }
 
-  /* Animated signature effect - single continuous stroke */
+  .logo-ink {
+    color: var(--c-text);
+    fill: currentColor;
+  }
+
+  .logo-base {
+    display: none;
+  }
+
   @media (prefers-reduced-motion: no-preference) {
-    .logo-path {
-      stroke-dasharray: 260;
-      stroke-dashoffset: 260;
-      animation:
-        draw 3s ease-in-out forwards,
-        loop 7s ease-in-out 3s infinite;
+    .logo-ink {
+      fill-opacity: 0;
+      animation: fill-signature-word 9s cubic-bezier(0.22, 1, 0.36, 1) infinite;
     }
 
-    @keyframes draw {
-      to {
-        stroke-dashoffset: 0;
-      }
+    .logo-ink path {
+      fill: currentColor;
+      stroke: currentColor;
+      stroke-width: 14;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      animation: draw-signature-word 9s cubic-bezier(0.4, 0, 0.2, 1) infinite;
     }
 
-    @keyframes loop {
-      0% {
+    @keyframes draw-signature-word {
+      0%,
+      3% {
+        stroke-dashoffset: 1;
+      }
+      28%,
+      88% {
         stroke-dashoffset: 0;
       }
-      40% {
-        stroke-dashoffset: 0;
-      }
-      70% {
-        stroke-dashoffset: 260;
-      }
+      98%,
       100% {
-        stroke-dashoffset: 0;
+        stroke-dashoffset: 1;
+      }
+    }
+
+    @keyframes fill-signature-word {
+      0%,
+      7% {
+        fill-opacity: 0;
+      }
+      30%,
+      84% {
+        fill-opacity: 1;
+      }
+      94%,
+      100% {
+        fill-opacity: 0;
       }
     }
   }
 
-  /* Respect reduced motion preference */
   @media (prefers-reduced-motion: reduce) {
-    .logo-path {
-      stroke-dasharray: none;
-      animation: none;
+    .logo-ink path {
+      fill: currentColor;
     }
-  }
-
-  /* Color adaptation */
-  .logo-path {
-    color: #17191e;
-  }
-
-  :global(.dark) .logo-path {
-    color: #fdfdfd;
   }
 </style>

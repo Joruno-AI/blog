@@ -17,7 +17,13 @@
 </div>
 
 <script>
-  document.addEventListener('astro:page-load', () => {
+  let readingProgressController: AbortController | null = null
+  let readingProgressFrame = 0
+
+  function mountReadingProgress() {
+    readingProgressController?.abort()
+    readingProgressController = new AbortController()
+    const { signal } = readingProgressController
     const progressBar = document.getElementById('reading-progress')
     const article =
       document.querySelector('article') || document.querySelector('.prose')
@@ -54,20 +60,28 @@
     }
 
     // 使用 requestAnimationFrame 优化性能
-    let ticking = false
     const onScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
+      if (!readingProgressFrame) {
+        readingProgressFrame = requestAnimationFrame(() => {
           updateProgress()
-          ticking = false
+          readingProgressFrame = 0
         })
-        ticking = true
       }
     }
 
     // 初始化
     updateProgress()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('resize', updateProgress, { passive: true })
+    window.addEventListener('scroll', onScroll, { passive: true, signal })
+    window.addEventListener('resize', updateProgress, {
+      passive: true,
+      signal,
+    })
+  }
+
+  document.addEventListener('astro:page-load', mountReadingProgress)
+  document.addEventListener('astro:before-swap', () => {
+    readingProgressController?.abort()
+    if (readingProgressFrame) window.cancelAnimationFrame(readingProgressFrame)
+    readingProgressFrame = 0
   })
 </script>

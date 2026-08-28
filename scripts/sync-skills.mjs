@@ -11,6 +11,16 @@ const USER_AGENT = 'wangshengliang-blog-skills-sync'
 
 const CATEGORIES = ['claude-skill', 'codex-skill', 'mcp-server', 'agent-tool']
 const SKILL_CATEGORIES = new Set(['claude-skill', 'codex-skill'])
+// 页面已知分类, 上游新增的未知分类 (如 education/youmind-plugin) 归入 uncategorized
+const KNOWN_CATEGORIES = new Set([
+  'claude-skill',
+  'codex-skill',
+  'mcp-server',
+  'agent-tool',
+  'ai-skill',
+  'llm-plugin',
+  'uncategorized',
+])
 const EXCLUDED_GRADES = new Set(['unsafe', 'reject'])
 const TOP_N = 100
 const README_MAX_CHARS = 15000
@@ -20,8 +30,11 @@ const scriptDir = dirname(fileURLToPath(import.meta.url))
 const dataPath = resolve(scriptDir, '../src/content/skills/data.json')
 const metaPath = resolve(scriptDir, '../src/content/skills/meta.json')
 const readmeDir = resolve(scriptDir, '../src/data/skills-readmes')
-const fullIndexPath = resolve(scriptDir, '../public/skills/full-index.json')
-const starHistoryPath = resolve(scriptDir, '../src/data/skills-star-history.json')
+const fullIndexPath = resolve(scriptDir, '../public/agent/full-index.json')
+const starHistoryPath = resolve(
+  scriptDir,
+  '../src/data/skills-star-history.json'
+)
 
 // 读取 .env 里的 GITHUB_TOKEN (脚本可能不经 --env-file 启动)
 function readEnvToken() {
@@ -57,12 +70,15 @@ async function fetchWithRetry(url, options = {}, retries = 2) {
 async function mapWithConcurrency(items, limit, task) {
   const results = new Array(items.length)
   let cursor = 0
-  const workers = Array.from({ length: Math.min(limit, items.length) }, async () => {
-    while (cursor < items.length) {
-      const index = cursor++
-      results[index] = await task(items[index], index)
+  const workers = Array.from(
+    { length: Math.min(limit, items.length) },
+    async () => {
+      while (cursor < items.length) {
+        const index = cursor++
+        results[index] = await task(items[index], index)
+      }
     }
-  })
+  )
   await Promise.all(workers)
   return results
 }
@@ -84,7 +100,7 @@ const selected = CATEGORIES.flatMap((category) =>
 )
 console.log(`[sync-skills] 筛选出 ${selected.length} 条 (每类 top ${TOP_N})`)
 
-// 全量精简索引: 供 /skills/all 客户端分页搜索与场景页构建端匹配
+// 全量精简索引: 供 /agent/all 客户端分页搜索与场景页构建端匹配
 const fullIndex = index.skills
   .filter((s) => !EXCLUDED_GRADES.has(s.g))
   .sort((a, b) => b.s - a.s)
@@ -94,7 +110,7 @@ const fullIndex = index.skills
     a: s.a,
     s: s.s,
     d: (s.d || '').slice(0, 140),
-    c: s.c,
+    c: KNOWN_CATEGORIES.has(s.c) ? s.c : 'uncategorized',
     q: Math.round(s.q * 10) / 10,
     g: s.g,
   }))
@@ -104,7 +120,7 @@ await writeFile(
   JSON.stringify({ generatedAt: new Date().toISOString(), items: fullIndex })
 )
 console.log(
-  `[sync-skills] 全量索引 ${fullIndex.length} 条写入 public/skills/full-index.json`
+  `[sync-skills] 全量索引 ${fullIndex.length} 条写入 public/agent/full-index.json`
 )
 
 // star 历史快照: 记录精选项目的每日 star 数, 用于计算增速
@@ -122,12 +138,32 @@ const pastDays = Object.keys(starHistory)
   .filter((day) => day < today)
   .sort()
 const baselineDay =
-  pastDays.find((day) => day <= new Date(Date.now() - 7 * 86400e3).toISOString().slice(0, 10)) ??
-  pastDays[0]
+  pastDays.find(
+    (day) =>
+      day <= new Date(Date.now() - 7 * 86400e3).toISOString().slice(0, 10)
+  ) ?? pastDays[0]
 const baseline = baselineDay ? starHistory[baselineDay] : null
 console.log(
   `[sync-skills] star 快照 ${today} 已记录, 增速基线: ${baselineDay ?? '无 (首次运行)'}`
 )
+
+// 现有 data.json 里的 GitHub 字段, 作为补数失败时的回退 (禁止用 null 覆盖已有数据)
+const previousGithubMeta = new Map()
+if (existsSync(dataPath)) {
+  try {
+    for (const entry of JSON.parse(readFileSync(dataPath, 'utf8'))) {
+      if (entry?.id && (entry.pushedAt || entry.createdAt || entry.language)) {
+        previousGithubMeta.set(entry.id, {
+          pushedAt: entry.pushedAt ?? null,
+          createdAt: entry.createdAt ?? null,
+          language: entry.language ?? null,
+        })
+      }
+    }
+  } catch {
+    console.warn('[sync-skills] 现有 data.json 解析失败, 跳过 GitHub 字段回退')
+  }
+}
 
 // GitHub API 补充仓库元数据 (需 GITHUB_TOKEN)
 const githubMeta = new Map()
@@ -159,6 +195,11 @@ if (githubToken) {
     }
   })
   console.log(`[sync-skills] GitHub 补数成功: ${ghFound}/${selected.length}`)
+  if (ghFound === 0) {
+    console.warn(
+      '[sync-skills] GitHub 补数全部失败 (网络不通?), 将复用 data.json 中已有的 pushedAt/createdAt/language'
+    )
+  }
 } else {
   console.warn(
     '[sync-skills] 未配置 GITHUB_TOKEN, 跳过仓库元数据 (最近更新/语言) 补数'
@@ -176,9 +217,13 @@ if (process.env.SKIP_INSTALLS === '1' && existsSync(dataPath)) {
   for (const item of prev) {
     if (item.installs != null) installsMap.set(item.id, item.installs)
   }
-  console.log(`[sync-skills] SKIP_INSTALLS=1, 复用已有安装量 ${installsMap.size} 条`)
+  console.log(
+    `[sync-skills] SKIP_INSTALLS=1, 复用已有安装量 ${installsMap.size} 条`
+  )
 } else {
-  console.log(`[sync-skills] 查询 skills.sh 安装量: ${installTargets.length} 个仓库`)
+  console.log(
+    `[sync-skills] 查询 skills.sh 安装量: ${installTargets.length} 个仓库`
+  )
   await mapWithConcurrency(installTargets, 2, async (item) => {
     const query = item.n.length >= 2 ? item.n : item.a
     const url = `${INSTALLS_API}?q=${encodeURIComponent(query)}&owner=${encodeURIComponent(item.a)}&limit=100`
@@ -198,7 +243,9 @@ if (process.env.SKIP_INSTALLS === '1' && existsSync(dataPath)) {
     }
     await new Promise((r) => setTimeout(r, 300))
   })
-  console.log(`[sync-skills] 拿到安装量的仓库: ${installsFound}/${installTargets.length}`)
+  console.log(
+    `[sync-skills] 拿到安装量的仓库: ${installsFound}/${installTargets.length}`
+  )
 }
 
 const skipReadme = process.env.SKIP_README === '1'
@@ -233,7 +280,9 @@ if (skipReadme) {
       }
     }
   })
-  console.log(`[sync-skills] 拿到 README 的仓库: ${readmesFound}/${selected.length}`)
+  console.log(
+    `[sync-skills] 拿到 README 的仓库: ${readmesFound}/${selected.length}`
+  )
 }
 
 const keywordsOf = (item) => {
@@ -263,9 +312,18 @@ const entries = selected.map((item) => ({
   tags: (item.t || []).slice(0, 6),
   official: Boolean(item.o),
   keywords: keywordsOf(item),
-  pushedAt: githubMeta.get(item.f)?.pushedAt ?? null,
-  createdAt: githubMeta.get(item.f)?.createdAt ?? null,
-  language: githubMeta.get(item.f)?.language ?? null,
+  pushedAt:
+    githubMeta.get(item.f)?.pushedAt ??
+    previousGithubMeta.get(item.f)?.pushedAt ??
+    null,
+  createdAt:
+    githubMeta.get(item.f)?.createdAt ??
+    previousGithubMeta.get(item.f)?.createdAt ??
+    null,
+  language:
+    githubMeta.get(item.f)?.language ??
+    previousGithubMeta.get(item.f)?.language ??
+    null,
   starsDelta: baseline?.[item.f] != null ? item.s - baseline[item.f] : null,
 }))
 

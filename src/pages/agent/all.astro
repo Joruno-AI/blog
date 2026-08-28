@@ -50,13 +50,13 @@ const sortOptions = [
 ---
 
 <BaseLayout
-  title="全部项目 - Agent 能力目录"
+  title="Agent 项目库"
   description="浏览全部收录的 Agent Skills、MCP Servers 与工具，支持搜索、筛选、比较和站内阅读"
   bgType="dot"
 >
   <StandardLayout
     class="max-w-300"
-    title="Agent 能力目录"
+    title="Agent 项目库"
     subtitle={`${fullIndex.length.toLocaleString('zh-CN')} 个开源项目，可搜索、筛选与站内比较`}
     isCentered={true}
   >
@@ -167,7 +167,7 @@ const sortOptions = [
         </div>
 
         <div class="ska-results-head">
-          <p class="ska-summary" data-summary>
+          <p class="ska-summary" data-summary aria-live="polite">
             找到 {fullIndex.length.toLocaleString('zh-CN')} 个项目 · 第 1/{
               totalPages
             } 页
@@ -177,7 +177,7 @@ const sortOptions = [
           </p>
         </div>
 
-        <div class="ska-grid" data-grid aria-live="polite">
+        <div class="ska-grid" data-grid>
           {
             initialItems.map((item) => {
               const enrich = enrichMap[item.f]
@@ -283,9 +283,9 @@ const sortOptions = [
     'codex-skill': 'Codex Skills',
     'mcp-server': 'MCP Servers',
     'agent-tool': 'Agent Tools',
-    'llm-plugin': 'LLM Plugins',
     'ai-skill': 'AI Skills',
-    'uncategorized': '未分类',
+    'llm-plugin': 'Prompt / LLM Plugins',
+    'uncategorized': '其他工具',
   }
   const installable = new Set(['claude-skill', 'codex-skill'])
   const format = (value: number) =>
@@ -465,7 +465,7 @@ const sortOptions = [
     const cardHtml = (item: Item) => {
       const enrich = cfg.enrichMap[item.f]
       const description = enrich?.z || item.d || '暂无描述'
-      const detail = `${cfg.detailBase}${item.f}/`
+      const detail = escapeHtml(`${cfg.detailBase}${item.f}/`)
       const install = installable.has(item.c) ? `npx skills add ${item.f}` : ''
       return `<article class="ska-card">
         <div class="ska-card-topline">
@@ -503,7 +503,7 @@ const sortOptions = [
       <thead><tr><th>项目</th><th>类型</th><th>Stars</th><th>质量</th><th>安全</th><th>操作</th></tr></thead>
       <tbody>${list
         .map((item) => {
-          const detail = `${cfg.detailBase}${item.f}/`
+          const detail = escapeHtml(`${cfg.detailBase}${item.f}/`)
           return `<tr>
             <td><a href="${detail}">${avatarHtml(item.a, 48, 'ska-table-avatar')}<span><strong>${escapeHtml(item.n)}</strong><small>${escapeHtml(item.a)}</small></span></a></td>
             <td>${categoryLabel[item.c] || escapeHtml(item.c)}</td>
@@ -587,16 +587,24 @@ const sortOptions = [
       skillsWindow.__mountSkillAvatars?.()
     }
 
+    let lastGoodState = { ...state }
     const applyState = async () => {
       if (!indexReady && !needsFullIndex()) {
         summary.textContent = `找到 ${cfg.totalCount.toLocaleString('zh-CN')} 个项目 · 第 1/${Math.ceil(cfg.totalCount / PAGE_SIZE)} 页`
         renderPager(cfg.totalCount)
         syncControls()
         updateUrl()
+        lastGoodState = { ...state }
         return true
       }
-      if (!(await ensureFullIndex())) return false
+      if (!(await ensureFullIndex())) {
+        // 索引读取失败: 回滚 state, 保持 UI(仍显示推荐项)与状态一致
+        Object.assign(state, lastGoodState)
+        syncControls()
+        return false
+      }
       render()
+      lastGoodState = { ...state }
       return true
     }
 
@@ -666,14 +674,15 @@ const sortOptions = [
       ] as const
       compareContent.innerHTML = `<div class="ska-compare-grid" style="--compare-count:${compare.length}">
         <div class="ska-compare-label"></div>
-        ${compare.map((item) => `<a class="ska-compare-project" href="${cfg.detailBase}${item.f}/"><img src="https://github.com/${encodeURIComponent(item.a)}.png?size=72" alt=""><strong>${escapeHtml(item.n)}</strong><span>打开详情 →</span></a>`).join('')}
+        ${compare.map((item) => `<a class="ska-compare-project" href="${escapeHtml(`${cfg.detailBase}${item.f}/`)}"><img src="https://github.com/${encodeURIComponent(item.a)}.png?size=72" alt=""><strong>${escapeHtml(item.n)}</strong><span>打开详情 →</span></a>`).join('')}
         ${rows
           .map(
             ([label, value]) =>
               `<div class="ska-compare-label">${label}</div>${compare.map((item) => `<div class="ska-compare-cell">${value(item)}</div>`).join('')}`
           )
           .join('')}
-      </div>`
+      </div>
+      <p class="ska-compare-handoff"><a href="/agent/compare/?repos=${encodeURIComponent(compare.map((item) => item.f).join(','))}">在对比页查看实时 GitHub 数据 →</a></p>`
       compareDialog.showModal()
     }
 
@@ -744,15 +753,20 @@ const sortOptions = [
       const target = event.target as HTMLElement
       const copy = target.closest<HTMLElement>('[data-copy]')
       if (copy) {
-        navigator.clipboard.writeText(copy.dataset.copy ?? '').then(() => {
-          copy.classList.add('is-copied')
-          const label = copy.querySelector('span:last-child')
-          if (label) label.textContent = '已复制'
-          window.setTimeout(() => {
-            copy.classList.remove('is-copied')
-            if (label) label.textContent = '复制安装命令'
-          }, 1200)
-        })
+        navigator.clipboard
+          .writeText(copy.dataset.copy ?? '')
+          .then(() => {
+            copy.classList.add('is-copied')
+            const label = copy.querySelector('span:last-child')
+            if (label) label.textContent = '已复制'
+            window.setTimeout(() => {
+              copy.classList.remove('is-copied')
+              if (label) label.textContent = '复制安装命令'
+            }, 1200)
+          })
+          .catch(() => {
+            console.warn('[agent] 复制安装命令失败: 剪贴板不可用')
+          })
         return
       }
       const compare = target.closest<HTMLElement>('[data-compare]')

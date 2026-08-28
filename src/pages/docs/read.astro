@@ -196,7 +196,7 @@ import PostActions from '~/components/widgets/PostActions.astro'
 
       <dialog
         id="reader-mindmap-dialog"
-        class="reader-mindmap-dialog"
+        class="reader-mindmap-dialog diagram-design"
         data-mindmap-dialog
         aria-labelledby="reader-mindmap-title"
       >
@@ -246,8 +246,10 @@ import PostActions from '~/components/widgets/PostActions.astro'
             <svg
               class="reader-mindmap-canvas"
               data-mindmap-canvas
+              data-motion-mode="none"
               role="img"
-              aria-labelledby="reader-mindmap-title"></svg>
+              aria-labelledby="reader-mindmap-svg-title reader-mindmap-svg-desc"
+            ></svg>
           </div>
           <p class="reader-mindmap-hint">
             点击节点即可跳转到对应章节，放大后可滚动查看。
@@ -502,13 +504,9 @@ import PostActions from '~/components/widgets/PostActions.astro'
 
   .reader-mindmap-trigger:hover,
   .reader-mindmap-trigger:focus-visible {
-    border-color: rgb(96 165 250);
-    color: rgb(59 130 246);
-  }
-
-  :global(.dark) .reader-mindmap-trigger:hover,
-  :global(.dark) .reader-mindmap-trigger:focus-visible {
-    color: rgb(147 197 253);
+    border-color: var(--diagram-rule-solid);
+    background: var(--diagram-paper-2);
+    color: var(--diagram-ink);
   }
 
   .reader-mindmap-trigger:active {
@@ -522,15 +520,15 @@ import PostActions from '~/components/widgets/PostActions.astro'
     max-height: none;
     padding: 0;
     overflow: hidden;
-    border: 1px solid var(--c-border-soft);
-    border-radius: 0.9rem;
-    background: var(--c-bg);
+    border: 1px solid var(--diagram-rule);
+    border-radius: var(--diagram-radius-frame);
+    background: var(--diagram-paper);
     box-shadow: 0 30px 90px rgb(0 0 0 / 0.25);
     color: var(--c-text);
   }
 
   .reader-mindmap-dialog::backdrop {
-    background: rgb(15 23 42 / 0.38);
+    background: var(--c-scrim);
     -webkit-backdrop-filter: blur(7px);
     backdrop-filter: blur(7px);
   }
@@ -550,8 +548,8 @@ import PostActions from '~/components/widgets/PostActions.astro'
     gap: 1rem;
     min-height: 4.5rem;
     padding: 0.85rem 1rem 0.85rem 1.15rem;
-    border-bottom: 1px solid var(--reader-line);
-    background: color-mix(in srgb, var(--c-bg) 94%, var(--c-surface-soft) 6%);
+    border-bottom: 1px solid var(--diagram-rule);
+    background: var(--diagram-paper);
   }
 
   .reader-mindmap-heading {
@@ -561,16 +559,17 @@ import PostActions from '~/components/widgets/PostActions.astro'
   .reader-mindmap-kicker {
     display: block;
     margin-bottom: 0.12rem;
-    color: var(--c-text-faint);
-    font-size: 0.66rem;
-    letter-spacing: 0.12em;
+    color: var(--diagram-soft);
+    font-family: var(--diagram-font-mono);
+    font-size: 0.5rem;
+    letter-spacing: 0.18em;
   }
 
   .reader-mindmap-heading h2 {
     overflow: hidden;
     margin: 0;
-    color: var(--c-text);
-    font-family: var(--font-sans);
+    color: var(--diagram-ink);
+    font-family: var(--diagram-font-node);
     font-size: clamp(0.95rem, 2vw, 1.15rem);
     font-weight: 600;
     line-height: 1.35;
@@ -587,15 +586,15 @@ import PostActions from '~/components/widgets/PostActions.astro'
 
   .reader-mindmap-tools button {
     display: inline-flex;
-    min-width: 2.1rem;
-    height: 2.1rem;
+    min-width: 2.75rem;
+    height: 2.75rem;
     align-items: center;
     justify-content: center;
     padding: 0 0.5rem;
     border: 1px solid transparent;
-    border-radius: 0.4rem;
+    border-radius: var(--diagram-radius-node);
     background: transparent;
-    color: var(--c-text-muted);
+    color: var(--diagram-muted);
     cursor: pointer;
     transition:
       background-color 160ms ease,
@@ -605,9 +604,9 @@ import PostActions from '~/components/widgets/PostActions.astro'
 
   .reader-mindmap-tools button:hover,
   .reader-mindmap-tools button:focus-visible {
-    border-color: var(--c-border-soft);
-    background: var(--c-surface-hover);
-    color: var(--c-text);
+    border-color: var(--diagram-rule);
+    background: var(--diagram-paper-2);
+    color: var(--diagram-ink);
   }
 
   .reader-mindmap-tools .reader-mindmap-fit {
@@ -624,15 +623,9 @@ import PostActions from '~/components/widgets/PostActions.astro'
     min-height: 0;
     flex: 1;
     overflow: auto;
-    padding: 1rem;
-    background-color: color-mix(in srgb, var(--c-bg) 97%, var(--c-text) 3%);
-    background-image: radial-gradient(
-      circle,
-      color-mix(in srgb, var(--c-text-faint) 24%, transparent) 0.7px,
-      transparent 0.8px
-    );
-    background-size: 18px 18px;
-    scrollbar-color: var(--c-border-strong) transparent;
+    padding: 1.5rem;
+    background: var(--diagram-paper);
+    scrollbar-color: var(--diagram-rule-solid) transparent;
     scrollbar-width: thin;
     overscroll-behavior: contain;
   }
@@ -647,21 +640,22 @@ import PostActions from '~/components/widgets/PostActions.astro'
 
   .reader-mindmap-canvas :global(.reader-mindmap-edge) {
     fill: none;
-    stroke: color-mix(in srgb, var(--c-text-faint) 42%, transparent);
+    stroke: var(--diagram-muted);
     stroke-linecap: round;
-    stroke-width: 1.4;
+    stroke-linejoin: round;
+    stroke-width: 1;
     vector-effect: non-scaling-stroke;
   }
 
   .reader-mindmap-canvas :global(.reader-mindmap-node) {
-    color: var(--c-text);
+    color: var(--diagram-ink);
     cursor: pointer;
     outline: none;
   }
 
   .reader-mindmap-canvas :global(.reader-mindmap-node rect) {
-    fill: color-mix(in srgb, var(--c-bg) 92%, #60a5fa 8%);
-    stroke: color-mix(in srgb, var(--c-border-strong) 72%, #60a5fa 28%);
+    fill: var(--diagram-paper);
+    stroke: var(--diagram-rule-solid);
     stroke-width: 1;
     transition:
       fill 160ms ease,
@@ -669,37 +663,43 @@ import PostActions from '~/components/widgets/PostActions.astro'
   }
 
   .reader-mindmap-canvas :global(.reader-mindmap-node[data-root='true'] rect) {
-    fill: color-mix(in srgb, var(--c-bg) 82%, #3b82f6 18%);
-    stroke: color-mix(in srgb, var(--c-border-strong) 42%, #3b82f6 58%);
-    stroke-width: 1.25;
+    fill: var(--diagram-accent-tint);
+    stroke: var(--diagram-accent);
+    stroke-width: 1.2;
+  }
+
+  .reader-mindmap-canvas :global(.reader-mindmap-node[data-leaf='true'] rect) {
+    fill: var(--diagram-paper-2);
+    stroke-width: 0.8;
   }
 
   .reader-mindmap-canvas :global(.reader-mindmap-node:hover rect),
-  .reader-mindmap-canvas :global(.reader-mindmap-node:focus rect) {
-    fill: color-mix(in srgb, var(--c-bg) 78%, #60a5fa 22%);
-    stroke: #3b82f6;
+  .reader-mindmap-canvas :global(.reader-mindmap-node:focus-visible rect) {
+    fill: var(--diagram-paper-2);
+    stroke: var(--diagram-accent);
   }
 
   .reader-mindmap-canvas :global(.reader-mindmap-node text) {
     fill: currentColor;
-    font-family: var(--font-sans);
-    font-size: 13px;
-    font-weight: 500;
+    font-family: var(--diagram-font-node);
+    font-size: 12px;
+    font-weight: 600;
     pointer-events: none;
   }
 
   .reader-mindmap-canvas :global(.reader-mindmap-node[data-root='true'] text) {
-    font-size: 14px;
-    font-weight: 650;
+    font-size: 12px;
+    font-weight: 600;
   }
 
   .reader-mindmap-hint {
     flex: none;
     margin: 0;
     padding: 0.55rem 1rem 0.65rem;
-    border-top: 1px solid var(--reader-line);
-    color: var(--c-text-faint);
-    font-size: 0.68rem;
+    border-top: 1px solid var(--diagram-rule);
+    color: var(--diagram-soft);
+    font-family: var(--diagram-font-mono);
+    font-size: 0.55rem;
     text-align: center;
   }
 
@@ -2669,13 +2669,14 @@ import PostActions from '~/components/widgets/PostActions.astro'
 
       const compact = window.matchMedia('(max-width: 640px)').matches
       const nodeWidth = compact ? 176 : 208
-      const rootWidth = compact ? 192 : 226
-      const horizontalGap = compact ? 54 : 78
-      const verticalGap = compact ? 13 : 16
-      const padding = compact ? 22 : 30
-      const lineHeight = compact ? 18 : 19
+      const rootWidth = compact ? 192 : 224
+      const horizontalGap = compact ? 56 : 80
+      const verticalGap = 16
+      const padding = compact ? 24 : 32
+      const lineHeight = 20
       const nodes: MindMapNode[] = []
       let cursorY = padding
+      const snapToGrid = (value: number) => Math.round(value / 4) * 4
 
       const prepare = (node: MindMapNode) => {
         node.width = node.depth === 1 ? rootWidth : nodeWidth
@@ -2683,7 +2684,9 @@ import PostActions from '~/components/widgets/PostActions.astro'
           node.title,
           node.depth === 1 ? (compact ? 20 : 24) : compact ? 17 : 21
         )
-        node.height = Math.max(44, node.lines.length * lineHeight + 22)
+        node.height = snapToGrid(
+          Math.max(48, node.lines.length * lineHeight + 24)
+        )
         node.children.forEach(prepare)
       }
 
@@ -2701,9 +2704,8 @@ import PostActions from '~/components/widgets/PostActions.astro'
           const last = node.children.at(-1)!
           const firstCenter = first.y! + first.height! / 2
           const lastCenter = last.y! + last.height! / 2
-          node.y = Math.max(
-            padding,
-            (firstCenter + lastCenter) / 2 - node.height! / 2
+          node.y = snapToGrid(
+            Math.max(padding, (firstCenter + lastCenter) / 2 - node.height! / 2)
           )
         }
         nodes.push(node)
@@ -2711,15 +2713,23 @@ import PostActions from '~/components/widgets/PostActions.astro'
 
       prepare(root)
       position(root)
-      this.mindMapWidth = Math.ceil(
+      this.mindMapWidth = snapToGrid(
         Math.max(...nodes.map((node) => node.x! + node.width!)) + padding
       )
-      this.mindMapHeight = Math.ceil(
+      this.mindMapHeight = snapToGrid(
         Math.max(...nodes.map((node) => node.y! + node.height!)) + padding
       )
 
       const svgNamespace = 'http://www.w3.org/2000/svg'
       const fragment = document.createDocumentFragment()
+      const title = document.createElementNS(svgNamespace, 'title')
+      title.id = 'reader-mindmap-svg-title'
+      title.textContent = `${root.title}文章结构图`
+      const description = document.createElementNS(svgNamespace, 'desc')
+      description.id = 'reader-mindmap-svg-desc'
+      description.textContent =
+        '以文章标题为根节点，展示二级至四级章节的层级关系；章节节点可用于跳转。'
+      fragment.append(title, description)
       const edges = document.createElementNS(svgNamespace, 'g')
       edges.setAttribute('aria-hidden', 'true')
       for (const parent of nodes) {
@@ -2728,12 +2738,16 @@ import PostActions from '~/components/widgets/PostActions.astro'
           const startY = parent.y! + parent.height! / 2
           const endX = child.x!
           const endY = child.y! + child.height! / 2
-          const bend = Math.max(24, (endX - startX) * 0.48)
+          const bendX = snapToGrid(startX + (endX - startX) / 2)
+          const radius = 8
+          const direction = endY >= startY ? 1 : -1
           const path = document.createElementNS(svgNamespace, 'path')
           path.setAttribute('class', 'reader-mindmap-edge')
           path.setAttribute(
             'd',
-            `M ${startX} ${startY} C ${startX + bend} ${startY}, ${endX - bend} ${endY}, ${endX} ${endY}`
+            Math.abs(endY - startY) < radius * 2
+              ? `M ${startX} ${startY} H ${endX}`
+              : `M ${startX} ${startY} H ${bendX - radius} Q ${bendX} ${startY} ${bendX} ${startY + direction * radius} V ${endY - direction * radius} Q ${bendX} ${endY} ${bendX + radius} ${endY} H ${endX}`
           )
           edges.append(path)
         }
@@ -2745,6 +2759,7 @@ import PostActions from '~/components/widgets/PostActions.astro'
         group.setAttribute('class', 'reader-mindmap-node')
         group.setAttribute('transform', `translate(${node.x} ${node.y})`)
         group.dataset.root = String(node.depth === 1)
+        group.dataset.leaf = String(node.children.length === 0)
         if (node.headingId) {
           group.dataset.mindmapHeading = node.headingId
           group.setAttribute('role', 'link')
@@ -2757,10 +2772,10 @@ import PostActions from '~/components/widgets/PostActions.astro'
         const rect = document.createElementNS(svgNamespace, 'rect')
         rect.setAttribute('width', String(node.width))
         rect.setAttribute('height', String(node.height))
-        rect.setAttribute('rx', '10')
+        rect.setAttribute('rx', '6')
 
         const text = document.createElementNS(svgNamespace, 'text')
-        const textX = node.depth === 1 ? 15 : 13
+        const textX = node.depth === 1 ? 16 : 12
         const startY =
           (node.height! - node.lines!.length * lineHeight) / 2 +
           lineHeight * 0.76
@@ -3269,7 +3284,7 @@ import PostActions from '~/components/widgets/PostActions.astro'
       }
       if (courseSeparator) courseSeparator.hidden = false
 
-      document.title = `${articleTitle} - wangshengliang`
+      document.title = `${articleTitle} - Joruno`
       document
         .querySelector('meta[name="description"]')
         ?.setAttribute('content', `${this.course.name}：${articleTitle}`)

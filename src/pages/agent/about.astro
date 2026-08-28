@@ -31,9 +31,21 @@ const pipeline = [
   ['01', '聚合', '同步公开目录索引，排除明确不安全或已拒绝的条目。'],
   ['02', '规范化', '统一仓库 ID、分类、Stars、质量分、安全等级与作者信息。'],
   ['03', '增强', '为精选项目补充 GitHub 活跃度、主要语言与 skills.sh 安装量。'],
-  ['04', '组织', `按 ${scenesData.scenes.length} 个任务场景重新编排，同时提供分类、趋势、作者与对比视图。`],
-  ['05', '站内阅读', '详情页调用 DeepWiki 公开 MCP 生成架构文档，GitHub 仅负责源码与仓库元数据。'],
-  ['06', '回退', '当 DeepWiki 未收录仓库时，用仓库文件树生成结构导览，不把 README 冒充为 AI 文档。'],
+  [
+    '04',
+    '组织',
+    `按 ${scenesData.scenes.length} 个任务场景重新编排，同时提供分类、趋势、作者与对比视图。`,
+  ],
+  [
+    '05',
+    '站内阅读',
+    '详情页调用 DeepWiki 公开 MCP 生成架构文档，GitHub 仅负责源码与仓库元数据。',
+  ],
+  [
+    '06',
+    '回退',
+    '当 DeepWiki 未收录仓库时，用仓库文件树生成结构导览，不把 README 冒充为 AI 文档。',
+  ],
 ]
 ---
 
@@ -70,10 +82,20 @@ const pipeline = [
           <p>最后同步：{generatedAt}</p>
         </div>
         <div class="agent-formula">
-          <div><span>全量项目</span><strong>{fullIndex.length.toLocaleString('zh-CN')}</strong></div>
+          <div>
+            <span>全量项目</span><strong
+              >{fullIndex.length.toLocaleString('zh-CN')}</strong
+            >
+          </div>
           <div><span>数据分类</span><strong>{categories}</strong></div>
-          <div><span>任务场景</span><strong>{scenesData.scenes.length}</strong></div>
-          <div><span>安全通过</span><strong>{safeCount.toLocaleString('zh-CN')}</strong></div>
+          <div>
+            <span>任务场景</span><strong>{scenesData.scenes.length}</strong>
+          </div>
+          <div>
+            <span>安全通过</span><strong
+              >{safeCount.toLocaleString('zh-CN')}</strong
+            >
+          </div>
           <div><span>详情文档</span><strong>DeepWiki</strong></div>
           <div><span>源码浏览</span><strong>GitHub API</strong></div>
         </div>
@@ -86,13 +108,21 @@ const pipeline = [
             <h2>质量分的 6 个维度</h2>
           </div>
           <p>
-            质量分优先衡量项目能否被 Agent 正确理解和使用，不与 Stars 、更新速度或安全等级混成一个不透明总分。
+            质量分优先衡量项目能否被 Agent 正确理解和使用，不与 Stars
+            、更新速度或安全等级混成一个不透明总分。
           </p>
         </div>
         <div class="agent-formula">
-          {dimensions.map(([label, weight]) => (
-            <div><span>{label}</span><strong>{weight}%</strong></div>
-          ))}
+          {
+            dimensions.map(([label, weight]) => (
+              <div>
+                <>
+                  <span>{label}</span>
+                  <strong>{weight}%</strong>
+                </>
+              </div>
+            ))
+          }
         </div>
       </section>
 
@@ -127,15 +157,22 @@ const pipeline = [
         <div class="agent-method-grid">
           <article class="agent-method-card">
             <span>01</span><h3>安全通过 ≠ 绝对安全</h3>
-            <p>结构扫描与公开等级只能帮助排序。涉及凭据、网络、文件系统与自动执行时，仍应阅读源码。</p>
+            <p>
+              结构扫描与公开等级只能帮助排序。涉及凭据、网络、文件系统与自动执行时，仍应阅读源码。
+            </p>
           </article>
           <article class="agent-method-card">
             <span>02</span><h3>Stars 会偏向早期项目</h3>
-            <p>新项目可能更适合当前任务。趋势页和对比页会同时展示更新时间、增速与文档质量。</p>
+            <p>
+              新项目可能更适合当前任务。趋势页和对比页会同时展示更新时间、增速与文档质量。
+            </p>
           </article>
           <article class="agent-method-card">
             <span>03</span><h3>DeepWiki 覆盖度有边界</h3>
-            <p>未收录的仓库会回退到文件树导览，页面会明确标注来源，不会把本地摘要标成 DeepWiki 内容。</p>
+            <p>
+              未收录的仓库会回退到文件树导览，页面会明确标注来源，不会把本地摘要标成
+              DeepWiki 内容。
+            </p>
           </article>
         </div>
       </section>

@@ -202,12 +202,16 @@ export default defineConfig<PresetWind3Theme>({
     'i-ri-code-box-line',
     'i-ri-error-warning-line',
     'i-ri-checkbox-circle-line',
-    'i-ri-sparkling-2-line',
+    'i-ri-sparkling-2-fill',
     'i-ri-arrow-right-line',
 
     /* Nav Panel */
     'i-ri-close-line',
     'i-ri-menu-line',
+
+    /* Agent nav tabs */
+    'i-ri-search-eye-line',
+    'i-ri-git-compare-line',
 
     /* Music Player */
     'i-ri-disc-line',

@@ -15,8 +15,11 @@ import RenderPage from '~/components/views/RenderPage.astro'
   description={frontmatter.description}
   bgType={frontmatter.bgType}
   ogImage={frontmatter.ogImage}
+  hideFooter={true}
 >
   <StandardLayout title={frontmatter.title} subtitle={frontmatter.subtitle}>
-    <RenderPage slot="article" collectionType="home" id="index" />
+    <div class="home-shell" slot="article">
+      <RenderPage collectionType="home" id="index" />
+    </div>
   </StandardLayout>
 </BaseLayout>

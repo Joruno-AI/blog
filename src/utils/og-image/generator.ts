@@ -6,7 +6,7 @@ import sharp from 'sharp'
 import { ogImageMarkup } from '~/utils/og-image/template/markup'
 
 import type { html } from 'satori-html'
-import type { BgType } from '~/types'
+import type { StaticBgType } from '~/types'
 
 const fontDataCache = new Map<string, Promise<ArrayBuffer | undefined>>()
 
@@ -72,7 +72,7 @@ async function getSatoriFontData(requestUrl: URL) {
 export async function generateOgImageBuffer(
   authorOrBrand: string,
   title: string,
-  bgType: BgType,
+  bgType: StaticBgType,
   requestUrl: URL
 ) {
   const node = ogImageMarkup(authorOrBrand, title, bgType)

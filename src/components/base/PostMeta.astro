@@ -17,7 +17,7 @@ const isMinimal = UI.postView.postMetaStyle === 'minimal'
 <div class="post-meta-wrapper">
   {
     isMinimal ? (
-      <div class="op-50">
+      <div class="post-meta-primary">
         <time datetime={pubDate}>{formatDate(pubDate)}</time>
         {minutesRead > 0 && <span> · {minutesRead} min</span>}
         {lastModDate && (
@@ -27,7 +27,7 @@ const isMinimal = UI.postView.postMetaStyle === 'minimal'
         )}
       </div>
     ) : (
-      <div class="flex flex-wrap justify-start items-center gap-x-4 gap-y-2 op-50">
+      <div class="post-meta-primary flex flex-wrap justify-start items-center gap-x-4 gap-y-2">
         <div class="flex items-center">
           <span class="i-ri-calendar-line mr-1.2" />
           <time datetime={pubDate}>{formatDate(pubDate)}</time>
@@ -51,7 +51,7 @@ const isMinimal = UI.postView.postMetaStyle === 'minimal'
   {
     tags.length > 0 && (
       <div class="flex flex-wrap items-center gap-2 mt-3">
-        <span class="i-ri-price-tag-3-line op-40 text-sm" />
+        <span class="i-ri-price-tag-3-line post-meta-tag-icon text-sm" />
         {tags.map((tag) => (
           <span class="tag-item">{tag}</span>
         ))}
@@ -64,32 +64,46 @@ const isMinimal = UI.postView.postMetaStyle === 'minimal'
   .post-meta-wrapper {
     margin-top: -1.5rem;
     margin-bottom: 1.5rem;
+    color: var(--c-text-muted);
+    font-size: 0.82rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .post-meta-primary {
+    color: var(--c-text-muted);
   }
 
   .tag-item {
     display: inline-flex;
     align-items: center;
-    padding: 0.2rem 0.65rem;
-    font-size: 0.8rem;
-    font-weight: 500;
-    border-radius: 9999px;
-    background: rgba(0, 0, 0, 0.06);
-    color: rgba(0, 0, 0, 0.65);
-    transition: all 0.2s ease;
+    padding: 0.1rem 0;
+    border-bottom: 1px solid var(--c-border-soft);
+    color: var(--c-text-muted);
+    font-size: 0.76rem;
+    font-weight: 540;
+    transition:
+      border-color var(--motion-fast) ease,
+      color var(--motion-fast) ease;
+  }
+
+  .tag-item::before {
+    content: '#';
+    margin-right: 0.12rem;
+    color: var(--c-text-faint);
   }
 
   .tag-item:hover {
-    background: rgba(0, 0, 0, 0.1);
-    color: rgba(0, 0, 0, 0.85);
+    border-color: var(--c-border-strong);
+    color: var(--c-text);
   }
 
-  :global(.dark) .tag-item {
-    background: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.65);
+  .post-meta-tag-icon {
+    color: var(--c-text-faint);
   }
 
-  :global(.dark) .tag-item:hover {
-    background: rgba(255, 255, 255, 0.18);
-    color: rgba(255, 255, 255, 0.9);
+  @media (prefers-reduced-motion: reduce) {
+    .tag-item {
+      transition: none;
+    }
   }
 </style>
