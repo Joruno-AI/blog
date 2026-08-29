@@ -1,0 +1,75 @@
+name: Verify and deploy personal platform
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: personal-platform-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint, test and typecheck
+        run: |
+          pnpm lint
+          pnpm test
+          pnpm exec tsc --noEmit
+
+      - name: Build Cloudflare Worker with OpenNext
+        run: pnpm cloudflare:build
+        env:
+          NODE_OPTIONS: "--max-old-space-size=4096"
+          NODE_ENV: production
+          BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
+          BETTER_AUTH_URL: ${{ secrets.BETTER_AUTH_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          NEXT_PUBLIC_BETTER_AUTH_URL: ${{ secrets.BETTER_AUTH_URL }}
+          R2_PUBLIC_URL: ${{ secrets.R2_PUBLIC_URL }}
+
+      - name: Apply D1 migrations
+        run: pnpm exec wrangler d1 migrations apply blog-cms-db --remote
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Verify migrated D1 data
+        run: pnpm db:verify:remote
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Deploy Cloudflare Worker
+        run: pnpm exec opennextjs-cloudflare deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Smoke test deployed Worker
+        run: pnpm test:smoke
+        env:
+          # Keep production on the Astro Pages origin until the parity contract
+          # is satisfied. CI deploys and verifies the isolated Next.js preview.
+          SMOKE_BASE_URL: https://personal-platform.wsl1710642275.workers.dev

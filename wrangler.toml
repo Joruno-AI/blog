@@ -1,0 +1,36 @@
+name = "personal-platform"
+main = "custom-worker.ts"
+compatibility_date = "2026-08-28"
+compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
+workers_dev = true
+preview_urls = true
+routes = []
+
+[assets]
+directory = ".open-next/assets"
+binding = "ASSETS"
+
+[images]
+binding = "IMAGES"
+
+[observability]
+enabled = true
+
+[triggers]
+crons = ["* * * * *"]
+
+[[services]]
+binding = "WORKER_SELF_REFERENCE"
+service = "personal-platform"
+
+# Cloudflare D1 database
+[[d1_databases]]
+binding = "DB"
+database_name = "blog-cms-db"
+database_id = "0e818d28-2d7c-43af-b703-ceaa39a3e445"
+migrations_dir = "lib/db/d1/migrations"
+
+# R2 object storage
+[[r2_buckets]]
+binding = "R2_BUCKET"
+bucket_name = "blog-cms-media"
