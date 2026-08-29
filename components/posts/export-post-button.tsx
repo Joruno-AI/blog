@@ -1,10 +1,9 @@
 'use client'
 
-import { Download, Loader2 } from 'lucide-react'
+import { Button, Spinner } from '@heroui/react'
+import { Download } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
-
-import { Button } from '@/components/ui/button'
 
 interface ExportPostButtonProps {
   id: string
@@ -45,8 +44,8 @@ export function ExportPostButton({ id, slug }: ExportPostButtonProps) {
   }
 
   return (
-    <Button variant="outline" onClick={() => void handleExport()} disabled={isLoading}>
-      {isLoading ? <Loader2 className="animate-spin" /> : <Download />}导出 MDX
+    <Button variant="outline" onPress={() => void handleExport()} isDisabled={isLoading}>
+      {isLoading ? <Spinner color="current" size="sm" /> : <Download className="size-4" />}导出 MDX
     </Button>
   )
 }

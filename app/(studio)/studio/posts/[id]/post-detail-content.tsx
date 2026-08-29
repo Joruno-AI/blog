@@ -1,20 +1,16 @@
 "use client";
 
+import { Button, Card, Chip } from "@heroui/react";
 import { CalendarDays, Clock3, Code2, FileText, Folder, Pencil, Tags, View } from "lucide-react";
 import { format } from "date-fns";
 import { zhCN } from "date-fns/locale";
 import { motion } from "framer-motion";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { DeletePostButton } from "@/components/posts/delete-post-button";
 import { ExportPostButton } from "@/components/posts/export-post-button";
 import { MarkdownPreview } from "@/components/posts/markdown-preview";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
 
 interface PostTag { tag: { id: string; name: string } }
 
@@ -48,10 +44,10 @@ export function PostDetailContent({ post }: { post: Post }) {
   ];
 
   return (
-    <motion.main initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }} className="mx-auto flex w-full max-w-[1500px] flex-col gap-5 p-4 md:p-6">
+    <motion.main initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }} className="studio-dashboard studio-post-detail">
       <header className="flex flex-col justify-between gap-4 xl:flex-row xl:items-start">
         <div className="flex min-w-0 items-start gap-3">
-          <Button variant="outline" size="icon" title="返回内容管理" onClick={() => router.push("/studio/content")}><span aria-hidden>←</span><span className="sr-only">返回内容管理</span></Button>
+          <Button aria-label="返回内容管理" isIconOnly onPress={() => router.push("/studio/content")} variant="outline"><span aria-hidden>←</span></Button>
           <div className="min-w-0">
             <h1 className="text-2xl font-semibold tracking-tight">{post.title}</h1>
             {post.subtitle ? <p className="mt-1 text-sm text-muted-foreground">{post.subtitle}</p> : null}
@@ -62,7 +58,7 @@ export function PostDetailContent({ post }: { post: Post }) {
         </div>
         <div className="flex flex-wrap gap-2">
           <ExportPostButton id={post.id} slug={post.slug} />
-          <Button asChild><Link href={`/studio/posts/${post.id}/edit`}><Pencil />编辑</Link></Button>
+          <Button onPress={() => router.push(`/studio/posts/${post.id}/edit`)}><Pencil className="size-4" />编辑</Button>
           <DeletePostButton id={post.id} title={post.title} />
         </div>
       </header>
@@ -70,16 +66,9 @@ export function PostDetailContent({ post }: { post: Post }) {
       {post.excerpt ? <div className="rounded-lg border bg-muted/30 px-4 py-3 text-sm text-muted-foreground"><strong className="text-foreground">摘要：</strong>{post.excerpt}</div> : null}
 
       <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_300px]">
-        <Card className="min-w-0 gap-0 py-0 shadow-none">
-          <CardHeader className="border-b px-5 py-4">
-            <CardTitle className="text-sm">文章内容</CardTitle>
-            <CardDescription>在渲染预览和原始 Markdown 之间切换。</CardDescription>
-            <CardAction className="flex rounded-md border bg-muted/40 p-0.5">
-              <ModeButton active={viewMode === "preview"} onClick={() => setViewMode("preview")}><View />预览</ModeButton>
-              <ModeButton active={viewMode === "source"} onClick={() => setViewMode("source")}><Code2 />源码</ModeButton>
-            </CardAction>
-          </CardHeader>
-          <CardContent className="p-4 md:p-5">
+        <Card className="studio-panel min-w-0">
+          <Card.Header className="studio-panel-heading"><span><Card.Title className="text-sm">文章内容</Card.Title><Card.Description className="mt-1 text-xs">在渲染预览和原始 Markdown 之间切换。</Card.Description></span><div className="studio-view-toggle"><Button onPress={() => setViewMode("preview")} size="sm" variant={viewMode === "preview" ? "secondary" : "ghost"}><View className="size-4" />预览</Button><Button onPress={() => setViewMode("source")} size="sm" variant={viewMode === "source" ? "secondary" : "ghost"}><Code2 className="size-4" />源码</Button></div></Card.Header>
+          <Card.Content className="p-4 md:p-5">
             {viewMode === "preview" ? (
               <div className="post-detail-preview max-h-[calc(100vh-260px)] overflow-auto rounded-lg border bg-muted/20 p-4">
                 <MarkdownPreview content={post.content} emptyText="暂无内容" />
@@ -87,18 +76,18 @@ export function PostDetailContent({ post }: { post: Post }) {
             ) : (
               <pre className="m-0 max-h-[calc(100vh-260px)] overflow-auto whitespace-pre-wrap break-words rounded-lg border bg-muted/20 p-4 font-mono text-xs leading-6">{post.content}</pre>
             )}
-          </CardContent>
+          </Card.Content>
         </Card>
 
         <aside className="grid content-start gap-4 sm:grid-cols-2 xl:grid-cols-1">
           <InfoCard title="文章信息">
-            <InfoRow label="分类"><Badge variant="secondary">{categoryName}</Badge></InfoRow>
+            <InfoRow label="分类"><Chip size="sm" variant="soft">{categoryName}</Chip></InfoRow>
             <InfoRow label="发布日期">{date(post.pubDate, true)}</InfoRow>
             <InfoRow label="更新日期">{date(post.updatedAt, true)}</InfoRow>
             <InfoRow label="创建日期">{date(post.createdAt, true)}</InfoRow>
           </InfoCard>
           <InfoCard title="标签">
-            {post.postTags?.length ? <div className="flex flex-wrap gap-2">{post.postTags.map(({ tag }) => <Badge key={tag.id} variant="outline"><Tags />{tag.name}</Badge>)}</div> : <p className="text-sm text-muted-foreground">暂无标签</p>}
+            {post.postTags?.length ? <div className="flex flex-wrap gap-2">{post.postTags.map(({ tag }) => <Chip key={tag.id} size="sm" variant="soft"><Tags className="size-3" />{tag.name}</Chip>)}</div> : <p className="text-sm text-muted-foreground">暂无标签</p>}
           </InfoCard>
           <InfoCard title="统计">
             <InfoRow label="字数">{wordCount.toLocaleString()} 字</InfoRow>
@@ -110,12 +99,8 @@ export function PostDetailContent({ post }: { post: Post }) {
   );
 }
 
-function ModeButton({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
-  return <button type="button" className={cn("flex h-7 items-center gap-1.5 rounded px-2.5 text-xs transition-colors", active ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")} onClick={onClick}>{children}</button>;
-}
-
 function InfoCard({ title, children }: { title: string; children: React.ReactNode }) {
-  return <Card className="gap-0 py-0 shadow-none"><CardHeader className="border-b px-4 py-3"><CardTitle className="text-sm">{title}</CardTitle></CardHeader><CardContent className="grid gap-3 p-4 text-sm">{children}</CardContent></Card>;
+  return <Card className="studio-panel"><Card.Header className="studio-panel-heading"><Card.Title className="text-sm">{title}</Card.Title></Card.Header><Card.Content className="grid gap-3 p-4 text-sm">{children}</Card.Content></Card>;
 }
 
 function InfoRow({ label, children }: { label: string; children: React.ReactNode }) {
