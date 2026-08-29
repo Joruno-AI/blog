@@ -17,6 +17,7 @@ const navigation = [
   { href: "/studio", label: "仪表盘", icon: LayoutDashboard },
   { href: "/studio/content", label: "内容管理", icon: FolderTree },
   { href: "/studio/resources", label: "资源中心", icon: Database },
+  { href: "/studio/categories", label: "分类管理", icon: FolderTree },
   { href: "/studio/tags", label: "标签管理", icon: Tags },
   { href: "/studio/media", label: "媒体库", icon: Image },
   { href: "/studio/music", label: "音乐管理", icon: Music2 },

@@ -1695,6 +1695,78 @@ body {
   background: var(--studio-accent);
 }
 
+.studio-management-page {
+  width: min(100%, 88rem);
+}
+
+.studio-management-toolbar {
+  align-items: end;
+}
+
+.studio-taxonomy-content {
+  padding: 1rem;
+}
+
+.studio-empty-state {
+  display: flex;
+  min-height: 13rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  color: var(--studio-muted);
+  font-size: 0.82rem;
+}
+
+.studio-tag-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.studio-tag-item {
+  display: grid;
+  min-height: 3.25rem;
+  padding: 0.55rem 0.65rem;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 0.7rem;
+  border: 1px solid var(--studio-line);
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--studio-surface) 84%, transparent);
+  transition: border-color 160ms ease, background 160ms ease;
+}
+
+.studio-tag-item:hover {
+  border-color: color-mix(in srgb, var(--studio-accent) 38%, var(--studio-line));
+  background: color-mix(in srgb, var(--studio-accent) 4%, var(--studio-surface));
+}
+
+.studio-tag-slug {
+  overflow: hidden;
+  color: var(--studio-muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.68rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.studio-tag-count {
+  color: var(--studio-muted);
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.studio-row-actions {
+  display: flex;
+  opacity: 0.52;
+  transition: opacity 160ms ease;
+}
+
+.studio-tag-item:hover .studio-row-actions,
+.studio-tag-item:focus-within .studio-row-actions {
+  opacity: 1;
+}
+
 @media (max-width: 1100px) {
   .studio-stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .studio-detail-grid { grid-template-columns: 1fr 1fr; }
@@ -1711,6 +1783,12 @@ body {
   .studio-detail-grid > :last-child { grid-column: auto; }
   .studio-monthly-chart { overflow-x: auto; }
   .studio-chart-column { min-width: 1.6rem; }
+  .studio-management-toolbar { align-items: stretch; flex-direction: column; }
+  .studio-management-toolbar [role='search'] { width: 100%; }
+  .studio-management-toolbar input { width: 100%; }
+  .studio-tag-list { grid-template-columns: 1fr; }
+  .studio-tag-item { grid-template-columns: auto minmax(0, 1fr) auto; }
+  .studio-tag-slug { display: none; }
 }
 
 /* ===== Print Styles ===== */

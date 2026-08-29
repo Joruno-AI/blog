@@ -1,42 +1,37 @@
 'use client'
 
-import { Loader2, Trash2 } from 'lucide-react'
+import { AlertDialog, Button, Spinner } from '@heroui/react'
+import { Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
-import { Button } from '@/components/ui/button'
-
-interface DeleteCategoryButtonProps {
-  id: string
-  name: string
-  onDeleted?: () => void
-}
+interface DeleteCategoryButtonProps { id: string; name: string; onDeleted?: () => void }
 
 export function DeleteCategoryButton({ id, name, onDeleted }: DeleteCategoryButtonProps) {
+  const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  const handleDelete = async () => {
-    if (!window.confirm(`确定要删除分类「${name}」吗？`)) return
+  async function handleDelete() {
     setLoading(true)
     try {
-      const res = await fetch(`/api/categories/${id}`, {
-        method: 'DELETE',
-      })
-      if (!res.ok) throw new Error('Failed to delete category')
+      const response = await fetch(`/api/categories/${id}`, { method: 'DELETE' })
+      if (!response.ok) throw new Error('分类删除失败')
       toast.success('分类已删除')
+      setOpen(false)
       onDeleted?.()
-    } catch (error) {
-      console.error('Delete error:', error)
-      toast.error('删除失败')
-    } finally {
-      setLoading(false)
-    }
+    } catch (error) { toast.error(error instanceof Error ? error.message : '删除失败') }
+    finally { setLoading(false) }
   }
 
-  return (
-    <Button variant="ghost" size="icon" title="删除分类" className="size-8 text-destructive hover:text-destructive" disabled={loading} onClick={() => void handleDelete()}>
-      {loading ? <Loader2 className="animate-spin" /> : <Trash2 />}
-      <span className="sr-only">删除分类</span>
-    </Button>
-  )
+  return <>
+    <Button aria-label={`删除分类 ${name}`} isIconOnly onPress={() => setOpen(true)} size="sm" variant="ghost"><Trash2 className="size-3.5" /></Button>
+    <AlertDialog.Backdrop isOpen={open} onOpenChange={(next) => { if (!loading) setOpen(next) }}>
+      <AlertDialog.Container><AlertDialog.Dialog className="sm:max-w-[400px]">
+        <AlertDialog.CloseTrigger />
+        <AlertDialog.Header><AlertDialog.Icon status="danger" /><AlertDialog.Heading>删除分类</AlertDialog.Heading></AlertDialog.Header>
+        <AlertDialog.Body><p>确定删除“{name}”吗？请先确认没有文章继续依赖这个分类。</p></AlertDialog.Body>
+        <AlertDialog.Footer><Button isDisabled={loading} onPress={() => setOpen(false)} variant="tertiary">取消</Button><Button isDisabled={loading} onPress={() => void handleDelete()} variant="danger">{loading ? <Spinner color="current" size="sm" /> : null}确认删除</Button></AlertDialog.Footer>
+      </AlertDialog.Dialog></AlertDialog.Container>
+    </AlertDialog.Backdrop>
+  </>
 }

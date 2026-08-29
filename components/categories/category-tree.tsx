@@ -29,9 +29,8 @@ import {
   Plus,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { Button, Chip } from '@heroui/react'
 
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 import { DeleteCategoryButton } from './delete-category-button'
@@ -139,14 +138,14 @@ function SortableItem({
       </div>
 
       {/* Post count */}
-      <Badge variant="secondary" className="shrink-0 font-normal">
+      <Chip variant="secondary" className="shrink-0 font-normal">
         {category.totalPostCount} 篇
-      </Badge>
+      </Chip>
 
       {/* Actions */}
       <div className="flex shrink-0 items-center gap-1">
-        <Button variant="ghost" size="icon" className="size-8" title="添加子分类" onClick={() => onAddChild(category.id)}><Plus /><span className="sr-only">添加子分类</span></Button>
-        <Button variant="ghost" size="icon" className="size-8" title="编辑分类" onClick={() => onEdit(category)}><Pencil /><span className="sr-only">编辑分类</span></Button>
+        <Button variant="ghost" size="sm" isIconOnly className="size-8" aria-label="添加子分类" onPress={() => onAddChild(category.id)}><Plus /></Button>
+        <Button variant="ghost" size="sm" isIconOnly className="size-8" aria-label="编辑分类" onPress={() => onEdit(category)}><Pencil /></Button>
         <DeleteCategoryButton id={category.id} name={category.name} onDeleted={onDeleted} />
       </div>
     </div>
@@ -295,7 +294,7 @@ export function CategoryTree({ categories, onEdit, onAddChild, onDeleted, onReor
             <GripVertical className="size-4 text-muted-foreground" />
             <Folder className="size-4 text-muted-foreground" />
             <span className="font-medium">{activeCategory.name}</span>
-            <Badge variant="secondary">{activeCategory.totalPostCount} 篇</Badge>
+            <Chip variant="secondary">{activeCategory.totalPostCount} 篇</Chip>
           </div>
         ) : null}
       </DragOverlay>
