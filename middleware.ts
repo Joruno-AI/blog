@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { verifySignedSessionToken } from "@/lib/auth/session-cookie";
+import { requiresPlatformSession } from "@/lib/auth/session-scope";
 import { normalizeContentPath } from "@/lib/parity/content-path";
 
 // Public routes that unauthenticated users can access
@@ -158,7 +159,7 @@ export async function middleware(request: NextRequest) {
     request.cookies.get("better-auth.session_token");
 
   let viewer: SessionViewer | null = null;
-  if (sessionCookie) {
+  if (sessionCookie && requiresPlatformSession(pathname)) {
     viewer = await hasValidSession(sessionCookie.value);
   }
 

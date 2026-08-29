@@ -15,6 +15,8 @@ const checks = [
   ["/feeds", 200],
   ["/prs", 200],
   ["/releases", 200],
+  ["/login", 200],
+  ["/studio", 307],
   ["/search?q=Next", 200],
   ["/rss.xml", 200],
   ["/sitemap.xml", 200],

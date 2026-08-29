@@ -6,7 +6,6 @@ import { notFound } from "next/navigation";
 
 import { MarkdownContent } from "@/components/site/markdown-content";
 import { getPublicAlbum } from "@/modules/music/application/queries";
-import { getRequestViewer } from "@/lib/auth/request-viewer";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +17,7 @@ function albumPath(slug: string) {
 
 export async function generateMetadata({ params }: AlbumPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const album = await getPublicAlbum(albumPath(slug), await getRequestViewer());
+  const album = await getPublicAlbum(albumPath(slug));
   if (!album) notFound();
   return {
     title: album.resource.title,
@@ -29,7 +28,7 @@ export async function generateMetadata({ params }: AlbumPageProps): Promise<Meta
 
 export default async function AlbumPage({ params }: AlbumPageProps) {
   const { slug } = await params;
-  const album = await getPublicAlbum(albumPath(slug), await getRequestViewer());
+  const album = await getPublicAlbum(albumPath(slug));
   if (!album) notFound();
 
   return (

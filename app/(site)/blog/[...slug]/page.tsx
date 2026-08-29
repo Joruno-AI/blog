@@ -7,7 +7,6 @@ import { ArticleActions } from "@/components/site/article-actions";
 import { BlogReaderSidebar } from "@/components/site/blog-reader-sidebar";
 import { MarkdownContent } from "@/components/site/markdown-content";
 import { getPublicRedirect, getPublicResource } from "@/modules/resources/application/queries";
-import { getRequestViewer } from "@/lib/auth/request-viewer";
 import { getPostsWithCategoryPath } from "@/lib/db/queries/posts";
 import { extractArticleHeadings, sortBlogReaderPosts, type BlogReaderPost } from "@/lib/parity/blog-reader";
 
@@ -24,7 +23,7 @@ function articlePath(slug: string[]) {
 export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
   const { slug } = await params;
   const path = articlePath(slug);
-  const resource = await getPublicResource(path, await getRequestViewer());
+  const resource = await getPublicResource(path);
   if (!resource) {
     const redirect = await getPublicRedirect(path);
     if (redirect) permanentRedirect(redirect.toPath);
@@ -49,7 +48,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 export default async function ArticlePage({ params }: ArticlePageProps) {
   const { slug } = await params;
   const path = articlePath(slug);
-  const resource = await getPublicResource(path, await getRequestViewer());
+  const resource = await getPublicResource(path);
   if (!resource) {
     const redirect = await getPublicRedirect(path);
     if (redirect) permanentRedirect(redirect.toPath);
