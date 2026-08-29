@@ -66,6 +66,14 @@ function isResourcePath(pathname: string) {
   return resourcePathPrefixes.some((prefix) => pathname.startsWith(prefix));
 }
 
+function isReservedContentRoute(pathname: string) {
+  return pathname === "/docs/read"
+    || pathname === "/docs/catalog.json"
+    || pathname === "/docs/catalog.static.json"
+    || pathname.startsWith("/docs/course/")
+    || /^\/photos\/photos\..+\.json$/i.test(pathname);
+}
+
 async function resolveContentPath(pathname: string) {
   const contentPath = normalizeContentPath(pathname);
   if (!isResourcePath(contentPath)) {
@@ -154,12 +162,13 @@ export async function middleware(request: NextRequest) {
     viewer = await hasValidSession(sessionCookie.value);
   }
 
-  const contentPath = await resolveContentPath(pathname);
+  const reservedContentRoute = isReservedContentRoute(pathname);
+  const contentPath = reservedContentRoute ? null : await resolveContentPath(pathname);
   if (contentPath?.kind === "redirect" && contentPath.toPath) {
     const status = contentPath.statusCode === 308 ? 308 : 301;
     return NextResponse.redirect(new URL(contentPath.toPath, request.url), status);
   }
-  if (isResourcePath(pathname) && !(await canAccessContentPath(contentPath, viewer))) {
+  if (!reservedContentRoute && isResourcePath(pathname) && !(await canAccessContentPath(contentPath, viewer))) {
     // Resolve dynamic resources before rendering so missing and inaccessible
     // paths share the same non-enumerable HTTP 404 response.
     return NextResponse.rewrite(new URL("/__resource_not_found__", request.url));

@@ -1,15 +1,13 @@
-import { SectionPage } from "@/components/site/section-page";
+import type { Metadata } from "next";
 
-export const dynamic = "force-dynamic";
+import { DocsLibrary } from "@/components/site/docs-library";
+import { docsCatalogSummary } from "@/lib/docs/catalog";
+
+export const metadata: Metadata = {
+  title: "Docs",
+  description: "按课程整理的技术学习文档库",
+};
 
 export default function DocsPage() {
-  return (
-    <SectionPage
-      kicker="Documentation"
-      title="文档"
-      description="项目说明、接口文档和可以直接复用的实施手册。"
-      types={["document"]}
-      empty="公开文档尚未发布。"
-    />
-  );
+  return <DocsLibrary catalog={docsCatalogSummary} />;
 }

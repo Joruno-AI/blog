@@ -3,6 +3,7 @@ import { ThemeProvider } from '@/components/theme-provider'
 import './globals.css'
 import './astro-parity.css'
 import './agent-parity.css'
+import './docs-parity.css'
 
 const inter = {
   variable: '--font-sans',

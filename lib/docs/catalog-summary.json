@@ -1,0 +1,3215 @@
+{
+  "generatedAt": "2026-08-19T17:23:50.873Z",
+  "stats": {
+    "categories": 8,
+    "courses": 349,
+    "articles": 13034
+  },
+  "categories": [
+    {
+      "id": "ai-data",
+      "name": "AI-大数据",
+      "courseCount": 35,
+      "articleCount": 1283,
+      "courses": [
+        {
+          "id": "e93acff69311",
+          "sourceId": "geektime",
+          "name": "程序员的AI开发第一课",
+          "articleCount": 24,
+          "firstArticle": {
+            "path": "AI-大数据/程序员的AI开发第一课/docs/01-用户视角：你应该知道的LLM基础知识.md"
+          }
+        },
+        {
+          "id": "22bb947bfe5a",
+          "sourceId": "geektime",
+          "name": "从0开始学大数据",
+          "articleCount": 47,
+          "firstArticle": {
+            "path": "AI-大数据/从0开始学大数据/docs/04 - 移动计算比移动数据更划算.md"
+          }
+        },
+        {
+          "id": "9608e964d72b",
+          "sourceId": "geektime",
+          "name": "大规模数据处理实战",
+          "articleCount": 46,
+          "firstArticle": {
+            "path": "AI-大数据/大规模数据处理实战/docs/01 - 为什么MapReduce会被硅谷一线公司淘汰？.md"
+          }
+        },
+        {
+          "id": "d6ae15874b90",
+          "sourceId": "geektime",
+          "name": "大模型应用开发实战",
+          "articleCount": 25,
+          "firstArticle": {
+            "path": "AI-大数据/大模型应用开发实战/docs/01-用OpenAI Assistants的Function进行订单管理.md"
+          }
+        },
+        {
+          "id": "df4d8ee77cd8",
+          "sourceId": "geektime",
+          "name": "大数据经典论文解读",
+          "articleCount": 59,
+          "firstArticle": {
+            "path": "AI-大数据/大数据经典论文解读/docs/01 - 什么是大数据：从GFS到Dataflow，12年大数据生态演化图.md"
+          }
+        },
+        {
+          "id": "5c141c343372",
+          "sourceId": "geektime",
+          "name": "机器学习40讲",
+          "articleCount": 48,
+          "firstArticle": {
+            "path": "AI-大数据/机器学习40讲/docs/01 - 频率视角下的机器学习.md"
+          }
+        },
+        {
+          "id": "0d6651145eac",
+          "sourceId": "geektime",
+          "name": "检索技术核心20讲",
+          "articleCount": 29,
+          "firstArticle": {
+            "path": "AI-大数据/检索技术核心20讲/docs/01 - 线性结构检索：从数组和链表的原理初窥检索本质.md"
+          }
+        },
+        {
+          "id": "6e060f3d0c42",
+          "sourceId": "geektime",
+          "name": "零基础入门Spark",
+          "articleCount": 38,
+          "firstArticle": {
+            "path": "AI-大数据/零基础入门Spark/docs/01-Spark：从“大数据的Hello World”开始.md"
+          }
+        },
+        {
+          "id": "e53f5b3f7280",
+          "sourceId": "geektime",
+          "name": "零基础实战机器学习",
+          "articleCount": 24,
+          "firstArticle": {
+            "path": "AI-大数据/零基础实战机器学习/docs/01-打好基础：到底什么是机器学习？.md"
+          }
+        },
+        {
+          "id": "911ef30135d6",
+          "sourceId": "geektime",
+          "name": "零基础GPT应用入门课",
+          "articleCount": 20,
+          "firstArticle": {
+            "path": "AI-大数据/零基础GPT应用入门课/docs/01-快速开始：由简入繁，从解答到解决.md"
+          }
+        },
+        {
+          "id": "526148e2c34b",
+          "sourceId": "geektime",
+          "name": "人工智能基础课",
+          "articleCount": 59,
+          "firstArticle": {
+            "path": "AI-大数据/人工智能基础课/docs/（课外辅导）机器学习 - 拓展阅读参考书.md"
+          }
+        },
+        {
+          "id": "d3c76f6975c3",
+          "sourceId": "geektime",
+          "name": "深度学习推荐系统实战",
+          "articleCount": 46,
+          "firstArticle": {
+            "path": "AI-大数据/深度学习推荐系统实战/docs/01 - 技术架构：深度学习推荐系统的经典技术架构长啥样？.md"
+          }
+        },
+        {
+          "id": "9fcf72450690",
+          "sourceId": "geektime",
+          "name": "实用密码学",
+          "articleCount": 24,
+          "firstArticle": {
+            "path": "AI-大数据/实用密码学/docs/01 - 学习密码学有什么用？.md"
+          }
+        },
+        {
+          "id": "8b46a4acb9c3",
+          "sourceId": "geektime",
+          "name": "手把手带你搭建推荐系统",
+          "articleCount": 36,
+          "firstArticle": {
+            "path": "AI-大数据/手把手带你搭建推荐系统/docs/01-推荐系统：我们应该怎样学习推荐系统？.md"
+          }
+        },
+        {
+          "id": "f29847b9c613",
+          "sourceId": "geektime",
+          "name": "数据分析实战45讲",
+          "articleCount": 57,
+          "firstArticle": {
+            "path": "AI-大数据/数据分析实战45讲/docs/01丨数据分析全景图及修炼指南.md"
+          }
+        },
+        {
+          "id": "aa342df024c3",
+          "sourceId": "geektime",
+          "name": "数据分析思维课",
+          "articleCount": 44,
+          "firstArticle": {
+            "path": "AI-大数据/数据分析思维课/docs/01 - 平均值：不要被骗了，它不能代表整体水平.md"
+          }
+        },
+        {
+          "id": "c31dba1a9f8b",
+          "sourceId": "geektime",
+          "name": "推荐系统三十六式",
+          "articleCount": 40,
+          "firstArticle": {
+            "path": "AI-大数据/推荐系统三十六式/docs/01 - 你真的需要个性化推荐系统吗？.md"
+          }
+        },
+        {
+          "id": "ab61e1676831",
+          "sourceId": "geektime",
+          "name": "中国人工智能成熟度模型报告",
+          "articleCount": 3,
+          "firstArticle": {
+            "path": "AI-大数据/中国人工智能成熟度模型报告/docs/01-⼈工智能技术发展历程.md"
+          }
+        },
+        {
+          "id": "f9fddf36ae4d",
+          "sourceId": "geektime",
+          "name": "A-B测试从0到1",
+          "articleCount": 20,
+          "firstArticle": {
+            "path": "AI-大数据/A-B测试从0到1/docs/01 - 统计基础（上）：系统掌握指标的统计属性.md"
+          }
+        },
+        {
+          "id": "d259da1bfc6b",
+          "sourceId": "geektime",
+          "name": "AI大模型实战高手课",
+          "articleCount": 33,
+          "firstArticle": {
+            "path": "AI-大数据/AI大模型实战高手课/docs/01-洞察本质：从工程学角度看ChatGPT为什么会崛起.md"
+          }
+        },
+        {
+          "id": "38edf3a14a8b",
+          "sourceId": "geektime",
+          "name": "AI大模型系统实战",
+          "articleCount": 42,
+          "firstArticle": {
+            "path": "AI-大数据/AI大模型系统实战/docs/01-认知升级：你心中的AI大模型长啥样？.md"
+          }
+        },
+        {
+          "id": "91eb2423ad48",
+          "sourceId": "geektime",
+          "name": "AI大模型项目落地实战",
+          "articleCount": 28,
+          "firstArticle": {
+            "path": "AI-大数据/AI大模型项目落地实战/docs/01- 原理：一个例子讲清楚Transformer原理.md"
+          }
+        },
+        {
+          "id": "3ae8039b58f3",
+          "sourceId": "geektime",
+          "name": "AI大模型之美",
+          "articleCount": 34,
+          "firstArticle": {
+            "path": "AI-大数据/AI大模型之美/docs/01-重新出发，让我们学会和AI说话.md"
+          }
+        },
+        {
+          "id": "baae07802444",
+          "sourceId": "geektime",
+          "name": "AI绘画核心技术与实战",
+          "articleCount": 36,
+          "firstArticle": {
+            "path": "AI-大数据/AI绘画核心技术与实战/docs/01-WebUI：免费AI绘画工具箱的N大绘图功能.md"
+          }
+        },
+        {
+          "id": "203d2de06b94",
+          "sourceId": "geektime",
+          "name": "AI技术内参",
+          "articleCount": 166,
+          "firstArticle": {
+            "path": "AI-大数据/AI技术内参/docs/001 - 聊聊2017年KDD大会的时间检验奖.md"
+          }
+        },
+        {
+          "id": "9119f819c15a",
+          "sourceId": "geektime",
+          "name": "AI重塑云原生应用开发实战",
+          "articleCount": 29,
+          "firstArticle": {
+            "path": "AI-大数据/AI重塑云原生应用开发实战/docs/01-Agent的前辈：Function Calling.md"
+          }
+        },
+        {
+          "id": "31df2fcdd288",
+          "sourceId": "geektime",
+          "name": "DeepSeek 应用开发实战",
+          "articleCount": 40,
+          "firstArticle": {
+            "path": "AI-大数据/DeepSeek 应用开发实战/docs/01-DeepSeek“民用级”程序员使用指北.md"
+          }
+        },
+        {
+          "id": "b999c9ca5a05",
+          "sourceId": "geektime",
+          "name": "LangChain实战课",
+          "articleCount": 28,
+          "firstArticle": {
+            "path": "AI-大数据/LangChain实战课/docs/01-LangChain系统安装和快速入门.md"
+          }
+        },
+        {
+          "id": "308feb615aa1",
+          "sourceId": "geektime",
+          "name": "LLaMA 3前沿模型实战课",
+          "articleCount": 22,
+          "firstArticle": {
+            "path": "AI-大数据/LLaMA 3前沿模型实战课/docs/01-揭示LLaMA 3对话能力的奥秘.md"
+          }
+        },
+        {
+          "id": "7fe1db27631d",
+          "sourceId": "geektime",
+          "name": "LLM & RAG快速应用小册",
+          "articleCount": 8,
+          "firstArticle": {
+            "path": "AI-大数据/LLM & RAG快速应用小册/docs/01-数据处理：把企业知识组织起来.md"
+          }
+        },
+        {
+          "id": "6ffcfa0db43c",
+          "sourceId": "geektime",
+          "name": "LLM自主智能体应用实战课",
+          "articleCount": 20,
+          "firstArticle": {
+            "path": "AI-大数据/LLM自主智能体应用实战课/docs/01-Autonomous Agent开发框架的爱丽丝奇境.md"
+          }
+        },
+        {
+          "id": "87a9877945b9",
+          "sourceId": "geektime",
+          "name": "PyTorch深度学习实战",
+          "articleCount": 32,
+          "firstArticle": {
+            "path": "AI-大数据/PyTorch深度学习实战/docs/01 - PyTorch：网红中的顶流明星.md"
+          }
+        },
+        {
+          "id": "b832e9990ab6",
+          "sourceId": "geektime",
+          "name": "RAG快速开发实战",
+          "articleCount": 11,
+          "firstArticle": {
+            "path": "AI-大数据/RAG快速开发实战/docs/01-RAG的场景及技术原理.md"
+          }
+        },
+        {
+          "id": "893f901abce1",
+          "sourceId": "geektime",
+          "name": "RAG系统实战课",
+          "articleCount": 29,
+          "firstArticle": {
+            "path": "AI-大数据/RAG系统实战课/docs/01-提效利器：RAG为传统MIS系统大幅提效，门槛并不高.md"
+          }
+        },
+        {
+          "id": "d01bf3ee9cbc",
+          "sourceId": "geektime",
+          "name": "Spark性能调优实战",
+          "articleCount": 36,
+          "firstArticle": {
+            "path": "AI-大数据/Spark性能调优实战/docs/01 - 性能调优的必要性：Spark本身就很快，为啥还需要我调优？.md"
+          }
+        }
+      ]
+    },
+    {
+      "id": "product-operations",
+      "name": "产品-运营",
+      "courseCount": 12,
+      "articleCount": 459,
+      "courses": [
+        {
+          "id": "72a444bb54c5",
+          "sourceId": "geektime",
+          "name": "成为AI产品经理",
+          "articleCount": 38,
+          "firstArticle": {
+            "path": "产品-运营/成为AI产品经理/docs/01 - 行业视角：产品经理眼中的人工智能.md"
+          }
+        },
+        {
+          "id": "dcc807632f56",
+          "sourceId": "geektime",
+          "name": "从0开始做增长",
+          "articleCount": 44,
+          "firstArticle": {
+            "path": "产品-运营/从0开始做增长/docs/01 预习 - 增长小白如何“弯道超车”？.md"
+          }
+        },
+        {
+          "id": "0fcb1e4fdc08",
+          "sourceId": "geektime",
+          "name": "大厂广告产品心法",
+          "articleCount": 24,
+          "firstArticle": {
+            "path": "产品-运营/大厂广告产品心法/docs/01-业务逻辑：广告产品的前世今生和商业模式是怎样的？.md"
+          }
+        },
+        {
+          "id": "fffa62d216ab",
+          "sourceId": "geektime",
+          "name": "硅谷产品实战36讲",
+          "articleCount": 40,
+          "firstArticle": {
+            "path": "产品-运营/硅谷产品实战36讲/docs/01 - 什么是优秀的产品经理？.md"
+          }
+        },
+        {
+          "id": "1f29f763e043",
+          "sourceId": "geektime",
+          "name": "基于人因的用户体验设计课",
+          "articleCount": 34,
+          "firstArticle": {
+            "path": "产品-运营/基于人因的用户体验设计课/docs/01 - 什么是用户体验设计？.md"
+          }
+        },
+        {
+          "id": "7fec3114b28b",
+          "sourceId": "geektime",
+          "name": "邱岳的产品实战",
+          "articleCount": 58,
+          "firstArticle": {
+            "path": "产品-运营/邱岳的产品实战/docs/01 - 如何验证你的产品创意？.md"
+          }
+        },
+        {
+          "id": "4d4e34039e2c",
+          "sourceId": "geektime",
+          "name": "邱岳的产品手记",
+          "articleCount": 49,
+          "firstArticle": {
+            "path": "产品-运营/邱岳的产品手记/docs/【第二季回归】二爷归来，再次扬帆起航.md"
+          }
+        },
+        {
+          "id": "f80735f20c3e",
+          "sourceId": "geektime",
+          "name": "商业思维案例笔记",
+          "articleCount": 51,
+          "firstArticle": {
+            "path": "产品-运营/商业思维案例笔记/docs/01 - 导读：我们说商业思维时，到底在说什么？.md"
+          }
+        },
+        {
+          "id": "42b339e8906d",
+          "sourceId": "geektime",
+          "name": "苏杰的产品创新课",
+          "articleCount": 32,
+          "firstArticle": {
+            "path": "产品-运营/苏杰的产品创新课/docs/01 - 为什么每个人都要学产品创新课？.md"
+          }
+        },
+        {
+          "id": "d875c25c359f",
+          "sourceId": "geektime",
+          "name": "体验设计案例课",
+          "articleCount": 32,
+          "firstArticle": {
+            "path": "产品-运营/体验设计案例课/docs/01 - 当别人说产品体验不好的时候，他在说什么？.md"
+          }
+        },
+        {
+          "id": "30a5948cb172",
+          "sourceId": "geektime",
+          "name": "用户体验设计实战课",
+          "articleCount": 35,
+          "firstArticle": {
+            "path": "产品-运营/用户体验设计实战课/docs/01 - 商业的天时：如何选择正确的体验策略？.md"
+          }
+        },
+        {
+          "id": "e353b25fc3d4",
+          "sourceId": "geektime",
+          "name": "To B市场品牌实战课",
+          "articleCount": 22,
+          "firstArticle": {
+            "path": "产品-运营/To B市场品牌实战课/docs/01 - To B市场营销到底是做什么的？.md"
+          }
+        }
+      ]
+    },
+    {
+      "id": "frontend-mobile",
+      "name": "前端-移动",
+      "courseCount": 24,
+      "articleCount": 881,
+      "courses": [
+        {
+          "id": "c77e8b949e37",
+          "sourceId": "geektime",
+          "name": "从0打造音视频直播系统",
+          "articleCount": 41,
+          "firstArticle": {
+            "path": "前端-移动/从0打造音视频直播系统/docs/01 - 原来通过浏览器访问摄像头这么容易.md"
+          }
+        },
+        {
+          "id": "c9505000e1fe",
+          "sourceId": "geektime",
+          "name": "搞定音频技术",
+          "articleCount": 19,
+          "firstArticle": {
+            "path": "前端-移动/搞定音频技术/docs/01-声音是如何保存成数字信号的？.md"
+          }
+        },
+        {
+          "id": "cccdde7b9c36",
+          "sourceId": "geektime",
+          "name": "跟月影学可视化",
+          "articleCount": 54,
+          "firstArticle": {
+            "path": "前端-移动/跟月影学可视化/docs/01 - 浏览器中实现可视化的四种方式.md"
+          }
+        },
+        {
+          "id": "e5bc90daecd7",
+          "sourceId": "geektime",
+          "name": "攻克视频技术",
+          "articleCount": 19,
+          "firstArticle": {
+            "path": "前端-移动/攻克视频技术/docs/01-基本概念：从参数的角度看视频图像.md"
+          }
+        },
+        {
+          "id": "279411092e93",
+          "sourceId": "geektime",
+          "name": "快手 · 移动端音视频开发实战",
+          "articleCount": 25,
+          "firstArticle": {
+            "path": "前端-移动/快手 · 移动端音视频开发实战/docs/01-iOS平台音频渲染（一）：使用AudioQueue渲染音频.md"
+          }
+        },
+        {
+          "id": "36138a7c9d3a",
+          "sourceId": "geektime",
+          "name": "快手 · 音视频技术入门课",
+          "articleCount": 18,
+          "firstArticle": {
+            "path": "前端-移动/快手 · 音视频技术入门课/docs/01-如何从色彩格式、帧率等参数角度看视频图像？.md"
+          }
+        },
+        {
+          "id": "10b5b2965a3b",
+          "sourceId": "geektime",
+          "name": "浏览器工作原理与实践",
+          "articleCount": 46,
+          "firstArticle": {
+            "path": "前端-移动/浏览器工作原理与实践/docs/01 - Chrome架构：仅仅打开了1个页面，为什么有4个进程？.md"
+          }
+        },
+        {
+          "id": "643b2f5685ca",
+          "sourceId": "geektime",
+          "name": "前端全链路优化实战课",
+          "articleCount": 33,
+          "firstArticle": {
+            "path": "前端-移动/前端全链路优化实战课/docs/01-前世今生：前端全链路的演进历程.md"
+          }
+        },
+        {
+          "id": "925dd4269bb0",
+          "sourceId": "geektime",
+          "name": "说透低代码",
+          "articleCount": 31,
+          "firstArticle": {
+            "path": "前端-移动/说透低代码/docs/01-低代码平台到底是什么样的？.md"
+          }
+        },
+        {
+          "id": "030fca46948c",
+          "sourceId": "geektime",
+          "name": "图解 Google V8",
+          "articleCount": 25,
+          "firstArticle": {
+            "path": "前端-移动/图解 Google V8/docs/01 - V8是如何执行一段JavaScript代码的？.md"
+          }
+        },
+        {
+          "id": "1d3cfc351e0b",
+          "sourceId": "geektime",
+          "name": "玩转Vue 3全家桶",
+          "articleCount": 44,
+          "firstArticle": {
+            "path": "前端-移动/玩转Vue 3全家桶/docs/01 - 宏观视角：从前端框架发展史聊聊为什么要学Vue 3？.md"
+          }
+        },
+        {
+          "id": "f48aa596be56",
+          "sourceId": "geektime",
+          "name": "现代React Web开发实战",
+          "articleCount": 31,
+          "firstArticle": {
+            "path": "前端-移动/现代React Web开发实战/docs/01-身为Web前端工程师，我都在开发什么？.md"
+          }
+        },
+        {
+          "id": "6e45b016b2c7",
+          "sourceId": "geektime",
+          "name": "重学前端",
+          "articleCount": 60,
+          "firstArticle": {
+            "path": "前端-移动/重学前端/docs/（小实验）理解编译原理：一个四则运算的解释器.md"
+          }
+        },
+        {
+          "id": "d6bab87bffc8",
+          "sourceId": "geektime",
+          "name": "朱涛 · Kotlin编程第一课",
+          "articleCount": 50,
+          "firstArticle": {
+            "path": "前端-移动/朱涛 · Kotlin编程第一课/docs/01 - Kotlin基础语法：正式开启学习之旅.md"
+          }
+        },
+        {
+          "id": "a8d0dadb0871",
+          "sourceId": "geektime",
+          "name": "Android开发高手课",
+          "articleCount": 62,
+          "firstArticle": {
+            "path": "前端-移动/Android开发高手课/docs/01 - 崩溃优化（上）：关于“崩溃”那些事儿.md"
+          }
+        },
+        {
+          "id": "81a5ff8696a4",
+          "sourceId": "geektime",
+          "name": "Flutter核心技术与实战",
+          "articleCount": 48,
+          "firstArticle": {
+            "path": "前端-移动/Flutter核心技术与实战/docs/01 - 预习篇 · 从0开始搭建Flutter工程环境.md"
+          }
+        },
+        {
+          "id": "f3ac56f5bb2a",
+          "sourceId": "geektime",
+          "name": "iOS开发高手课",
+          "articleCount": 47,
+          "firstArticle": {
+            "path": "前端-移动/iOS开发高手课/docs/01 - 建立你自己的iOS开发知识体系.md"
+          }
+        },
+        {
+          "id": "ff3f40323263",
+          "sourceId": "geektime",
+          "name": "JavaScript核心原理解析",
+          "articleCount": 28,
+          "firstArticle": {
+            "path": "前端-移动/JavaScript核心原理解析/docs/01 - delete 0：JavaScript中到底有什么是可以销毁的.md"
+          }
+        },
+        {
+          "id": "242ac4a71100",
+          "sourceId": "geektime",
+          "name": "JavaScript进阶实战课",
+          "articleCount": 47,
+          "firstArticle": {
+            "path": "前端-移动/JavaScript进阶实战课/docs/01 - 函数式vs.面向对象：响应未知和不确定.md"
+          }
+        },
+        {
+          "id": "d2463bad85cd",
+          "sourceId": "geektime",
+          "name": "React Hooks 核心原理与实战",
+          "articleCount": 25,
+          "firstArticle": {
+            "path": "前端-移动/React Hooks 核心原理与实战/docs/01-认识 React：如何创建你的第一个 React 应用？.md"
+          }
+        },
+        {
+          "id": "accdb8438ddd",
+          "sourceId": "geektime",
+          "name": "React Native 新架构实战课",
+          "articleCount": 42,
+          "firstArticle": {
+            "path": "前端-移动/React Native 新架构实战课/docs/01-学习React Native，你需要掌握哪些知识？.md"
+          }
+        },
+        {
+          "id": "6ce5e2cc6747",
+          "sourceId": "geektime",
+          "name": "Serverless入门课",
+          "articleCount": 16,
+          "firstArticle": {
+            "path": "前端-移动/Serverless入门课/docs/01-定义：到底什么是Serverless？.md"
+          }
+        },
+        {
+          "id": "e8001009b7bb",
+          "sourceId": "geektime",
+          "name": "Vue 3 企业级项目实战课",
+          "articleCount": 47,
+          "firstArticle": {
+            "path": "前端-移动/Vue 3 企业级项目实战课/docs/01-编译和非编译模式：离开Vue工具，你还知道怎么用Vue 3吗？.md"
+          }
+        },
+        {
+          "id": "cb9d9006e3b1",
+          "sourceId": "geektime",
+          "name": "WebAssembly入门课",
+          "articleCount": 23,
+          "firstArticle": {
+            "path": "前端-移动/WebAssembly入门课/docs/01 - 基础篇：学习此课程你需要了解哪些基础知识？.md"
+          }
+        }
+      ]
+    },
+    {
+      "id": "backend-architecture",
+      "name": "后端-架构",
+      "courseCount": 84,
+      "articleCount": 3461,
+      "courses": [
+        {
+          "id": "466f9c5497f9",
+          "sourceId": "geektime",
+          "name": "编程高手必学的内存知识",
+          "articleCount": 33,
+          "firstArticle": {
+            "path": "后端-架构/编程高手必学的内存知识/docs/01-虚拟内存：为什么可用内存会远超物理内存？.md"
+          }
+        },
+        {
+          "id": "028cc1491030",
+          "sourceId": "geektime",
+          "name": "陈天 · Rust 编程第一课",
+          "articleCount": 65,
+          "firstArticle": {
+            "path": "后端-架构/陈天 · Rust 编程第一课/docs/01-内存：值放堆上还是放栈上，这是一个问题.md"
+          }
+        },
+        {
+          "id": "1200388e7f24",
+          "sourceId": "geektime",
+          "name": "从0开始学架构",
+          "articleCount": 73,
+          "firstArticle": {
+            "path": "后端-架构/从0开始学架构/docs/01 - 架构到底是指什么？.md"
+          }
+        },
+        {
+          "id": "74b35fe0b6b7",
+          "sourceId": "geektime",
+          "name": "从0开始学微服务",
+          "articleCount": 43,
+          "firstArticle": {
+            "path": "后端-架构/从0开始学微服务/docs/01 - 到底什么是微服务？.md"
+          }
+        },
+        {
+          "id": "0ca5b74c6a3a",
+          "sourceId": "geektime",
+          "name": "从0开始学游戏开发",
+          "articleCount": 42,
+          "firstArticle": {
+            "path": "后端-架构/从0开始学游戏开发/docs/第1讲 - 游戏开发需要了解哪些背景知识？.md"
+          }
+        },
+        {
+          "id": "b5e18b471995",
+          "sourceId": "geektime",
+          "name": "大型Android系统重构实战",
+          "articleCount": 29,
+          "firstArticle": {
+            "path": "后端-架构/大型Android系统重构实战/docs/01-初识重构：重构的类型、收益和度量.md"
+          }
+        },
+        {
+          "id": "221a461dcc56",
+          "sourceId": "geektime",
+          "name": "分布式技术原理与算法解析",
+          "articleCount": 43,
+          "firstArticle": {
+            "path": "后端-架构/分布式技术原理与算法解析/docs/01 - 分布式缘何而起：从单兵，到游击队，到集团军.md"
+          }
+        },
+        {
+          "id": "a55fe0df27a0",
+          "sourceId": "geektime",
+          "name": "分布式金融架构课",
+          "articleCount": 30,
+          "firstArticle": {
+            "path": "后端-架构/分布式金融架构课/docs/01 - 业务初探：扫了二维码之后发生了什么？.md"
+          }
+        },
+        {
+          "id": "bdf93cd6a602",
+          "sourceId": "geektime",
+          "name": "分布式数据库30讲",
+          "articleCount": 34,
+          "firstArticle": {
+            "path": "后端-架构/分布式数据库30讲/docs/01-什么是分布式数据库？.md"
+          }
+        },
+        {
+          "id": "db553eceb6c7",
+          "sourceId": "geektime",
+          "name": "分布式数据库从入门到实战",
+          "articleCount": 29,
+          "firstArticle": {
+            "path": "后端-架构/分布式数据库从入门到实战/docs/01-列式存储已经取代行式存储了吗？.md"
+          }
+        },
+        {
+          "id": "53e2cff6b732",
+          "sourceId": "geektime",
+          "name": "分布式协议与算法实战",
+          "articleCount": 31,
+          "firstArticle": {
+            "path": "后端-架构/分布式协议与算法实战/docs/01 - 拜占庭将军问题：有叛徒的情况下，如何才能达成共识？.md"
+          }
+        },
+        {
+          "id": "3ee3f19d0af9",
+          "sourceId": "geektime",
+          "name": "高并发系统设计40问",
+          "articleCount": 49,
+          "firstArticle": {
+            "path": "后端-架构/高并发系统设计40问/docs/01 - 高并发系统：它的通用设计方法是什么？.md"
+          }
+        },
+        {
+          "id": "ce56c3c713d3",
+          "sourceId": "geektime",
+          "name": "高并发系统实战课",
+          "articleCount": 31,
+          "firstArticle": {
+            "path": "后端-架构/高并发系统实战课/docs/01-结构梳理：大并发下，你的数据库表可能成为性能隐患.md"
+          }
+        },
+        {
+          "id": "4cb2a7b1c970",
+          "sourceId": "geektime",
+          "name": "郭东白的架构课",
+          "articleCount": 67,
+          "firstArticle": {
+            "path": "后端-架构/郭东白的架构课/docs/01-模块导学：是什么在影响架构活动的成败？.md"
+          }
+        },
+        {
+          "id": "5fb448fd4d84",
+          "sourceId": "geektime",
+          "name": "后端存储实战课",
+          "articleCount": 30,
+          "firstArticle": {
+            "path": "后端-架构/后端存储实战课/docs/01 - 创建和更新订单时，如何保证数据准确无误？.md"
+          }
+        },
+        {
+          "id": "202a3d665b85",
+          "sourceId": "geektime",
+          "name": "后端工程师的高阶面经",
+          "articleCount": 52,
+          "firstArticle": {
+            "path": "后端-架构/后端工程师的高阶面经/docs/01-服务注册与发现：AP和CP，你选哪个？.md"
+          }
+        },
+        {
+          "id": "73d32b14c9e3",
+          "sourceId": "geektime",
+          "name": "后端技术面试 38 讲",
+          "articleCount": 46,
+          "firstArticle": {
+            "path": "后端-架构/后端技术面试 38 讲/docs/01丨程序运行原理：程序是如何运行又是如何崩溃的？.md"
+          }
+        },
+        {
+          "id": "93a89921e785",
+          "sourceId": "geektime",
+          "name": "即时消息技术剖析与实战",
+          "articleCount": 25,
+          "firstArticle": {
+            "path": "后端-架构/即时消息技术剖析与实战/docs/01 - 架构与特性：一个完整的IM系统是怎样的？.md"
+          }
+        },
+        {
+          "id": "90d9b4fc4870",
+          "sourceId": "geektime",
+          "name": "架构实战案例解析",
+          "articleCount": 23,
+          "firstArticle": {
+            "path": "后端-架构/架构实战案例解析/docs/01 - 架构的本质：如何打造一个有序的系统？.md"
+          }
+        },
+        {
+          "id": "cb3dd0596015",
+          "sourceId": "geektime",
+          "name": "李智慧 · 高并发架构实战课",
+          "articleCount": 26,
+          "firstArticle": {
+            "path": "后端-架构/李智慧 · 高并发架构实战课/docs/01 - 软件建模与文档：架构师怎样绘制系统架构蓝图？.md"
+          }
+        },
+        {
+          "id": "0fbf70aac225",
+          "sourceId": "geektime",
+          "name": "罗剑锋的C++实战笔记",
+          "articleCount": 32,
+          "firstArticle": {
+            "path": "后端-架构/罗剑锋的C++实战笔记/docs/01 - 重新认识C++：生命周期和编程范式.md"
+          }
+        },
+        {
+          "id": "d998a09313c9",
+          "sourceId": "geektime",
+          "name": "面试现场",
+          "articleCount": 40,
+          "firstArticle": {
+            "path": "后端-架构/面试现场/docs/01 - 公司到底想要什么样的人？.md"
+          }
+        },
+        {
+          "id": "6966fa5167b4",
+          "sourceId": "geektime",
+          "name": "如何落地业务建模",
+          "articleCount": 32,
+          "firstArticle": {
+            "path": "后端-架构/如何落地业务建模/docs/01-领域驱动设计到底在讲什么？.md"
+          }
+        },
+        {
+          "id": "ab73d726b594",
+          "sourceId": "geektime",
+          "name": "如何设计一个秒杀系统",
+          "articleCount": 10,
+          "firstArticle": {
+            "path": "后端-架构/如何设计一个秒杀系统/docs/01 - 设计秒杀系统时应该注意的5个架构原则.md"
+          }
+        },
+        {
+          "id": "974167a90b95",
+          "sourceId": "geektime",
+          "name": "设计模式之美",
+          "articleCount": 113,
+          "firstArticle": {
+            "path": "后端-架构/设计模式之美/docs/01 - 为什么说每个程序员都要尽早地学习并掌握设计模式相关知识？.md"
+          }
+        },
+        {
+          "id": "3eb1e168d4c0",
+          "sourceId": "geektime",
+          "name": "深入拆解消息队列47讲",
+          "articleCount": 52,
+          "firstArticle": {
+            "path": "后端-架构/深入拆解消息队列47讲/docs/01-业界的主流消息队列是如何发展起来的？.md"
+          }
+        },
+        {
+          "id": "3b080c26e37f",
+          "sourceId": "geektime",
+          "name": "深入拆解Java虚拟机",
+          "articleCount": 43,
+          "firstArticle": {
+            "path": "后端-架构/深入拆解Java虚拟机/docs/【工具篇】 常用工具介绍.md"
+          }
+        },
+        {
+          "id": "89a5e0b86826",
+          "sourceId": "geektime",
+          "name": "深入拆解Tomcat & Jetty",
+          "articleCount": 45,
+          "firstArticle": {
+            "path": "后端-架构/深入拆解Tomcat & Jetty/docs/01 - Web容器学习路径.md"
+          }
+        },
+        {
+          "id": "d82153e67442",
+          "sourceId": "geektime",
+          "name": "深入浅出分布式技术原理",
+          "articleCount": 39,
+          "firstArticle": {
+            "path": "后端-架构/深入浅出分布式技术原理/docs/01-导读：以前因后果为脉络，串起网状知识体系.md"
+          }
+        },
+        {
+          "id": "1969b714b4f8",
+          "sourceId": "geektime",
+          "name": "深入浅出区块链",
+          "articleCount": 40,
+          "firstArticle": {
+            "path": "后端-架构/深入浅出区块链/docs/第1讲 - 到底什么才是区块链？.md"
+          }
+        },
+        {
+          "id": "3301a3e19aa0",
+          "sourceId": "geektime",
+          "name": "深入C语言和程序运行原理",
+          "articleCount": 49,
+          "firstArticle": {
+            "path": "后端-架构/深入C语言和程序运行原理/docs/01-快速回顾：一个 C 程序的完整生命周期.md"
+          }
+        },
+        {
+          "id": "5f71f4f7cc70",
+          "sourceId": "geektime",
+          "name": "手把手带你搭建秒杀系统",
+          "articleCount": 18,
+          "firstArticle": {
+            "path": "后端-架构/手把手带你搭建秒杀系统/docs/01-直面痛点：秒杀系统的挑战和设计原则.md"
+          }
+        },
+        {
+          "id": "7b64e029ce9d",
+          "sourceId": "geektime",
+          "name": "手把手带你写一个MiniSpring",
+          "articleCount": 26,
+          "firstArticle": {
+            "path": "后端-架构/手把手带你写一个MiniSpring/docs/01-原始IoC：如何通过BeanFactory实现原始版本的IoC容器？.md"
+          }
+        },
+        {
+          "id": "d3e23ec20aba",
+          "sourceId": "geektime",
+          "name": "手把手带你写一个MiniTomcat",
+          "articleCount": 22,
+          "firstArticle": {
+            "path": "后端-架构/手把手带你写一个MiniTomcat/docs/01-持久的传奇：Tomcat的发展历程与框架演进.md"
+          }
+        },
+        {
+          "id": "d67195a45bc7",
+          "sourceId": "geektime",
+          "name": "手把手带你写一个Web框架",
+          "articleCount": 48,
+          "firstArticle": {
+            "path": "后端-架构/手把手带你写一个Web框架/docs/01-net-http：使用标准库搭建Server并不是那么简单.md"
+          }
+        },
+        {
+          "id": "02ac7ac8912b",
+          "sourceId": "geektime",
+          "name": "手把手教你落地DDD",
+          "articleCount": 45,
+          "firstArticle": {
+            "path": "后端-架构/手把手教你落地DDD/docs/01-DDD小传：领域驱动设计为什么这么火？.md"
+          }
+        },
+        {
+          "id": "7e3817c6cb7d",
+          "sourceId": "geektime",
+          "name": "手写Python虚拟机",
+          "articleCount": 35,
+          "firstArticle": {
+            "path": "后端-架构/手写Python虚拟机/docs/01-源起：动态编程语言如何引爆虚拟机的革命？.md"
+          }
+        },
+        {
+          "id": "bbb5d75ee93a",
+          "sourceId": "geektime",
+          "name": "说透区块链",
+          "articleCount": 19,
+          "firstArticle": {
+            "path": "后端-架构/说透区块链/docs/01 - 回顾前世：解读区块链技术发展三阶段.md"
+          }
+        },
+        {
+          "id": "47d5b1a37e2a",
+          "sourceId": "geektime",
+          "name": "说透数字化转型",
+          "articleCount": 18,
+          "firstArticle": {
+            "path": "后端-架构/说透数字化转型/docs/01 - 历史思维：什么是数字时代和数字化转型？.md"
+          }
+        },
+        {
+          "id": "5f43e0b8bae1",
+          "sourceId": "geektime",
+          "name": "说透中台",
+          "articleCount": 14,
+          "firstArticle": {
+            "path": "后端-架构/说透中台/docs/01 - 来龙去脉：中台为什么这么火？.md"
+          }
+        },
+        {
+          "id": "6ad568d1134f",
+          "sourceId": "geektime",
+          "name": "网络编程实战",
+          "articleCount": 40,
+          "firstArticle": {
+            "path": "后端-架构/网络编程实战/docs/01 - 追古溯源：TCP-IP和Linux是如何改变世界的？.md"
+          }
+        },
+        {
+          "id": "758010765be2",
+          "sourceId": "geektime",
+          "name": "网络架构实战课",
+          "articleCount": 9,
+          "firstArticle": {
+            "path": "后端-架构/网络架构实战课/docs/01-一个数据包的网络之旅：网络是如何工作的？.md"
+          }
+        },
+        {
+          "id": "f42c7d261d54",
+          "sourceId": "geektime",
+          "name": "物联网开发实战",
+          "articleCount": 36,
+          "firstArticle": {
+            "path": "后端-架构/物联网开发实战/docs/01 - 入门介绍：如何定义物联网？.md"
+          }
+        },
+        {
+          "id": "74ee9e519438",
+          "sourceId": "geektime",
+          "name": "系统性能调优必知必会",
+          "articleCount": 47,
+          "firstArticle": {
+            "path": "后端-架构/系统性能调优必知必会/docs/01 - CPU缓存：怎样写代码能够让CPU执行得更快？.md"
+          }
+        },
+        {
+          "id": "11e791f5deab",
+          "sourceId": "geektime",
+          "name": "现代C++20实战高手课",
+          "articleCount": 29,
+          "firstArticle": {
+            "path": "后端-架构/现代C++20实战高手课/docs/01-Modules（上）：C++模块化问题的前世今生.md"
+          }
+        },
+        {
+          "id": "bf429fb8f0b3",
+          "sourceId": "geektime",
+          "name": "现代C++编程实战",
+          "articleCount": 54,
+          "firstArticle": {
+            "path": "后端-架构/现代C++编程实战/docs/01 - 堆、栈、RAII：C++里该如何管理资源？.md"
+          }
+        },
+        {
+          "id": "7934cdea677a",
+          "sourceId": "geektime",
+          "name": "消息队列高手课",
+          "articleCount": 48,
+          "firstArticle": {
+            "path": "后端-架构/消息队列高手课/docs/01 - 为什么需要消息队列？.md"
+          }
+        },
+        {
+          "id": "7696293f2b9e",
+          "sourceId": "geektime",
+          "name": "性能工程高手课",
+          "articleCount": 40,
+          "firstArticle": {
+            "path": "后端-架构/性能工程高手课/docs/01 - 程序员为什么要关心代码性能？.md"
+          }
+        },
+        {
+          "id": "e48c6cfc6ce3",
+          "sourceId": "geektime",
+          "name": "徐昊 · AI时代的软件工程",
+          "articleCount": 35,
+          "firstArticle": {
+            "path": "后端-架构/徐昊 · AI时代的软件工程/docs/01-围绕不可言说知识构造知识过程.md"
+          }
+        },
+        {
+          "id": "be50b768584d",
+          "sourceId": "geektime",
+          "name": "徐昊 · TDD项目实战70讲",
+          "articleCount": 88,
+          "firstArticle": {
+            "path": "后端-架构/徐昊 · TDD项目实战70讲/docs/01-TDD演示（1）：任务分解法与整体工作流程.md"
+          }
+        },
+        {
+          "id": "45133bc9461f",
+          "sourceId": "geektime",
+          "name": "许式伟的架构课",
+          "articleCount": 89,
+          "firstArticle": {
+            "path": "后端-架构/许式伟的架构课/docs/01 - 架构设计的宏观视角.md"
+          }
+        },
+        {
+          "id": "698e2df4c641",
+          "sourceId": "geektime",
+          "name": "遗留系统现代化实战",
+          "articleCount": 30,
+          "firstArticle": {
+            "path": "后端-架构/遗留系统现代化实战/docs/01-遗留系统之殇：为什么要对遗留系统进行现代化？.md"
+          }
+        },
+        {
+          "id": "37398e3fe4ff",
+          "sourceId": "geektime",
+          "name": "云时代的JVM原理与实战",
+          "articleCount": 39,
+          "firstArticle": {
+            "path": "后端-架构/云时代的JVM原理与实战/docs/01-重识JVM：JVM的起源、特性与系统构成.md"
+          }
+        },
+        {
+          "id": "5343ffbb2233",
+          "sourceId": "geektime",
+          "name": "中间件核心技术与实战",
+          "articleCount": 33,
+          "firstArticle": {
+            "path": "后端-架构/中间件核心技术与实战/docs/01-中间件生态（上）：有哪些类型的中间件？.md"
+          }
+        },
+        {
+          "id": "667097a8d351",
+          "sourceId": "geektime",
+          "name": "左耳听风",
+          "articleCount": 119,
+          "firstArticle": {
+            "path": "后端-架构/左耳听风/docs/01 - 程序员如何用技术变现？（上）.md"
+          }
+        },
+        {
+          "id": "9ad9024ce664",
+          "sourceId": "geektime",
+          "name": "DDD实战课",
+          "articleCount": 26,
+          "firstArticle": {
+            "path": "后端-架构/DDD实战课/docs/01 - 领域驱动设计：微服务设计为什么要选择DDD？.md"
+          }
+        },
+        {
+          "id": "6c017ee0760d",
+          "sourceId": "geektime",
+          "name": "Dubbo源码剖析与实战",
+          "articleCount": 33,
+          "firstArticle": {
+            "path": "后端-架构/Dubbo源码剖析与实战/docs/01-温故知新：Dubbo基础知识你掌握得如何？.md"
+          }
+        },
+        {
+          "id": "391f9cf6aeac",
+          "sourceId": "geektime",
+          "name": "etcd实战课",
+          "articleCount": 28,
+          "firstArticle": {
+            "path": "后端-架构/etcd实战课/docs/01 - etcd的前世今生：为什么Kubernetes使用etcd？.md"
+          }
+        },
+        {
+          "id": "895dd37510d0",
+          "sourceId": "geektime",
+          "name": "Go 并发编程实战课",
+          "articleCount": 22,
+          "firstArticle": {
+            "path": "后端-架构/Go 并发编程实战课/docs/01 - Mutex：如何解决资源并发访问问题？.md"
+          }
+        },
+        {
+          "id": "d2bfebcee6d7",
+          "sourceId": "geektime",
+          "name": "Go 语言项目开发实战",
+          "articleCount": 61,
+          "firstArticle": {
+            "path": "后端-架构/Go 语言项目开发实战/docs/01 - IAM系统概述：我们要实现什么样的 Go 项目？.md"
+          }
+        },
+        {
+          "id": "0af1c1c80710",
+          "sourceId": "geektime",
+          "name": "Go服务开发高手课",
+          "articleCount": 30,
+          "firstArticle": {
+            "path": "后端-架构/Go服务开发高手课/docs/01-性能优化流程：刚开始做性能优化从何入手？.md"
+          }
+        },
+        {
+          "id": "fe3c88f8c71b",
+          "sourceId": "geektime",
+          "name": "Go进阶 · 分布式爬虫实战",
+          "articleCount": 58,
+          "firstArticle": {
+            "path": "后端-架构/Go进阶 · 分布式爬虫实战/docs/01-知识回顾：Go基础知识你真的掌握了吗？.md"
+          }
+        },
+        {
+          "id": "6fe74dba4b20",
+          "sourceId": "geektime",
+          "name": "Go语言核心36讲",
+          "articleCount": 55,
+          "firstArticle": {
+            "path": "后端-架构/Go语言核心36讲/docs/01 - 工作区和GOPATH.md"
+          }
+        },
+        {
+          "id": "9f7a8c10f40e",
+          "sourceId": "geektime",
+          "name": "Java并发编程实战",
+          "articleCount": 51,
+          "firstArticle": {
+            "path": "后端-架构/Java并发编程实战/docs/01 - 可见性、原子性和有序性问题：并发编程Bug的源头.md"
+          }
+        },
+        {
+          "id": "cc56584ef9b8",
+          "sourceId": "geektime",
+          "name": "Java核心技术面试精讲",
+          "articleCount": 44,
+          "firstArticle": {
+            "path": "后端-架构/Java核心技术面试精讲/docs/第1讲 - 谈谈你对Java平台的理解？.md"
+          }
+        },
+        {
+          "id": "30f65b40f37e",
+          "sourceId": "geektime",
+          "name": "Java性能调优实战",
+          "articleCount": 49,
+          "firstArticle": {
+            "path": "后端-架构/Java性能调优实战/docs/01 - 如何制定性能调优标准？.md"
+          }
+        },
+        {
+          "id": "9d367585e1f0",
+          "sourceId": "geektime",
+          "name": "Java业务开发常见错误100例",
+          "articleCount": 48,
+          "firstArticle": {
+            "path": "后端-架构/Java业务开发常见错误100例/docs/01 - 使用了并发工具类库，线程安全就高枕无忧了吗？.md"
+          }
+        },
+        {
+          "id": "267dbd6d5d8b",
+          "sourceId": "geektime",
+          "name": "Kafka核心技术与实战",
+          "articleCount": 47,
+          "firstArticle": {
+            "path": "后端-架构/Kafka核心技术与实战/docs/01 -  消息引擎系统ABC.md"
+          }
+        },
+        {
+          "id": "6157b36bcd5e",
+          "sourceId": "geektime",
+          "name": "MySQL实战45讲",
+          "articleCount": 49,
+          "firstArticle": {
+            "path": "后端-架构/MySQL实战45讲/docs/01 - 基础架构：一条SQL查询语句是如何执行的？.md"
+          }
+        },
+        {
+          "id": "6b9d2c3cdb1f",
+          "sourceId": "geektime",
+          "name": "MySQL运维实战课",
+          "articleCount": 53,
+          "firstArticle": {
+            "path": "后端-架构/MySQL运维实战课/docs/01-快速上手数据库安装部署.md"
+          }
+        },
+        {
+          "id": "e70806be5034",
+          "sourceId": "geektime",
+          "name": "OAuth 2.0实战课",
+          "articleCount": 17,
+          "firstArticle": {
+            "path": "后端-架构/OAuth 2.0实战课/docs/01 - OAuth 2.0是要通过什么方式解决什么问题？.md"
+          }
+        },
+        {
+          "id": "533dd2134669",
+          "sourceId": "geektime",
+          "name": "Python核心技术与实战",
+          "articleCount": 47,
+          "firstArticle": {
+            "path": "后端-架构/Python核心技术与实战/docs/01 - 如何逐步突破，成为Python高手？.md"
+          }
+        },
+        {
+          "id": "9fb37fa583b0",
+          "sourceId": "geektime",
+          "name": "Python实战 · 从0到1搭建直播视频平台",
+          "articleCount": 42,
+          "firstArticle": {
+            "path": "后端-架构/Python实战 · 从0到1搭建直播视频平台/docs/01-初识Python（上）：入门Python你应该怎么做？.md"
+          }
+        },
+        {
+          "id": "c01159f16b12",
+          "sourceId": "geektime",
+          "name": "Redis核心技术与实战",
+          "articleCount": 53,
+          "firstArticle": {
+            "path": "后端-架构/Redis核心技术与实战/docs/01 - 基本架构：一个键值数据库包含什么？.md"
+          }
+        },
+        {
+          "id": "44d888931a04",
+          "sourceId": "geektime",
+          "name": "Redis源码剖析与实战",
+          "articleCount": 47,
+          "firstArticle": {
+            "path": "后端-架构/Redis源码剖析与实战/docs/01 - 带你快速攻略Redis源码的整体架构.md"
+          }
+        },
+        {
+          "id": "1b3d0b11c21d",
+          "sourceId": "geektime",
+          "name": "RPC实战与核心原理",
+          "articleCount": 29,
+          "firstArticle": {
+            "path": "后端-架构/RPC实战与核心原理/docs/01 - 核心原理：能否画张图解释下RPC的通信流程？.md"
+          }
+        },
+        {
+          "id": "93eeb1649364",
+          "sourceId": "geektime",
+          "name": "Rust并发编程实战课",
+          "articleCount": 39,
+          "firstArticle": {
+            "path": "后端-架构/Rust并发编程实战课/docs/01-并发江湖，逐鹿天下：并发编程的基本概念与应用场景.md"
+          }
+        },
+        {
+          "id": "f7c6b4da53ca",
+          "sourceId": "geektime",
+          "name": "Rust实战 · 手写下一代云原生消息队列",
+          "articleCount": 13,
+          "firstArticle": {
+            "path": "后端-架构/Rust实战 · 手写下一代云原生消息队列/docs/01-以终为始：手写开源消息队列最终成果展示.md"
+          }
+        },
+        {
+          "id": "f6708f70f392",
+          "sourceId": "geektime",
+          "name": "Rust语言从入门到实战",
+          "articleCount": 36,
+          "firstArticle": {
+            "path": "后端-架构/Rust语言从入门到实战/docs/01-快速入门：Rust中有哪些你不得不了解的基础语法？.md"
+          }
+        },
+        {
+          "id": "1753a82593a4",
+          "sourceId": "geektime",
+          "name": "Spring Cloud 微服务项目实战",
+          "articleCount": 38,
+          "firstArticle": {
+            "path": "后端-架构/Spring Cloud 微服务项目实战/docs/01 - 是什么推动了单体应用到微服务架构的演进？.md"
+          }
+        },
+        {
+          "id": "9e9fb8f094b7",
+          "sourceId": "geektime",
+          "name": "Spring编程常见错误50例",
+          "articleCount": 29,
+          "firstArticle": {
+            "path": "后端-架构/Spring编程常见错误50例/docs/01-Spring Bean 定义常见错误.md"
+          }
+        },
+        {
+          "id": "5f25221497a6",
+          "sourceId": "geektime",
+          "name": "SQL必知必会",
+          "articleCount": 57,
+          "firstArticle": {
+            "path": "后端-架构/SQL必知必会/docs/01丨了解SQL：一门半衰期很长的语言.md"
+          }
+        },
+        {
+          "id": "00eaea326128",
+          "sourceId": "geektime",
+          "name": "Tony Bai · Go语言第一课",
+          "articleCount": 66,
+          "firstArticle": {
+            "path": "后端-架构/Tony Bai · Go语言第一课/docs/01-前世今生：你不得不了解的Go的历史和现状.md"
+          }
+        },
+        {
+          "id": "fc02c617f00e",
+          "sourceId": "geektime",
+          "name": "Web 3.0入局攻略",
+          "articleCount": 17,
+          "firstArticle": {
+            "path": "后端-架构/Web 3.0入局攻略/docs/01 - 我们为什么需要Web 3.0？.md"
+          }
+        }
+      ]
+    },
+    {
+      "id": "management-growth",
+      "name": "管理-成长",
+      "courseCount": 42,
+      "articleCount": 1625,
+      "courses": [
+        {
+          "id": "e0fcda9ad757",
+          "sourceId": "geektime",
+          "name": "10x程序员工作法",
+          "articleCount": 67,
+          "firstArticle": {
+            "path": "管理-成长/10x程序员工作法/docs/01 - 10x程序员是如何思考的？.md"
+          }
+        },
+        {
+          "id": "6573b54f3312",
+          "sourceId": "geektime",
+          "name": "爱上跑步",
+          "articleCount": 13,
+          "firstArticle": {
+            "path": "管理-成长/爱上跑步/docs/01 - 跑两步就喘了，是不是我不适合跑步？.md"
+          }
+        },
+        {
+          "id": "b6aac8beb8a3",
+          "sourceId": "geektime",
+          "name": "白话法律42讲",
+          "articleCount": 47,
+          "firstArticle": {
+            "path": "管理-成长/白话法律42讲/docs/01 “老周，我想知道” - 常见法律认知盲区（一）.md"
+          }
+        },
+        {
+          "id": "20ce1b04945d",
+          "sourceId": "geektime",
+          "name": "编辑训练营",
+          "articleCount": 9,
+          "firstArticle": {
+            "path": "管理-成长/编辑训练营/docs/01 - 为什么说编辑要重视文字规范？.md"
+          }
+        },
+        {
+          "id": "bbb15d9d3a60",
+          "sourceId": "geektime",
+          "name": "超级访谈：对话毕玄",
+          "articleCount": 18,
+          "firstArticle": {
+            "path": "管理-成长/超级访谈：对话毕玄/docs/00-番外：一位险些没上得了大学的青年，如何开启计算机征程.md"
+          }
+        },
+        {
+          "id": "c7fb0428aff3",
+          "sourceId": "geektime",
+          "name": "超级访谈：对话道哥",
+          "articleCount": 22,
+          "firstArticle": {
+            "path": "管理-成长/超级访谈：对话道哥/docs/01-走向工程师精神的复兴.md"
+          }
+        },
+        {
+          "id": "8434928b8969",
+          "sourceId": "geektime",
+          "name": "超级访谈：对话玉伯",
+          "articleCount": 17,
+          "firstArticle": {
+            "path": "管理-成长/超级访谈：对话玉伯/docs/01 - 从页面仔到工程师，前端到底在发挥什么价值.md"
+          }
+        },
+        {
+          "id": "492a58922eb3",
+          "sourceId": "geektime",
+          "name": "程序员的个人财富课",
+          "articleCount": 36,
+          "firstArticle": {
+            "path": "管理-成长/程序员的个人财富课/docs/01 - 财富框架：建立属于你自己的财富双塔.md"
+          }
+        },
+        {
+          "id": "df1c45cf1745",
+          "sourceId": "geektime",
+          "name": "程序员进阶攻略",
+          "articleCount": 65,
+          "firstArticle": {
+            "path": "管理-成长/程序员进阶攻略/docs/01 - 初心：为什么成为一名程序员？.md"
+          }
+        },
+        {
+          "id": "d1ca4634096a",
+          "sourceId": "geektime",
+          "name": "程序员职业规划手册",
+          "articleCount": 23,
+          "firstArticle": {
+            "path": "管理-成长/程序员职业规划手册/docs/“传统行业数字化转型”到底是什么意思？怎么选择行业？.md"
+          }
+        },
+        {
+          "id": "46bc41e9486c",
+          "sourceId": "geektime",
+          "name": "打造爆款短视频",
+          "articleCount": 31,
+          "firstArticle": {
+            "path": "管理-成长/打造爆款短视频/docs/01 - 爆款短视频的底层逻辑：用心拍的短视频为啥没人看？.md"
+          }
+        },
+        {
+          "id": "fbf719bd25c5",
+          "sourceId": "geektime",
+          "name": "大厂晋升指南",
+          "articleCount": 45,
+          "firstArticle": {
+            "path": "管理-成长/大厂晋升指南/docs/01 - 职级体系：你意识到级别鸿沟了吗？.md"
+          }
+        },
+        {
+          "id": "c08eac270efa",
+          "sourceId": "geektime",
+          "name": "动态规划面试宝典",
+          "articleCount": 23,
+          "firstArticle": {
+            "path": "管理-成长/动态规划面试宝典/docs/01 - 硬币找零问题：从贪心算法说起.md"
+          }
+        },
+        {
+          "id": "1c5e2d5d1d11",
+          "sourceId": "geektime",
+          "name": "跟着高手学复盘",
+          "articleCount": 24,
+          "firstArticle": {
+            "path": "管理-成长/跟着高手学复盘/docs/01 - CLAP模型：一个优秀的复盘模型是什么样的？.md"
+          }
+        },
+        {
+          "id": "7defcf3e5b22",
+          "sourceId": "geektime",
+          "name": "工程师个人发展指南",
+          "articleCount": 35,
+          "firstArticle": {
+            "path": "管理-成长/工程师个人发展指南/docs/01-导学：探索规律走可持续发展之路.md"
+          }
+        },
+        {
+          "id": "e31c0dffff27",
+          "sourceId": "geektime",
+          "name": "互联网人的英语私教课",
+          "articleCount": 44,
+          "firstArticle": {
+            "path": "管理-成长/互联网人的英语私教课/docs/01-导读：背景知识对于理解文章究竟有多重要？.md"
+          }
+        },
+        {
+          "id": "8e9553e9bf05",
+          "sourceId": "geektime",
+          "name": "黄勇的OKR实战笔记",
+          "articleCount": 42,
+          "firstArticle": {
+            "path": "管理-成长/黄勇的OKR实战笔记/docs/01 - 你想要快速理解OKR吗？看这篇文章就够了.md"
+          }
+        },
+        {
+          "id": "0c502ea426ef",
+          "sourceId": "geektime",
+          "name": "技术管理案例课",
+          "articleCount": 28,
+          "firstArticle": {
+            "path": "管理-成长/技术管理案例课/docs/01 - 领导力：如何在实践中应用不同层次的领导力？.md"
+          }
+        },
+        {
+          "id": "7a173032f867",
+          "sourceId": "geektime",
+          "name": "技术管理实战36讲",
+          "articleCount": 44,
+          "firstArticle": {
+            "path": "管理-成长/技术管理实战36讲/docs/01  - 多年前的那些工程师都去哪了？.md"
+          }
+        },
+        {
+          "id": "cf1ad7bd459c",
+          "sourceId": "geektime",
+          "name": "技术领导力实战笔记",
+          "articleCount": 266,
+          "firstArticle": {
+            "path": "管理-成长/技术领导力实战笔记/docs/大咖对话 - 不可替代的Java：生态与程序员是两道护城河.md"
+          }
+        },
+        {
+          "id": "0f9c77170b5e",
+          "sourceId": "geektime",
+          "name": "技术领导力实战笔记 2022",
+          "articleCount": 33,
+          "firstArticle": {
+            "path": "管理-成长/技术领导力实战笔记 2022/docs/01-研发团队绩效考核：Leader 如何做到赏罚分明？.md"
+          }
+        },
+        {
+          "id": "121a3ba27ee3",
+          "sourceId": "geektime",
+          "name": "技术面试官识人手册",
+          "articleCount": 19,
+          "firstArticle": {
+            "path": "管理-成长/技术面试官识人手册/docs/01 - 评估体系：公司和团队到底需要怎样的技术人才？.md"
+          }
+        },
+        {
+          "id": "df30f0a79d49",
+          "sourceId": "geektime",
+          "name": "技术与商业案例解读",
+          "articleCount": 164,
+          "firstArticle": {
+            "path": "管理-成长/技术与商业案例解读/docs/001 - 西雅图IT公司之RealNetworks：一个帝国的兴衰（上）.md"
+          }
+        },
+        {
+          "id": "32191b340f9f",
+          "sourceId": "geektime",
+          "name": "讲好故事",
+          "articleCount": 17,
+          "firstArticle": {
+            "path": "管理-成长/讲好故事/docs/01 - 鸡同鸭讲：说者和听者的认知差异.md"
+          }
+        },
+        {
+          "id": "6f15c9929949",
+          "sourceId": "geektime",
+          "name": "雷蓓蓓的项目管理实战课",
+          "articleCount": 29,
+          "firstArticle": {
+            "path": "管理-成长/雷蓓蓓的项目管理实战课/docs/01-角色转变：新手项目管理的三大误区.md"
+          }
+        },
+        {
+          "id": "b82135423663",
+          "sourceId": "geektime",
+          "name": "恋爱必修课",
+          "articleCount": 18,
+          "firstArticle": {
+            "path": "管理-成长/恋爱必修课/docs/01-是终点也是起点：你的恋爱目标是什么？.md"
+          }
+        },
+        {
+          "id": "d432a5159f6d",
+          "sourceId": "geektime",
+          "name": "林外 · 专利写作第一课",
+          "articleCount": 11,
+          "firstArticle": {
+            "path": "管理-成长/林外 · 专利写作第一课/docs/01 - 为什么我推荐互联网人要积极写专利？.md"
+          }
+        },
+        {
+          "id": "75c6129058f6",
+          "sourceId": "geektime",
+          "name": "流程型组织15讲",
+          "articleCount": 19,
+          "firstArticle": {
+            "path": "管理-成长/流程型组织15讲/docs/01 - 拥抱客户还是老板？老板导向型组织的弊端.md"
+          }
+        },
+        {
+          "id": "d64d70dddf78",
+          "sourceId": "geektime",
+          "name": "乔新亮的CTO成长复盘",
+          "articleCount": 29,
+          "firstArticle": {
+            "path": "管理-成长/乔新亮的CTO成长复盘/docs/01 - 职业生涯发展规划：每五年登上一个新台阶.md"
+          }
+        },
+        {
+          "id": "dce02ccb9b6d",
+          "sourceId": "geektime",
+          "name": "去无方向的信",
+          "articleCount": 73,
+          "firstArticle": {
+            "path": "管理-成长/去无方向的信/docs/布步佐的年终小记（2021.3.3-2022.3.3）.md"
+          }
+        },
+        {
+          "id": "fc8446c3ede7",
+          "sourceId": "geektime",
+          "name": "人人都用得上的写作课",
+          "articleCount": 21,
+          "firstArticle": {
+            "path": "管理-成长/人人都用得上的写作课/docs/01-写作前戏：如何让阅读真正帮到写作？.md"
+          }
+        },
+        {
+          "id": "dd2b2f9a019c",
+          "sourceId": "geektime",
+          "name": "如何成为学习高手",
+          "articleCount": 24,
+          "firstArticle": {
+            "path": "管理-成长/如何成为学习高手/docs/01-如何减少对学习的排斥和厌恶心理，使其变得相对愉悦？.md"
+          }
+        },
+        {
+          "id": "6d4d67697f32",
+          "sourceId": "geektime",
+          "name": "如何读懂一首诗",
+          "articleCount": 29,
+          "firstArticle": {
+            "path": "管理-成长/如何读懂一首诗/docs/01-读诗句：溪柴火软蛮毡暖，还是火软溪柴蛮毡暖？.md"
+          }
+        },
+        {
+          "id": "40a1222e349c",
+          "sourceId": "geektime",
+          "name": "如何看懂一幅画",
+          "articleCount": 24,
+          "firstArticle": {
+            "path": "管理-成长/如何看懂一幅画/docs/01 - 历史与流派：关于油画，你必须了解的事儿.md"
+          }
+        },
+        {
+          "id": "a28581443925",
+          "sourceId": "geektime",
+          "name": "摄影入门课",
+          "articleCount": 27,
+          "firstArticle": {
+            "path": "管理-成长/摄影入门课/docs/01 - 影像时代的视觉语言（上）：是什么推动了摄影的发展？.md"
+          }
+        },
+        {
+          "id": "373da9c5bcbb",
+          "sourceId": "geektime",
+          "name": "视觉笔记入门课",
+          "articleCount": 16,
+          "firstArticle": {
+            "path": "管理-成长/视觉笔记入门课/docs/01 - 基础：只用点线面也能搞定视觉笔记.md"
+          }
+        },
+        {
+          "id": "1edccc2f66aa",
+          "sourceId": "geektime",
+          "name": "手把手教你玩音乐",
+          "articleCount": 22,
+          "firstArticle": {
+            "path": "管理-成长/手把手教你玩音乐/docs/01-基本操作：5分钟制作一段专属手机铃声.md"
+          }
+        },
+        {
+          "id": "b7718b558b1b",
+          "sourceId": "geektime",
+          "name": "手机摄影",
+          "articleCount": 16,
+          "firstArticle": {
+            "path": "管理-成长/手机摄影/docs/01-拍摄前，我们需要做什么？.md"
+          }
+        },
+        {
+          "id": "3941281a7f0f",
+          "sourceId": "geektime",
+          "name": "研发效率破局之道",
+          "articleCount": 40,
+          "firstArticle": {
+            "path": "管理-成长/研发效率破局之道/docs/01 - 效能模型：如何系统地理解研发效能？.md"
+          }
+        },
+        {
+          "id": "1a56b7d10c91",
+          "sourceId": "geektime",
+          "name": "职场求生攻略",
+          "articleCount": 34,
+          "firstArticle": {
+            "path": "管理-成长/职场求生攻略/docs/01丨优先级：工作中那么多事情，我要如何安排优先级？.md"
+          }
+        },
+        {
+          "id": "6bf300f4a24d",
+          "sourceId": "geektime",
+          "name": "朱赟的技术管理课",
+          "articleCount": 39,
+          "firstArticle": {
+            "path": "管理-成长/朱赟的技术管理课/docs/01 - 职场分身术：从给答案到做引导.md"
+          }
+        },
+        {
+          "id": "e05008ca9d8a",
+          "sourceId": "geektime",
+          "name": "B端体验设计入门课",
+          "articleCount": 22,
+          "firstArticle": {
+            "path": "管理-成长/B端体验设计入门课/docs/01-我们说的“B端”到底是什么？.md"
+          }
+        }
+      ]
+    },
+    {
+      "id": "computer-science",
+      "name": "计算机基础",
+      "courseCount": 22,
+      "articleCount": 1050,
+      "courses": [
+        {
+          "id": "6068a0ea2bfe",
+          "sourceId": "geektime",
+          "name": "编译原理实战课",
+          "articleCount": 55,
+          "firstArticle": {
+            "path": "计算机基础/编译原理实战课/docs/01 - 编译的全过程都悄悄做了哪些事情？.md"
+          }
+        },
+        {
+          "id": "9db57bf1d14e",
+          "sourceId": "geektime",
+          "name": "编译原理之美",
+          "articleCount": 45,
+          "firstArticle": {
+            "path": "计算机基础/编译原理之美/docs/01 - 理解代码：编译器的前端技术.md"
+          }
+        },
+        {
+          "id": "73d594aecf67",
+          "sourceId": "geektime",
+          "name": "操作系统实战45讲",
+          "articleCount": 60,
+          "firstArticle": {
+            "path": "计算机基础/操作系统实战45讲/docs/01 - 程序的运行过程：从代码到机器运行.md"
+          }
+        },
+        {
+          "id": "0d7242addbca",
+          "sourceId": "geektime",
+          "name": "程序员的数学基础课",
+          "articleCount": 58,
+          "firstArticle": {
+            "path": "计算机基础/程序员的数学基础课/docs/01 - 二进制：不了解计算机的源头，你学什么编程.md"
+          }
+        },
+        {
+          "id": "a9f4ba4e5a2b",
+          "sourceId": "geektime",
+          "name": "代码精进之路",
+          "articleCount": 48,
+          "firstArticle": {
+            "path": "计算机基础/代码精进之路/docs/01 - 从条件运算符说起，反思什么是好代码.md"
+          }
+        },
+        {
+          "id": "e7d54a3f2ae7",
+          "sourceId": "geektime",
+          "name": "代码之丑",
+          "articleCount": 25,
+          "firstArticle": {
+            "path": "计算机基础/代码之丑/docs/01 - 缺乏业务含义的命名：如何精准命名？.md"
+          }
+        },
+        {
+          "id": "b4110800d70a",
+          "sourceId": "geektime",
+          "name": "计算机基础实战课",
+          "articleCount": 57,
+          "firstArticle": {
+            "path": "计算机基础/计算机基础实战课/docs/01-CISC & RISC：从何而来，何至于此.md"
+          }
+        },
+        {
+          "id": "a8cfa58791ca",
+          "sourceId": "geektime",
+          "name": "快速上手C++数据结构与算法",
+          "articleCount": 55,
+          "firstArticle": {
+            "path": "计算机基础/快速上手C++数据结构与算法/docs/01-编程环境：工欲善其事，必先利其器.md"
+          }
+        },
+        {
+          "id": "2b4c8a719bdd",
+          "sourceId": "geektime",
+          "name": "趣谈网络协议",
+          "articleCount": 51,
+          "firstArticle": {
+            "path": "计算机基础/趣谈网络协议/docs/第1讲 - 为什么要学习网络协议？.md"
+          }
+        },
+        {
+          "id": "7ef510948703",
+          "sourceId": "geektime",
+          "name": "趣谈Linux操作系统",
+          "articleCount": 72,
+          "firstArticle": {
+            "path": "计算机基础/趣谈Linux操作系统/docs/“趣谈Linux操作系统”食用指南.md"
+          }
+        },
+        {
+          "id": "ddf325499564",
+          "sourceId": "geektime",
+          "name": "软件工程之美",
+          "articleCount": 55,
+          "firstArticle": {
+            "path": "计算机基础/软件工程之美/docs/“一问一答”第1期 - 30个软件开发常见问题解决策略.md"
+          }
+        },
+        {
+          "id": "26c6653e139f",
+          "sourceId": "geektime",
+          "name": "软件设计之美",
+          "articleCount": 43,
+          "firstArticle": {
+            "path": "计算机基础/软件设计之美/docs/01 - 软件设计到底是什么？.md"
+          }
+        },
+        {
+          "id": "9d2dacd93184",
+          "sourceId": "geektime",
+          "name": "深入浅出计算机组成原理",
+          "articleCount": 62,
+          "firstArticle": {
+            "path": "计算机基础/深入浅出计算机组成原理/docs/01 - 冯·诺依曼体系结构：计算机组成的金字塔.md"
+          }
+        },
+        {
+          "id": "532061295f96",
+          "sourceId": "geektime",
+          "name": "手把手带你写一门编程语言",
+          "articleCount": 49,
+          "firstArticle": {
+            "path": "计算机基础/手把手带你写一门编程语言/docs/“他山之石”-Sugar：这门课你可以试试这么学.md"
+          }
+        },
+        {
+          "id": "c72529950296",
+          "sourceId": "geektime",
+          "name": "数据结构与算法之美",
+          "articleCount": 81,
+          "firstArticle": {
+            "path": "计算机基础/数据结构与算法之美/docs/《数据结构与算法之美》学习指导手册.md"
+          }
+        },
+        {
+          "id": "6621f2b4fa99",
+          "sourceId": "geektime",
+          "name": "透视HTTP协议",
+          "articleCount": 48,
+          "firstArticle": {
+            "path": "计算机基础/透视HTTP协议/docs/01 - 时势与英雄：HTTP的前世今生.md"
+          }
+        },
+        {
+          "id": "574c18bab4ee",
+          "sourceId": "geektime",
+          "name": "业务开发算法50讲",
+          "articleCount": 51,
+          "firstArticle": {
+            "path": "计算机基础/业务开发算法50讲/docs/01-动态数组：按需分配的vector为什么要二倍扩容？.md"
+          }
+        },
+        {
+          "id": "d7bbf59d609e",
+          "sourceId": "geektime",
+          "name": "正则表达式入门课",
+          "articleCount": 18,
+          "firstArticle": {
+            "path": "计算机基础/正则表达式入门课/docs/01 - 元字符：如何巧妙记忆正则表达式的基本元件？.md"
+          }
+        },
+        {
+          "id": "c57e4808d722",
+          "sourceId": "geektime",
+          "name": "重学线性代数",
+          "articleCount": 19,
+          "firstArticle": {
+            "path": "计算机基础/重学线性代数/docs/01 - 导读：如何在机器学习中运用线性代数工具？.md"
+          }
+        },
+        {
+          "id": "46568d279ad5",
+          "sourceId": "geektime",
+          "name": "MySQL 必知必会",
+          "articleCount": 36,
+          "firstArticle": {
+            "path": "计算机基础/MySQL 必知必会/docs/01 - 存储：一个完整的数据存储过程是怎样的？.md"
+          }
+        },
+        {
+          "id": "76be811acff6",
+          "sourceId": "geektime",
+          "name": "Python自动化办公实战课",
+          "articleCount": 37,
+          "firstArticle": {
+            "path": "计算机基础/Python自动化办公实战课/docs/01 - 拆分与合并：如何快速地批量处理内容相似的Excel？.md"
+          }
+        },
+        {
+          "id": "47852c4cf66d",
+          "sourceId": "geektime",
+          "name": "Vim 实用技巧必知必会",
+          "articleCount": 25,
+          "firstArticle": {
+            "path": "计算机基础/Vim 实用技巧必知必会/docs/01-各平台下的 Vim 安装方法：上路前准备好你的宝马.md"
+          }
+        }
+      ]
+    },
+    {
+      "id": "operations-testing",
+      "name": "运维-测试",
+      "courseCount": 29,
+      "articleCount": 990,
+      "courses": [
+        {
+          "id": "5bfba92847ac",
+          "sourceId": "geektime",
+          "name": "安全攻防技能30讲",
+          "articleCount": 46,
+          "firstArticle": {
+            "path": "运维-测试/安全攻防技能30讲/docs/01 - 安全的本质：数据被窃取后，你能意识到问题来源吗？.md"
+          }
+        },
+        {
+          "id": "fbbb5f3d68c0",
+          "sourceId": "geektime",
+          "name": "程序员的测试课",
+          "articleCount": 24,
+          "firstArticle": {
+            "path": "运维-测试/程序员的测试课/docs/01 - 实战：实现一个 ToDo 的应用（上）.md"
+          }
+        },
+        {
+          "id": "9e10dd24570c",
+          "sourceId": "geektime",
+          "name": "持续交付36讲",
+          "articleCount": 42,
+          "firstArticle": {
+            "path": "运维-测试/持续交付36讲/docs/01 - 持续交付到底有什么价值？.md"
+          }
+        },
+        {
+          "id": "4ac83af3dbff",
+          "sourceId": "geektime",
+          "name": "反爬虫兵法演绎20讲",
+          "articleCount": 29,
+          "firstArticle": {
+            "path": "运维-测试/反爬虫兵法演绎20讲/docs/01 - 爬虫需求的诞生：我们是正经的软件工程师.md"
+          }
+        },
+        {
+          "id": "52c0a5c1a0e2",
+          "sourceId": "geektime",
+          "name": "高楼的性能工程实战课",
+          "articleCount": 35,
+          "firstArticle": {
+            "path": "运维-测试/高楼的性能工程实战课/docs/01 - 性能工程：为什么很多性能测试人员无法对性能结果负责？.md"
+          }
+        },
+        {
+          "id": "00645a6f625f",
+          "sourceId": "geektime",
+          "name": "接口测试入门课",
+          "articleCount": 12,
+          "firstArticle": {
+            "path": "运维-测试/接口测试入门课/docs/01 - 基础：跳出细节看全局，接口测试到底是在做什么？.md"
+          }
+        },
+        {
+          "id": "6ff9f3eb7867",
+          "sourceId": "geektime",
+          "name": "零基础拿下云原生CKA认证",
+          "articleCount": 23,
+          "firstArticle": {
+            "path": "运维-测试/零基础拿下云原生CKA认证/docs/01-课前准备：Docker容器技术.md"
+          }
+        },
+        {
+          "id": "9d5eb9a97a3e",
+          "sourceId": "geektime",
+          "name": "容器实战高手课",
+          "articleCount": 31,
+          "firstArticle": {
+            "path": "运维-测试/容器实战高手课/docs/01 - 认识容器：容器的基本操作和实现原理.md"
+          }
+        },
+        {
+          "id": "fb7905adeca1",
+          "sourceId": "geektime",
+          "name": "软件测试52讲",
+          "articleCount": 63,
+          "firstArticle": {
+            "path": "运维-测试/软件测试52讲/docs/01 - 你真的懂测试吗？从“用户登录”测试谈起.md"
+          }
+        },
+        {
+          "id": "725f5195f43b",
+          "sourceId": "geektime",
+          "name": "深入剖析Kubernetes",
+          "articleCount": 57,
+          "firstArticle": {
+            "path": "运维-测试/深入剖析Kubernetes/docs/01 - 预习篇 · 小鲸鱼大事记（一）：初出茅庐.md"
+          }
+        },
+        {
+          "id": "26250ebde213",
+          "sourceId": "geektime",
+          "name": "深入浅出云计算",
+          "articleCount": 19,
+          "firstArticle": {
+            "path": "运维-测试/深入浅出云计算/docs/01 - 区域和可用区：欢迎来到云端数据中心.md"
+          }
+        },
+        {
+          "id": "1fe8a48d996e",
+          "sourceId": "geektime",
+          "name": "说透敏捷",
+          "articleCount": 13,
+          "firstArticle": {
+            "path": "运维-测试/说透敏捷/docs/01 - 灵魂拷问：如何利用敏捷思维更好地解决实际问题？.md"
+          }
+        },
+        {
+          "id": "897be7b4afa3",
+          "sourceId": "geektime",
+          "name": "网络排查案例课",
+          "articleCount": 39,
+          "firstArticle": {
+            "path": "运维-测试/网络排查案例课/docs/01 - 网络模型和工具：网络为什么要分层？.md"
+          }
+        },
+        {
+          "id": "7b19f7fbd677",
+          "sourceId": "geektime",
+          "name": "性能测试实战30讲",
+          "articleCount": 37,
+          "firstArticle": {
+            "path": "运维-测试/性能测试实战30讲/docs/01丨性能综述：性能测试的概念到底是什么？.md"
+          }
+        },
+        {
+          "id": "e257f7b7f9c4",
+          "sourceId": "geektime",
+          "name": "性能优化高手课",
+          "articleCount": 31,
+          "firstArticle": {
+            "path": "运维-测试/性能优化高手课/docs/01 - 性能建模设计：如何满足软件设计中的性能需求？.md"
+          }
+        },
+        {
+          "id": "4e6a1dcd4af4",
+          "sourceId": "geektime",
+          "name": "云原生基础架构实战课",
+          "articleCount": 24,
+          "firstArticle": {
+            "path": "运维-测试/云原生基础架构实战课/docs/01-发展历程：IaC过去、现在与未来展望.md"
+          }
+        },
+        {
+          "id": "d59c0743c2c2",
+          "sourceId": "geektime",
+          "name": "运维监控系统实战笔记",
+          "articleCount": 31,
+          "firstArticle": {
+            "path": "运维-测试/运维监控系统实战笔记/docs/01-背景信息：监控需求以及开源方案的横评对比.md"
+          }
+        },
+        {
+          "id": "20774cc8bba9",
+          "sourceId": "geektime",
+          "name": "赵成的运维体系管理课",
+          "articleCount": 49,
+          "firstArticle": {
+            "path": "运维-测试/赵成的运维体系管理课/docs/01 - 为什么Netflix没有运维岗位？.md"
+          }
+        },
+        {
+          "id": "360386ccb318",
+          "sourceId": "geektime",
+          "name": "自动化测试高手课",
+          "articleCount": 34,
+          "firstArticle": {
+            "path": "运维-测试/自动化测试高手课/docs/01-ROI价值内核：自动化测试的价值可以量化么？.md"
+          }
+        },
+        {
+          "id": "2399082b06fd",
+          "sourceId": "geektime",
+          "name": "AI重塑云原生应用开发实战",
+          "articleCount": 29,
+          "firstArticle": {
+            "path": "运维-测试/AI重塑云原生应用开发实战/docs/01-Agent的前辈：Function Calling.md"
+          }
+        },
+        {
+          "id": "2c358c2060e8",
+          "sourceId": "geektime",
+          "name": "DevOps实战笔记",
+          "articleCount": 41,
+          "firstArticle": {
+            "path": "运维-测试/DevOps实战笔记/docs/01 - DevOps的“定义”：DevOps究竟要解决什么问题？.md"
+          }
+        },
+        {
+          "id": "c07272157601",
+          "sourceId": "geektime",
+          "name": "eBPF核心技术与实战",
+          "articleCount": 31,
+          "firstArticle": {
+            "path": "运维-测试/eBPF核心技术与实战/docs/01-技术概览：eBPF的发展历程及工作原理.md"
+          }
+        },
+        {
+          "id": "f92055c22dc3",
+          "sourceId": "geektime",
+          "name": "Kubernetes入门实战课",
+          "articleCount": 41,
+          "firstArticle": {
+            "path": "运维-测试/Kubernetes入门实战课/docs/01-初识容器：万事开头难.md"
+          }
+        },
+        {
+          "id": "1f60a8f1f09a",
+          "sourceId": "geektime",
+          "name": "Linux内核技术实战课",
+          "articleCount": 26,
+          "firstArticle": {
+            "path": "运维-测试/Linux内核技术实战课/docs/01 基础篇 - 如何用数据观测Page Cache？.md"
+          }
+        },
+        {
+          "id": "d706c26c6c14",
+          "sourceId": "geektime",
+          "name": "Linux性能优化实战",
+          "articleCount": 65,
+          "firstArticle": {
+            "path": "运维-测试/Linux性能优化实战/docs/01 - 如何学习Linux性能优化？.md"
+          }
+        },
+        {
+          "id": "5e1835cc71fc",
+          "sourceId": "geektime",
+          "name": "Serverless进阶实战课",
+          "articleCount": 29,
+          "firstArticle": {
+            "path": "运维-测试/Serverless进阶实战课/docs/01 - 生命周期：函数计算的基本流程是如何执行的？.md"
+          }
+        },
+        {
+          "id": "53aad2a55b7a",
+          "sourceId": "geektime",
+          "name": "SRE实践：服务可靠性案例课",
+          "articleCount": 32,
+          "firstArticle": {
+            "path": "运维-测试/SRE实践：服务可靠性案例课/docs/01-监控：如何从业务视角出发添加监控？.md"
+          }
+        },
+        {
+          "id": "e2a9cb1b1de9",
+          "sourceId": "geektime",
+          "name": "SRE实战手册",
+          "articleCount": 13,
+          "firstArticle": {
+            "path": "运维-测试/SRE实战手册/docs/01-SRE迷思：无所不能的角色？还是运维的升级？.md"
+          }
+        },
+        {
+          "id": "4969ef1edc97",
+          "sourceId": "geektime",
+          "name": "Web漏洞挖掘实战",
+          "articleCount": 44,
+          "firstArticle": {
+            "path": "运维-测试/Web漏洞挖掘实战/docs/01-失效的访问控制：攻击者如何获取其他用户信息？.md"
+          }
+        }
+      ]
+    },
+    {
+      "id": "nuggets-booklet",
+      "name": "掘金小册",
+      "courseCount": 101,
+      "articleCount": 3285,
+      "courses": [
+        {
+          "id": "923479fad623",
+          "sourceId": "nuggets",
+          "name": "10+ 代码案例掌握 NodeJS 核心基础知识",
+          "articleCount": 14,
+          "firstArticle": {
+            "path": "10+ 代码案例掌握 NodeJS 核心基础知识/0开篇介绍：Node 10 年大跃进与当下在互联网研发中的地位.md"
+          }
+        },
+        {
+          "id": "ff76f505cd6f",
+          "sourceId": "nuggets",
+          "name": "程序员的必修课",
+          "articleCount": 35,
+          "firstArticle": {
+            "path": "程序员的必修课/第01章—写在前面的话.md"
+          }
+        },
+        {
+          "id": "e21a43f7f659",
+          "sourceId": "nuggets",
+          "name": "程序员职业小白书 —— 如何规划和经营你的职业",
+          "articleCount": 14,
+          "firstArticle": {
+            "path": "程序员职业小白书 —— 如何规划和经营你的职业/常见问题解答.md"
+          }
+        },
+        {
+          "id": "ad3e9910794e",
+          "sourceId": "nuggets",
+          "name": "初探前端工程化",
+          "articleCount": 18,
+          "firstArticle": {
+            "path": "初探前端工程化/1.开篇词：什么是前端工程？.md"
+          }
+        },
+        {
+          "id": "a34c85066dff",
+          "sourceId": "nuggets",
+          "name": "从 0 打造通用型低代码产品",
+          "articleCount": 53,
+          "firstArticle": {
+            "path": "从 0 打造通用型低代码产品/1.序章：前端的价值.md"
+          }
+        },
+        {
+          "id": "b5e03fdad4cc",
+          "sourceId": "nuggets",
+          "name": "从 0 到 1 落地前端工程化",
+          "articleCount": 23,
+          "firstArticle": {
+            "path": "从 0 到 1 落地前端工程化/1.开篇：落地前端工程化，告别纸上谈兵！.md"
+          }
+        },
+        {
+          "id": "26bda639c919",
+          "sourceId": "nuggets",
+          "name": "从0到1实现一套CI_CD流程",
+          "articleCount": 16,
+          "firstArticle": {
+            "path": "从0到1实现一套CI_CD流程/1 前言：什么是 CICD & 为什么要学 CICD.md"
+          }
+        },
+        {
+          "id": "303dbe126bb5",
+          "sourceId": "nuggets",
+          "name": "从零开发H5可视化搭建项目",
+          "articleCount": 19,
+          "firstArticle": {
+            "path": "从零开发H5可视化搭建项目/1.前言：可视化搭建诞生背景.md"
+          }
+        },
+        {
+          "id": "5f516f1947b1",
+          "sourceId": "nuggets",
+          "name": "从前端到 AI：LangChain.js 入门和实战_online",
+          "articleCount": 24,
+          "firstArticle": {
+            "path": "从前端到 AI：LangChain.js 入门和实战_online/1-开篇：大模型时代，如何跟上节奏？.md"
+          }
+        },
+        {
+          "id": "ff0dca506c21",
+          "sourceId": "nuggets",
+          "name": "从前端到全栈",
+          "articleCount": 36,
+          "firstArticle": {
+            "path": "从前端到全栈/1 什么是 Node.js？.md"
+          }
+        },
+        {
+          "id": "e11351b5bf1d",
+          "sourceId": "nuggets",
+          "name": "大厂 H5 开发实战手册",
+          "articleCount": 11,
+          "firstArticle": {
+            "path": "大厂 H5 开发实战手册/0大厂 H5 开发概述.md"
+          }
+        },
+        {
+          "id": "72e4e12a2a14",
+          "sourceId": "nuggets",
+          "name": "代码案例掌握 NodeJS 核心基础知识",
+          "articleCount": 14,
+          "firstArticle": {
+            "path": "代码案例掌握 NodeJS 核心基础知识/0开篇介绍：Node 10 年大跃进与当下在互联网研发中的地位.md"
+          }
+        },
+        {
+          "id": "e0aa0a2e0dcc",
+          "sourceId": "nuggets",
+          "name": "基于 Go 语言构建企业级的 RESTful API 服务",
+          "articleCount": 27,
+          "firstArticle": {
+            "path": "基于 Go 语言构建企业级的 RESTful API 服务/0本小册所实现的 API 功能.md"
+          }
+        },
+        {
+          "id": "7651091bacd5",
+          "sourceId": "nuggets",
+          "name": "基于 hapi 的 Node.js 小程序后端开发实践指南",
+          "articleCount": 17,
+          "firstArticle": {
+            "path": "基于 hapi 的 Node.js 小程序后端开发实践指南/0开篇： 小程序的 Node.js 全栈之路【微信ETH22009】.md"
+          }
+        },
+        {
+          "id": "acad87009572",
+          "sourceId": "nuggets",
+          "name": "基于 JavaScript 开发灵活的数据应用",
+          "articleCount": 20,
+          "firstArticle": {
+            "path": "基于 JavaScript 开发灵活的数据应用/第 1 节 基于 JavaScript 的数据应用开发概述.md"
+          }
+        },
+        {
+          "id": "be9da3b694d6",
+          "sourceId": "nuggets",
+          "name": "基于 Python 轻松自建 App 服务器",
+          "articleCount": 14,
+          "firstArticle": {
+            "path": "基于 Python 轻松自建 App 服务器/0App 与后端服务器通信方法简介.md"
+          }
+        },
+        {
+          "id": "ade7d3578a1a",
+          "sourceId": "nuggets",
+          "name": "基于 Python 实现微信公众号爬虫",
+          "articleCount": 11,
+          "firstArticle": {
+            "path": "基于 Python 实现微信公众号爬虫/0微信公众号爬虫的基本原理.md"
+          }
+        },
+        {
+          "id": "72cc534f6be6",
+          "sourceId": "nuggets",
+          "name": "基于 Stencil 构建 Web Components 组件库",
+          "articleCount": 20,
+          "firstArticle": {
+            "path": "基于 Stencil 构建 Web Components 组件库/1.为什么 Web Components 会成为未来组件化的发展趋势？.md"
+          }
+        },
+        {
+          "id": "00af45a49ddc",
+          "sourceId": "nuggets",
+          "name": "基于 ThreeJS 框架的魔方微信小游戏实践",
+          "articleCount": 10,
+          "firstArticle": {
+            "path": "基于 ThreeJS 框架的魔方微信小游戏实践/1.ThreeJS基础.md"
+          }
+        },
+        {
+          "id": "71873154c4ab",
+          "sourceId": "nuggets",
+          "name": "基于 Vite 的组件库工程化实战",
+          "articleCount": 22,
+          "firstArticle": {
+            "path": "基于 Vite 的组件库工程化实战/1.开篇词：学习前端工程化就从搭建组件库开始.md"
+          }
+        },
+        {
+          "id": "c268546f4489",
+          "sourceId": "nuggets",
+          "name": "技术人求职指南",
+          "articleCount": 26,
+          "firstArticle": {
+            "path": "技术人求职指南/第01章—小册开场篇：求职市场凛冬已至，技术人该如何杀出重围.md"
+          }
+        },
+        {
+          "id": "0209c15d373d",
+          "sourceId": "nuggets",
+          "name": "技术写作指南",
+          "articleCount": 12,
+          "firstArticle": {
+            "path": "技术写作指南/1.开篇：十年技术写作者的收益“清单”.md"
+          }
+        },
+        {
+          "id": "500effac8f2d",
+          "sourceId": "nuggets",
+          "name": "掘金小册 Nest 通关秘籍  最新205章",
+          "articleCount": 205,
+          "firstArticle": {
+            "path": "掘金小册 Nest 通关秘籍  最新205章/第01章—开篇词.md"
+          }
+        },
+        {
+          "id": "fb24f8b6112c",
+          "sourceId": "nuggets",
+          "name": "开发者必备的 Docker 实践指南",
+          "articleCount": 21,
+          "firstArticle": {
+            "path": "开发者必备的 Docker 实践指南/安装运行：搭建 Docker 运行环境.md"
+          }
+        },
+        {
+          "id": "ebe07cee2172",
+          "sourceId": "nuggets",
+          "name": "零基础通关Go语言",
+          "articleCount": 37,
+          "firstArticle": {
+            "path": "零基础通关Go语言/第01章—开篇词｜Go语言就是在“面向未来”学习.md"
+          }
+        },
+        {
+          "id": "4dbdb20113da",
+          "sourceId": "nuggets",
+          "name": "你不知道的 Chrome 调试技巧",
+          "articleCount": 18,
+          "firstArticle": {
+            "path": "你不知道的 Chrome 调试技巧/1.写在前面.md"
+          }
+        },
+        {
+          "id": "8c72ed580d85",
+          "sourceId": "nuggets",
+          "name": "剖析 Vue.js 内部运行机制",
+          "articleCount": 9,
+          "firstArticle": {
+            "path": "剖析 Vue.js 内部运行机制/1.Vue.js 运行机制全局概览.md"
+          }
+        },
+        {
+          "id": "8366c7735366",
+          "sourceId": "nuggets",
+          "name": "前端调试通关秘籍",
+          "articleCount": 122,
+          "firstArticle": {
+            "path": "前端调试通关秘籍/1.如何阅读本小册？.md"
+          }
+        },
+        {
+          "id": "1211f257e11f",
+          "sourceId": "nuggets",
+          "name": "前端工程师进阶 10 日谈",
+          "articleCount": 11,
+          "firstArticle": {
+            "path": "前端工程师进阶 10 日谈/1.第一日：遵守各司其责原则.md"
+          }
+        },
+        {
+          "id": "716bbcdd914a",
+          "sourceId": "nuggets",
+          "name": "前端工程体验优化实战",
+          "articleCount": 20,
+          "firstArticle": {
+            "path": "前端工程体验优化实战/第01章—你做的前端优化都错了-数据驱动、指标先行.md"
+          }
+        },
+        {
+          "id": "d56fbb1d20a4",
+          "sourceId": "nuggets",
+          "name": "前端缓存技术与方案解析",
+          "articleCount": 13,
+          "firstArticle": {
+            "path": "前端缓存技术与方案解析/1.开篇：小册背景及前言.md"
+          }
+        },
+        {
+          "id": "37c0bdc2ff11",
+          "sourceId": "nuggets",
+          "name": "前端面试之道",
+          "articleCount": 36,
+          "firstArticle": {
+            "path": "前端面试之道/1.小册食用指南.md"
+          }
+        },
+        {
+          "id": "8482a4f36fe4",
+          "sourceId": "nuggets",
+          "name": "前端面试之道 2",
+          "articleCount": 36,
+          "firstArticle": {
+            "path": "前端面试之道 2/0小册食用指南.md"
+          }
+        },
+        {
+          "id": "52b67d33236a",
+          "sourceId": "nuggets",
+          "name": "前端面试之道2",
+          "articleCount": 37,
+          "firstArticle": {
+            "path": "前端面试之道2/0小册食用指南.md"
+          }
+        },
+        {
+          "id": "13385e802af0",
+          "sourceId": "nuggets",
+          "name": "前端算法与数据结构面试：底层逻辑解读与大厂真题训练",
+          "articleCount": 28,
+          "firstArticle": {
+            "path": "前端算法与数据结构面试：底层逻辑解读与大厂真题训练/1.面试总有套路，算法不是玄学——写给普通人的前端算法面试攻略.md"
+          }
+        },
+        {
+          "id": "399c8f1ab003",
+          "sourceId": "nuggets",
+          "name": "前端性能优化原理与实践",
+          "articleCount": 15,
+          "firstArticle": {
+            "path": "前端性能优化原理与实践/1.开篇：知识体系与小册格局.md"
+          }
+        },
+        {
+          "id": "23ab7eb5a544",
+          "sourceId": "nuggets",
+          "name": "前端依赖治理：代码分析工具开发实战",
+          "articleCount": 17,
+          "firstArticle": {
+            "path": "前端依赖治理：代码分析工具开发实战/1.开篇词：我们为什么需要代码分析？.md"
+          }
+        },
+        {
+          "id": "16c11030d3bb",
+          "sourceId": "nuggets",
+          "name": "前端自动化测试精讲",
+          "articleCount": 18,
+          "firstArticle": {
+            "path": "前端自动化测试精讲/1.开篇词：如何写前端的自动化测试？.md"
+          }
+        },
+        {
+          "id": "6aad165d9e77",
+          "sourceId": "nuggets",
+          "name": "趣学 Node.js",
+          "articleCount": 19,
+          "firstArticle": {
+            "path": "趣学 Node.js/0-开篇：Node.js 是个啥？.md"
+          }
+        },
+        {
+          "id": "6fec9a8362f7",
+          "sourceId": "nuggets",
+          "name": "人人都能看懂的 ChatGPT 原理课",
+          "articleCount": 14,
+          "firstArticle": {
+            "path": "人人都能看懂的 ChatGPT 原理课/1.概览：ChatGPT 与自然语言处理.md"
+          }
+        },
+        {
+          "id": "a7e8d24796f0",
+          "sourceId": "nuggets",
+          "name": "如何使用 Canvas 制作出炫酷的网页背景特效",
+          "articleCount": 9,
+          "firstArticle": {
+            "path": "如何使用 Canvas 制作出炫酷的网页背景特效/0什么是 Canvas .md"
+          }
+        },
+        {
+          "id": "6b16fe69922f",
+          "sourceId": "nuggets",
+          "name": "如何使用掘金社区",
+          "articleCount": 23,
+          "firstArticle": {
+            "path": "如何使用掘金社区/1.了解掘金：❓ 为什么做掘金社区.md"
+          }
+        },
+        {
+          "id": "79bd37a3d318",
+          "sourceId": "nuggets",
+          "name": "如何写出高质量的前端代码",
+          "articleCount": 29,
+          "firstArticle": {
+            "path": "如何写出高质量的前端代码/1-小册介绍.md"
+          }
+        },
+        {
+          "id": "59a0cf6c48c3",
+          "sourceId": "nuggets",
+          "name": "深入浅出 SVG",
+          "articleCount": 43,
+          "firstArticle": {
+            "path": "深入浅出 SVG/1-开篇：神奇的 SVG 技术之旅.md"
+          }
+        },
+        {
+          "id": "0c9eedcfb1ff",
+          "sourceId": "nuggets",
+          "name": "深入浅出 Vite",
+          "articleCount": 28,
+          "firstArticle": {
+            "path": "深入浅出 Vite/1.开篇 ：让 Vite 助力你的前端工程化之路.md"
+          }
+        },
+        {
+          "id": "5c944b7a41df",
+          "sourceId": "nuggets",
+          "name": "深入浅出微前端",
+          "articleCount": 46,
+          "firstArticle": {
+            "path": "深入浅出微前端/1.前言：阅读指南.md"
+          }
+        },
+        {
+          "id": "d89785175e80",
+          "sourceId": "nuggets",
+          "name": "使用 webpack 定制前端开发环境",
+          "articleCount": 2,
+          "firstArticle": {
+            "path": "使用 webpack 定制前端开发环境/7.使用 plugin.md"
+          }
+        },
+        {
+          "id": "ac4f03e48a5a",
+          "sourceId": "nuggets",
+          "name": "使用 webpack 定制前端开发环境1",
+          "articleCount": 16,
+          "firstArticle": {
+            "path": "使用 webpack 定制前端开发环境1/0webpack 的概念和基础使用.md"
+          }
+        },
+        {
+          "id": "9fe7cc595dd6",
+          "sourceId": "nuggets",
+          "name": "说透Redis7",
+          "articleCount": 64,
+          "firstArticle": {
+            "path": "说透Redis7/第01章—开篇词：如何才能精通Redis？.md"
+          }
+        },
+        {
+          "id": "2fe05aa0a3da",
+          "sourceId": "nuggets",
+          "name": "玩转 React Hooks",
+          "articleCount": 20,
+          "firstArticle": {
+            "path": "玩转 React Hooks/1.预习篇｜React 组件的通信和强化方式.md"
+          }
+        },
+        {
+          "id": "204dea324632",
+          "sourceId": "nuggets",
+          "name": "玩转CSS艺术之美",
+          "articleCount": 16,
+          "firstArticle": {
+            "path": "玩转CSS艺术之美/1.准备篇：学前准备.md"
+          }
+        },
+        {
+          "id": "ae5740e790d6",
+          "sourceId": "nuggets",
+          "name": "微信小程序开发入门：从 0 到 1 实现天气小程序",
+          "articleCount": 13,
+          "firstArticle": {
+            "path": "微信小程序开发入门：从 0 到 1 实现天气小程序/0开篇：微信小程序概述.md"
+          }
+        },
+        {
+          "id": "b659cb7e2fff",
+          "sourceId": "nuggets",
+          "name": "现代CSS",
+          "articleCount": 47,
+          "firstArticle": {
+            "path": "现代CSS/第01章—CSS的父选择器：：has().md"
+          }
+        },
+        {
+          "id": "3aa3fbe4f32b",
+          "sourceId": "nuggets",
+          "name": "现代web布局",
+          "articleCount": 28,
+          "firstArticle": {
+            "path": "现代web布局/01.md"
+          }
+        },
+        {
+          "id": "2eee98b5ed71",
+          "sourceId": "nuggets",
+          "name": "小程序云开发入门到实践",
+          "articleCount": 94,
+          "firstArticle": {
+            "path": "小程序云开发入门到实践/1.云开发简介.md"
+          }
+        },
+        {
+          "id": "b241f456174b",
+          "sourceId": "nuggets",
+          "name": "用 npm script 打造超溜的前端工作流",
+          "articleCount": 15,
+          "firstArticle": {
+            "path": "用 npm script 打造超溜的前端工作流/0为什么选择 npm script.md"
+          }
+        },
+        {
+          "id": "9ae31dd0d639",
+          "sourceId": "nuggets",
+          "name": "源码共读第一期｜掘金会员专属活动",
+          "articleCount": 33,
+          "firstArticle": {
+            "path": "源码共读第一期｜掘金会员专属活动/1.后端｜Netty 学习 第一周.md"
+          }
+        },
+        {
+          "id": "a3afb98039e3",
+          "sourceId": "nuggets",
+          "name": "AI 大模型之美",
+          "articleCount": 30,
+          "firstArticle": {
+            "path": "AI 大模型之美/01｜重新出发，让我们学会和AI说话.md"
+          }
+        },
+        {
+          "id": "c30330780395",
+          "sourceId": "nuggets",
+          "name": "Babel 插件通关秘籍",
+          "articleCount": 36,
+          "firstArticle": {
+            "path": "Babel 插件通关秘籍/1.Babel 的介绍.md"
+          }
+        },
+        {
+          "id": "548640fb35bb",
+          "sourceId": "nuggets",
+          "name": "Coze 从入门到实践：全面掌握 AI 智能体",
+          "articleCount": 33,
+          "firstArticle": {
+            "path": "Coze 从入门到实践：全面掌握 AI 智能体/0-小册介绍.md"
+          }
+        },
+        {
+          "id": "d1c87b5b1342",
+          "sourceId": "nuggets",
+          "name": "Electron + React 从 0 到 1 实现简历平台实战",
+          "articleCount": 31,
+          "firstArticle": {
+            "path": "Electron + React 从 0 到 1 实现简历平台实战/1.开篇-技术选型和项目结构.md"
+          }
+        },
+        {
+          "id": "26d4c9433b5b",
+          "sourceId": "nuggets",
+          "name": "Electron + Vue 3 桌面应用开发",
+          "articleCount": 17,
+          "firstArticle": {
+            "path": "Electron + Vue 3 桌面应用开发/1.开篇：简介与主旨.md"
+          }
+        },
+        {
+          "id": "fa6860333138",
+          "sourceId": "nuggets",
+          "name": "Electron 应用开发实践指南",
+          "articleCount": 25,
+          "firstArticle": {
+            "path": "Electron 应用开发实践指南/第01章—开篇：Electron带来的边界扩展.md"
+          }
+        },
+        {
+          "id": "eb629231bf65",
+          "sourceId": "nuggets",
+          "name": "Git 原理详解及实用指南",
+          "articleCount": 22,
+          "firstArticle": {
+            "path": "Git 原理详解及实用指南/0什么是版本控制系统（VCS）.md"
+          }
+        },
+        {
+          "id": "a0626f4bc9f5",
+          "sourceId": "nuggets",
+          "name": "JavaScript 函数式编程实践指南",
+          "articleCount": 31,
+          "firstArticle": {
+            "path": "JavaScript 函数式编程实践指南/1 函数式编程导读：升维的编程套路.md"
+          }
+        },
+        {
+          "id": "fda10aaaee74",
+          "sourceId": "nuggets",
+          "name": "JavaScript 设计模式核⼼原理与应⽤实践",
+          "articleCount": 16,
+          "firstArticle": {
+            "path": "JavaScript 设计模式核⼼原理与应⽤实践/01 开篇：前端工程师的成长论.md"
+          }
+        },
+        {
+          "id": "fdcdd9b6facf",
+          "sourceId": "nuggets",
+          "name": "JavaScript 设计模式核心原理与应用实践",
+          "articleCount": 18,
+          "firstArticle": {
+            "path": "JavaScript 设计模式核心原理与应用实践/1.开篇：前端工程师的成长论.md"
+          }
+        },
+        {
+          "id": "95a76d21619e",
+          "sourceId": "nuggets",
+          "name": "JavaScript 语言编程进阶",
+          "articleCount": 15,
+          "firstArticle": {
+            "path": "JavaScript 语言编程进阶/1 开篇｜你真的熟悉 JavaScript 吗？.md"
+          }
+        },
+        {
+          "id": "3a838341a4f1",
+          "sourceId": "nuggets",
+          "name": "MySQL 是怎样运行的：从根儿上理解 MySQL",
+          "articleCount": 24,
+          "firstArticle": {
+            "path": "MySQL 是怎样运行的：从根儿上理解 MySQL/0万里长征第一步（非常重要） —— 如何愉快的阅读本小册.md"
+          }
+        },
+        {
+          "id": "c51ef9f1bdaf",
+          "sourceId": "nuggets",
+          "name": "Nest 通关秘籍",
+          "articleCount": 200,
+          "firstArticle": {
+            "path": "Nest 通关秘籍/1. 开篇词.md"
+          }
+        },
+        {
+          "id": "bca1891413fd",
+          "sourceId": "nuggets",
+          "name": "Nest 通关秘籍  最新200章",
+          "articleCount": 200,
+          "firstArticle": {
+            "path": "Nest 通关秘籍  最新200章/1. 开篇词.md"
+          }
+        },
+        {
+          "id": "e2b3ce05d2d9",
+          "sourceId": "nuggets",
+          "name": "NestJS项目实战",
+          "articleCount": 19,
+          "firstArticle": {
+            "path": "NestJS项目实战/第01章—设计篇：需求分析.md"
+          }
+        },
+        {
+          "id": "e31bb93482f9",
+          "sourceId": "nuggets",
+          "name": "Netty 入门与实战：仿写微信 IM 即时通讯系统",
+          "articleCount": 23,
+          "firstArticle": {
+            "path": "Netty 入门与实战：仿写微信 IM 即时通讯系统/md/仿微信 IM 系统简介.md"
+          }
+        },
+        {
+          "id": "5e7f933f550f",
+          "sourceId": "nuggets",
+          "name": "Next.js 开发指南",
+          "articleCount": 96,
+          "firstArticle": {
+            "path": "Next.js 开发指南/1.答疑篇 | 学习路线与答疑.md"
+          }
+        },
+        {
+          "id": "9b882f8d2516",
+          "sourceId": "nuggets",
+          "name": "Node + React 实战：从 0 到 1 实现记账本",
+          "articleCount": 22,
+          "firstArticle": {
+            "path": "Node + React 实战：从 0 到 1 实现记账本 /1.开篇词.md"
+          }
+        },
+        {
+          "id": "cf534da41730",
+          "sourceId": "nuggets",
+          "name": "OpenClaw 从入门安装到卸载",
+          "articleCount": 11,
+          "firstArticle": {
+            "path": "OpenClaw 从入门安装到卸载/1.第 1 章：初识 OpenClaw .md"
+          }
+        },
+        {
+          "id": "0f0880b40f35",
+          "sourceId": "nuggets",
+          "name": "Openclaw入门详解",
+          "articleCount": 12,
+          "firstArticle": {
+            "path": "Openclaw入门详解/1.建议学习路线.md"
+          }
+        },
+        {
+          "id": "6d60c878eed6",
+          "sourceId": "nuggets",
+          "name": "QuickJs",
+          "articleCount": 24,
+          "firstArticle": {
+            "path": "QuickJs/1-序言和约定.md"
+          }
+        },
+        {
+          "id": "ba940fb8f0c5",
+          "sourceId": "nuggets",
+          "name": "QuickJS 引擎源码解析与实践",
+          "articleCount": 48,
+          "firstArticle": {
+            "path": "QuickJS 引擎源码解析与实践/QuickJS 引擎源码解析与实践/1-序言和约定.md"
+          }
+        },
+        {
+          "id": "2842b7a7d357",
+          "sourceId": "nuggets",
+          "name": "React 进阶实践指南",
+          "articleCount": 45,
+          "firstArticle": {
+            "path": "React 进阶实践指南/1.写给想要进阶的你.md"
+          }
+        },
+        {
+          "id": "ea36caa7aca2",
+          "sourceId": "nuggets",
+          "name": "React 通关秘籍",
+          "articleCount": 86,
+          "firstArticle": {
+            "path": "React 通关秘籍/第01章—关于本小册.md"
+          }
+        },
+        {
+          "id": "723d501b0f70",
+          "sourceId": "nuggets",
+          "name": "React 组合式开发实践：打造企业管理系统五大核心模块",
+          "articleCount": 11,
+          "firstArticle": {
+            "path": "React 组合式开发实践：打造企业管理系统五大核心模块/0以史为鉴：前端开发的四个时代.md"
+          }
+        },
+        {
+          "id": "cbc1dead5884",
+          "sourceId": "nuggets",
+          "name": "react进阶实践指南",
+          "articleCount": 41,
+          "firstArticle": {
+            "path": "react进阶实践指南/01.md"
+          }
+        },
+        {
+          "id": "554c3d839b89",
+          "sourceId": "nuggets",
+          "name": "Redis 深度历险：核心原理与应用实践",
+          "articleCount": 45,
+          "firstArticle": {
+            "path": "Redis 深度历险：核心原理与应用实践/0开篇：授人以鱼不若授人以渔 —— Redis 可以用来做什么？.md"
+          }
+        },
+        {
+          "id": "4a0831b99b8b",
+          "sourceId": "nuggets",
+          "name": "Rust 语言从入门到实战",
+          "articleCount": 36,
+          "firstArticle": {
+            "path": "Rust 语言从入门到实战/01｜快速入门：Rust中有哪些你不得不了解的基础语法？.md"
+          }
+        },
+        {
+          "id": "c1c7d93926b0",
+          "sourceId": "nuggets",
+          "name": "SSR 实战：官网开发指南",
+          "articleCount": 20,
+          "firstArticle": {
+            "path": "SSR 实战：官网开发指南/1.开篇：为什么学习官网开发？.md"
+          }
+        },
+        {
+          "id": "8db50ff10887",
+          "sourceId": "nuggets",
+          "name": "SVG 动画开发实战手册",
+          "articleCount": 10,
+          "firstArticle": {
+            "path": "SVG 动画开发实战手册/1 SVG 基本知识介绍.md"
+          }
+        },
+        {
+          "id": "313731286298",
+          "sourceId": "nuggets",
+          "name": "Taro 多端开发实现原理与项目实战",
+          "articleCount": 27,
+          "firstArticle": {
+            "path": "Taro 多端开发实现原理与项目实战/0开篇：前端多端统一开发背景与趋势介绍.md"
+          }
+        },
+        {
+          "id": "c86796418e8b",
+          "sourceId": "nuggets",
+          "name": "TypeScript 类型体操通关秘籍",
+          "articleCount": 26,
+          "firstArticle": {
+            "path": "TypeScript 类型体操通关秘籍/1 如何阅读本小册.md"
+          }
+        },
+        {
+          "id": "f14a125dd5f1",
+          "sourceId": "nuggets",
+          "name": "TypeScript 全面进阶指南",
+          "articleCount": 33,
+          "firstArticle": {
+            "path": "TypeScript 全面进阶指南/1.开篇：用正确的方式学习 TypeScript.md"
+          }
+        },
+        {
+          "id": "02356d704b1a",
+          "sourceId": "nuggets",
+          "name": "TypeScript 入门教程",
+          "articleCount": 17,
+          "firstArticle": {
+            "path": "TypeScript 入门教程/1.为什么你需要 TypeScript：类型之于 JavaScript.md"
+          }
+        },
+        {
+          "id": "874bc4fb406e",
+          "sourceId": "nuggets",
+          "name": "TypeScript全面进阶指南",
+          "articleCount": 33,
+          "firstArticle": {
+            "path": "TypeScript全面进阶指南/1.开篇：用正确的方式学习 TypeScript.md"
+          }
+        },
+        {
+          "id": "026752932e97",
+          "sourceId": "nuggets",
+          "name": "Uniapp 从入门到进阶",
+          "articleCount": 32,
+          "firstArticle": {
+            "path": "Uniapp 从入门到进阶/1 开篇：为什么你必须学Uniapp开发.md"
+          }
+        },
+        {
+          "id": "a00f078a8753",
+          "sourceId": "nuggets",
+          "name": "Vue 3 技术揭秘",
+          "articleCount": 22,
+          "firstArticle": {
+            "path": "Vue 3 技术揭秘/1.开篇词：<Vue 3><\\Vue 2>.md"
+          }
+        },
+        {
+          "id": "6863f71bf56c",
+          "sourceId": "nuggets",
+          "name": "Vue 项目构建与开发入门",
+          "articleCount": 17,
+          "firstArticle": {
+            "path": "Vue 项目构建与开发入门/1.开篇：Vue CLI 3 项目构建基础.md"
+          }
+        },
+        {
+          "id": "6f72c98c467d",
+          "sourceId": "nuggets",
+          "name": "Vue.js 组件精讲",
+          "articleCount": 20,
+          "firstArticle": {
+            "path": "Vue.js 组件精讲/1.开篇：Vue.js 的精髓——组件.md"
+          }
+        },
+        {
+          "id": "761551af794e",
+          "sourceId": "nuggets",
+          "name": "Vue3 企业级项目实战",
+          "articleCount": 41,
+          "firstArticle": {
+            "path": "Vue3 企业级项目实战/1.开篇词：通关 Vue3 企业级项目开发，升职加薪快人一步.md"
+          }
+        },
+        {
+          "id": "b52924d3de28",
+          "sourceId": "nuggets",
+          "name": "Web 动画之旅",
+          "articleCount": 37,
+          "firstArticle": {
+            "path": "Web 动画之旅/1-Web 动画基础：从发展史中了解 Web 动画及动画的作用.md"
+          }
+        },
+        {
+          "id": "0b92b5281288",
+          "sourceId": "nuggets",
+          "name": "Web 前端面试指南与高频考题解析",
+          "articleCount": 12,
+          "firstArticle": {
+            "path": "Web 前端面试指南与高频考题解析/1.准备：简历编写和面试前准备.md"
+          }
+        },
+        {
+          "id": "7ccf1e6cddb4",
+          "sourceId": "nuggets",
+          "name": "WebGL 入门与实践",
+          "articleCount": 33,
+          "firstArticle": {
+            "path": "WebGL 入门与实践/1.初级入门 --- 认识 WebGL.md"
+          }
+        },
+        {
+          "id": "4c551e9f2057",
+          "sourceId": "nuggets",
+          "name": "Webpack5 核心原理与应用实践",
+          "articleCount": 30,
+          "firstArticle": {
+            "path": "Webpack5 核心原理与应用实践/1.重新认识 Webpack：旧时代的破局者.md"
+          }
+        }
+      ]
+    }
+  ]
+}
