@@ -2,6 +2,7 @@
 
 /* eslint-disable @next/next/no-img-element */
 
+import { AlertDialog, Button, Card, Chip, Input, Label, Modal, Spinner, Table, TextField } from "@heroui/react";
 import {
   Archive,
   ChevronLeft,
@@ -15,7 +16,6 @@ import {
   Grid2X2,
   ImageIcon,
   List,
-  Loader2,
   Pencil,
   Trash2,
   Upload,
@@ -24,20 +24,6 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 
 interface MediaFile {
@@ -295,17 +281,24 @@ export default function MediaPage() {
 
   const actions = (file: MediaFile) => (
     <div className="flex items-center justify-end gap-1">
-      <Button variant="ghost" size="icon" aria-label="复制素材地址" title={copiedId === file.id ? "已复制" : "复制地址"} onClick={() => void copyUrl(file)}>
+      <Button variant="ghost" size="sm" isIconOnly aria-label={copiedId === file.id ? "已复制素材地址" : "复制素材地址"} onPress={() => void copyUrl(file)}>
         <Clipboard className="size-4" />
       </Button>
-      <Button variant="ghost" size="icon" aria-label="下载素材" title="下载" asChild>
-        <a href={file.url} download={file.name} target="_blank" rel="noreferrer"><Download className="size-4" /></a>
+      <Button variant="ghost" size="sm" isIconOnly aria-label="下载素材" onPress={() => {
+        const anchor = document.createElement("a");
+        anchor.href = file.url;
+        anchor.download = file.name;
+        anchor.target = "_blank";
+        anchor.rel = "noreferrer";
+        anchor.click();
+      }}>
+        <Download className="size-4" />
       </Button>
-      <Button variant="ghost" size="icon" aria-label="重命名素材" title="重命名" onClick={() => startRename(file)}>
+      <Button variant="ghost" size="sm" isIconOnly aria-label="重命名素材" onPress={() => startRename(file)}>
         <Pencil className="size-4" />
       </Button>
-      <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" aria-label="删除素材" title="删除" onClick={() => setDeleteFile(file)}>
-        <Trash2 className="size-4" />
+      <Button variant="ghost" size="sm" isIconOnly aria-label="删除素材" onPress={() => setDeleteFile(file)}>
+        <Trash2 className="text-danger size-4" />
       </Button>
     </div>
   );
@@ -313,146 +306,28 @@ export default function MediaPage() {
   const previewFile = previewIndex === null ? null : imageFiles[previewIndex];
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">媒体库</h1>
-          <p className="mt-1 text-sm text-muted-foreground">集中管理图片、音频、视频和文档素材。</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="flex rounded-md border p-1">
-            <Button variant={viewMode === "grid" ? "secondary" : "ghost"} size="icon" className="size-8" aria-label="网格视图" onClick={() => setViewMode("grid")}><Grid2X2 className="size-4" /></Button>
-            <Button variant={viewMode === "list" ? "secondary" : "ghost"} size="icon" className="size-8" aria-label="列表视图" onClick={() => setViewMode("list")}><List className="size-4" /></Button>
-          </div>
-          <input ref={fileInputRef} className="hidden" type="file" accept={ACCEPTED_FILES} multiple onChange={(event) => handleFiles(event.target.files)} />
-          <Button onClick={() => fileInputRef.current?.click()}><Upload className="size-4" />上传素材</Button>
-        </div>
-      </div>
+    <main className="studio-dashboard studio-media-page">
+      <section className="studio-page-heading">
+        <div><p className="studio-eyebrow">Asset library</p><h1>媒体库</h1><p>集中管理图片、音频、视频和文档素材。</p></div>
+        <div className="flex items-center gap-2"><div className="studio-view-toggle"><Button aria-label="网格视图" isIconOnly onPress={() => setViewMode("grid")} size="sm" variant={viewMode === "grid" ? "secondary" : "ghost"}><Grid2X2 className="size-4" /></Button><Button aria-label="列表视图" isIconOnly onPress={() => setViewMode("list")} size="sm" variant={viewMode === "list" ? "secondary" : "ghost"}><List className="size-4" /></Button></div><input ref={fileInputRef} className="hidden" type="file" accept={ACCEPTED_FILES} multiple onChange={(event) => handleFiles(event.target.files)} /><Button onPress={() => fileInputRef.current?.click()}><Upload className="size-4" />上传素材</Button></div>
+      </section>
 
-      {uploadingFiles.length > 0 && (
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base">上传任务</CardTitle>
-            <CardDescription>{uploadingFiles.length} 个文件正在处理</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {uploadingFiles.map((file) => (
-              <div key={file.id} className="flex items-center gap-3 rounded-lg border p-3">
-                <div className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-md bg-muted">
-                  {file.thumbnail ? <img src={file.thumbnail} alt="" className="size-full object-cover" /> : <FileIcon className="size-5 text-muted-foreground" />}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="mb-1 flex items-center justify-between gap-3 text-sm">
-                    <span className="truncate font-medium">{file.name}</span>
-                    <span className="shrink-0 text-muted-foreground">{file.progress}%</span>
-                  </div>
-                  <div className="h-1.5 overflow-hidden rounded-full bg-muted"><div className={cn("h-full rounded-full transition-all", file.status === "error" ? "bg-destructive" : "bg-primary")} style={{ width: `${file.progress}%` }} /></div>
-                </div>
-                {file.status === "uploading" && <Button variant="ghost" size="icon" aria-label="取消上传" onClick={() => cancelUpload(file.id)}><X className="size-4" /></Button>}
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-      )}
+      {uploadingFiles.length ? <Card className="studio-panel"><Card.Header className="studio-panel-heading"><span><Card.Title className="text-sm">上传任务</Card.Title><Card.Description className="mt-1 text-xs">{uploadingFiles.length} 个文件正在处理</Card.Description></span></Card.Header><Card.Content className="grid gap-3 p-4">{uploadingFiles.map((file) => <div className="studio-upload-task" key={file.id}><div className="studio-upload-thumb">{file.thumbnail ? <img src={file.thumbnail} alt="" /> : <FileIcon className="size-5" />}</div><div className="min-w-0 flex-1"><div className="mb-1 flex items-center justify-between gap-3 text-sm"><strong className="truncate">{file.name}</strong><span className="text-muted shrink-0">{file.progress}%</span></div><div className="studio-upload-track"><div className={cn("studio-upload-progress", file.status === "error" && "is-error")} style={{ width: `${file.progress}%` }} /></div></div>{file.status === "uploading" ? <Button aria-label="取消上传" isIconOnly onPress={() => cancelUpload(file.id)} size="sm" variant="ghost"><X className="size-4" /></Button> : null}</div>)}</Card.Content></Card> : null}
 
-      <Card>
-        <CardHeader className="border-b">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <CardTitle>全部素材</CardTitle>
-              <CardDescription>共 {mediaFiles.length} 个素材，每页最多展示 {PAGE_SIZE} 个</CardDescription>
-            </div>
-            {isLoading && <Loader2 className="size-5 animate-spin text-muted-foreground" />}
-          </div>
-        </CardHeader>
-        <CardContent className="p-0">
-          {!isLoading && mediaFiles.length === 0 ? (
-            <div className="flex min-h-72 flex-col items-center justify-center px-6 text-center">
-              <div className="mb-4 flex size-12 items-center justify-center rounded-full bg-muted"><ImageIcon className="size-6 text-muted-foreground" /></div>
-              <p className="font-medium">还没有素材</p>
-              <p className="mt-1 text-sm text-muted-foreground">上传文件后，可在文章、音乐和页面中复用。</p>
-              <Button className="mt-5" onClick={() => fileInputRef.current?.click()}><Upload className="size-4" />上传第一个素材</Button>
-            </div>
-          ) : viewMode === "grid" ? (
-            <div className="grid grid-cols-2 gap-px bg-border sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-              {visibleFiles.map((file) => (
-                <article key={file.id} className="group min-w-0 bg-card p-3">
-                  <button type="button" className="relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-lg bg-muted outline-none ring-offset-2 focus-visible:ring-2 focus-visible:ring-ring" onClick={() => openFile(file)}>
-                    {isImage(file.type) ? <img src={file.url} alt={file.name} loading="lazy" className="size-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" /> : <MediaGlyph type={file.type} className="size-10" />}
-                    <Badge variant="secondary" className="absolute left-2 top-2 bg-background/85 backdrop-blur">{mediaKind(file.type)}</Badge>
-                  </button>
-                  <div className="mt-3 min-w-0">
-                    <p className="truncate text-sm font-medium" title={file.name}>{file.name}</p>
-                    <p className="mt-0.5 text-xs text-muted-foreground">{formatFileSize(file.size)}</p>
-                  </div>
-                  <div className="mt-2 border-t pt-1">{actions(file)}</div>
-                </article>
-              ))}
-            </div>
-          ) : (
-            <Table>
-              <TableHeader><TableRow><TableHead>素材</TableHead><TableHead>类型</TableHead><TableHead>大小</TableHead><TableHead>上传时间</TableHead><TableHead className="text-right">操作</TableHead></TableRow></TableHeader>
-              <TableBody>
-                {visibleFiles.map((file) => (
-                  <TableRow key={file.id}>
-                    <TableCell>
-                      <button type="button" className="flex min-w-0 items-center gap-3 text-left" onClick={() => openFile(file)}>
-                        <span className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-md bg-muted">{isImage(file.type) ? <img src={file.url} alt="" loading="lazy" className="size-full object-cover" /> : <MediaGlyph type={file.type} className="size-5" />}</span>
-                        <span className="max-w-80 truncate font-medium">{file.name}</span>
-                      </button>
-                    </TableCell>
-                    <TableCell><Badge variant="outline">{mediaKind(file.type)}</Badge></TableCell>
-                    <TableCell className="text-muted-foreground">{formatFileSize(file.size)}</TableCell>
-                    <TableCell className="text-muted-foreground">{new Date(file.createdAt).toLocaleDateString("zh-CN")}</TableCell>
-                    <TableCell>{actions(file)}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
+      <Card className="studio-panel">
+        <Card.Header className="studio-panel-heading"><span><Card.Title>全部素材</Card.Title><Card.Description className="mt-1 text-xs">共 {mediaFiles.length} 个素材，每页最多展示 {PAGE_SIZE} 个</Card.Description></span>{isLoading ? <Spinner size="sm" /> : null}</Card.Header>
+        <Card.Content className="p-0">
+          {!isLoading && !mediaFiles.length ? <div className="studio-empty-state min-h-72 flex-col"><ImageIcon className="size-8" /><strong>还没有素材</strong><span>上传文件后，可在文章、音乐和页面中复用。</span><Button onPress={() => fileInputRef.current?.click()}><Upload className="size-4" />上传第一个素材</Button></div> : viewMode === "grid" ? <div className="studio-media-grid">{visibleFiles.map((file) => <article className="studio-media-card" key={file.id}><button type="button" className="studio-media-preview" onClick={() => openFile(file)}>{isImage(file.type) ? <img src={file.url} alt={file.name} loading="lazy" /> : <MediaGlyph type={file.type} className="size-10" />}<Chip className="absolute left-2 top-2" size="sm" variant="soft">{mediaKind(file.type)}</Chip></button><div className="mt-3 min-w-0"><strong className="block truncate text-sm" title={file.name}>{file.name}</strong><small className="text-muted">{formatFileSize(file.size)}</small></div><div className="mt-2 border-t pt-1">{actions(file)}</div></article>)}</div> : <Table><Table.ScrollContainer><Table.Content aria-label="媒体素材" className="min-w-[720px]"><Table.Header><Table.Column isRowHeader>素材</Table.Column><Table.Column>类型</Table.Column><Table.Column>大小</Table.Column><Table.Column>上传时间</Table.Column><Table.Column>操作</Table.Column></Table.Header><Table.Body>{visibleFiles.map((file) => <Table.Row key={file.id}><Table.Cell><button type="button" className="flex min-w-0 items-center gap-3 text-left" onClick={() => openFile(file)}><span className="studio-media-row-thumb">{isImage(file.type) ? <img src={file.url} alt="" loading="lazy" /> : <MediaGlyph type={file.type} className="size-5" />}</span><strong className="max-w-80 truncate">{file.name}</strong></button></Table.Cell><Table.Cell><Chip size="sm" variant="soft">{mediaKind(file.type)}</Chip></Table.Cell><Table.Cell><span className="text-muted">{formatFileSize(file.size)}</span></Table.Cell><Table.Cell><span className="text-muted">{new Date(file.createdAt).toLocaleDateString("zh-CN")}</span></Table.Cell><Table.Cell>{actions(file)}</Table.Cell></Table.Row>)}</Table.Body></Table.Content></Table.ScrollContainer></Table>}
+        </Card.Content>
       </Card>
 
-      {totalPages > 1 && (
-        <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <span>第 {page} / {totalPages} 页</span>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage((current) => Math.max(1, current - 1))}><ChevronLeft className="size-4" />上一页</Button>
-            <Button variant="outline" size="sm" disabled={page >= totalPages} onClick={() => setPage((current) => Math.min(totalPages, current + 1))}>下一页<ChevronRight className="size-4" /></Button>
-          </div>
-        </div>
-      )}
+      {totalPages > 1 ? <div className="studio-table-pagination"><span>第 {page} / {totalPages} 页</span><div className="flex gap-2"><Button isDisabled={page <= 1} onPress={() => setPage((current) => Math.max(1, current - 1))} size="sm" variant="outline"><ChevronLeft className="size-4" />上一页</Button><Button isDisabled={page >= totalPages} onPress={() => setPage((current) => Math.min(totalPages, current + 1))} size="sm" variant="outline">下一页<ChevronRight className="size-4" /></Button></div></div> : null}
 
-      <Dialog open={Boolean(editFile)} onOpenChange={(open) => { if (!open && !editLoading) setEditFile(null); }}>
-        <DialogContent>
-          <DialogHeader><DialogTitle>重命名素材</DialogTitle><DialogDescription>只修改素材在媒体库中的显示名称，不会改变其访问地址。</DialogDescription></DialogHeader>
-          <div className="space-y-2"><Label htmlFor="media-name">素材名称</Label><Input id="media-name" value={editName} autoFocus maxLength={500} onChange={(event) => setEditName(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") void saveRename(); }} /></div>
-          <DialogFooter><Button variant="outline" disabled={editLoading} onClick={() => setEditFile(null)}>取消</Button><Button disabled={editLoading || !editName.trim()} onClick={() => void saveRename()}>{editLoading && <Loader2 className="size-4 animate-spin" />}保存</Button></DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <Modal.Backdrop isOpen={Boolean(editFile)} onOpenChange={(open) => { if (!open && !editLoading) setEditFile(null); }}><Modal.Container><Modal.Dialog className="sm:max-w-md"><Modal.CloseTrigger /><Modal.Header><Modal.Icon className="bg-accent-soft text-accent-soft-foreground"><Pencil className="size-5" /></Modal.Icon><Modal.Heading>重命名素材</Modal.Heading></Modal.Header><Modal.Body><p className="text-muted mb-4 text-sm">只修改媒体库显示名称，不会改变访问地址。</p><TextField value={editName} onChange={setEditName}><Label>素材名称</Label><Input autoFocus maxLength={500} onKeyDown={(event) => { if (event.key === "Enter") void saveRename(); }} /></TextField></Modal.Body><Modal.Footer><Button isDisabled={editLoading} onPress={() => setEditFile(null)} variant="tertiary">取消</Button><Button isDisabled={editLoading || !editName.trim()} onPress={() => void saveRename()}>{editLoading ? <Spinner color="current" size="sm" /> : null}保存</Button></Modal.Footer></Modal.Dialog></Modal.Container></Modal.Backdrop>
 
-      <Dialog open={Boolean(deleteFile)} onOpenChange={(open) => { if (!open && !deleteLoading) setDeleteFile(null); }}>
-        <DialogContent>
-          <DialogHeader><DialogTitle>删除素材</DialogTitle><DialogDescription>确定删除“{deleteFile?.name}”吗？若素材仍被内容引用，系统会保留它并提示引用状态。</DialogDescription></DialogHeader>
-          <DialogFooter><Button variant="outline" disabled={deleteLoading} onClick={() => setDeleteFile(null)}>取消</Button><Button variant="destructive" disabled={deleteLoading} onClick={() => void confirmDelete()}>{deleteLoading && <Loader2 className="size-4 animate-spin" />}确认删除</Button></DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <AlertDialog.Backdrop isOpen={Boolean(deleteFile)} onOpenChange={(open) => { if (!open && !deleteLoading) setDeleteFile(null); }}><AlertDialog.Container><AlertDialog.Dialog className="sm:max-w-[420px]"><AlertDialog.CloseTrigger /><AlertDialog.Header><AlertDialog.Icon status="danger" /><AlertDialog.Heading>删除素材</AlertDialog.Heading></AlertDialog.Header><AlertDialog.Body><p>确定删除“{deleteFile?.name}”吗？若素材仍被内容引用，系统会保留它并提示引用状态。</p></AlertDialog.Body><AlertDialog.Footer><Button isDisabled={deleteLoading} onPress={() => setDeleteFile(null)} variant="tertiary">取消</Button><Button isDisabled={deleteLoading} onPress={() => void confirmDelete()} variant="danger">{deleteLoading ? <Spinner color="current" size="sm" /> : null}确认删除</Button></AlertDialog.Footer></AlertDialog.Dialog></AlertDialog.Container></AlertDialog.Backdrop>
 
-      <Dialog open={previewIndex !== null} onOpenChange={(open) => { if (!open) setPreviewIndex(null); }}>
-        <DialogContent className="border-black/30 bg-black p-0 text-white sm:max-w-[90vw]">
-          <DialogHeader className="sr-only"><DialogTitle>{previewFile?.name ?? "图片预览"}</DialogTitle><DialogDescription>媒体库图片预览</DialogDescription></DialogHeader>
-          {previewFile && (
-            <div className="relative flex h-[80vh] items-center justify-center overflow-hidden rounded-lg bg-black">
-              <img src={previewFile.url} alt={previewFile.name} className="max-h-full max-w-full object-contain" />
-              {imageFiles.length > 1 && <>
-                <Button variant="secondary" size="icon" className="absolute left-4 rounded-full bg-black/50 text-white hover:bg-black/70" aria-label="上一张图片" onClick={showPreviousImage}><ChevronLeft className="size-5" /></Button>
-                <Button variant="secondary" size="icon" className="absolute right-4 rounded-full bg-black/50 text-white hover:bg-black/70" aria-label="下一张图片" onClick={showNextImage}><ChevronRight className="size-5" /></Button>
-              </>}
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-5 pb-4 pt-10 text-sm"><p className="truncate font-medium">{previewFile.name}</p><p className="mt-1 text-white/65">{previewIndex! + 1} / {imageFiles.length} · {formatFileSize(previewFile.size)}</p></div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-    </div>
+      <Modal.Backdrop isOpen={previewIndex !== null} onOpenChange={(open) => { if (!open) setPreviewIndex(null); }}><Modal.Container><Modal.Dialog className="studio-image-dialog"><Modal.CloseTrigger />{previewFile ? <Modal.Body className="p-0"><div className="studio-lightbox"><img src={previewFile.url} alt={previewFile.name} />{imageFiles.length > 1 ? <><Button aria-label="上一张图片" className="studio-lightbox-prev" isIconOnly onPress={showPreviousImage} variant="secondary"><ChevronLeft className="size-5" /></Button><Button aria-label="下一张图片" className="studio-lightbox-next" isIconOnly onPress={showNextImage} variant="secondary"><ChevronRight className="size-5" /></Button></> : null}<div className="studio-lightbox-caption"><strong>{previewFile.name}</strong><small>{previewIndex! + 1} / {imageFiles.length} · {formatFileSize(previewFile.size)}</small></div></div></Modal.Body> : null}</Modal.Dialog></Modal.Container></Modal.Backdrop>
+    </main>
   );
 }
