@@ -3834,67 +3834,210 @@ body {
   padding-block: clamp(4rem, 9vw, 7rem);
 }
 
-.photo-grid {
+.photo-gallery {
+  width: calc(100% - clamp(0rem, 10vw, 10rem));
+  margin: 1.25rem auto 0;
+}
+
+.photo-gallery--masonry {
+  columns: 3 15rem;
+  column-gap: 1rem;
+}
+
+.photo-gallery--square {
   display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 0.8rem;
-  margin-top: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: 1rem;
 }
 
-.photo-card {
+.photo-figure {
   position: relative;
-  grid-column: span 4;
   overflow: hidden;
-  min-height: 24rem;
-  border-radius: 0.9rem;
-  background: var(--site-surface);
+  width: 100%;
+  margin: 0 0 1rem;
+  break-inside: avoid;
+  border-radius: 0.6rem;
+  background: color-mix(in srgb, var(--site-muted) 12%, var(--site-surface));
 }
 
-.photo-card:nth-child(5n + 1),
-.photo-card:nth-child(5n + 4) {
-  grid-column: span 7;
+.photo-gallery--square .photo-figure {
+  margin: 0;
 }
 
-.photo-card:nth-child(5n + 2),
-.photo-card:nth-child(5n + 5) {
-  grid-column: span 5;
-}
-
-.photo-card img {
-  object-fit: cover;
-  transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.photo-card:hover img {
-  transform: scale(1.035);
-}
-
-.photo-card__veil {
+.photo-figure > button {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, transparent 50%, rgb(5 10 9 / 0.78));
+  display: block;
+  width: 100%;
+  appearance: none;
+  overflow: hidden;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: zoom-in;
 }
 
-.photo-card > div {
+.photo-figure img {
+  object-fit: cover;
+  transition: filter 300ms ease, transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.photo-figure:hover img,
+.photo-figure:focus-within img {
+  filter: brightness(0.82);
+  transform: scale(1.025);
+}
+
+.photo-figure figcaption {
   position: absolute;
-  right: 1.2rem;
-  bottom: 1.1rem;
-  left: 1.2rem;
+  right: 1rem;
+  bottom: 0.85rem;
+  left: 1rem;
+  color: #fff;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  opacity: 0;
+  text-align: left;
+  text-shadow: 0 1px 8px rgb(0 0 0 / 0.6);
+  transform: translateY(0.4rem);
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+
+.photo-figure:hover figcaption,
+.photo-figure:focus-within figcaption {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.photo-layout-toggle {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 1.25rem;
+  z-index: 20;
+  display: grid;
+  width: 2.5rem;
+  height: 2.5rem;
+  appearance: none;
+  place-items: center;
+  border: 0;
+  border-radius: 999px;
+  color: var(--site-text);
+  background: color-mix(in srgb, var(--site-bg) 74%, transparent);
+  box-shadow: 0 0.5rem 2rem -1rem rgb(0 0 0 / 0.45);
+  opacity: 0.48;
+  cursor: pointer;
+  backdrop-filter: blur(14px);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.photo-layout-toggle:hover,
+.photo-layout-toggle:focus-visible {
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+.photo-layout-toggle svg {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.photo-loader-sentinel {
+  height: 1px;
+}
+
+.photo-viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 4rem;
+}
+
+.photo-viewer__backdrop {
+  position: absolute;
+  inset: 0;
+  appearance: none;
+  border: 0;
+  background: rgb(4 7 7 / 0.94);
+  cursor: zoom-out;
+}
+
+.photo-viewer__image {
+  position: relative;
+  width: min(86vw, 88rem);
+  height: min(78dvh, 62rem);
+  pointer-events: none;
+}
+
+.photo-viewer__image img {
+  object-fit: contain;
+}
+
+.photo-viewer__caption {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 50%;
+  display: flex;
+  max-width: min(70vw, 48rem);
+  align-items: baseline;
+  gap: 0.8rem;
+  color: #fff;
+  transform: translateX(-50%);
+}
+
+.photo-viewer__caption span,
+.photo-viewer__caption small {
+  color: rgb(255 255 255 / 0.62);
+  font-size: 0.75rem;
+}
+
+.photo-viewer__caption small {
+  white-space: nowrap;
+}
+
+.photo-viewer__close,
+.photo-viewer__previous,
+.photo-viewer__next {
+  position: absolute;
   z-index: 1;
-  color: white;
+  display: grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  appearance: none;
+  place-items: center;
+  border: 0;
+  border-radius: 999px;
+  color: #fff;
+  background: rgb(255 255 255 / 0.1);
+  cursor: pointer;
+  transition: background-color 180ms ease, transform 180ms ease;
 }
 
-.photo-card > div > span {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 0.68rem;
-  opacity: 0.72;
+.photo-viewer__close:hover,
+.photo-viewer__previous:hover,
+.photo-viewer__next:hover {
+  background: rgb(255 255 255 / 0.2);
 }
 
-.photo-card h2 {
-  margin: 0.35rem 0 0;
-  font-size: 1rem;
-  font-weight: 650;
-  letter-spacing: -0.02em;
+.photo-viewer__close {
+  z-index: 3;
+  top: 1.25rem;
+  right: 1.25rem;
+}
+
+.photo-viewer__previous,
+.photo-viewer__next {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.photo-viewer__previous {
+  left: 1.25rem;
+}
+
+.photo-viewer__next {
+  right: 1.25rem;
 }
 
 .photo-page {
@@ -4461,15 +4604,53 @@ body {
     flex-direction: column;
   }
 
-  .photo-grid {
-    display: grid;
-    grid-template-columns: 1fr;
+  .photo-gallery {
+    width: calc(100% - 0.75rem);
   }
 
-  .photo-card,
-  .photo-card:nth-child(n) {
-    grid-column: 1;
-    min-height: 23rem;
+  .photo-gallery--masonry {
+    columns: 2 9rem;
+    column-gap: 0.6rem;
+  }
+
+  .photo-gallery--square {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.6rem;
+  }
+
+  .photo-figure {
+    margin-bottom: 0.6rem;
+    border-radius: 0.45rem;
+  }
+
+  .photo-layout-toggle {
+    bottom: 5rem;
+    opacity: 0.72;
+  }
+
+  .photo-viewer {
+    padding: 3.5rem 0.75rem 5rem;
+  }
+
+  .photo-viewer__image {
+    width: 100%;
+    height: 76dvh;
+  }
+
+  .photo-viewer__caption {
+    bottom: 1.1rem;
+    max-width: calc(100% - 2rem);
+  }
+
+  .photo-viewer__caption span {
+    display: none;
+  }
+
+  .photo-viewer__previous,
+  .photo-viewer__next {
+    top: auto;
+    bottom: 4.25rem;
+    transform: none;
   }
 
   .domain-block,
