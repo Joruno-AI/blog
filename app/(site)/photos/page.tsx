@@ -8,12 +8,10 @@ export const dynamic = "force-dynamic";
 export default async function PhotosPage() {
   const photos = await listPublicPhotos();
   return (
-    <div className="site-shell listing-page photo-listing-page">
-      <header className="listing-hero">
-        <p className="site-kicker">Visual Notes</p>
-        <h1>照片</h1>
-        <p>用图像保存地点、人物与正在消失的日常细节。</p>
-        <strong>{photos.length} 项已发布</strong>
+    <div className="site-shell listing-page photo-listing-page astro-photos-index">
+      <header className="prose standard-header text-center">
+        <h1>Photos</h1>
+        <p className="subtitle">Create your personal gallery</p>
       </header>
       {photos.length ? (
         <section className="photo-grid" aria-label="照片列表">

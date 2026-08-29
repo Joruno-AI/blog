@@ -7,9 +7,9 @@ export default function ProjectsPage() {
     <SectionPage
       kicker="Build Log"
       title="项目"
-      description="真实交付的产品、工具和实验。每个项目都会保留判断、过程与结果。"
+      description="做过的产品、开源工具，以及仍在持续打磨的想法"
       types={["project", "tool"]}
-      empty="项目条目正在迁入统一资源库。"
+      empty="No content available for display."
     />
   );
 }

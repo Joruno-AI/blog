@@ -20,12 +20,10 @@ export async function SectionPage({
   const resources = await getPublishedResourcesByTypes({ types, limit: 60 });
 
   return (
-    <div className="site-shell listing-page">
-      <header className="listing-hero">
-        <p className="site-kicker">{kicker}</p>
+    <div className={`site-shell listing-page astro-section-index astro-section-${kicker.toLowerCase().replaceAll(" ", "-")}`}>
+      <header className="prose standard-header text-center">
         <h1>{title}</h1>
-        <p>{description}</p>
-        <strong>{resources.length} 项已发布</strong>
+        <p className="subtitle">{description}</p>
       </header>
       <ResourceList resources={resources} emptyMessage={empty} />
     </div>
