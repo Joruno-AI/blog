@@ -14,7 +14,7 @@ import {
   parseArticleMarkdown,
   serializeArticleMarkdown,
 } from '@/lib/content-transfer/markdown'
-import { legacyContentEntry, parseLegacyProjects } from '@/lib/content-transfer/legacy-astro-import'
+import { legacyContentEntry, parseLegacyProjects, parseLegacyStreams } from '@/lib/content-transfer/legacy-astro-import'
 
 test('round-trips Astro-compatible article frontmatter and Markdown', () => {
   const content = serializeArticleMarkdown({
@@ -140,4 +140,19 @@ test('parses valid legacy Astro project data without accepting incomplete rows',
     category: 'SaaS',
   }])
   assert.deepEqual(parseLegacyProjects('{broken'), [])
+})
+
+test('parses legacy Astro streams with media flags and publication dates', () => {
+  const [stream] = parseLegacyStreams(JSON.stringify([{
+    id: 'Astro in 100 Seconds',
+    pubDate: '2021-07-16',
+    link: 'https://www.youtube.com/watch?v=example',
+    video: true,
+    platform: 'YouTube',
+  }]))
+  assert.equal(stream.id, 'Astro in 100 Seconds')
+  assert.equal(stream.video, true)
+  assert.equal(stream.radio, false)
+  assert.equal(stream.platform, 'YouTube')
+  assert.equal(stream.pubDate.toISOString(), '2021-07-16T00:00:00.000Z')
 })

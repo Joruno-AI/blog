@@ -3652,6 +3652,199 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
+.legacy-page {
+  width: min(100% - 2rem, 48rem);
+  margin-inline: auto;
+  padding-block: clamp(4.5rem, 10vw, 8rem);
+  color: var(--site-text);
+}
+
+.standard-header.centered {
+  text-align: center;
+}
+
+.legacy-tabs,
+.tabbed-title {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.legacy-tabs {
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.legacy-tabs a {
+  color: var(--site-muted);
+  font-size: 0.8rem;
+}
+
+.tabbed-title {
+  margin-bottom: 0;
+  font-size: clamp(1.55rem, 5vw, 1.875rem);
+  font-weight: 650;
+  line-height: 1.2;
+  user-select: none;
+}
+
+.tabbed-title a {
+  border: 0;
+  color: var(--site-text);
+  opacity: 0.2;
+  transition: opacity 180ms ease;
+}
+
+.tabbed-title a:hover,
+.tabbed-title a:focus-visible {
+  opacity: 0.5;
+}
+
+.tabbed-title a.active {
+  opacity: 1;
+}
+
+.tabbed-subtitle {
+  margin: 1rem 0 2rem;
+  color: var(--site-muted);
+  font-style: italic;
+}
+
+.stream-directory-layout {
+  display: grid;
+  grid-template-columns: 5rem minmax(0, 1fr);
+  gap: 1.5rem;
+}
+
+.stream-year-nav {
+  position: sticky;
+  top: calc(var(--navbar-height, 4rem) + 1.5rem);
+  display: flex;
+  align-self: start;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.stream-year-nav a {
+  color: var(--site-muted);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.stream-year-nav a:hover,
+.stream-year-nav a:focus-visible {
+  color: var(--site-text);
+}
+
+.stream-year:not(:first-child) {
+  margin-top: 2rem;
+}
+
+.stream-year h2 {
+  margin: 0 0 1rem;
+  scroll-margin-top: calc(var(--navbar-height, 4rem) + 1rem);
+  color: var(--site-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.stream-item {
+  position: relative;
+  display: flex;
+  isolation: isolate;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 0 0.4rem -0.5rem;
+  overflow: hidden;
+  border-radius: 0.55rem;
+  padding: 0.55rem 0.5rem 0.65rem;
+  color: var(--site-muted);
+  transition: color 180ms ease, transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.stream-item::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border: 1px solid transparent;
+  border-radius: inherit;
+  background: var(--site-surface);
+  opacity: 0;
+  transform: scaleX(0.985);
+  transform-origin: left;
+  transition: border-color 180ms ease, opacity 180ms ease, transform 220ms ease;
+}
+
+.stream-item::after {
+  content: "";
+  position: absolute;
+  top: 0.75rem;
+  bottom: 0.75rem;
+  left: 0;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--site-text);
+  opacity: 0;
+  transform: scaleY(0.35);
+  transition: opacity 180ms ease, transform 220ms ease;
+}
+
+.stream-item:hover,
+.stream-item:focus-visible {
+  color: var(--site-text);
+  transform: translateX(0.2rem);
+}
+
+.stream-item:hover::before,
+.stream-item:focus-visible::before {
+  border-color: var(--site-line);
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+.stream-item:hover::after,
+.stream-item:focus-visible::after {
+  opacity: 0.78;
+  transform: scaleY(1);
+}
+
+.stream-item__title {
+  min-width: 0;
+  font-weight: 540;
+  letter-spacing: -0.012em;
+}
+
+.stream-item__meta {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--site-muted);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.stream-item__meta svg {
+  width: 0.9rem;
+  height: 0.9rem;
+  opacity: 0.62;
+}
+
+.stream-item__meta svg:last-child {
+  opacity: 0;
+  transform: translateX(-0.3rem);
+  transition: opacity 180ms ease, transform 220ms ease;
+}
+
+.stream-item:hover .stream-item__meta svg:last-child,
+.stream-item:focus-visible .stream-item__meta svg:last-child {
+  opacity: 0.8;
+  transform: translateX(0);
+}
+
 .site-pagination {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
@@ -4689,6 +4882,31 @@ body {
 
   .site-footer__links {
     gap: 0.75rem;
+  }
+
+  .stream-directory-layout {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .stream-year-nav {
+    position: static;
+    flex-direction: row;
+    overflow-x: auto;
+    border-bottom: 1px solid var(--site-line);
+    padding-bottom: 0.65rem;
+  }
+
+  .stream-item {
+    width: 100%;
+    align-items: flex-start;
+    flex-direction: column;
+    margin-left: 0;
+    padding: 0.65rem;
+  }
+
+  .stream-item__meta {
+    white-space: normal;
   }
 }
 

@@ -28,9 +28,19 @@ interface LegacyProjectEntry {
   category: string
 }
 
+interface LegacyStreamEntry {
+  id: string
+  link: string
+  pubDate: Date
+  radio: boolean
+  video: boolean
+  platform: string
+}
+
 type LegacyCandidate =
   | { kind: 'markdown'; entry: LegacyEntry; source: string }
   | { kind: 'project'; entry: LegacyEntry; project: LegacyProjectEntry; order: number }
+  | { kind: 'stream'; entry: LegacyEntry; stream: LegacyStreamEntry; order: number }
 
 export function legacyContentEntry(filePath: string): LegacyEntry | null {
   const article = filePath.match(/^src\/content\/blog\/(?:.*\/)?([^/]+)\.(?:md|mdx)$/i)
@@ -64,6 +74,31 @@ export function parseLegacyProjects(source: string): LegacyProjectEntry[] {
       const icon = typeof record.icon === 'string' ? record.icon.trim() : ''
       const category = typeof record.category === 'string' ? record.category.trim() : ''
       return id && link && desc && category ? [{ id, link, desc, icon, category }] : []
+    })
+  } catch {
+    return []
+  }
+}
+
+export function parseLegacyStreams(source: string): LegacyStreamEntry[] {
+  try {
+    const value: unknown = JSON.parse(source)
+    if (!Array.isArray(value)) return []
+    return value.flatMap((item) => {
+      if (!item || typeof item !== 'object' || Array.isArray(item)) return []
+      const record = item as Record<string, unknown>
+      const id = typeof record.id === 'string' ? record.id.trim() : ''
+      const link = typeof record.link === 'string' ? record.link.trim() : ''
+      const pubDate = new Date(typeof record.pubDate === 'string' ? record.pubDate : '')
+      if (!id || !link || Number.isNaN(pubDate.valueOf())) return []
+      return [{
+        id,
+        link,
+        pubDate,
+        radio: record.radio === true,
+        video: record.video === true,
+        platform: typeof record.platform === 'string' ? record.platform.trim() : '',
+      }]
     })
   } catch {
     return []
@@ -116,6 +151,20 @@ function entries(bundle: ContentBundle): LegacyCandidate[] {
           article: false,
         },
         project,
+        order,
+      }))
+    }
+    if (file.path === 'src/content/streams/data.json') {
+      return parseLegacyStreams(readEmbeddedFile(file)).map((stream, order) => ({
+        kind: 'stream' as const,
+        entry: {
+          filePath: file.path,
+          type: 'document' as const,
+          slug: resourceSlug(stream.id),
+          path: `/streams/${resourceSlug(stream.id)}`,
+          article: false,
+        },
+        stream,
         order,
       }))
     }
@@ -203,6 +252,59 @@ export async function applyLegacyAstroImport(bundleInput: unknown, actorId?: str
           && current.content === input.content && current.contentFormat === input.contentFormat
           && JSON.stringify(parseJson(current.metadataJson)) === JSON.stringify(metadata)
           && current.status === 'published'
+        if (same) unchanged += 1
+        else {
+          await updateGenericResource(identity.id, input)
+          updated += 1
+        }
+      }
+      continue
+    }
+
+    if (candidate.kind === 'stream') {
+      const { stream, order } = candidate
+      const [identity] = await db.select({ id: resources.id }).from(resources).where(and(
+        eq(resources.type, entry.type),
+        eq(resources.path, entry.path),
+      )).limit(1)
+      const metadata = {
+        externalUrl: stream.link,
+        radio: stream.radio,
+        video: stream.video,
+        platform: stream.platform,
+        order,
+        sourceType: 'git',
+        repository: bundle.source.repository,
+        sourcePath: `src/content/streams/data.json#${entry.slug}`,
+        commit: bundle.source.commit,
+      }
+      const input = {
+        type: entry.type,
+        title: stream.id,
+        slug: entry.slug,
+        path: entry.path,
+        description: stream.platform || null,
+        visibility: 'public' as const,
+        content: '',
+        contentFormat: 'json' as const,
+        metadata,
+        published: true,
+        publishedAt: stream.pubDate,
+        authorId: actorId,
+        changeSummary: `Imported from GitHub ${bundle.source.commit ?? bundle.source.ref ?? ''}`.trim(),
+      }
+      if (!identity) {
+        await createGenericResource(input)
+        created += 1
+      } else {
+        const current = await getStudioResource(identity.id)
+        const same = current
+          && current.title === input.title && current.slug === input.slug && current.path === input.path
+          && current.description === input.description && current.visibility === input.visibility
+          && current.content === input.content && current.contentFormat === input.contentFormat
+          && JSON.stringify(parseJson(current.metadataJson)) === JSON.stringify(metadata)
+          && current.status === 'published'
+          && current.publishedAt?.valueOf() === stream.pubDate.valueOf()
         if (same) unchanged += 1
         else {
           await updateGenericResource(identity.id, input)
