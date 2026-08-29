@@ -1,15 +1,27 @@
-import { SectionPage } from "@/components/site/section-page";
+import { MusicExperience, type PublicMusicAlbum } from "@/components/site/music-experience";
+import { getAlbumsWithSongs } from "@/lib/db/queries/albums";
 
 export const dynamic = "force-dynamic";
 
-export default function MusicPage() {
-  return (
-    <SectionPage
-      kicker="Listening Archive"
-      title="音乐"
-      description="以专辑为线索整理声音、歌词和记忆。这里不是播放器列表，而是一份持续生长的听觉档案。"
-      types={["album"]}
-      empty="音乐档案正在整理。"
-    />
-  );
+export default async function MusicPage() {
+  const rows = await getAlbumsWithSongs({ published: true });
+  const albums: PublicMusicAlbum[] = rows.map((album) => ({
+    id: album.id,
+    slug: album.slug,
+    name: album.name,
+    description: album.description,
+    artist: album.artist,
+    cover: album.cover,
+    color: album.color,
+    releaseDate: album.releaseDate?.toISOString() ?? null,
+    songs: album.songs.map((song) => ({
+      id: song.id,
+      name: song.name,
+      duration: song.duration,
+      durationSeconds: song.durationSeconds,
+      url: song.sourceType === "upload" ? song.url : song.externalUrl,
+      lyrics: song.lyrics,
+    })),
+  }));
+  return <MusicExperience albums={albums} />;
 }
