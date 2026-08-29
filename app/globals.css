@@ -2232,6 +2232,22 @@ body {
   width: 100%;
 }
 
+.studio-login-field {
+  align-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  color: var(--color-muted-foreground);
+  display: flex;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding-left: 0.75rem;
+}
+
+.studio-login-field [data-slot="input-wrapper"] {
+  border: 0;
+  box-shadow: none;
+}
+
 .studio-album-card strong,
 .studio-album-card small {
   display: block;
