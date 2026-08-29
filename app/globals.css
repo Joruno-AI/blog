@@ -4209,21 +4209,10 @@ body {
   text-align: center;
 }
 
-.legacy-tabs,
 .tabbed-title {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
-}
-
-.legacy-tabs {
-  justify-content: center;
-  margin-top: 1.5rem;
-}
-
-.legacy-tabs a {
-  color: var(--site-muted);
-  font-size: 0.8rem;
 }
 
 .tabbed-title {

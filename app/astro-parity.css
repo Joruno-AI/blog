@@ -103,6 +103,11 @@ body { background: var(--c-bg); color: var(--c-text-soft); }
 .standard-header { margin-bottom: 2rem; }
 .standard-header.centered { text-align: center; }
 .standard-header .subtitle { margin-top: -1rem; opacity: .5; font-style: italic; }
+.callout { margin: 1.75rem 0; padding: .9rem 1rem; border: 1px solid color-mix(in srgb, #e2a11c 44%, var(--c-border-soft)); border-radius: .55rem; background: color-mix(in srgb, #e2a11c 7%, var(--c-bg)); }
+.callout-title { display: flex; align-items: center; gap: .45rem; color: color-mix(in srgb, #b97800 82%, var(--c-text)); font-family: var(--font-mono); font-size: .72rem; font-weight: 700; letter-spacing: .05em; }
+.callout-title-icon, .callout-title-icon svg { width: 1rem; height: 1rem; }
+.callout-content p { margin: .65rem 0 0; color: var(--c-text-soft); font-size: .9rem; }
+.legacy-empty { padding-block: .5rem; opacity: .5; }
 .astro-blog-index { width: min(100%, 92rem); margin-inline: auto; }
 .blog-filter-view { display: grid; grid-template-columns: minmax(13rem, 15rem) minmax(0, 1fr); gap: clamp(2.25rem, 4vw, 5rem); align-items: start; padding-top: clamp(1rem, 2vw, 2rem); }
 .blog-catalog { position: sticky; top: 5.5rem; min-width: 0; max-height: calc(100vh - 7rem); overflow: hidden; padding-right: clamp(.75rem, 1.5vw, 1.25rem); border-right: 1px solid var(--c-border-soft); }
