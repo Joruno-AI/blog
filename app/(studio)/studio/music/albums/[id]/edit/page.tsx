@@ -16,15 +16,10 @@ export default async function EditAlbumPage({ params }: EditAlbumPageProps) {
   }
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold mb-2">编辑专辑</h1>
-        <p className="text-gray-500">
-          修改「{album.name}」的专辑信息
-        </p>
-      </div>
+    <main className="studio-dashboard">
+      <section className="studio-page-heading"><div><p className="studio-eyebrow">Music archive</p><h1>编辑专辑</h1><p>修改「{album.name}」的专辑信息</p></div></section>
 
       <AlbumForm album={album} mode="edit" />
-    </div>
+    </main>
   );
 }

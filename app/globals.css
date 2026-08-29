@@ -2208,6 +2208,30 @@ body {
 
 .studio-song-current { background: var(--color-accent-soft); }
 
+.studio-album-form {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.studio-album-cover-input {
+  align-items: center;
+  background: var(--color-surface-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 0.875rem;
+  display: flex;
+  flex: 0 0 auto;
+  height: 7rem;
+  justify-content: center;
+  overflow: hidden;
+  width: 7rem;
+}
+
+.studio-album-cover-input img {
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
 .studio-album-card strong,
 .studio-album-card small {
   display: block;

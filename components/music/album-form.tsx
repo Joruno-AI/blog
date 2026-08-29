@@ -2,17 +2,12 @@
 
 /* eslint-disable @next/next/no-img-element */
 
-import { ArrowLeft, Disc3, ImageIcon, Loader2, Save, Upload } from "lucide-react";
+import { Button, Card, Checkbox, Description, Input, Label, Spinner, TextArea, TextField } from "@heroui/react";
+import { ArrowLeft, Disc3, ImageIcon, Save, Upload } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { FormEvent, useRef, useState } from "react";
 import { toast } from "sonner";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { createAlbum, updateAlbum } from "@/lib/actions/albums";
 import type { Album } from "@/lib/db/schema";
 
@@ -72,35 +67,35 @@ export function AlbumForm({ album, mode }: AlbumFormProps) {
   };
 
   return (
-    <form className="space-y-6" onSubmit={(event) => void handleSubmit(event)}>
-      <Card>
-        <CardHeader><CardTitle className="text-base">基本信息</CardTitle><CardDescription>用于公开音乐页展示的专辑名称、艺术家和简介。</CardDescription></CardHeader>
-        <CardContent className="space-y-5">
+    <form className="studio-album-form" onSubmit={(event) => void handleSubmit(event)}>
+      <Card className="studio-panel">
+        <Card.Header className="studio-panel-heading"><span><Card.Title className="text-base">基本信息</Card.Title><Card.Description className="mt-1 text-xs">用于公开音乐页展示的专辑名称、艺术家和简介。</Card.Description></span></Card.Header>
+        <Card.Content className="grid gap-5 p-5">
           <div className="grid gap-5 md:grid-cols-2">
-            <div className="space-y-2"><Label htmlFor="album-name">专辑名称</Label><Input id="album-name" name="name" defaultValue={album?.name ?? ""} placeholder="请输入专辑名称" required /></div>
-            <div className="space-y-2"><Label htmlFor="album-artist">艺术家</Label><Input id="album-artist" name="artist" defaultValue={album?.artist ?? ""} placeholder="请输入艺术家名称" required /></div>
+            <TextField defaultValue={album?.name ?? ""} isRequired><Label>专辑名称</Label><Input name="name" placeholder="请输入专辑名称" /></TextField>
+            <TextField defaultValue={album?.artist ?? ""} isRequired><Label>艺术家</Label><Input name="artist" placeholder="请输入艺术家名称" /></TextField>
           </div>
-          <div className="space-y-2"><Label htmlFor="album-description">专辑简介</Label><Textarea id="album-description" name="description" defaultValue={album?.description ?? ""} placeholder="请输入专辑简介（可选）" rows={4} maxLength={500} /></div>
-        </CardContent>
+          <TextField defaultValue={album?.description ?? ""}><Label>专辑简介</Label><TextArea className="min-h-28" name="description" placeholder="请输入专辑简介（可选）" maxLength={500} /></TextField>
+        </Card.Content>
       </Card>
 
-      <Card>
-        <CardHeader><CardTitle className="text-base">封面信息</CardTitle><CardDescription>上传专辑封面，并设置可选的发行日期。</CardDescription></CardHeader>
-        <CardContent className="grid items-end gap-6 md:grid-cols-[1fr_260px]">
+      <Card className="studio-panel">
+        <Card.Header className="studio-panel-heading"><span><Card.Title className="text-base">封面信息</Card.Title><Card.Description className="mt-1 text-xs">上传专辑封面，并设置可选的发行日期。</Card.Description></span></Card.Header>
+        <Card.Content className="grid items-end gap-6 p-5 md:grid-cols-[1fr_260px]">
           <div className="flex items-center gap-4">
-            <div className="flex size-28 shrink-0 items-center justify-center overflow-hidden rounded-xl border bg-muted">{coverUrl ? <img src={coverUrl} alt="专辑封面" className="size-full object-cover" /> : <Disc3 className="size-9 text-muted-foreground" />}</div>
-            <div><input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={(event) => void handleUpload(event.target.files?.[0])} /><Button type="button" variant="outline" disabled={coverLoading} onClick={() => fileInputRef.current?.click()}>{coverLoading ? <Loader2 className="size-4 animate-spin" /> : coverUrl ? <ImageIcon className="size-4" /> : <Upload className="size-4" />}{coverUrl ? "更换封面" : "上传封面"}</Button><p className="mt-2 text-xs text-muted-foreground">支持常见图片格式，文件会保存到媒体库。</p></div>
+            <div className="studio-album-cover-input">{coverUrl ? <img src={coverUrl} alt="专辑封面" /> : <Disc3 className="text-muted size-9" />}</div>
+            <div><input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={(event) => void handleUpload(event.target.files?.[0])} /><Button variant="outline" isDisabled={coverLoading} onPress={() => fileInputRef.current?.click()}>{coverLoading ? <Spinner color="current" size="sm" /> : coverUrl ? <ImageIcon className="size-4" /> : <Upload className="size-4" />}{coverUrl ? "更换封面" : "上传封面"}</Button><p className="text-muted mt-2 text-xs">支持常见图片格式，文件会保存到媒体库。</p></div>
           </div>
-          <div className="space-y-2"><Label htmlFor="release-date">发行日期</Label><Input id="release-date" name="releaseDate" type="date" defaultValue={dateInputValue(album?.releaseDate)} /></div>
-        </CardContent>
+          <TextField defaultValue={dateInputValue(album?.releaseDate)} type="date"><Label>发行日期</Label><Input name="releaseDate" /></TextField>
+        </Card.Content>
       </Card>
 
-      <Card>
-        <CardHeader><CardTitle className="text-base">发布设置</CardTitle><CardDescription>发布后，这张专辑会在 C 端音乐页面展示。</CardDescription></CardHeader>
-        <CardContent><label className="flex cursor-pointer items-start gap-3 rounded-lg border p-4"><Checkbox checked={published} onCheckedChange={(checked) => setPublished(checked === true)} /><span><span className="block text-sm font-medium">公开发布</span><span className="mt-1 block text-xs text-muted-foreground">关闭时保存为草稿，仅在 Studio 中可见。</span></span></label></CardContent>
+      <Card className="studio-panel">
+        <Card.Header className="studio-panel-heading"><span><Card.Title className="text-base">发布设置</Card.Title><Card.Description className="mt-1 text-xs">发布后，这张专辑会在 C 端音乐页面展示。</Card.Description></span></Card.Header>
+        <Card.Content className="p-5"><Checkbox isSelected={published} onChange={setPublished}><Checkbox.Control><Checkbox.Indicator /></Checkbox.Control><Checkbox.Content><strong className="block text-sm">公开发布</strong><Description>关闭时保存为草稿，仅在 Studio 中可见。</Description></Checkbox.Content></Checkbox></Card.Content>
       </Card>
 
-      <div className="flex justify-end gap-3 pb-4"><Button type="button" variant="outline" disabled={loading} onClick={() => router.back()}><ArrowLeft className="size-4" />返回</Button><Button type="submit" disabled={loading || coverLoading}>{loading ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}{mode === "create" ? "创建专辑" : "保存修改"}</Button></div>
+      <div className="flex justify-end gap-3 pb-4"><Button variant="outline" isDisabled={loading} onPress={() => router.back()}><ArrowLeft className="size-4" />返回</Button><Button type="submit" isDisabled={loading || coverLoading}>{loading ? <Spinner color="current" size="sm" /> : <Save className="size-4" />}{mode === "create" ? "创建专辑" : "保存修改"}</Button></div>
     </form>
   );
 }
