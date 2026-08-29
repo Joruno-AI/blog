@@ -1,14 +1,9 @@
 "use client";
 
-import { Bot, KeyRound, Loader2, RefreshCw, Save, Sparkles } from "lucide-react";
+import { Button, Card, Description, Input, Label, Spinner, TextArea, TextField } from "@heroui/react";
+import { Bot, KeyRound, RefreshCw, Save, Sparkles } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
-
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 
 interface ModelOption {
   id: string;
@@ -142,56 +137,40 @@ export default function AISettingsPage() {
   }
 
   if (initialLoading) {
-    return <div className="flex min-h-[60vh] items-center justify-center text-sm text-muted-foreground"><Loader2 className="mr-2 size-5 animate-spin" />加载 AI 设置</div>;
+    return <div className="studio-empty-state min-h-[60vh]"><Spinner size="sm" />加载 AI 设置</div>;
   }
 
   return (
-    <main className="mx-auto flex w-full max-w-[1500px] flex-col gap-5 p-4 md:p-6">
-      <div>
-        <p className="mb-1 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">Assistant</p>
-        <h1 className="text-2xl font-semibold tracking-tight">AI 助手</h1>
-        <p className="mt-1 text-sm text-muted-foreground">配置兼容 OpenAI API 的写作服务、模型与系统提示词。</p>
-      </div>
+    <main className="studio-dashboard studio-ai-page">
+      <section className="studio-page-heading"><div><p className="studio-eyebrow">Assistant</p><h1>AI 助手</h1><p>配置兼容 OpenAI API 的写作服务、模型与系统提示词。</p></div></section>
 
-      <form className="grid gap-5 lg:grid-cols-[minmax(280px,0.8fr)_minmax(0,1.8fr)]" onSubmit={save}>
-        <Card className="h-fit gap-0 py-0 shadow-none">
-          <CardHeader className="border-b px-5 py-4">
-            <CardTitle className="flex items-center gap-2 text-sm"><KeyRound className="size-4" />API 配置</CardTitle>
-            <CardDescription>密钥仅用于服务端生成接口，不会出现在公开页面。</CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-4 p-5">
-            <Field label="API Key" description="支持 OpenAI、DeepSeek、OpenRouter 等兼容接口。">
-              <Input type="password" value={form.ai_api_key} placeholder="sk-xxxxxxxx" autoComplete="off" onChange={(event) => update("ai_api_key", event.target.value)} />
-            </Field>
-            <Field label="API 地址" description="例如 https://openrouter.ai/api/v1">
-              <Input type="url" value={form.ai_api_url} onChange={(event) => update("ai_api_url", event.target.value)} />
-            </Field>
-            <Field label="模型" description={models.length ? `已加载 ${models.length} 个可用模型，可输入名称搜索。` : "可直接填写模型 ID。"}>
+      <form className="studio-ai-grid" onSubmit={save}>
+        <Card className="studio-panel h-fit">
+          <Card.Header className="studio-panel-heading"><span><Card.Title className="flex items-center gap-2 text-sm"><KeyRound className="size-4" />API 配置</Card.Title><Card.Description className="mt-1 text-xs">密钥仅用于服务端生成接口，不会出现在公开页面。</Card.Description></span></Card.Header>
+          <Card.Content className="studio-form-content grid gap-4">
+            <TextField type="password" value={form.ai_api_key} onChange={(value) => update("ai_api_key", value)}><Label>API Key</Label><Input autoComplete="off" placeholder="sk-xxxxxxxx" /><Description>支持 OpenAI、DeepSeek、OpenRouter 等兼容接口。</Description></TextField>
+            <TextField type="url" value={form.ai_api_url} onChange={(value) => update("ai_api_url", value)}><Label>API 地址</Label><Input /><Description>例如 https://openrouter.ai/api/v1</Description></TextField>
+            <TextField value={form.ai_model} onChange={(value) => update("ai_model", value)}>
+              <Label>模型</Label>
               <div className="flex gap-2">
-                <Input list="ai-model-options" value={form.ai_model} placeholder="选择或输入模型 ID" onChange={(event) => update("ai_model", event.target.value)} />
-                <Button type="button" variant="outline" size="icon" title="刷新模型" disabled={modelsLoading} onClick={() => void loadModels()}><RefreshCw className={modelsLoading ? "animate-spin" : ""} /><span className="sr-only">刷新模型</span></Button>
+                <Input className="flex-1" list="ai-model-options" placeholder="选择或输入模型 ID" />
+                <Button aria-label="刷新模型" isDisabled={modelsLoading} isIconOnly onPress={() => void loadModels()} variant="outline"><RefreshCw className={modelsLoading ? "size-4 animate-spin" : "size-4"} /></Button>
               </div>
               <datalist id="ai-model-options">{models.map((model) => <option key={model.id} value={model.id}>{model.name}</option>)}</datalist>
-            </Field>
-            <Button type="submit" disabled={saving}>{saving ? <Loader2 className="animate-spin" /> : <Save />}保存设置</Button>
-          </CardContent>
+              <Description>{models.length ? `已加载 ${models.length} 个可用模型，可输入名称搜索。` : "可直接填写模型 ID。"}</Description>
+            </TextField>
+            <Button isDisabled={saving} type="submit">{saving ? <Spinner color="current" size="sm" /> : <Save className="size-4" />}保存设置</Button>
+          </Card.Content>
         </Card>
 
-        <Card className="gap-0 py-0 shadow-none">
-          <CardHeader className="border-b px-5 py-4">
-            <CardTitle className="flex items-center gap-2 text-sm"><Sparkles className="size-4" />系统提示词</CardTitle>
-            <CardDescription>定义 AI 生成文章时的结构、写作风格、技术边界与质量要求。</CardDescription>
-          </CardHeader>
-          <CardContent className="p-5">
-            <Textarea className="min-h-[620px] resize-y font-mono text-xs leading-relaxed" value={form.ai_system_prompt} placeholder={DEFAULT_SYSTEM_PROMPT} onChange={(event) => update("ai_system_prompt", event.target.value)} />
-            <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground"><span className="flex items-center gap-1.5"><Bot className="size-3.5" />基于 Astro MDX 的内容规范</span><span>{form.ai_system_prompt.length.toLocaleString()} 字符</span></div>
-          </CardContent>
+        <Card className="studio-panel">
+          <Card.Header className="studio-panel-heading"><span><Card.Title className="flex items-center gap-2 text-sm"><Sparkles className="size-4" />系统提示词</Card.Title><Card.Description className="mt-1 text-xs">定义 AI 生成文章时的结构、写作风格、技术边界与质量要求。</Card.Description></span></Card.Header>
+          <Card.Content className="studio-form-content">
+            <TextArea aria-label="系统提示词" className="min-h-[620px] resize-y font-mono text-xs leading-relaxed" fullWidth value={form.ai_system_prompt} placeholder={DEFAULT_SYSTEM_PROMPT} onChange={(event) => update("ai_system_prompt", event.target.value)} />
+            <div className="text-muted mt-3 flex items-center justify-between text-xs"><span className="flex items-center gap-1.5"><Bot className="size-3.5" />基于 Astro MDX 的内容规范</span><span>{form.ai_system_prompt.length.toLocaleString()} 字符</span></div>
+          </Card.Content>
         </Card>
       </form>
     </main>
   );
-}
-
-function Field({ label, description, children }: { label: string; description: string; children: React.ReactNode }) {
-  return <div className="grid gap-2"><Label>{label}</Label>{children}<p className="text-xs text-muted-foreground">{description}</p></div>;
 }
