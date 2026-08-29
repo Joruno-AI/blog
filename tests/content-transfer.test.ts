@@ -14,7 +14,7 @@ import {
   parseArticleMarkdown,
   serializeArticleMarkdown,
 } from '@/lib/content-transfer/markdown'
-import { legacyContentEntry, parseLegacyProjects, parseLegacyStreams } from '@/lib/content-transfer/legacy-astro-import'
+import { legacyContentEntry, parseLegacyProjects, parseLegacySkills, parseLegacyStreams } from '@/lib/content-transfer/legacy-astro-import'
 
 test('round-trips Astro-compatible article frontmatter and Markdown', () => {
   const content = serializeArticleMarkdown({
@@ -155,4 +155,33 @@ test('parses legacy Astro streams with media flags and publication dates', () =>
   assert.equal(stream.radio, false)
   assert.equal(stream.platform, 'YouTube')
   assert.equal(stream.pubDate.toISOString(), '2021-07-16T00:00:00.000Z')
+})
+
+test('parses legacy Agent skills and preserves enrichment metadata', () => {
+  const [skill] = parseLegacySkills(JSON.stringify([{
+    id: 'anthropics/skills',
+    name: 'skills',
+    author: 'anthropics',
+    desc: 'Public repository for Agent Skills',
+    descZh: 'Anthropic 官方 Agent Skills 仓库',
+    category: 'claude-skill',
+    stars: 170866,
+    installs: 2933880,
+    qualityScore: 63,
+    securityGrade: 'safe',
+    platforms: ['python'],
+    tags: ['agent', 'claude'],
+    official: true,
+    keywords: 'Claude Code 技能',
+    pushedAt: '2026-08-21T17:10:55Z',
+    createdAt: '2025-09-22T15:53:31Z',
+    language: 'Python',
+    starsDelta: 120,
+  }]))
+  assert.equal(skill.id, 'anthropics/skills')
+  assert.equal(skill.official, true)
+  assert.equal(skill.installs, 2933880)
+  assert.deepEqual(skill.tags, ['agent', 'claude'])
+  assert.equal(skill.pushedAt?.toISOString(), '2026-08-21T17:10:55.000Z')
+  assert.deepEqual(parseLegacySkills(JSON.stringify([{ id: 'missing-fields' }])), [])
 })

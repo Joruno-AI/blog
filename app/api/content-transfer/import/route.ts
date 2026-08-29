@@ -6,7 +6,7 @@ import { CONTENT_SNAPSHOT_PATH, contentBundleSchema } from '@/lib/content-transf
 import { applyContentImport, planContentImport } from '@/lib/content-transfer/import-service'
 import { applyLegacyAstroImport, planLegacyAstroImport } from '@/lib/content-transfer/legacy-astro-import'
 
-export const runtime = 'edge'
+export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 const importRequestSchema = z.object({

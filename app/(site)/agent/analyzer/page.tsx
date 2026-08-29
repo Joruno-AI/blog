@@ -1,2 +1,6 @@
-import { AgentRoutePage } from "@/components/site/agent-route-page";
-export default function Page() { return <AgentRoutePage title="仓库分析" subtitle="分析 Agent 仓库结构、依赖与质量信号" />; }
+import { AgentAnalyzerTool } from "@/components/site/agent-analyzer-tool";
+import { AgentPageShell } from "@/components/site/agent-page-shell";
+
+export default function Page() {
+  return <AgentPageShell active="overview" title="仓库分析器" subtitle="在安装前先检查结构风险、活跃度与文档完整度"><AgentAnalyzerTool /></AgentPageShell>;
+}

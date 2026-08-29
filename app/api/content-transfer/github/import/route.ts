@@ -7,7 +7,7 @@ import { readContentBundleFromGitHub } from '@/lib/content-transfer/github-servi
 import { applyContentImport, planContentImport } from '@/lib/content-transfer/import-service'
 import { applyLegacyAstroImport, planLegacyAstroImport } from '@/lib/content-transfer/legacy-astro-import'
 
-export const runtime = 'edge'
+export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 const requestSchema = z.object({

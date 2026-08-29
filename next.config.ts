@@ -9,6 +9,12 @@ const fileName = fileURLToPath(import.meta.url);
 const root = path.dirname(fileName);
 
 const nextConfig: NextConfig = {
+  async headers() {
+    return [{
+      source: "/agent/:file*.json",
+      headers: [{ key: "Cache-Control", value: "public, max-age=3600, stale-while-revalidate=86400" }],
+    }];
+  },
   images: {
     remotePatterns: [
       {

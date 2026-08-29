@@ -1,3 +1,5 @@
-import { getPublishedResourcesByPathPrefix } from "@/modules/resources/application/queries";
-export const dynamic = "force-dynamic";
-export async function GET() { const resources = await getPublishedResourcesByPathPrefix("/agent", 1000); return Response.json(resources.map(({ id, title, path, description }) => ({ id, title, path, description })), { headers: { "Cache-Control": "public, s-maxage=300" } }); }
+import type { NextRequest } from "next/server";
+
+export function GET(request: NextRequest) {
+  return Response.redirect(new URL("/agent/suggest-index.static.json", request.url), 307);
+}

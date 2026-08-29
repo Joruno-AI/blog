@@ -37,10 +37,32 @@ interface LegacyStreamEntry {
   platform: string
 }
 
+export interface LegacySkillEntry {
+  id: string
+  name: string
+  author: string
+  desc: string
+  descZh: string
+  category: string
+  stars: number
+  installs: number | null
+  qualityScore: number
+  securityGrade: string
+  platforms: string[]
+  tags: string[]
+  official: boolean
+  keywords: string
+  pushedAt: Date | null
+  createdAt: Date | null
+  language: string | null
+  starsDelta: number | null
+}
+
 type LegacyCandidate =
   | { kind: 'markdown'; entry: LegacyEntry; source: string }
   | { kind: 'project'; entry: LegacyEntry; project: LegacyProjectEntry; order: number }
   | { kind: 'stream'; entry: LegacyEntry; stream: LegacyStreamEntry; order: number }
+  | { kind: 'skill'; entry: LegacyEntry; skill: LegacySkillEntry; readme: string; order: number }
 
 export function legacyContentEntry(filePath: string): LegacyEntry | null {
   const article = filePath.match(/^src\/content\/blog\/(?:.*\/)?([^/]+)\.(?:md|mdx)$/i)
@@ -105,6 +127,60 @@ export function parseLegacyStreams(source: string): LegacyStreamEntry[] {
   }
 }
 
+function stringList(value: unknown) {
+  return Array.isArray(value)
+    ? value.filter((item): item is string => typeof item === 'string').map((item) => item.trim()).filter(Boolean)
+    : []
+}
+
+function optionalDate(value: unknown) {
+  if (typeof value !== 'string' || !value.trim()) return null
+  const date = new Date(value)
+  return Number.isNaN(date.valueOf()) ? null : date
+}
+
+export function parseLegacySkills(source: string): LegacySkillEntry[] {
+  try {
+    const value: unknown = JSON.parse(source)
+    if (!Array.isArray(value)) return []
+    return value.flatMap((item) => {
+      if (!item || typeof item !== 'object' || Array.isArray(item)) return []
+      const record = item as Record<string, unknown>
+      const id = typeof record.id === 'string' ? record.id.trim() : ''
+      const name = typeof record.name === 'string' ? record.name.trim() : ''
+      const author = typeof record.author === 'string' ? record.author.trim() : ''
+      const category = typeof record.category === 'string' ? record.category.trim() : ''
+      const stars = typeof record.stars === 'number' && Number.isFinite(record.stars) ? record.stars : null
+      const qualityScore = typeof record.qualityScore === 'number' && Number.isFinite(record.qualityScore)
+        ? record.qualityScore
+        : null
+      if (!id || !name || !author || !category || stars === null || qualityScore === null || !id.includes('/')) return []
+      return [{
+        id,
+        name,
+        author,
+        desc: typeof record.desc === 'string' ? record.desc.trim() : '',
+        descZh: typeof record.descZh === 'string' ? record.descZh.trim() : '',
+        category,
+        stars,
+        installs: typeof record.installs === 'number' && Number.isFinite(record.installs) ? record.installs : null,
+        qualityScore,
+        securityGrade: typeof record.securityGrade === 'string' ? record.securityGrade.trim() || 'unknown' : 'unknown',
+        platforms: stringList(record.platforms),
+        tags: stringList(record.tags),
+        official: record.official === true,
+        keywords: typeof record.keywords === 'string' ? record.keywords.trim() : '',
+        pushedAt: optionalDate(record.pushedAt),
+        createdAt: optionalDate(record.createdAt),
+        language: typeof record.language === 'string' ? record.language.trim() || null : null,
+        starsDelta: typeof record.starsDelta === 'number' && Number.isFinite(record.starsDelta) ? record.starsDelta : null,
+      }]
+    })
+  } catch {
+    return []
+  }
+}
+
 async function ensureCategory(name: string | null) {
   if (!name) return null
   const normalizedName = name.split('/').at(-1)?.trim()
@@ -138,6 +214,11 @@ async function ensureTags(names: string[]) {
 }
 
 function entries(bundle: ContentBundle): LegacyCandidate[] {
+  const readmes = new Map(bundle.files.flatMap((file) => {
+    if (file.encoding === 'external') return []
+    const match = file.path.match(/^src\/data\/skills-readmes\/(.+)\.md$/i)
+    return match ? [[match[1], readEmbeddedFile(file)] as const] : []
+  }))
   return bundle.files.flatMap((file): LegacyCandidate[] => {
     if (file.encoding === 'external') return []
     if (file.path === 'src/content/projects/data.json') {
@@ -165,6 +246,21 @@ function entries(bundle: ContentBundle): LegacyCandidate[] {
           article: false,
         },
         stream,
+        order,
+      }))
+    }
+    if (file.path === 'src/content/skills/data.json') {
+      return parseLegacySkills(readEmbeddedFile(file)).map((skill, order) => ({
+        kind: 'skill' as const,
+        entry: {
+          filePath: `${file.path}#${skill.id}`,
+          type: 'tool' as const,
+          slug: skill.id,
+          path: `/agent/${skill.id}`,
+          article: false,
+        },
+        skill,
+        readme: readmes.get(skill.id.replace('/', '__')) ?? '',
         order,
       }))
     }
@@ -305,6 +401,73 @@ export async function applyLegacyAstroImport(bundleInput: unknown, actorId?: str
           && JSON.stringify(parseJson(current.metadataJson)) === JSON.stringify(metadata)
           && current.status === 'published'
           && current.publishedAt?.valueOf() === stream.pubDate.valueOf()
+        if (same) unchanged += 1
+        else {
+          await updateGenericResource(identity.id, input)
+          updated += 1
+        }
+      }
+      continue
+    }
+
+    if (candidate.kind === 'skill') {
+      const { skill, readme, order } = candidate
+      const [identity] = await db.select({ id: resources.id }).from(resources).where(and(
+        eq(resources.type, entry.type),
+        eq(resources.path, entry.path),
+      )).limit(1)
+      const metadata = {
+        repo: skill.id,
+        author: skill.author,
+        category: skill.category,
+        desc: skill.desc,
+        descZh: skill.descZh,
+        stars: skill.stars,
+        installs: skill.installs,
+        qualityScore: skill.qualityScore,
+        securityGrade: skill.securityGrade,
+        platforms: skill.platforms,
+        tags: skill.tags,
+        official: skill.official,
+        keywords: skill.keywords,
+        pushedAt: skill.pushedAt?.toISOString() ?? null,
+        createdAt: skill.createdAt?.toISOString() ?? null,
+        language: skill.language,
+        starsDelta: skill.starsDelta,
+        order,
+        sourceType: 'git',
+        repository: bundle.source.repository,
+        sourcePath: `src/content/skills/data.json#${skill.id}`,
+        readmePath: readme ? `src/data/skills-readmes/${skill.id.replace('/', '__')}.md` : null,
+        commit: bundle.source.commit,
+      }
+      const input = {
+        type: entry.type,
+        title: skill.name,
+        slug: entry.slug,
+        path: entry.path,
+        description: skill.descZh || skill.desc || null,
+        visibility: 'public' as const,
+        content: readme,
+        contentFormat: 'markdown' as const,
+        metadata,
+        published: true,
+        publishedAt: skill.pushedAt,
+        authorId: actorId,
+        changeSummary: `Imported from GitHub ${bundle.source.commit ?? bundle.source.ref ?? ''}`.trim(),
+      }
+      if (!identity) {
+        await createGenericResource(input)
+        created += 1
+      } else {
+        const current = await getStudioResource(identity.id)
+        const same = current
+          && current.title === input.title && current.slug === resourceSlug(input.slug) && current.path === input.path
+          && current.description === input.description && current.visibility === input.visibility
+          && current.content === input.content && current.contentFormat === input.contentFormat
+          && JSON.stringify(parseJson(current.metadataJson)) === JSON.stringify(metadata)
+          && current.status === 'published'
+          && current.publishedAt?.valueOf() === skill.pushedAt?.valueOf()
         if (same) unchanged += 1
         else {
           await updateGenericResource(identity.id, input)

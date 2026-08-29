@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { ThemeProvider } from '@/components/theme-provider'
 import './globals.css'
 import './astro-parity.css'
+import './agent-parity.css'
 
 const inter = {
   variable: '--font-sans',

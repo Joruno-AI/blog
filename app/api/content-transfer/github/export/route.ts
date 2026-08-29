@@ -5,7 +5,7 @@ import { getRequestViewer } from '@/lib/auth/request-viewer'
 import { createContentBundle } from '@/lib/content-transfer/export-service'
 import { writeContentBundleToGitHub } from '@/lib/content-transfer/github-service'
 
-export const runtime = 'edge'
+export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 const requestSchema = z.object({

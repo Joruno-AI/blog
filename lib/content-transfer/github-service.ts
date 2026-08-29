@@ -67,6 +67,7 @@ function managedGitHubPath(path: string) {
 function importableGitHubPath(path: string) {
   const normalized = normalizeBundlePath(path)
   if (managedGitHubPath(normalized)) return true
+  if (/^src\/data\/skills-readmes\/[^/]+\.md$/i.test(normalized)) return true
   return normalized.startsWith('src/content/') && /\.(?:md|mdx|json)$/i.test(normalized)
 }
 
@@ -94,7 +95,9 @@ export async function readContentBundleFromGitHub(input: {
       if (blob.encoding !== 'base64') throw new Error(`Unsupported GitHub blob encoding for ${entry.path}.`)
       return {
         path: normalizeBundlePath(entry.path),
-        kind: entry.path.startsWith('src/content/') ? 'content' as const : 'data' as const,
+        kind: entry.path.startsWith('src/content/') || entry.path.startsWith('src/data/skills-readmes/')
+          ? 'content' as const
+          : 'data' as const,
         encoding: 'utf8' as const,
         mediaType: mediaType(entry.path),
         content: decodeBase64(blob.content),
