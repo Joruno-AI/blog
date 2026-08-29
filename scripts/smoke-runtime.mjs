@@ -5,8 +5,16 @@ const checks = [
   ["/blog", 200],
   ["/music", 200],
   ["/photos", 200],
+  ["/docs", 200],
+  ["/agent", 200],
+  ["/agent/all", 200],
+  ["/agent/scenes", 200],
+  ["/agent/anthropics/skills", 200],
   ["/knowledge", 200],
   ["/projects", 200],
+  ["/feeds", 200],
+  ["/prs", 200],
+  ["/releases", 200],
   ["/search?q=Next", 200],
   ["/rss.xml", 200],
   ["/sitemap.xml", 200],
@@ -50,10 +58,24 @@ if (albumResponse.status !== 200) {
 console.log(`PASS 200 /music/albums/${music.albums[0].id}`);
 
 const photosHtml = await fetch(`${base}/photos`).then((response) => response.text());
-const photoPath = photosHtml.match(/href="(\/photos\/[^"]+)"/)?.[1];
-if (!photoPath) throw new Error("Photo listing returned no migrated photo links");
-const photoResponse = await fetch(base + photoPath);
-if (photoResponse.status !== 200) {
-  throw new Error(`First photo page: expected 200, received ${photoResponse.status}`);
+const photoUrl = photosHtml.match(/\\"url\\":\\"(https:[^"\\]+)/)?.[1];
+if (!photoUrl || !photosHtml.includes('aria-label="查看')) {
+  throw new Error("Photo gallery returned no migrated photos");
 }
-console.log(`PASS 200 ${photoPath}`);
+const photoResponse = await fetch(photoUrl);
+if (!photoResponse.ok || !photoResponse.headers.get("content-type")?.startsWith("image/")) {
+  throw new Error(`First photo asset: expected an image, received ${photoResponse.status}`);
+}
+console.log("PASS migrated photo gallery and R2 asset");
+
+const docsCatalog = await fetch(`${base}/docs/catalog.json`).then((response) => response.json());
+if (docsCatalog.stats?.courses !== 349 || docsCatalog.stats?.articles !== 13_034) {
+  throw new Error("Docs catalog did not preserve the complete Astro course index");
+}
+console.log("PASS 13034 /docs/catalog.json chapters");
+
+const agentIndex = await fetch(`${base}/agent/full-index.json`).then((response) => response.json());
+if (!Array.isArray(agentIndex.items) || agentIndex.items.length !== 28_868) {
+  throw new Error("Agent catalog did not preserve the complete Astro project index");
+}
+console.log("PASS 28868 /agent/full-index.json projects");

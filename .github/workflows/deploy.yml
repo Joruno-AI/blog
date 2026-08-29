@@ -75,6 +75,6 @@ jobs:
       - name: Smoke test deployed Worker
         run: pnpm test:smoke
         env:
-          # Keep production on the Astro Pages origin until the parity contract
-          # is satisfied. CI deploys and verifies the isolated Next.js preview.
+          # Verify the unified Next.js public site, Studio, D1 data and static
+          # Astro-compatible indexes on the production Worker.
           SMOKE_BASE_URL: https://personal-platform.wsl1710642275.workers.dev
