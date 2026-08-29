@@ -18,6 +18,7 @@ const checks = [
   ["/search?q=Next", 200],
   ["/rss.xml", 200],
   ["/sitemap.xml", 200],
+  ["/og-images/smoke.png", 307],
   ["/blog/__smoke_missing_resource__", 404],
 ];
 
@@ -67,6 +68,12 @@ if (!photoResponse.ok || !photoResponse.headers.get("content-type")?.startsWith(
   throw new Error(`First photo asset: expected an image, received ${photoResponse.status}`);
 }
 console.log("PASS migrated photo gallery and R2 asset");
+
+const ogImageResponse = await fetch(`${base}/og-images/og-image.png`);
+if (!ogImageResponse.ok || ogImageResponse.headers.get("content-type") !== "image/png") {
+  throw new Error(`Fallback OG image: expected image/png, received ${ogImageResponse.status}`);
+}
+console.log("PASS 200 /og-images/og-image.png");
 
 const docsCatalog = await fetch(`${base}/docs/catalog.json`).then((response) => response.json());
 if (docsCatalog.stats?.courses !== 349 || docsCatalog.stats?.articles !== 13_034) {
