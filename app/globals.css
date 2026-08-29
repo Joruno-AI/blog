@@ -1966,6 +1966,24 @@ body {
   gap: 0.7rem;
 }
 
+.studio-resource-form {
+  display: grid;
+  gap: 1rem;
+  max-height: min(72vh, 760px);
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+.studio-table-pagination {
+  align-items: center;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-muted-foreground);
+  display: flex;
+  font-size: 0.8125rem;
+  justify-content: space-between;
+  padding: 0.75rem 1.25rem;
+}
+
 .studio-album-card strong,
 .studio-album-card small {
   display: block;
