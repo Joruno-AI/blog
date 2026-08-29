@@ -14,7 +14,7 @@ import {
   parseArticleMarkdown,
   serializeArticleMarkdown,
 } from '@/lib/content-transfer/markdown'
-import { legacyContentEntry } from '@/lib/content-transfer/legacy-astro-import'
+import { legacyContentEntry, parseLegacyProjects } from '@/lib/content-transfer/legacy-astro-import'
 
 test('round-trips Astro-compatible article frontmatter and Markdown', () => {
   const content = serializeArticleMarkdown({
@@ -126,4 +126,18 @@ test('maps legacy Astro collections to their canonical Next resource routes', ()
   })
   assert.equal(legacyContentEntry('src/content/changelog/3.0.0.md')?.path, '/changelog/3.0.0')
   assert.equal(legacyContentEntry('src/content/home/index.md'), null)
+})
+
+test('parses valid legacy Astro project data without accepting incomplete rows', () => {
+  assert.deepEqual(parseLegacyProjects(JSON.stringify([
+    { id: 'TypeCN', link: 'https://example.com', desc: 'Typing practice', icon: 'i-ph-translate-duotone', category: 'SaaS' },
+    { id: 'Missing link', desc: 'Ignored', category: 'SaaS' },
+  ])), [{
+    id: 'TypeCN',
+    link: 'https://example.com',
+    desc: 'Typing practice',
+    icon: 'i-ph-translate-duotone',
+    category: 'SaaS',
+  }])
+  assert.deepEqual(parseLegacyProjects('{broken'), [])
 })

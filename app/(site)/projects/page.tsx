@@ -1,15 +1,18 @@
-import { SectionPage } from "@/components/site/section-page";
+import { ProjectDirectory } from "@/components/site/project-directory";
+import { getPublishedResourcesByTypes } from "@/modules/resources/application/queries";
 
 export const dynamic = "force-dynamic";
 
-export default function ProjectsPage() {
+export default async function ProjectsPage() {
+  const resources = await getPublishedResourcesByTypes({ types: ["project", "tool"], limit: 100 });
+
   return (
-    <SectionPage
-      kicker="Build Log"
-      title="项目"
-      description="做过的产品、开源工具，以及仍在持续打磨的想法"
-      types={["project", "tool"]}
-      empty="No content available for display."
-    />
+    <div className="site-shell listing-page astro-section-index astro-section-projects">
+      <header className="prose standard-header text-center">
+        <h1>项目</h1>
+        <p className="subtitle">做过的产品、开源工具，以及仍在持续打磨的想法</p>
+      </header>
+      <ProjectDirectory resources={resources} />
+    </div>
   );
 }
