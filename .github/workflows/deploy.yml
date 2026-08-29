@@ -32,6 +32,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Install HeroUI Pro package contents
+        run: pnpm dlx hpsetup@latest "$HEROUI_HP_KEY" react --auto
+        env:
+          HEROUI_HP_KEY: ${{ secrets.HEROUI_HP_KEY }}
+
       - name: Lint, test and typecheck
         run: |
           pnpm lint

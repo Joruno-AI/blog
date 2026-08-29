@@ -17,3 +17,7 @@ overrides:
   postcss@<=8.5.22: 8.5.23
   seroval@<=1.5.2: 1.5.3
   sharp@<0.35.0: 0.35.0
+
+allowBuilds:
+  "@heroui-pro/react": true
+  "@zowe/secrets-for-zowe-sdk": true

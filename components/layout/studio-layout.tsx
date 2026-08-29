@@ -1,25 +1,16 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Avatar, Button, Dropdown, Label, Separator } from "@heroui/react";
+import { AppLayout, Navbar, Sidebar } from "@heroui-pro/react";
 import {
   Bot, Database, ExternalLink, FileText, FolderTree, Image, LayoutDashboard,
-  LogOut, Music2, Settings, Tags, User, UserRound,
+  LogOut, Moon, Music2, Settings, Sun, Tags, UserRound,
 } from "lucide-react";
+import { useTheme } from "next-themes";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import { MiniPlayer } from "@/components/music/mini-player";
-import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
-  DropdownMenuSeparator, DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent,
-  SidebarGroupLabel, SidebarHeader, SidebarInset, SidebarMenu, SidebarMenuButton,
-  SidebarMenuItem, SidebarProvider, SidebarRail, SidebarSeparator, SidebarTrigger,
-} from "@/components/ui/sidebar";
 import { signOut } from "@/lib/auth/client";
 
 const navigation = [
@@ -29,82 +20,143 @@ const navigation = [
   { href: "/studio/tags", label: "标签管理", icon: Tags },
   { href: "/studio/media", label: "媒体库", icon: Image },
   { href: "/studio/music", label: "音乐管理", icon: Music2 },
-];
+] as const;
 
 const accountNavigation = [
   { href: "/studio/profile", label: "个人信息", icon: UserRound },
   { href: "/studio/settings/ai", label: "AI 助手", icon: Bot },
   { href: "/studio/settings", label: "设置", icon: Settings },
-];
+] as const;
 
 function isCurrent(pathname: string, href: string) {
   if (href === "/studio") return pathname === href;
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
+function StudioBrand({ compact = false }: { compact?: boolean }) {
+  return (
+    <div className="flex items-center gap-3 px-1 py-2">
+      <span className="studio-mark" aria-hidden="true"><FileText className="size-3.5" /></span>
+      <span className="min-w-0" data-sidebar={compact ? undefined : "label"}>
+        <strong className="block truncate text-sm font-semibold tracking-[-0.02em]">Joruno Studio</strong>
+        <small className="text-muted block truncate text-[11px]">个人数字产品平台</small>
+      </span>
+    </div>
+  );
+}
+
+function StudioMenu({ mobile = false }: { mobile?: boolean }) {
+  const pathname = usePathname();
+  const MenuRoot = mobile ? Sidebar.Mobile : Sidebar;
+
+  return (
+    <MenuRoot>
+      <Sidebar.Header><StudioBrand compact={mobile} /></Sidebar.Header>
+      <Sidebar.Content>
+        <Sidebar.Group>
+          <Sidebar.GroupLabel>内容与资产</Sidebar.GroupLabel>
+          <Sidebar.Menu aria-label="内容与资产">
+            {navigation.map(({ href, label, icon: Icon }) => (
+              <Sidebar.MenuItem href={href} id={href} isCurrent={isCurrent(pathname, href)} key={href} textValue={label}>
+                <Sidebar.MenuIcon><Icon className="size-4" /></Sidebar.MenuIcon>
+                <Sidebar.MenuLabel>{label}</Sidebar.MenuLabel>
+              </Sidebar.MenuItem>
+            ))}
+          </Sidebar.Menu>
+        </Sidebar.Group>
+        <Sidebar.Group>
+          <Sidebar.GroupLabel>账户与系统</Sidebar.GroupLabel>
+          <Sidebar.Menu aria-label="账户与系统">
+            {accountNavigation.map(({ href, label, icon: Icon }) => (
+              <Sidebar.MenuItem href={href} id={href} isCurrent={isCurrent(pathname, href)} key={href} textValue={label}>
+                <Sidebar.MenuIcon><Icon className="size-4" /></Sidebar.MenuIcon>
+                <Sidebar.MenuLabel>{label}</Sidebar.MenuLabel>
+              </Sidebar.MenuItem>
+            ))}
+          </Sidebar.Menu>
+        </Sidebar.Group>
+      </Sidebar.Content>
+      <Sidebar.Footer>
+        <Sidebar.Menu aria-label="账户">
+          <Sidebar.MenuItem href="/studio/profile" id="studio-account" textValue="管理员账户">
+            <Sidebar.MenuIcon><UserRound className="size-4" /></Sidebar.MenuIcon>
+            <Sidebar.MenuLabel>
+              <span className="grid leading-tight"><strong className="truncate text-xs font-medium">wsl1710642275</strong><small className="text-muted truncate text-[11px]">管理员</small></span>
+            </Sidebar.MenuLabel>
+          </Sidebar.MenuItem>
+        </Sidebar.Menu>
+      </Sidebar.Footer>
+      {mobile ? null : <Sidebar.Rail />}
+    </MenuRoot>
+  );
+}
+
+function ThemeButton() {
+  const { resolvedTheme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const dark = mounted && resolvedTheme === "dark";
+
+  return (
+    <Button aria-label={dark ? "切换到浅色模式" : "切换到深色模式"} isIconOnly onPress={() => setTheme(dark ? "light" : "dark")} size="sm" variant="ghost">
+      {dark ? <Moon className="size-4" /> : <Sun className="size-4" />}
+    </Button>
+  );
+}
+
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const current = [...navigation, ...accountNavigation].find((item) => isCurrent(pathname, item.href));
 
   async function logout() {
     try {
-      await signOut({ fetchOptions: { onSuccess: () => { window.location.href = "/login"; } } });
+      await signOut({ fetchOptions: { onSuccess: () => router.replace("/login") } });
     } catch {
-      window.location.href = "/login";
+      router.replace("/login");
     }
   }
 
-  return (
-    <SidebarProvider className="studio-shell">
-      <Sidebar variant="inset" collapsible="icon">
-        <SidebarHeader>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild size="lg" tooltip="数字产品工作台">
-                <Link href="/studio">
-                  <span className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground"><FileText className="size-4" /></span>
-                  <span className="grid flex-1 text-left leading-tight"><strong className="truncate text-sm">数字产品工作台</strong><small className="truncate text-xs text-muted-foreground">Joruno Studio</small></span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarHeader>
-        <SidebarSeparator />
-        <SidebarContent>
-          <SidebarGroup>
-            <SidebarGroupLabel>内容与资产</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>{navigation.map(({ href, label, icon: Icon }) => <SidebarMenuItem key={href}><SidebarMenuButton asChild isActive={isCurrent(pathname, href)} tooltip={label}><Link href={href}><Icon /><span>{label}</span></Link></SidebarMenuButton></SidebarMenuItem>)}</SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-          <SidebarGroup>
-            <SidebarGroupLabel>账户与系统</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>{accountNavigation.map(({ href, label, icon: Icon }) => <SidebarMenuItem key={href}><SidebarMenuButton asChild isActive={isCurrent(pathname, href)} tooltip={label}><Link href={href}><Icon /><span>{label}</span></Link></SidebarMenuButton></SidebarMenuItem>)}</SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        </SidebarContent>
-        <SidebarFooter>
-          <SidebarMenu><SidebarMenuItem><SidebarMenuButton asChild size="lg" tooltip="个人账户"><Link href="/studio/profile"><Avatar className="size-8"><AvatarFallback>W</AvatarFallback></Avatar><span className="grid flex-1 text-left leading-tight"><strong className="truncate text-sm">wsl1710642275</strong><small className="truncate text-xs text-muted-foreground">管理员</small></span></Link></SidebarMenuButton></SidebarMenuItem></SidebarMenu>
-        </SidebarFooter>
-        <SidebarRail />
-      </Sidebar>
+  const navbar = (
+    <Navbar className="studio-navbar" maxWidth="full">
+      <Navbar.Header>
+        <AppLayout.MenuToggle aria-label="打开导航" className="lg:hidden" />
+        <Sidebar.Trigger />
+        <div className="min-w-0">
+          <p className="truncate text-sm font-medium">{current?.label || "数字产品工作台"}</p>
+          <p className="text-muted hidden truncate text-xs sm:block">统一维护公开站点、内容与数字资产</p>
+        </div>
+        <Navbar.Spacer />
+        <Navbar.Content>
+          <Button aria-label="查看公开站点" isIconOnly onPress={() => window.open("/", "_blank", "noopener,noreferrer")} size="sm" variant="ghost"><ExternalLink className="size-4" /></Button>
+          <ThemeButton />
+          <Navbar.Separator />
+          <Dropdown>
+            <Button aria-label="打开账户菜单" isIconOnly size="sm" variant="ghost"><Avatar className="size-7" variant="soft"><Avatar.Fallback>W</Avatar.Fallback></Avatar></Button>
+            <Dropdown.Popover className="min-w-52" placement="bottom end">
+              <Dropdown.Menu onAction={(key) => {
+                if (key === "logout") void logout();
+                if (key === "profile") router.push("/studio/profile");
+                if (key === "settings") router.push("/studio/settings");
+              }}>
+                <Dropdown.Item id="profile" textValue="个人信息"><UserRound className="text-muted size-4" /><Label>个人信息</Label></Dropdown.Item>
+                <Dropdown.Item id="settings" textValue="设置"><Settings className="text-muted size-4" /><Label>设置</Label></Dropdown.Item>
+                <Separator />
+                <Dropdown.Item id="logout" textValue="退出登录"><LogOut className="text-danger size-4" /><Label>退出登录</Label></Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown.Popover>
+          </Dropdown>
+        </Navbar.Content>
+      </Navbar.Header>
+    </Navbar>
+  );
 
-      <SidebarInset className="min-h-svh overflow-hidden">
-        <header className="sticky top-0 z-20 flex h-14 shrink-0 items-center gap-3 border-b bg-background/92 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/75">
-          <SidebarTrigger />
-          <div className="h-4 w-px bg-border" />
-          <div className="min-w-0 flex-1"><p className="truncate text-sm font-medium text-foreground">{current?.label || "数字产品工作台"}</p><p className="hidden truncate text-xs text-muted-foreground sm:block">统一维护公开站点、内容和数字资产</p></div>
-          <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex"><Link href="/" target="_blank">查看站点<ExternalLink /></Link></Button>
-          <AnimatedThemeToggler />
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" className="rounded-full"><Avatar className="size-7"><AvatarFallback><User className="size-3.5" /></AvatarFallback></Avatar><span className="sr-only">打开账户菜单</span></Button></DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-52"><DropdownMenuLabel>管理员账户</DropdownMenuLabel><DropdownMenuSeparator /><DropdownMenuItem asChild><Link href="/studio/profile"><UserRound />个人信息</Link></DropdownMenuItem><DropdownMenuItem asChild><Link href="/studio/settings"><Settings />设置</Link></DropdownMenuItem><DropdownMenuSeparator /><DropdownMenuItem variant="destructive" onSelect={logout}><LogOut />退出登录</DropdownMenuItem></DropdownMenuContent>
-          </DropdownMenu>
-        </header>
-        <div className="min-h-0 flex-1 overflow-auto bg-muted/25">{children}</div>
+  return (
+    <div className="studio-shell heroui-studio">
+      <AppLayout className="min-h-svh" navigate={(href) => router.push(href)} navbar={navbar} scrollMode="content" sidebar={<><StudioMenu /><StudioMenu mobile /></>} sidebarCollapsible="icon">
+        <div className="studio-content-scroll">{children}</div>
         <MiniPlayer />
-      </SidebarInset>
-    </SidebarProvider>
+      </AppLayout>
+    </div>
   );
 }
