@@ -2188,6 +2188,26 @@ body {
 @media (max-width: 1279px) { .studio-media-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 @media (max-width: 767px) { .studio-media-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
+.studio-album-hero-art {
+  align-items: center;
+  background: linear-gradient(135deg, #ec4899, #fb7185);
+  border-radius: 1rem;
+  display: flex;
+  flex: 0 0 auto;
+  height: 11rem;
+  justify-content: center;
+  overflow: hidden;
+  width: 11rem;
+}
+
+.studio-album-hero-art img {
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.studio-song-current { background: var(--color-accent-soft); }
+
 .studio-album-card strong,
 .studio-album-card small {
   display: block;
