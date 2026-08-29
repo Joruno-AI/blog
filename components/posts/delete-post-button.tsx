@@ -1,11 +1,10 @@
 'use client'
 
-import { Loader2, Trash2 } from 'lucide-react'
+import { AlertDialog, Button, Spinner } from '@heroui/react'
+import { Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-
-import { Button } from '@/components/ui/button'
 
 interface DeletePostButtonProps {
   id: string
@@ -19,9 +18,9 @@ interface DeletePostButtonProps {
 export function DeletePostButton({ id, title, variant = 'button', onDeleted, onDeleteStart, onDeleteEnd }: DeletePostButtonProps) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const [open, setOpen] = useState(false)
 
   const handleDelete = async () => {
-    if (!window.confirm(`确定要删除「${title}」吗？此操作不可撤销。`)) return
     setLoading(true)
     onDeleteStart?.()
     try {
@@ -34,6 +33,7 @@ export function DeletePostButton({ id, title, variant = 'button', onDeleted, onD
       }
 
       toast.success('文章已删除')
+      setOpen(false)
       if (onDeleted) {
         onDeleted()
       } else {
@@ -49,15 +49,8 @@ export function DeletePostButton({ id, title, variant = 'button', onDeleted, onD
     }
   }
 
-  return (
-    variant === 'icon' ? (
-      <Button variant="ghost" size="icon" className="size-8 text-destructive hover:text-destructive" title="删除文章" disabled={loading} onClick={() => void handleDelete()}>
-        {loading ? <Loader2 className="animate-spin" /> : <Trash2 />}<span className="sr-only">删除文章</span>
-      </Button>
-    ) : (
-      <Button variant="destructive" disabled={loading} onClick={() => void handleDelete()}>
-        {loading ? <Loader2 className="animate-spin" /> : <Trash2 />}删除
-      </Button>
-    )
-  )
+  return <>
+    {variant === 'icon' ? <Button aria-label="删除文章" isDisabled={loading} isIconOnly onPress={() => setOpen(true)} size="sm" variant="ghost"><Trash2 className="text-danger size-4" /></Button> : <Button isDisabled={loading} onPress={() => setOpen(true)} variant="danger"><Trash2 className="size-4" />删除</Button>}
+    <AlertDialog.Backdrop isOpen={open} onOpenChange={(next) => { if (!loading) setOpen(next) }}><AlertDialog.Container><AlertDialog.Dialog className="sm:max-w-[420px]"><AlertDialog.CloseTrigger /><AlertDialog.Header><AlertDialog.Icon status="danger" /><AlertDialog.Heading>删除文章</AlertDialog.Heading></AlertDialog.Header><AlertDialog.Body><p>确定删除“{title}”吗？此操作不可撤销。</p></AlertDialog.Body><AlertDialog.Footer><Button isDisabled={loading} onPress={() => setOpen(false)} variant="tertiary">取消</Button><Button isDisabled={loading} onPress={() => void handleDelete()} variant="danger">{loading ? <Spinner color="current" size="sm" /> : null}确认删除</Button></AlertDialog.Footer></AlertDialog.Dialog></AlertDialog.Container></AlertDialog.Backdrop>
+  </>
 }
