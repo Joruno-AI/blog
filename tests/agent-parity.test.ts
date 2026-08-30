@@ -238,8 +238,9 @@ test("uses ZRead as the only generated repository-document source", () => {
   assert.match(reader, /\/agent\/zread-cache\/\$\{staticPath\}\/\$\{action\}\.json/);
   assert.match(reader, /\/agent\/zread-cache\/\$\{staticPath\}\/pages\/\$\{encodeURIComponent\(key\)\}\.json/);
   assert.match(reader, /page\?\.slug \|\| ""/);
-  assert.match(reader, /const livePromise = readLive\(\)/);
-  assert.match(reader, /window\.setTimeout\(resolve, 650\)/);
+  assert.match(reader, /const staticFallback = await readStaticFallback\(\)/);
+  assert.match(reader, /if \(staticFallback\) return staticFallback;\s*return readLive\(\)/);
+  assert.doesNotMatch(reader, /Promise\.race\(\[/);
   assert.match(reader, /payload\?\.source === source/);
   assert.match(reader, /setCurrentWikiPage\(resolveAgentWikiPageTitle\(payload, title\)\)/);
   assert.match(reader, /manifestNodes\.length \? atlasOpen && atlasTab === "overview"/);

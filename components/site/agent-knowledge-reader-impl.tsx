@@ -191,12 +191,10 @@ async function readWikiJson(repo: string, action: "structure" | "overview" | "pa
   if (cache && Date.now() - cache.savedAt < 5 * 60_000) {
     return Object.assign(cache.payload, { source: source as AgentWikiSource });
   }
-  const activeLive = { controller: null as AbortController | null };
   const readLive = async () => {
     const maximumAttempts = 1;
     for (let attempt = 0; attempt < maximumAttempts; attempt += 1) {
       const controller = new AbortController();
-      activeLive.controller = controller;
       const abort = () => controller.abort();
       signal.addEventListener("abort", abort, { once: true });
       const timeout = window.setTimeout(() => controller.abort(), 12_000);
@@ -217,7 +215,6 @@ async function readWikiJson(repo: string, action: "structure" | "overview" | "pa
       } finally {
         window.clearTimeout(timeout);
         signal.removeEventListener("abort", abort);
-        if (activeLive.controller === controller) activeLive.controller = null;
       }
     }
     if (cache && Date.now() - cache.savedAt < 24 * 60 * 60_000) {
@@ -226,25 +223,12 @@ async function readWikiJson(repo: string, action: "structure" | "overview" | "pa
     throw lastError instanceof Error ? lastError : new Error("ZRead 中文文档暂时不可用。");
   };
 
-  // Start live ZRead first. A validated static ZRead snapshot joins after a
-  // short grace period so a slow/504 upstream never leaves the reader blank.
-  const livePromise = readLive();
-  const first = await Promise.race([
-    livePromise.then((payload) => ({ kind: "payload" as const, payload })).catch((error: unknown) => ({ kind: "error" as const, error })),
-    new Promise<void>((resolve) => window.setTimeout(resolve, 650))
-      .then(readStaticFallback)
-      .then((payload) => payload
-        ? { kind: "payload" as const, payload }
-        : { kind: "miss" as const, payload: null }),
-  ]);
-  if (first.kind === "payload" && first.payload) {
-    activeLive.controller?.abort();
-    return first.payload;
-  }
-  if (first.kind === "miss") return livePromise;
+  // Prefer a validated same-origin snapshot. Starting the upstream request
+  // only after a cache miss avoids leaving a Worker/ZRead request running when
+  // a browser abort cannot propagate through an intermediary connection.
   const staticFallback = await readStaticFallback();
   if (staticFallback) return staticFallback;
-  throw first.error instanceof Error ? first.error : new Error("ZRead 中文文档暂时不可用。");
+  return readLive();
 }
 
 function encodePath(path: string) {
