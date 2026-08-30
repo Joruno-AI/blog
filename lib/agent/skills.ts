@@ -1,4 +1,7 @@
-import type { PublishedResource } from "@/modules/resources/infrastructure/resource-repository";
+import type {
+  PublishedResource,
+  PublishedResourceSummary,
+} from "@/modules/resources/infrastructure/resource-repository";
 
 export const AGENT_CATEGORIES = [
   "claude-skill",
@@ -71,7 +74,9 @@ function list(value: unknown) {
   return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : [];
 }
 
-export function agentSkillFromResource(resource: PublishedResource): AgentSkill {
+export function agentSkillFromResource(
+  resource: PublishedResource | PublishedResourceSummary
+): AgentSkill {
   const metadata = record(resource.metadataJson);
   const id = text(metadata.repo, resource.path.replace(/^\/agent\//, ""));
   return {
@@ -93,7 +98,7 @@ export function agentSkillFromResource(resource: PublishedResource): AgentSkill 
     createdAt: typeof metadata.createdAt === "string" ? metadata.createdAt : null,
     language: typeof metadata.language === "string" ? metadata.language : null,
     starsDelta: metadata.starsDelta === null ? null : number(metadata.starsDelta) || null,
-    content: resource.content,
+    content: "content" in resource ? resource.content : "",
     path: resource.path,
   };
 }

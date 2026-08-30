@@ -9,14 +9,17 @@ const fileName = fileURLToPath(import.meta.url);
 const root = path.dirname(fileName);
 
 const nextConfig: NextConfig = {
+  // The Astro production site canonicalizes document routes with a trailing
+  // slash. Keep the same public URL contract after the Next.js migration.
+  trailingSlash: true,
+  // Astro leaves unknown and file-like trailing-slash URLs as real 404s
+  // instead of normalizing them first. Middleware applies the narrower
+  // document-only redirects needed for exact route parity.
+  skipTrailingSlashRedirect: true,
   async headers() {
     return [
       {
         source: "/agent/:file*.json",
-        headers: [{ key: "Cache-Control", value: "public, max-age=3600, stale-while-revalidate=86400" }],
-      },
-      {
-        source: "/docs/:file*.json",
         headers: [{ key: "Cache-Control", value: "public, max-age=3600, stale-while-revalidate=86400" }],
       },
     ];

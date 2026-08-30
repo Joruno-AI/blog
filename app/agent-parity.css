@@ -520,6 +520,13 @@
   gap: 0.3rem;
 }
 
+.skills-feature-metrics svg,
+.skills-board-more svg {
+  width: 1.2em;
+  height: 1.2em;
+  flex: none;
+}
+
 .skills-board {
   display: flex;
   flex-direction: column;
@@ -554,6 +561,18 @@
 
 .skills-board-select {
   min-width: 8.6rem;
+}
+
+select.skills-board-select {
+  width: 8.25rem;
+  min-width: 8.25rem;
+  min-height: 2.15rem;
+  border: 0;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.65rem;
+  background: var(--c-surface-soft);
+  color: var(--c-text-muted);
+  font-size: 0.7rem;
 }
 
 .skills-sort {
@@ -3022,21 +3041,22 @@ body:not([data-no-sliding]) .skills-hero.slide-enter.is-revealed {
 .agent-page-shell {
   width: min(100%, 75rem);
   margin-inline: auto;
-  padding-block: clamp(1rem, 4vw, 3rem) clamp(4rem, 8vw, 7rem);
+  padding-block: 0;
   color: var(--c-text-soft);
 }
 .agent-page-head { margin-bottom: 0; padding: .85rem 0 .25rem; text-align: left; }
-.agent-page-head > h1 { margin: 0; color: var(--c-text); font-size: clamp(2rem, 3.5vw, 2.8rem); font-weight: 760; line-height: 1; letter-spacing: -.04em; }
+.agent-page-head > h1 { margin: 0; color: var(--c-text); font-size: clamp(2rem, 3.5vw, 2.8rem); font-weight: 800; line-height: 1; letter-spacing: -.04em; }
 .agent-page-head > p { max-width: 38rem; margin: .85rem 0 0; color: var(--c-text-muted); font-size: .92rem; line-height: 1.6; }
 .skills-nav-wrap { position: relative; z-index: 5; display: flex; justify-content: flex-start; width: 100%; margin-top: 1.15rem; }
 .skills-nav { --tab-width: 5.2rem; position: relative; display: flex; align-items: center; max-width: 100%; padding: .22rem; overflow-x: auto; border-radius: var(--radius-md); background: var(--c-surface-soft); isolation: isolate; scrollbar-width: none; }
 .skills-nav::-webkit-scrollbar { display: none; }
 .skills-nav-indicator { position: absolute; z-index: 2; inset: .22rem auto .22rem .22rem; width: var(--tab-width); overflow: hidden; border-radius: var(--radius-sm); background: var(--c-text); transform: translate3d(calc(var(--active-index) * 100%),0,0); transition: transform 300ms cubic-bezier(.22,1,.36,1); pointer-events: none; }
-.skills-nav-indicator-track { display: flex; width: 500%; height: 100%; transform: translate3d(calc(var(--active-index) * -20%),0,0); transition: transform 300ms cubic-bezier(.22,1,.36,1); }
+.skills-nav-indicator-track { display: flex; width: 500%; height: 100%; transform: translate3d(var(--active-track-offset,0%),0,0); transition: transform 300ms cubic-bezier(.22,1,.36,1); }
 .skills-nav-indicator-item { display: inline-flex; align-items: center; justify-content: center; gap: .38rem; width: 20%; min-width: 20%; height: 100%; padding: .56rem .88rem; color: var(--c-bg); font-size: .8rem; font-weight: 600; line-height: 1; }
 .skills-nav-tab { position: relative; z-index: 1; display: inline-flex; align-items: center; justify-content: center; gap: .38rem; width: var(--tab-width); min-width: var(--tab-width); padding: .56rem .88rem; color: var(--c-text-soft); font-size: .8rem; font-weight: 600; line-height: 1; }
 .skills-nav-tab:hover { color: var(--c-text); }
-.skills-nav-tab svg,.skills-nav-indicator-item svg { width: .95rem; height: .95rem; stroke-width: 1.8; }
+.skills-nav-icon { flex: 0 0 auto; font-size: .95rem; }
+.i-ri-compass-3-line { --un-icon: url("data:image/svg+xml;utf8,%3Csvg viewBox='0 0 24 24' display='inline-block' height='1.2em' width='1.2em' vertical-align='text-bottom' xmlns='http://www.w3.org/2000/svg' %3E%3Cpath fill='currentColor' d='M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10m0-2a8 8 0 1 0 0-16a8 8 0 0 0 0 16m4.5-12.5L14 14l-6.5 2.5L10 10zM12 13a1 1 0 1 0 0-2a1 1 0 0 0 0 2'/%3E%3C/svg%3E"); display: inline-block; width: 1.2em; height: 1.2em; background-color: currentColor; color: inherit; vertical-align: text-bottom; -webkit-mask: var(--un-icon) no-repeat; mask: var(--un-icon) no-repeat; -webkit-mask-size: 100% 100%; mask-size: 100% 100%; }
 .skill-avatar-lazy { position: relative; display: grid; overflow: hidden; place-items: center; isolation: isolate; }
 .skill-avatar-fallback { color: var(--c-text-faint); font-size: .72em; font-weight: 680; text-transform: uppercase; }
 .skill-avatar-image { position: absolute; z-index: 1; inset: 0; width: 100%; height: 100%; object-fit: cover; }
@@ -3055,8 +3075,9 @@ body:not([data-no-sliding]) .skills-hero.slide-enter.is-revealed {
 .skm-meta svg { width: .8rem; height: .8rem; }
 .skm-extra { margin-left: auto; color: var(--c-text-faint); }
 .skm-foot { display: flex; align-items: center; gap: .55rem; margin-top: auto; border-top: 1px solid var(--c-border-soft); padding-top: .7rem; }
-.skm-install,.skm-repo,.skm-more { display: inline-flex; min-height: 2rem; align-items: center; gap: .28rem; border: 1px solid var(--c-border-soft); border-radius: var(--radius-sm); padding: .3rem .55rem; color: var(--c-text-muted); background: var(--c-surface-soft); font-size: .64rem; }
-.skm-install { min-width: 0; flex: auto; cursor: copy; }
+.skm-install { display: inline-flex; min-height: 2rem; min-width: 0; flex: auto; align-items: center; gap: .38rem; border: 1px solid var(--c-border-soft); border-radius: var(--radius-sm); padding: .3rem .55rem; color: var(--c-text-muted); background: var(--c-surface-soft); font-size: .64rem; cursor: copy; }
+.skm-repo,.skm-more { display: inline-flex; min-height: 2rem; align-items: center; gap: .28rem; border: 1px solid var(--c-border-soft); border-radius: var(--radius-sm); padding: 0 .55rem; color: var(--c-text-muted); font-size: .65rem; }
+.skm-install svg,.skm-repo svg,.skm-more svg { width: 1.2em; height: 1.2em; flex: none; }
 .skm-install code { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .skm-more { margin-left: auto; background: transparent; }
 .skm-install.is-copied { border-color: var(--c-text); color: var(--c-text); }
@@ -3162,7 +3183,7 @@ body:not([data-no-sliding]) .skills-hero.slide-enter.is-revealed {
   .agent-page-shell { padding-top: .25rem; }
   .skills-nav { --tab-width: calc((100% - .44rem)/5); width: 100%; overflow: hidden; }
   .skills-nav-tab { min-width: 0; flex: 1 1 0; padding: .7rem .2rem; }
-  .skills-nav-tab svg,.skills-nav-indicator-item svg { display: none; }
+  .skills-nav-icon { display: none; }
   .agent-reader-shell { display: block; }
   .agent-wiki-nav { display: none; }
   .agent-knowledge-head { align-items: flex-start; }
@@ -3655,3 +3676,3683 @@ body:not([data-no-sliding]) .skills-hero.slide-enter.is-revealed {
     animation: none;
   }
 }
+
+/* AgentKnowledgeReader exact Astro parity styles (d1ec7b0). */
+html.agent-atlas-lock,
+  html.agent-mobile-nav-lock {
+    overflow: hidden;
+  }
+  #main:has(.agent-knowledge) {
+    padding: 0;
+    max-width: none;
+    /* A positioned #main with z-index:1 traps every fixed child below the
+       global navbar. Keep ordinary reader content in document order while
+       allowing the drawer and fullscreen fallbacks to enter the root stack. */
+    z-index: auto;
+  }
+  .agent-knowledge {
+    --agent-reader-head: 4rem;
+    --agent-line: color-mix(in srgb, var(--c-text) 12%, transparent);
+    --agent-line-strong: color-mix(in srgb, var(--c-text) 21%, transparent);
+    --agent-soft: color-mix(in srgb, var(--c-text) 3.5%, var(--c-bg));
+    --agent-muted: var(--c-text-muted);
+    min-height: calc(100vh - var(--navbar-height, 4rem));
+    overflow-x: clip;
+    color: var(--c-text);
+    background: transparent;
+  }
+  .agent-knowledge button,
+  .agent-knowledge input {
+    font: inherit;
+  }
+  .agent-knowledge button {
+    color: inherit;
+  }
+  .agent-knowledge-head {
+    position: sticky;
+    top: var(--navbar-height, 4rem);
+    z-index: 30;
+    height: var(--agent-reader-head);
+    padding: 0 clamp(1rem, 2.2vw, 2rem);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    border-bottom: 1px solid var(--agent-line);
+    background: color-mix(in srgb, var(--c-bg) 91%, transparent);
+    backdrop-filter: blur(18px) saturate(130%);
+  }
+  .agent-knowledge-brand,
+  .agent-knowledge-actions,
+  .agent-atlas-title,
+  .agent-atlas-head > div,
+  .agent-file-viewer > header > div {
+    display: flex;
+    align-items: center;
+  }
+  .agent-knowledge-brand {
+    gap: 0.7rem;
+    min-width: 0;
+  }
+  .agent-back {
+    width: 2rem;
+    height: 2rem;
+    display: grid;
+    place-items: center;
+    border-radius: 0.55rem;
+    color: var(--agent-muted);
+  }
+  .agent-back:hover {
+    color: var(--c-text);
+    background: var(--agent-soft);
+  }
+  .agent-knowledge-brand img {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.55rem;
+    background: var(--agent-soft);
+  }
+  .agent-knowledge-brand > div {
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
+    min-width: 0;
+  }
+  .agent-knowledge-brand p {
+    display: contents;
+  }
+  .agent-knowledge-brand p span,
+  .agent-knowledge-brand p i {
+    color: var(--agent-muted);
+    font-size: 0.86rem;
+    font-style: normal;
+  }
+  .agent-knowledge-brand h1 {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .agent-source-state {
+    margin-left: 0.35rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.7rem;
+    color: var(--agent-muted);
+  }
+  .agent-source-state > i {
+    width: 0.38rem;
+    height: 0.38rem;
+    border-radius: 50%;
+    background: var(--agent-muted);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--c-text) 9%, transparent);
+  }
+  .agent-source-state.is-ready > i {
+    background: var(--c-text);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--c-text) 13%, transparent);
+  }
+  .agent-knowledge-actions {
+    gap: 0.45rem;
+  }
+  .agent-knowledge-actions > button,
+  .agent-knowledge-actions > a {
+    min-height: 2.35rem;
+    padding: 0 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    border: 1px solid var(--agent-line);
+    border-radius: 0.48rem;
+    background: var(--c-bg);
+    color: var(--agent-muted);
+    font-size: 0.8rem;
+  }
+  .agent-knowledge-actions > a {
+    width: 2.35rem;
+    padding: 0;
+    justify-content: center;
+    font-size: 1.1rem;
+  }
+  .agent-knowledge-actions > button:hover,
+  .agent-knowledge-actions > a:hover {
+    border-color: var(--agent-line-strong);
+    color: var(--c-text);
+    background: var(--agent-soft);
+  }
+  .agent-knowledge-actions .agent-atlas-launch {
+    background: var(--c-text);
+    color: var(--c-bg);
+    border-color: var(--c-text);
+  }
+  .agent-mobile-nav {
+    display: none !important;
+  }
+
+  .agent-reader-shell {
+    display: grid;
+    grid-template-columns: 16.5rem minmax(0, 50rem) 14rem;
+    justify-content: center;
+    min-height: calc(
+      100vh - var(--navbar-height, 4rem) - var(--agent-reader-head)
+    );
+    border-bottom: 1px solid var(--agent-line);
+  }
+  .agent-wiki-nav {
+    position: sticky;
+    top: calc(var(--navbar-height, 4rem) + var(--agent-reader-head));
+    align-self: start;
+    height: calc(100vh - var(--navbar-height, 4rem) - var(--agent-reader-head));
+    padding: 1.7rem 1rem 5rem;
+    border-right: 1px solid var(--agent-line);
+    overflow-y: auto;
+  }
+  .agent-wiki-nav-head {
+    display: none;
+  }
+  .agent-wiki-nav-head div {
+    display: grid;
+    gap: 0.15rem;
+  }
+  .agent-wiki-nav-head span,
+  .agent-page-toc-inner > span,
+  .agent-atlas-intro span,
+  .agent-map-section header span,
+  .agent-atlas-section-head > span,
+  .agent-file-browser-head span {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.64rem;
+    letter-spacing: 0.13em;
+    color: var(--agent-muted);
+  }
+  .agent-wiki-nav-head strong {
+    font-size: 0.86rem;
+  }
+  .agent-wiki-nav-head > button {
+    display: none;
+    border: 0;
+    background: transparent;
+    font-size: 1.1rem;
+  }
+  .agent-nav-search,
+  .agent-file-search {
+    height: 2.55rem;
+    padding: 0 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    border: 0;
+    border-radius: 0.48rem;
+    background: var(--agent-soft);
+    color: var(--agent-muted);
+  }
+  .agent-nav-search input,
+  .agent-file-search input {
+    min-width: 0;
+    flex: 1;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--c-text);
+    font-size: 0.78rem;
+  }
+  .agent-nav-search input::-webkit-search-cancel-button,
+  .agent-file-search input::-webkit-search-cancel-button {
+    display: none;
+  }
+  .agent-nav-search [data-doc-search-clear] {
+    width: 1.55rem;
+    height: 1.55rem;
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    border: 0;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--c-text) 7%, transparent);
+    color: var(--agent-muted);
+    transition:
+      color 160ms ease,
+      background-color 160ms ease,
+      transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .agent-nav-search [data-doc-search-clear][hidden] {
+    display: none;
+  }
+  .agent-nav-search [data-doc-search-clear]:hover {
+    background: color-mix(in srgb, var(--c-text) 12%, transparent);
+    color: var(--c-text);
+    transform: rotate(7deg) scale(1.06);
+  }
+  .agent-nav-search:focus-within,
+  .agent-file-search:focus-within {
+    background: var(--c-bg);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--c-text) 14%, transparent);
+  }
+  .agent-nav-search kbd,
+  .agent-file-search kbd {
+    font-size: 0.65rem;
+    border: 0;
+    border-radius: 0.3rem;
+    padding: 0.05rem 0.3rem;
+    background: color-mix(in srgb, var(--c-text) 7%, var(--c-bg));
+  }
+  .agent-wiki-pages {
+    margin-top: 1rem;
+    display: grid;
+    gap: 0.15rem;
+  }
+  .agent-nav-search-empty {
+    margin: 0.8rem 0 0;
+    padding: 0.75rem;
+    border-radius: 0.55rem;
+    background: var(--agent-soft);
+    color: var(--agent-muted);
+    font-size: 0.7rem;
+    text-align: center;
+  }
+  .agent-wiki-pages button {
+    width: 100%;
+    min-height: 2.15rem;
+    padding: 0.45rem 0.6rem 0.45rem calc(0.6rem + var(--depth) * 0.7rem);
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 0.35rem;
+    align-items: center;
+    text-align: left;
+    border: 0;
+    border-radius: 0.38rem;
+    background: transparent;
+    color: var(--agent-muted);
+    font-size: 0.76rem;
+  }
+  .agent-wiki-pages button:hover {
+    color: var(--c-text);
+    background: transparent;
+  }
+  .agent-wiki-pages button.is-active {
+    color: var(--c-text);
+    background: transparent;
+    box-shadow: none;
+  }
+  .agent-wiki-pages button span {
+    font-family: ui-monospace, monospace;
+    font-size: 0.64rem;
+    color: var(--c-text-muted);
+    line-height: 1.35;
+  }
+  .agent-wiki-pages button.is-active span {
+    color: var(--c-text);
+  }
+  .agent-wiki-pages button strong {
+    font-weight: 540;
+    line-height: 1.35;
+  }
+  .agent-nav-repo-card {
+    margin-top: 1.25rem;
+    padding: 0.9rem;
+    border-top: 1px solid var(--agent-line);
+    display: grid;
+    gap: 0.35rem;
+  }
+  .agent-nav-repo-card > span {
+    font-size: 0.66rem;
+    color: var(--agent-muted);
+  }
+  .agent-nav-repo-card > strong {
+    font-size: 0.78rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .agent-nav-repo-card > small {
+    color: var(--agent-muted);
+    font-size: 0.68rem;
+    line-height: 1.45;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .agent-nav-repo-card > div {
+    margin-top: 0.3rem;
+    display: flex;
+    gap: 0.65rem;
+    color: var(--agent-muted);
+    font-size: 0.67rem;
+  }
+  .agent-nav-repo-card > div span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+  }
+
+  .agent-wiki-main {
+    min-width: 0;
+    padding: 2.65rem clamp(2rem, 3.2vw, 3rem) 9rem;
+    border-right: 1px solid var(--agent-line);
+    overflow-x: clip;
+  }
+  .agent-reader-status {
+    min-height: 2rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    color: var(--agent-muted);
+    font-size: 0.75rem;
+  }
+  .agent-reader-status[data-kind='error'] {
+    color: var(--c-text);
+    font-weight: 600;
+  }
+  .agent-pulse {
+    width: 0.48rem;
+    height: 0.48rem;
+    border-radius: 50%;
+    background: var(--c-text);
+    animation: agent-pulse 1.2s ease-in-out infinite;
+  }
+  @keyframes agent-pulse {
+    50% {
+      opacity: 0.2;
+      transform: scale(0.76);
+    }
+  }
+  .agent-wiki-article {
+    min-width: 0;
+    max-width: none;
+    color: var(--c-text);
+  }
+  .agent-wiki-article > h1:first-child {
+    margin-top: 0;
+    padding-bottom: 0.08em;
+    font-family: var(--font-article-title);
+    font-weight: 400;
+    font-style: italic;
+    font-size: clamp(2rem, 3vw, 2.55rem);
+    line-height: 1.15;
+  }
+  .agent-wiki-article h2 {
+    margin-top: 3rem;
+    scroll-margin-top: 9rem;
+    letter-spacing: -0.025em;
+  }
+  .agent-wiki-article h3 {
+    margin-top: 2rem;
+    scroll-margin-top: 9rem;
+  }
+  .agent-wiki-article p,
+  .agent-wiki-article li {
+    line-height: 1.82;
+  }
+  .agent-wiki-article img.agent-markdown-image,
+  .agent-file-markdown img.agent-markdown-image {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    margin: 1.5rem auto;
+  }
+  .agent-image-unavailable {
+    min-height: 3.25rem;
+    margin: 1.25rem 0;
+    padding: 0.8rem 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    border: 1px dashed var(--agent-line-strong);
+    border-radius: 0.55rem;
+    color: var(--agent-muted);
+    font-size: 0.76rem;
+  }
+  .agent-image-unavailable > span:first-child {
+    flex: 0 0 auto;
+    font-size: 1rem;
+  }
+  .agent-wiki-article a,
+  .agent-file-markdown a {
+    color: inherit;
+    border-bottom: 0 !important;
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--c-text) 28%, transparent);
+    text-underline-offset: 0.2em;
+  }
+  .agent-wiki-article a.agent-wiki-link,
+  .agent-file-markdown a.agent-wiki-link {
+    border-radius: 0.12em;
+    color: var(--c-text);
+    text-decoration: none;
+    background-image: linear-gradient(
+      90deg,
+      var(--c-accent),
+      var(--c-accent-strong)
+    );
+    background-repeat: no-repeat;
+    background-position: left bottom;
+    background-size: 100% 1px;
+    transition:
+      color 180ms ease,
+      background-size 260ms cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 180ms ease;
+  }
+  .agent-wiki-article a.agent-wiki-link:hover,
+  .agent-wiki-article a.agent-wiki-link:focus-visible,
+  .agent-file-markdown a.agent-wiki-link:hover,
+  .agent-file-markdown a.agent-wiki-link:focus-visible {
+    color: var(--c-accent-strong);
+    background-color: color-mix(in srgb, var(--c-accent) 7%, transparent);
+    background-size: 100% 2px;
+  }
+  .agent-wiki-article a.agent-wiki-link:focus-visible,
+  .agent-file-markdown a.agent-wiki-link:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--c-accent) 46%, transparent);
+    outline-offset: 0.18em;
+  }
+  .agent-wiki-article a.agent-file-reference,
+  .agent-file-markdown a.agent-file-reference {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.08rem 0.34rem;
+    border: 1px solid var(--agent-line);
+    border-radius: 0.28rem;
+    background: var(--agent-soft);
+    font-family: var(--font-mono);
+    font-size: 0.88em;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .agent-file-reference-icon {
+    flex: none;
+    width: 1em;
+    height: 1em;
+    /* 彩色图标是多色 mask/背景, 不能被父级 color 影响 */
+    color: initial;
+  }
+  .agent-file-reference:hover {
+    border-color: var(--agent-line-strong);
+    background: color-mix(in srgb, var(--c-text) 8%, var(--c-bg));
+  }
+  .agent-wiki-article code:not(pre code) {
+    border-radius: 0.35rem;
+    background: var(--agent-soft);
+    padding: 0.13em 0.35em;
+  }
+  .agent-wiki-article pre,
+  .agent-file-markdown pre {
+    border: 1px solid var(--agent-line);
+    border-radius: 0.75rem;
+    background: color-mix(in srgb, var(--c-text) 4%, var(--c-bg));
+  }
+  .agent-source-files {
+    margin: 0 0 2rem;
+    padding: 0;
+    border: 1px solid var(--agent-line);
+    border-radius: 0.45rem;
+    background: var(--agent-soft);
+    overflow: hidden;
+  }
+  .agent-source-files summary {
+    padding: 0.8rem 1rem;
+    cursor: pointer;
+    font-size: 0.78rem;
+    font-weight: 650;
+  }
+  .agent-source-files > *:not(summary) {
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+  /* 源文件清单常有十几项, 默认单列竖排要滑很久:
+     收成自适应多列, 并去掉项目符号与多余行距 */
+  .agent-source-files > p {
+    margin: 0 1rem 0.5rem;
+    font-size: 0.78rem;
+    color: var(--agent-muted);
+  }
+  .agent-source-files ul {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+    gap: 0.3rem 0.7rem;
+    margin: 0 1rem 1rem;
+    padding: 0;
+    list-style: none;
+  }
+  .agent-source-files li {
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+  }
+  .agent-source-files li::marker {
+    content: none;
+  }
+  /* 正文通用列表会给 li 加一个灰色圆点, 这里每项自带类型图标,
+     圆点属于重复信息, 去掉 */
+  .agent-source-files li::before {
+    content: none !important;
+    display: none !important;
+  }
+  .agent-source-files li > a.agent-file-reference {
+    max-width: 100%;
+    font-size: 0.76rem;
+  }
+  .agent-source-files li .agent-file-reference-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .agent-article-skeleton {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.72rem;
+    padding-top: 0.6rem;
+  }
+  .agent-article-skeleton span {
+    height: 0.58rem;
+    border-radius: 0.12rem;
+    background: linear-gradient(
+      90deg,
+      var(--agent-soft),
+      color-mix(in srgb, var(--c-text) 9%, var(--c-bg)),
+      var(--agent-soft)
+    );
+    background-size: 220% 100%;
+    animation: agent-shimmer 1.65s ease-in-out infinite;
+  }
+  .agent-article-skeleton span:first-child {
+    width: min(28rem, 72%);
+    height: 2.35rem;
+    margin-bottom: 1.4rem;
+  }
+  .agent-article-skeleton span:nth-child(3) {
+    width: 88%;
+  }
+  .agent-article-skeleton span:nth-child(5) {
+    width: 72%;
+  }
+  .agent-article-skeleton span:nth-child(2) {
+    width: 96%;
+  }
+  .agent-article-skeleton span:nth-child(4) {
+    width: 82%;
+    margin-bottom: 1.35rem;
+  }
+  .agent-article-skeleton span:nth-child(6) {
+    width: 92%;
+  }
+  @keyframes agent-shimmer {
+    to {
+      background-position: -220% 0;
+    }
+  }
+  .agent-wiki-error {
+    min-height: 50vh;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    text-align: center;
+  }
+  .agent-wiki-error > span {
+    font-size: 2rem;
+    color: var(--agent-muted);
+  }
+  .agent-wiki-error h2 {
+    margin: 0.8rem 0 0;
+  }
+  .agent-wiki-error p {
+    color: var(--agent-muted);
+  }
+  .agent-wiki-error button,
+  .agent-wiki-error a {
+    padding: 0.6rem 0.9rem;
+    border: 1px solid var(--agent-line);
+    border-radius: 0.6rem;
+    background: var(--c-text);
+    color: var(--c-bg);
+    text-decoration: none;
+  }
+
+  .agent-page-toc {
+    position: sticky;
+    top: calc(var(--navbar-height, 4rem) + var(--agent-reader-head));
+    align-self: start;
+    height: calc(100vh - var(--navbar-height, 4rem) - var(--agent-reader-head));
+    padding: 2rem 1.2rem 7rem;
+    overflow-y: auto;
+  }
+  .agent-page-toc-inner {
+    display: grid;
+  }
+  .agent-page-toc-inner > strong {
+    margin-top: 0.2rem;
+    font-size: 0.82rem;
+  }
+  .agent-page-toc nav {
+    margin-top: 1rem;
+    display: grid;
+    gap: 0.1rem;
+    border-left: 1px solid var(--agent-line);
+  }
+  .agent-page-toc nav a {
+    padding: 0.42rem 0.7rem;
+    color: var(--agent-muted);
+    font-size: 0.7rem;
+    line-height: 1.4;
+  }
+  .agent-page-toc nav a[data-level='3'] {
+    padding-left: 1.2rem;
+    font-size: 0.66rem;
+  }
+  .agent-page-toc nav a:hover {
+    color: var(--c-text);
+  }
+  .agent-page-toc nav p {
+    padding-left: 0.7rem;
+    color: var(--agent-muted);
+    font-size: 0.68rem;
+  }
+  .agent-page-links {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--agent-line);
+    display: grid;
+    gap: 0.35rem;
+  }
+  .agent-page-links a,
+  .agent-page-links button {
+    min-height: 2rem;
+    padding: 0.35rem 0.15rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 0;
+    background: transparent;
+    color: var(--agent-muted);
+    font-size: 0.7rem;
+    text-align: left;
+  }
+  .agent-page-links a:hover,
+  .agent-page-links button:hover {
+    color: var(--c-text);
+  }
+
+  .agent-atlas-scrim,
+  .agent-mobile-scrim {
+    position: fixed;
+    inset: 0;
+    border: 0;
+    background: var(--c-scrim);
+    backdrop-filter: blur(2px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.26s ease;
+  }
+  .agent-atlas-scrim {
+    z-index: 60;
+  }
+  .agent-mobile-scrim {
+    z-index: 50;
+  }
+  .agent-atlas {
+    --agent-atlas-width: min(70rem, 72vw);
+    position: fixed;
+    z-index: 70;
+    inset: 0 0 0 auto;
+    width: min(var(--agent-atlas-width), calc(100vw - 2rem));
+    min-width: min(42.5rem, 100vw);
+    display: flex;
+    flex-direction: column;
+    container: agent-atlas / inline-size;
+    overflow: hidden;
+    border-left: 0;
+    background: var(--c-bg);
+    box-shadow: -22px 0 72px var(--c-shadow-key);
+    opacity: 0.98;
+    transform: translate3d(102%, 0, 0);
+    transition:
+      transform 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.24s ease;
+    will-change: transform;
+  }
+  .agent-knowledge[data-atlas-open='true'] .agent-atlas {
+    opacity: 1;
+    transform: none;
+  }
+  .agent-atlas:focus {
+    outline: 0;
+  }
+  .agent-knowledge[data-atlas-open='true'] .agent-atlas-scrim {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .agent-knowledge[data-atlas-resizing='true'],
+  .agent-knowledge[data-atlas-resizing='true'] * {
+    cursor: col-resize !important;
+    user-select: none !important;
+  }
+  .agent-knowledge[data-atlas-resizing='true'] .agent-atlas {
+    transition: none;
+  }
+  .agent-atlas-resize {
+    position: absolute;
+    z-index: 8;
+    inset: 0 auto 0 -0.5rem;
+    width: 1rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    touch-action: none;
+    cursor: col-resize;
+    outline: none;
+  }
+  .agent-atlas-resize::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0.45rem;
+    width: 1px;
+    background: transparent;
+    transition: background 0.16s ease;
+  }
+  .agent-atlas-resize > span {
+    position: absolute;
+    top: 50%;
+    left: 0.17rem;
+    width: 0.62rem;
+    height: 3.5rem;
+    border: 0;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--c-text) 16%, var(--c-bg));
+    box-shadow: 0 6px 20px rgb(0 0 0 / 0.12);
+    opacity: 0;
+    transform: translateY(-50%) scale(0.88);
+    transition:
+      opacity 0.16s ease,
+      transform 0.16s ease;
+  }
+  .agent-atlas-resize:hover::before,
+  .agent-atlas-resize:focus-visible::before,
+  .agent-knowledge[data-atlas-resizing='true'] .agent-atlas-resize::before {
+    background: color-mix(in srgb, var(--c-text) 70%, var(--agent-line));
+  }
+  .agent-atlas-resize:hover > span,
+  .agent-atlas-resize:focus-visible > span,
+  .agent-knowledge[data-atlas-resizing='true'] .agent-atlas-resize > span {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+  }
+  .agent-atlas-head,
+  .agent-atlas-tabs,
+  .agent-atlas-body {
+    opacity: 0;
+    translate: 0.75rem 0;
+    transition:
+      opacity 0.24s ease,
+      translate 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .agent-knowledge[data-atlas-open='true']
+    :is(.agent-atlas-head, .agent-atlas-tabs, .agent-atlas-body) {
+    opacity: 1;
+    translate: 0;
+  }
+  .agent-knowledge[data-atlas-open='true'] .agent-atlas-tabs {
+    transition-delay: 35ms;
+  }
+  .agent-knowledge[data-atlas-open='true'] .agent-atlas-body {
+    transition-delay: 70ms;
+  }
+  .agent-atlas-head {
+    min-height: 4.6rem;
+    padding: 0.75rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: color-mix(in srgb, var(--c-text) 2%, var(--c-bg));
+  }
+  .agent-atlas-title {
+    gap: 0.75rem;
+  }
+  .agent-atlas-title > span {
+    font-size: 1.35rem;
+  }
+  .agent-atlas-title div {
+    display: grid;
+    gap: 0.15rem;
+  }
+  .agent-atlas-title strong {
+    font-size: 0.92rem;
+  }
+  .agent-atlas-title small {
+    color: var(--agent-muted);
+    font-size: 0.68rem;
+  }
+  .agent-atlas-title small i {
+    padding: 0 0.35rem;
+    font-style: normal;
+  }
+  .agent-atlas-head > div:last-child {
+    gap: 0.55rem;
+  }
+  .agent-atlas-head a,
+  .agent-atlas-head button {
+    min-height: 2.25rem;
+    padding: 0 0.7rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    border: 0;
+    border-radius: 0.6rem;
+    background: var(--agent-soft);
+    color: var(--agent-muted);
+    font-size: 0.74rem;
+  }
+  .agent-atlas-head button {
+    width: 2.25rem;
+    padding: 0;
+    justify-content: center;
+    font-size: 1.1rem;
+  }
+  .agent-atlas-tabs {
+    min-height: 3.4rem;
+    padding: 0 1.25rem;
+    display: flex;
+    align-items: end;
+    gap: 1.35rem;
+    background: color-mix(in srgb, var(--c-text) 2%, var(--c-bg));
+  }
+  .agent-atlas-tabs button {
+    height: 3.4rem;
+    padding: 0 0.1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    border: 0;
+    border: 0;
+    border-radius: 0.52rem;
+    background: transparent;
+    color: var(--agent-muted);
+    font-size: 0.78rem;
+  }
+  .agent-atlas-tabs button.is-active {
+    color: var(--c-text);
+    background: color-mix(in srgb, var(--c-text) 8%, var(--c-bg));
+  }
+  .agent-atlas-body {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    padding: 2rem clamp(1rem, 3vw, 2.5rem) 4rem;
+    overscroll-behavior: contain;
+  }
+  .agent-atlas-body:has(> [data-atlas-panel='files']:not([hidden])) {
+    overflow: hidden;
+    padding: 0.8rem;
+  }
+  .agent-atlas-body > section {
+    max-width: 78rem;
+    margin: 0 auto;
+  }
+  .agent-atlas-body > section[hidden] {
+    display: none;
+  }
+  .agent-atlas-body > [data-atlas-panel='files']:not([hidden]) {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+  }
+  .agent-atlas-intro {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+  .agent-atlas-intro h2,
+  .agent-atlas-section-head h2 {
+    max-width: 46rem;
+    margin: 0 0 0.65rem;
+    font-size: clamp(1.65rem, 3vw, 2.6rem);
+    letter-spacing: -0.04em;
+    line-height: 1.12;
+  }
+  .agent-atlas-intro p,
+  .agent-atlas-section-head p {
+    max-width: 50rem;
+    color: var(--agent-muted);
+    line-height: 1.65;
+  }
+  .agent-atlas-intro button {
+    min-height: 2.8rem;
+    padding: 0 1rem;
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 0;
+    border-radius: 0.7rem;
+    background: var(--c-text);
+    color: var(--c-bg);
+  }
+  .agent-overview-facts {
+    margin-top: 2rem;
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    border-block: 1px solid var(--agent-line);
+  }
+  .agent-overview-facts > div {
+    min-width: 0;
+    padding: 1rem 0.85rem;
+    border-right: 1px solid var(--agent-line);
+    display: grid;
+    gap: 0.35rem;
+  }
+  .agent-overview-facts > div:last-child {
+    border-right: 0;
+  }
+  .agent-overview-facts span {
+    color: var(--agent-muted);
+    font-size: 0.66rem;
+  }
+  .agent-overview-facts strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .agent-overview-topics {
+    min-height: 2.4rem;
+    padding-top: 0.8rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .agent-overview-topics span,
+  .agent-overview-topics a {
+    padding: 0.22rem 0.48rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    border-radius: 0.35rem;
+    background: var(--agent-soft);
+    color: var(--agent-muted);
+    font-size: 0.64rem;
+  }
+  .agent-overview-topics a:hover {
+    color: var(--c-text);
+  }
+  .agent-map-section {
+    margin-top: 2.7rem;
+  }
+  .agent-map-section > header {
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .agent-map-section header h3 {
+    margin: 0;
+    font-size: 1rem;
+  }
+  .agent-diagram-eyebrow {
+    margin-bottom: 0.4rem;
+    display: block;
+    color: var(--diagram-soft);
+    font-family: var(--diagram-font-mono);
+    font-size: 0.5rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+  }
+  .agent-map-section header p {
+    margin: 0.25rem 0 0;
+    color: var(--agent-muted);
+    font-size: 0.7rem;
+  }
+  .agent-map-section header small {
+    color: var(--agent-muted);
+    font-size: 0.68rem;
+  }
+  .agent-repo-map {
+    position: relative;
+    min-height: 34rem;
+    border: 1px solid var(--diagram-rule);
+    border-radius: var(--diagram-radius-frame);
+    background: var(--diagram-paper);
+    overflow: hidden;
+  }
+  .agent-repo-map.is-fullscreen {
+    position: fixed;
+    z-index: 100;
+    inset: 1rem;
+    min-height: 0;
+    border-color: var(--diagram-rule-solid);
+    background: var(--diagram-paper);
+    box-shadow: none;
+  }
+  .agent-repo-map:fullscreen {
+    width: 100vw;
+    height: 100vh;
+    min-height: 100vh;
+    border: 0;
+    border-radius: 0;
+    background: var(--diagram-paper);
+  }
+  .agent-repo-map:fullscreen .agent-graph-fullscreen {
+    inset: 1rem 1rem auto auto;
+  }
+  html.agent-graph-lock {
+    overflow: hidden;
+  }
+  .agent-graph-hint,
+  .agent-graph-fullscreen {
+    position: absolute;
+    z-index: 4;
+    border: 1px solid var(--diagram-rule);
+    background: var(--diagram-paper);
+  }
+  .agent-graph-hint {
+    inset: 0.75rem 4.25rem auto auto;
+    min-height: 2.75rem;
+    padding: 0 0.75rem;
+    display: flex;
+    align-items: center;
+    border-radius: var(--diagram-radius-node);
+    color: var(--diagram-muted);
+    font-family: var(--diagram-font-mono);
+    font-size: 0.55rem;
+    letter-spacing: 0.06em;
+    pointer-events: none;
+  }
+  .agent-graph-fullscreen {
+    inset: 0.75rem 0.75rem auto auto;
+    width: 2.75rem;
+    height: 2.75rem;
+    display: grid;
+    place-items: center;
+    border-radius: var(--diagram-radius-node);
+    color: var(--diagram-muted);
+    font-size: 0.9rem;
+  }
+  .agent-graph-fullscreen:hover {
+    background: var(--diagram-paper-2);
+    color: var(--diagram-ink);
+  }
+  .agent-graph-viewport {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+  .agent-graph-canvas {
+    position: absolute;
+    inset: 0;
+    background: var(--diagram-paper);
+  }
+  .agent-graph-empty {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 0.4rem;
+    color: var(--agent-muted);
+    text-align: center;
+  }
+  .agent-graph-empty > span {
+    font-size: 1.6rem;
+  }
+  .agent-graph-empty p {
+    max-width: 26rem;
+    margin: 0;
+    font-size: 0.72rem;
+  }
+  .agent-graph-empty button {
+    min-height: 2.35rem;
+    margin-top: 0.45rem;
+    padding: 0 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border: 1px solid var(--diagram-rule-solid);
+    border-radius: var(--diagram-radius-node);
+    background: var(--diagram-paper);
+    color: var(--diagram-ink);
+    font-size: 0.7rem;
+  }
+  .agent-module-detail {
+    margin-top: 1rem;
+    padding: 1.2rem 0;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1fr auto;
+    gap: 1.2rem;
+    align-items: start;
+    border-block: 1px solid var(--agent-line);
+  }
+  .agent-module-detail > div {
+    min-width: 0;
+    display: grid;
+    gap: 0.38rem;
+  }
+  .agent-module-detail h3 {
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 1.05rem;
+  }
+  .agent-module-detail span,
+  .agent-module-detail > div > span {
+    color: var(--agent-muted);
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+  }
+  .agent-module-detail p {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    color: var(--agent-muted);
+    font-size: 0.7rem;
+  }
+  .agent-module-detail p button {
+    padding: 0.12rem 0.35rem;
+    border: 0;
+    border-radius: 0.3rem;
+    background: var(--agent-soft);
+    font-size: 0.66rem;
+  }
+  .agent-module-detail > button {
+    min-height: 2.4rem;
+    padding: 0 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    border: 1px solid var(--agent-line);
+    border-radius: 0.55rem;
+    background: var(--c-bg);
+    font-size: 0.7rem;
+  }
+  .agent-start-files {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-top: 1px solid var(--agent-line);
+  }
+  .agent-start-files button {
+    min-width: 0;
+    min-height: 3.4rem;
+    padding: 0.55rem 0.75rem;
+    display: grid;
+    grid-template-columns: 2rem 1.5rem minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.5rem;
+    border: 0;
+    border-bottom: 1px solid var(--agent-line);
+    background: transparent;
+    text-align: left;
+  }
+  .agent-start-files button:nth-child(odd) {
+    border-right: 1px solid var(--agent-line);
+  }
+  .agent-start-files button > span {
+    color: var(--agent-muted);
+    font-family: ui-monospace, monospace;
+    font-size: 0.68rem;
+  }
+  .agent-start-files button > i {
+    color: var(--agent-muted);
+  }
+  .agent-start-files button strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: var(--font-sans);
+    font-size: 0.74rem;
+    font-weight: 550;
+    letter-spacing: -0.01em;
+  }
+  .agent-start-files button:hover {
+    background: var(--agent-soft);
+  }
+  .agent-atlas-section-head {
+    position: relative;
+    margin-bottom: 2rem;
+  }
+  .agent-atlas-section-head > small {
+    position: absolute;
+    right: 0;
+    bottom: 0.15rem;
+    color: var(--agent-muted);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+  }
+  .agent-atlas-docs {
+    display: grid;
+    gap: 0.15rem;
+  }
+  .agent-atlas-docs button {
+    width: 100%;
+    min-height: 4.6rem;
+    padding: 0.75rem 0.5rem;
+    display: grid;
+    grid-template-columns: 2rem 2rem minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.65rem;
+    border: 0;
+    border-radius: 0.55rem;
+    background: transparent;
+    text-align: left;
+  }
+  .agent-atlas-docs button > span {
+    color: var(--agent-muted);
+    font-family: ui-monospace, monospace;
+    font-size: 0.68rem;
+  }
+  .agent-atlas-docs button > i {
+    color: var(--agent-muted);
+  }
+  .agent-atlas-docs button div {
+    display: grid;
+    gap: 0.25rem;
+  }
+  .agent-atlas-docs button strong {
+    font-size: 0.82rem;
+  }
+  .agent-atlas-docs button small {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--agent-muted);
+    font-size: 0.68rem;
+  }
+  .agent-atlas-docs button small b {
+    padding: 0.12rem 0.34rem;
+    border-radius: 0.3rem;
+    background: var(--agent-soft);
+    color: var(--agent-muted);
+    font-weight: 500;
+  }
+  .agent-atlas-docs button:hover {
+    background: var(--agent-soft);
+  }
+  .agent-atlas-docs .agent-material-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .agent-files-shell {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: clamp(15rem, 27%, 19rem) minmax(0, 1fr);
+    gap: 0.7rem;
+    border: 0;
+    border-radius: 0;
+    overflow: visible;
+    background: transparent;
+  }
+  .agent-file-browser {
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    border-right: 0;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--c-text) 3%, var(--c-bg));
+  }
+  .agent-file-browser-head {
+    min-height: 4.2rem;
+    padding: 0.8rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 0;
+  }
+  .agent-file-browser-head div {
+    display: grid;
+    gap: 0.2rem;
+    min-width: 0;
+  }
+  .agent-file-browser-head strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.82rem;
+  }
+  .agent-file-browser-head small {
+    color: var(--agent-muted);
+    font-family: var(--font-sans);
+    font-size: 0.66rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .agent-file-browser-head button {
+    width: 2rem;
+    height: 2rem;
+    border: 0;
+    border-radius: 0.5rem;
+    background: color-mix(in srgb, var(--c-text) 7%, var(--c-bg));
+  }
+  .agent-file-search {
+    margin: 0.75rem;
+  }
+  .agent-file-list {
+    flex: 1;
+    min-height: 0;
+    padding: 0 0.55rem 0.75rem;
+    overflow: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+  }
+  .agent-tree-group {
+    margin-left: 0.76rem;
+    padding-left: 0.38rem;
+    border-left: 0;
+  }
+  .agent-file-list button {
+    width: 100%;
+    min-height: 2.15rem;
+    padding: 0.35rem 0.45rem;
+    display: grid;
+    grid-template-columns: 0.9rem 1.15rem minmax(0, 1fr);
+    align-items: center;
+    gap: 0.38rem;
+    border: 0;
+    border-radius: 0.42rem;
+    background: transparent;
+    text-align: left;
+  }
+  .agent-file-list button:hover {
+    background: var(--agent-soft);
+  }
+  .agent-tree-entry.is-active > button {
+    background: color-mix(in srgb, var(--c-text) 11%, var(--c-bg));
+  }
+  .agent-file-list button > span {
+    color: var(--agent-muted);
+    font-size: 0.92rem;
+  }
+  .agent-file-list button > span.i-ri-folder-3-line {
+    color: color-mix(in srgb, var(--c-text) 78%, var(--agent-muted));
+  }
+  .agent-file-list
+    button
+    > span:is(
+      .i-ri-markdown-line,
+      .i-ri-braces-line,
+      .i-ri-palette-line,
+      .i-ri-image-line
+    ) {
+    color: var(--agent-muted);
+  }
+  .agent-tree-chevron {
+    color: var(--agent-muted);
+    font-size: 0.85rem;
+    transition: transform 0.16s ease;
+  }
+  [data-tree-folder][aria-expanded='true'] > .agent-tree-chevron {
+    transform: rotate(90deg);
+  }
+  .agent-tree-spacer {
+    width: 0.8rem;
+  }
+  .agent-file-list button > strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 520;
+    letter-spacing: -0.008em;
+  }
+  .agent-file-list .agent-search-result {
+    grid-template-columns: 1.15rem minmax(0, 1fr);
+  }
+  .agent-file-viewer {
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background: var(--c-bg);
+  }
+  .agent-file-viewer > header {
+    min-height: 4.2rem;
+    padding: 0.8rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    border-bottom: 0;
+    background: color-mix(in srgb, var(--c-text) 3%, var(--c-bg));
+  }
+  .agent-file-viewer > header > div {
+    min-width: 0;
+    gap: 0.55rem;
+  }
+  .agent-file-viewer > header strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    font-weight: 650;
+    letter-spacing: -0.012em;
+  }
+  .agent-file-viewer > header a {
+    flex: 0 0 auto;
+    color: var(--agent-muted);
+    font-size: 0.68rem;
+  }
+  .agent-file-content {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    overscroll-behavior: contain;
+  }
+  .agent-file-content.is-code-viewer {
+    position: relative;
+    overflow: hidden;
+    background: var(--c-bg);
+  }
+  .agent-code-host {
+    position: absolute;
+    inset: 0;
+    min-width: 0;
+    min-height: 0;
+  }
+  .agent-file-content:is(
+      [data-loading='true'],
+      [data-load-notice='true']
+    )::after {
+    position: absolute;
+    z-index: 5;
+    inset: 0.75rem 0.9rem auto auto;
+    padding: 0.35rem 0.55rem;
+    border: 0;
+    border-radius: 0.45rem;
+    background: color-mix(in srgb, var(--c-bg) 90%, transparent);
+    color: var(--agent-muted);
+    font-size: 0.64rem;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 8px 24px var(--c-shadow-key);
+    pointer-events: none;
+  }
+  .agent-file-content[data-loading='true']::after {
+    content: '正在切换文件…';
+  }
+  .agent-file-content[data-load-notice='true']::after {
+    content: attr(data-load-notice-label);
+    border-color: color-mix(in srgb, var(--c-primary) 24%, var(--agent-line));
+    color: var(--c-text);
+    animation: agent-file-notice-in 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .agent-file-content.is-code-viewer[data-truncated='true']::before {
+    content: attr(data-truncated-label);
+    position: absolute;
+    z-index: 2;
+    inset: auto 0.9rem 0.75rem auto;
+    padding: 0.3rem 0.5rem;
+    border-radius: 0.4rem;
+    background: color-mix(in srgb, var(--c-text) 82%, transparent);
+    color: var(--c-bg);
+    font-size: 0.6rem;
+    pointer-events: none;
+  }
+  .agent-code-host,
+  .agent-code-host .cm-editor {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+  }
+  .agent-code-host .cm-scroller {
+    overflow: auto !important;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+  }
+  .agent-file-empty {
+    height: 100%;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    text-align: center;
+    color: var(--agent-muted);
+  }
+  .agent-file-empty > span {
+    font-size: 2rem;
+  }
+  .agent-file-empty h3 {
+    margin: 0.6rem 0 0.15rem;
+    color: var(--c-text);
+    font-size: 1rem;
+  }
+  .agent-file-empty p {
+    margin: 0;
+    font-size: 0.74rem;
+  }
+  .agent-file-recovery {
+    min-height: 100%;
+    padding: 2rem;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    text-align: center;
+    color: var(--agent-muted);
+  }
+  .agent-file-recovery > span {
+    width: 3.25rem;
+    height: 3.25rem;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--agent-line);
+    border-radius: 1rem;
+    background: color-mix(in srgb, var(--c-primary) 8%, var(--c-bg));
+    color: var(--c-primary);
+    font-size: 1.45rem;
+    box-shadow: 0 14px 34px color-mix(in srgb, var(--c-text) 8%, transparent);
+  }
+  .agent-file-recovery h3 {
+    margin: 1rem 0 0.25rem;
+    color: var(--c-text);
+    font-size: 0.95rem;
+  }
+  .agent-file-recovery p {
+    max-width: 23rem;
+    margin: 0;
+    font-size: 0.72rem;
+    line-height: 1.65;
+  }
+  .agent-file-recovery button {
+    min-height: 2.5rem;
+    margin-top: 1rem;
+    padding: 0 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border: 1px solid
+      color-mix(in srgb, var(--c-primary) 30%, var(--agent-line));
+    border-radius: 0.72rem;
+    background: color-mix(in srgb, var(--c-primary) 10%, var(--c-bg));
+    color: var(--c-text);
+    font-size: 0.72rem;
+    font-weight: 700;
+    transition:
+      transform 160ms ease,
+      border-color 160ms ease,
+      background-color 160ms ease;
+  }
+  .agent-file-recovery button:hover {
+    transform: translateY(-1px);
+    border-color: color-mix(in srgb, var(--c-primary) 52%, var(--agent-line));
+    background: color-mix(in srgb, var(--c-primary) 15%, var(--c-bg));
+  }
+  .agent-file-recovery button:focus-visible {
+    outline: 2px solid var(--c-primary);
+    outline-offset: 3px;
+  }
+  @keyframes agent-file-notice-in {
+    from {
+      opacity: 0;
+      transform: translateY(-0.35rem);
+    }
+  }
+  .agent-file-markdown {
+    padding: 1.5rem 2rem 4rem;
+    max-width: 56rem;
+  }
+  .agent-file-image {
+    min-height: 100%;
+    margin: 0;
+    padding: 2rem;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 1rem;
+  }
+  .agent-file-image img {
+    max-width: 100%;
+    max-height: 70vh;
+  }
+  .agent-file-image figcaption {
+    color: var(--agent-muted);
+    font-size: 0.7rem;
+  }
+  .agent-highlighted-block {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+  .agent-highlighted-block .shiki,
+  .agent-code-fallback {
+    width: max-content;
+    min-width: 100%;
+    margin: 0;
+    padding: 0.55rem 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent !important;
+    font-family: var(--font-mono);
+    font-size: 0.76rem;
+    line-height: 1.15rem;
+  }
+  .agent-highlighted-block {
+    margin: 1.5rem 0;
+    overflow: auto;
+    border: 1px solid var(--agent-line);
+    border-radius: 0.7rem;
+    background: var(--agent-soft);
+  }
+  .agent-highlighted-block .shiki {
+    padding-block: 0.55rem;
+  }
+  .agent-highlighted-block .shiki > code,
+  .agent-code-fallback > code {
+    display: block;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    font: inherit;
+    line-height: 1.15rem !important;
+    box-decoration-break: slice !important;
+    -webkit-box-decoration-break: slice !important;
+  }
+  .agent-highlighted-block .shiki,
+  .agent-highlighted-block .shiki span {
+    color: var(--shiki-light);
+  }
+  .dark .agent-highlighted-block .shiki,
+  .dark .agent-highlighted-block .shiki span {
+    color: var(--shiki-dark);
+  }
+  .agent-highlighted-block .line {
+    position: relative;
+    display: block;
+    width: 100%;
+    min-height: 1.15rem;
+    height: 1.15rem;
+    margin: 0 !important;
+    padding: 0 1.25rem 0 2.7rem;
+    line-height: 1.15rem !important;
+    white-space: pre;
+  }
+  .agent-highlighted-block .line::before {
+    content: attr(data-line);
+    position: absolute;
+    left: 0;
+    width: 2.4rem;
+    padding-right: 0.45rem;
+    color: var(--c-text-faint);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    user-select: none;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+  .agent-highlighted-block .line:hover {
+    background: var(--agent-soft);
+  }
+  .agent-empty {
+    padding: 1rem;
+    color: var(--agent-muted);
+    font-size: 0.75rem;
+  }
+  .agent-list-skeleton {
+    padding: 0.65rem 0.5rem;
+    display: grid;
+    gap: 0.72rem;
+  }
+  .agent-list-skeleton span {
+    width: 92%;
+    height: 0.58rem;
+    border-radius: 0.1rem;
+    background: linear-gradient(
+      90deg,
+      var(--agent-soft),
+      color-mix(in srgb, var(--c-text) 8%, var(--c-bg)),
+      var(--agent-soft)
+    );
+    background-size: 220% 100%;
+    animation: agent-shimmer 1.65s ease-in-out infinite;
+  }
+  .agent-list-skeleton span:nth-child(2) {
+    width: 76%;
+  }
+  .agent-list-skeleton span:nth-child(3) {
+    width: 86%;
+  }
+  .agent-list-skeleton span:nth-child(4) {
+    width: 64%;
+  }
+
+  .agent-mermaid {
+    margin: 2rem 0;
+    border: 1px solid var(--diagram-rule);
+    border-radius: var(--diagram-radius-frame);
+    overflow: hidden;
+    background: var(--diagram-paper);
+  }
+  .agent-mermaid-toolbar {
+    min-height: 3.75rem;
+    padding: 0.5rem 0.5rem 0.5rem 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--diagram-rule);
+  }
+  .agent-mermaid-toolbar > span {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--diagram-muted);
+  }
+  .agent-mermaid-toolbar > span b,
+  .agent-mermaid-toolbar > span em {
+    font-family: var(--font-sans);
+    font-size: 0.68rem;
+    font-style: normal;
+    letter-spacing: 0.12em;
+  }
+  .agent-mermaid-toolbar > span b {
+    color: var(--diagram-ink);
+    font-weight: 600;
+  }
+  .agent-mermaid-toolbar > span em {
+    color: var(--diagram-soft);
+    letter-spacing: 0.04em;
+  }
+  .agent-mermaid-toolbar > div {
+    display: flex;
+    gap: 0.25rem;
+  }
+  .agent-mermaid-toolbar button {
+    min-width: 2.75rem;
+    height: 2.75rem;
+    padding: 0 0.5rem;
+    border: 1px solid var(--diagram-rule);
+    border-radius: var(--diagram-radius-node);
+    background: var(--diagram-paper);
+    color: var(--diagram-muted);
+    font-family: var(--diagram-font-mono);
+    font-size: 0.6rem;
+  }
+  .agent-mermaid-toolbar button:hover {
+    border-color: var(--diagram-rule-solid);
+    background: var(--diagram-paper-2);
+    color: var(--diagram-ink);
+  }
+  .agent-mermaid-viewport {
+    min-height: 22rem;
+    padding: 1.5rem;
+    overflow: auto;
+    display: grid;
+    place-items: center;
+    overscroll-behavior: contain;
+    background-image: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--diagram-muted) 26%, transparent) 0.75px,
+      transparent 0.85px
+    );
+    background-size: 17px 17px;
+  }
+  .agent-mermaid-canvas {
+    width: var(--diagram-width, 100%);
+    min-width: var(--diagram-width, 100%);
+    display: grid;
+    place-items: center;
+    transition: width var(--diagram-motion-fast) ease;
+  }
+  .agent-mermaid-canvas > svg {
+    max-width: none !important;
+    width: 100%;
+    min-width: 0;
+    height: auto;
+  }
+  .agent-mermaid.is-fullscreen {
+    position: fixed;
+    z-index: 110;
+    inset: 4.75rem 1rem 1rem;
+    min-height: 0;
+    margin: 0;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    background: var(--diagram-paper);
+  }
+  .agent-mermaid.is-fullscreen .agent-mermaid-viewport {
+    min-height: 0;
+    height: 100%;
+  }
+  @media (max-width: 767px) {
+    .agent-mermaid.is-fullscreen {
+      inset: 4.25rem 0.5rem 0.5rem;
+    }
+  }
+  .agent-mermaid :is(svg text, svg .nodeLabel, svg .label) {
+    fill: var(--diagram-ink) !important;
+    color: var(--diagram-ink) !important;
+    font-family:
+      'Comic Sans MS', 'Bradley Hand', 'Kaiti SC', var(--diagram-font-node) !important;
+    font-size: 12px !important;
+  }
+  .agent-mermaid svg :is(.node rect, .node polygon, .node path, .actor) {
+    fill: var(--diagram-paper) !important;
+    stroke: var(--diagram-rule-solid) !important;
+    stroke-width: 1.75px !important;
+    filter: none !important;
+  }
+  .agent-mermaid svg .node rect {
+    rx: var(--diagram-radius-node) !important;
+    ry: var(--diagram-radius-node) !important;
+  }
+  .agent-mermaid svg g.node:first-of-type > :is(rect, polygon, path) {
+    fill: var(--diagram-accent-tint) !important;
+    stroke: var(--diagram-accent) !important;
+  }
+  .agent-mermaid svg .cluster rect {
+    fill: var(--diagram-paper-2) !important;
+    stroke: var(--diagram-rule) !important;
+    rx: var(--diagram-radius-frame) !important;
+    ry: var(--diagram-radius-frame) !important;
+  }
+  .agent-mermaid
+    svg
+    :is(.flowchart-link, .edgePath path, .messageLine0, .messageLine1) {
+    stroke: color-mix(
+      in srgb,
+      var(--diagram-ink) 88%,
+      var(--diagram-muted)
+    ) !important;
+    stroke-width: 2.15px !important;
+    stroke-linecap: round !important;
+    stroke-linejoin: round !important;
+  }
+  .agent-mermaid
+    svg.agent-excalidraw-svg
+    :is(.node rect, .node polygon, .node path, .actor, .cluster rect) {
+    filter: var(--agent-hand-drawn-filter) !important;
+    stroke-linecap: round !important;
+    stroke-linejoin: round !important;
+  }
+  .agent-mermaid
+    svg.agent-excalidraw-svg
+    :is(.flowchart-link, .edgePath path, .messageLine0, .messageLine1) {
+    filter: none !important;
+    opacity: 1 !important;
+  }
+  .agent-mermaid svg marker path {
+    fill: var(--diagram-ink) !important;
+    stroke: var(--diagram-ink) !important;
+  }
+  .agent-mermaid svg .edgeLabel {
+    color: var(--diagram-muted) !important;
+    background: var(--diagram-paper) !important;
+    font-family: var(--diagram-font-mono) !important;
+    font-size: 8px !important;
+  }
+  .agent-mermaid svg .edgeLabel rect {
+    fill: var(--diagram-paper) !important;
+    opacity: 1 !important;
+  }
+  .agent-mermaid figcaption {
+    padding: 0.55rem 0.75rem;
+    border-top: 1px solid var(--diagram-rule);
+    color: var(--diagram-soft);
+    font-family: var(--diagram-font-mono);
+    font-size: 0.5rem;
+    letter-spacing: 0.1em;
+    text-align: right;
+  }
+
+  /* Repository reader polish: surfaces are separated by tone, spacing and
+     depth instead of persistent outlines. Motion borrows Sylva's soft lift
+     and icon response while all colours continue to come from the blog theme. */
+  .agent-material-icon,
+  .agent-file-reference-icon,
+  [data-file-icon] {
+    width: 1.08rem;
+    height: 1.08rem;
+    flex: 0 0 auto;
+    object-fit: contain;
+    filter: saturate(0.9);
+    transition:
+      transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+      filter 220ms ease;
+  }
+  .agent-knowledge-head {
+    border-bottom: 0;
+    box-shadow: 0 1rem 2.6rem -2.35rem var(--c-shadow-key);
+  }
+  .agent-wiki-main {
+    border-right: 0;
+  }
+  .agent-nav-repo-card {
+    border-top: 0;
+    border-radius: 0.65rem;
+    background: color-mix(in srgb, var(--c-text) 3.5%, var(--c-bg));
+  }
+  .agent-knowledge-actions > button,
+  .agent-knowledge-actions > a {
+    border: 0;
+    background: color-mix(in srgb, var(--c-text) 4%, var(--c-bg));
+    transition:
+      color 180ms ease,
+      background-color 180ms ease,
+      box-shadow 220ms ease,
+      transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .agent-back {
+    transition:
+      color 180ms ease,
+      background-color 180ms ease,
+      transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .agent-knowledge-actions > button:hover,
+  .agent-knowledge-actions > a:hover,
+  .agent-back:hover {
+    border: 0;
+    background: color-mix(in srgb, var(--c-text) 8%, var(--c-bg));
+    color: var(--c-text);
+    transform: translateY(-2px);
+    box-shadow: 0 0.9rem 1.8rem -1.2rem var(--c-shadow-key);
+  }
+  .agent-knowledge-actions > button:hover > span:first-child,
+  .agent-knowledge-actions > a:hover > span,
+  .agent-back:hover > span {
+    transform: scale(1.08) rotate(-3deg);
+  }
+  .agent-knowledge-actions > button > span:first-child,
+  .agent-knowledge-actions > a > span,
+  .agent-back > span {
+    transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  [data-file-icon] {
+    width: 1.22rem;
+    height: 1.22rem;
+  }
+  .agent-atlas-head a,
+  .agent-atlas-head button,
+  .agent-atlas-tabs button,
+  .agent-file-browser-head button,
+  .agent-file-viewer > header a,
+  .agent-start-files button,
+  .agent-atlas-docs button,
+  .agent-file-list button,
+  .agent-overview-topics a,
+  .agent-page-links :is(a, button) {
+    position: relative;
+    isolation: isolate;
+    cursor: pointer;
+    transition:
+      color 180ms ease,
+      background-color 180ms ease,
+      box-shadow 220ms ease,
+      transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .agent-atlas-head a:hover,
+  .agent-file-browser-head button:hover,
+  .agent-file-viewer > header a:hover,
+  .agent-overview-topics a:hover,
+  .agent-page-links :is(a, button):hover {
+    color: var(--c-text);
+    transform: translateY(-1px);
+  }
+  .agent-atlas-head a:hover span,
+  .agent-file-viewer > header a:hover span,
+  .agent-page-links :is(a, button):hover :is(span, i) {
+    transform: translate3d(2px, -2px, 0);
+  }
+  .agent-atlas-head a span,
+  .agent-file-viewer > header a span,
+  .agent-page-links :is(a, button) :is(span, i) {
+    transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .agent-atlas-head [data-atlas-close] {
+    width: 2.35rem;
+    height: 2.35rem;
+    border-radius: 50%;
+    background: transparent;
+    box-shadow: none;
+    color: var(--agent-muted);
+  }
+  .agent-atlas-head [data-atlas-close]:hover {
+    background: color-mix(in srgb, var(--c-text) 8%, var(--c-bg));
+    color: var(--c-text);
+    transform: rotate(6deg) scale(1.04);
+    box-shadow: 0 0.7rem 1.8rem -1rem var(--c-shadow-key);
+  }
+  .agent-atlas-head [data-atlas-close]:active {
+    transform: rotate(0) scale(0.92);
+  }
+  .agent-atlas-head [data-atlas-close]:focus-visible,
+  .agent-atlas-tabs button:focus-visible,
+  .agent-file-list button:focus-visible {
+    outline: 0;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-text) 14%, transparent);
+  }
+  .agent-atlas-tabs {
+    min-height: 3.35rem;
+    padding: 0.45rem 1.15rem;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  .agent-atlas-tabs button {
+    height: 2.35rem;
+    padding: 0 0.72rem;
+    gap: 0.38rem;
+    border-radius: 0.68rem;
+  }
+  .agent-atlas-tabs button::after {
+    content: '';
+    position: absolute;
+    inset: auto 0.78rem 0.25rem;
+    height: 2px;
+    border-radius: 999px;
+    background: var(--c-text);
+    opacity: 0;
+    transform: scaleX(0.45);
+    transition:
+      opacity 180ms ease,
+      transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .agent-atlas-tabs button:hover {
+    background: color-mix(in srgb, var(--c-text) 5%, transparent);
+    color: var(--c-text);
+    transform: translateY(-1px);
+  }
+  .agent-atlas-tabs button:hover > span {
+    transform: translateY(-1px) rotate(-4deg) scale(1.08);
+  }
+  .agent-atlas-tabs button > span {
+    transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .agent-atlas-tabs button.is-active {
+    background: color-mix(in srgb, var(--c-text) 7%, var(--c-bg));
+    color: var(--c-text);
+    box-shadow: inset 0 1px color-mix(in srgb, white 12%, transparent);
+  }
+  .agent-atlas-tabs button.is-active::after {
+    opacity: 0.78;
+    transform: scaleX(1);
+  }
+  .agent-overview-facts {
+    gap: 0.45rem;
+    border: 0;
+  }
+  .agent-overview-facts > div {
+    min-height: 4.5rem;
+    padding: 0.82rem 0.75rem;
+    border: 0;
+    border-radius: 0.72rem;
+    background: color-mix(in srgb, var(--c-text) 4%, var(--c-bg));
+    transition:
+      background-color 180ms ease,
+      transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .agent-overview-facts > div:hover {
+    background: color-mix(in srgb, var(--c-text) 7%, var(--c-bg));
+    transform: translateY(-2px);
+  }
+  .agent-overview-facts strong {
+    overflow: visible;
+    text-overflow: clip;
+    font-size: clamp(0.7rem, 0.75vw, 0.82rem);
+  }
+  .agent-start-files {
+    gap: 0.45rem;
+    border: 0;
+  }
+  .agent-start-files button {
+    border: 0 !important;
+    border-radius: 0.68rem;
+    background: color-mix(in srgb, var(--c-text) 3%, var(--c-bg));
+  }
+  .agent-start-files button:hover,
+  .agent-atlas-docs button:hover {
+    background: color-mix(in srgb, var(--c-text) 7%, var(--c-bg));
+    transform: translateY(-2px);
+    box-shadow: 0 0.9rem 2rem -1.35rem var(--c-shadow-key);
+  }
+  .agent-start-files button:hover .agent-material-icon,
+  .agent-atlas-docs button:hover .agent-material-icon,
+  .agent-file-list button:hover .agent-material-icon {
+    filter: saturate(1.08);
+    transform: scale(1.1);
+  }
+  .agent-files-shell {
+    grid-template-columns: clamp(17rem, 29%, 21rem) minmax(0, 1fr);
+  }
+  .agent-file-browser,
+  .agent-file-viewer {
+    border: 0;
+    background: color-mix(in srgb, var(--c-text) 3%, var(--c-bg));
+    box-shadow: 0 1.1rem 3rem -2.45rem var(--c-shadow-key);
+  }
+  .agent-file-viewer > header {
+    background: color-mix(in srgb, var(--c-text) 4%, var(--c-bg));
+  }
+  .agent-file-content,
+  .agent-file-content.is-code-viewer {
+    background: var(--c-bg);
+  }
+  .agent-file-list button:hover {
+    background: color-mix(in srgb, var(--c-text) 7%, transparent);
+    transform: translateX(2px);
+  }
+  .agent-tree-entry.is-active > button {
+    background: color-mix(in srgb, var(--c-text) 10%, var(--c-bg));
+    box-shadow: inset 2px 0 var(--c-text);
+  }
+  .agent-file-list .agent-search-result {
+    grid-template-columns: 1.15rem minmax(0, 1fr);
+  }
+  .agent-wiki-article a.agent-file-reference,
+  .agent-file-markdown a.agent-file-reference {
+    padding: 0.12rem 0.38rem;
+    border: 0;
+    border-radius: 0.35rem;
+    background: color-mix(in srgb, var(--c-text) 6%, var(--c-bg));
+    box-shadow: inset 0 -1px color-mix(in srgb, var(--c-text) 12%, transparent);
+    transition:
+      background-color 180ms ease,
+      box-shadow 220ms ease,
+      transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .agent-file-reference:hover {
+    border: 0;
+    background: color-mix(in srgb, var(--c-text) 10%, var(--c-bg));
+    box-shadow:
+      inset 0 -1px color-mix(in srgb, var(--c-text) 18%, transparent),
+      0 0.7rem 1.4rem -1rem var(--c-shadow-key);
+    transform: translateY(-1px);
+  }
+  .agent-file-reference:hover .agent-file-reference-icon {
+    filter: saturate(1.12);
+    transform: scale(1.12) rotate(-3deg);
+  }
+  .agent-source-files {
+    border: 0;
+    border-radius: 0.72rem;
+    background: color-mix(in srgb, var(--c-text) 4%, var(--c-bg));
+    box-shadow: inset 0 1px color-mix(in srgb, white 7%, transparent);
+  }
+
+  /* Final repository-reader language: flat editorial separators, quiet
+     surfaces and inline references. Depth is reserved for the modal scrim. */
+  .agent-knowledge-head,
+  .agent-knowledge-actions > button:hover,
+  .agent-knowledge-actions > a:hover,
+  .agent-back:hover,
+  .agent-atlas-head [data-atlas-close]:hover,
+  .agent-start-files button:hover,
+  .agent-atlas-docs button:hover,
+  .agent-file-browser,
+  .agent-file-viewer {
+    box-shadow: none;
+  }
+
+  .agent-knowledge-head {
+    border-bottom: 1px solid var(--agent-line);
+  }
+
+  .agent-atlas {
+    border-left: 1px solid var(--agent-line);
+    box-shadow: none;
+  }
+
+  .agent-overview-facts {
+    gap: 0;
+    border-top: 1px solid var(--agent-line);
+    border-bottom: 1px solid var(--agent-line);
+  }
+
+  .agent-overview-facts > div {
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .agent-overview-facts > div:hover {
+    background: var(--agent-soft);
+    transform: none;
+  }
+
+  .agent-file-browser,
+  .agent-file-viewer {
+    border: 1px solid var(--agent-line);
+    background: var(--c-bg);
+  }
+
+  .agent-wiki-article a.agent-file-reference,
+  .agent-file-markdown a.agent-file-reference {
+    gap: 0.18rem;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    color: inherit;
+    font-size: 0.86em;
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--c-text) 36%, transparent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.22em;
+    transition:
+      color 160ms ease,
+      text-decoration-color 160ms ease;
+  }
+
+  .agent-file-reference-icon {
+    display: none;
+  }
+
+  .agent-file-reference:hover {
+    background: transparent;
+    box-shadow: none;
+    color: var(--c-text);
+    text-decoration-color: currentColor;
+    transform: none;
+  }
+
+  .agent-file-reference:hover .agent-file-reference-icon {
+    filter: none;
+    transform: none;
+  }
+
+  .agent-source-files {
+    border-top: 1px solid var(--agent-line);
+    border-bottom: 1px solid var(--agent-line);
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  /* Keep navigation controls stationary; only the document/page lists scroll. */
+  .agent-wiki-nav {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding-bottom: 1rem;
+  }
+
+  .agent-wiki-nav-head,
+  .agent-nav-search,
+  .agent-nav-repo-card {
+    flex: 0 0 auto;
+  }
+
+  .agent-wiki-pages {
+    flex: 1 1 auto;
+    min-height: 0;
+    margin-top: 0.85rem;
+    padding-right: 0.2rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+    align-content: start;
+    grid-auto-rows: max-content;
+  }
+
+  .agent-wiki-pages button {
+    height: auto;
+    min-height: 2.15rem;
+    overflow: visible;
+  }
+
+  .agent-wiki-pages button[hidden],
+  .agent-nav-search-empty[hidden] {
+    display: none !important;
+  }
+
+  .agent-nav-search-empty {
+    align-self: start;
+    width: 100%;
+    margin-top: 0.4rem;
+  }
+
+  .agent-nav-search [data-doc-search-clear] {
+    width: 1.65rem;
+    height: 1.65rem;
+    border-radius: 0.4rem;
+    background: transparent;
+    transform: none;
+  }
+
+  .agent-nav-search [data-doc-search-clear]:hover {
+    background: color-mix(in srgb, var(--c-text) 8%, transparent);
+    transform: none;
+  }
+
+  .agent-nav-search:has([data-doc-search-clear]:not([hidden])) kbd {
+    display: none;
+  }
+
+  .agent-wiki-pages button.is-active,
+  .agent-tree-entry.is-active > button {
+    box-shadow: none;
+  }
+
+  .agent-wiki-pages button.is-active strong,
+  .agent-tree-entry.is-active > button strong {
+    font-weight: 680;
+  }
+
+  .agent-page-toc {
+    overflow: hidden;
+  }
+
+  .agent-page-toc-inner {
+    height: 100%;
+    min-height: 0;
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  .agent-page-toc nav {
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+  }
+
+  .agent-wiki-article a.agent-file-reference,
+  .agent-file-markdown a.agent-file-reference {
+    position: relative;
+    isolation: isolate;
+    gap: 0.3rem;
+    color: var(--c-text-soft);
+    text-decoration: none;
+    transition:
+      color 220ms ease,
+      background-color 220ms ease,
+      transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .agent-wiki-article a.agent-file-reference::after,
+  .agent-file-markdown a.agent-file-reference::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: -0.12em;
+    left: 0;
+    height: 1px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--c-text) 32%, transparent);
+    transform: scaleX(1);
+    transform-origin: left center;
+    transition:
+      transform 340ms cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 220ms ease,
+      height 220ms ease;
+  }
+
+  .agent-file-reference-icon {
+    display: inline-block;
+    width: 0.92em;
+    height: 0.92em;
+    opacity: 0.78;
+    filter: grayscale(0.32) saturate(0.82);
+  }
+
+  .agent-file-reference-label {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    text-decoration: none;
+  }
+
+  .agent-wiki-article a.agent-external-link,
+  .agent-file-markdown a.agent-external-link {
+    position: relative;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.12em;
+    color: var(--c-text-soft);
+    text-decoration: none;
+    vertical-align: baseline;
+    transition:
+      color 200ms ease,
+      transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .agent-wiki-article a.agent-external-link::after,
+  .agent-file-markdown a.agent-external-link::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: -0.12em;
+    left: 0;
+    height: 1px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--c-text) 34%, transparent);
+    transform: scaleX(1);
+    transform-origin: left center;
+    transition:
+      background-color 200ms ease,
+      height 200ms ease,
+      transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .agent-external-link-icon {
+    display: inline-block;
+    flex: none;
+    font-size: 0.72em;
+    opacity: 0.7;
+    transition:
+      color 200ms ease,
+      opacity 200ms ease,
+      transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .agent-wiki-article a.agent-external-link:hover,
+  .agent-wiki-article a.agent-external-link:focus-visible,
+  .agent-file-markdown a.agent-external-link:hover,
+  .agent-file-markdown a.agent-external-link:focus-visible {
+    color: var(--c-accent-strong);
+    text-decoration: none;
+    transform: translateY(-1px);
+  }
+
+  .agent-wiki-article a.agent-external-link:hover::after,
+  .agent-wiki-article a.agent-external-link:focus-visible::after,
+  .agent-file-markdown a.agent-external-link:hover::after,
+  .agent-file-markdown a.agent-external-link:focus-visible::after {
+    height: 1.5px;
+    background: var(--c-accent);
+  }
+
+  .agent-external-link:hover .agent-external-link-icon,
+  .agent-external-link:focus-visible .agent-external-link-icon {
+    opacity: 1;
+    transform: translate(0.14em, -0.14em);
+  }
+
+  .agent-wiki-article code:not(pre code),
+  .agent-file-markdown code:not(pre code) {
+    transition:
+      color 180ms ease,
+      background-color 180ms ease,
+      transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .agent-wiki-article code:not(pre code):hover,
+  .agent-file-markdown code:not(pre code):hover,
+  .agent-wiki-article a:hover > code:not(pre code),
+  .agent-wiki-article a:focus-visible > code:not(pre code),
+  .agent-file-markdown a:hover > code:not(pre code),
+  .agent-file-markdown a:focus-visible > code:not(pre code) {
+    color: var(--c-accent-strong);
+    background: var(--agent-accent-soft);
+    transform: translateY(-1px);
+  }
+
+  .agent-wiki-article a.agent-file-reference:hover,
+  .agent-wiki-article a.agent-file-reference:focus-visible,
+  .agent-file-markdown a.agent-file-reference:hover,
+  .agent-file-markdown a.agent-file-reference:focus-visible {
+    color: var(--c-accent-strong);
+    background: color-mix(in srgb, var(--c-accent) 8%, transparent);
+    text-decoration: none;
+    transform: translateY(-1px);
+  }
+
+  .agent-wiki-article a.agent-file-reference:hover::after,
+  .agent-wiki-article a.agent-file-reference:focus-visible::after,
+  .agent-file-markdown a.agent-file-reference:hover::after,
+  .agent-file-markdown a.agent-file-reference:focus-visible::after {
+    height: 2px;
+    background: var(--c-accent-strong);
+    transform: scaleX(1);
+    transform-origin: left center;
+  }
+
+  .agent-file-reference:hover .agent-file-reference-icon,
+  .agent-file-reference:focus-visible .agent-file-reference-icon {
+    opacity: 1;
+    filter: grayscale(0) saturate(1.18) brightness(1.04);
+    transform: translateY(-1px) scale(1.1) rotate(-3deg);
+  }
+
+  .agent-file-browser-head button {
+    width: 2.25rem;
+    height: 2.25rem;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--agent-line);
+    border-radius: 0.55rem;
+    background: transparent;
+    color: var(--agent-muted);
+    font-size: 1rem;
+    box-shadow: none;
+  }
+
+  .agent-file-browser-head button:hover {
+    border-color: var(--agent-line-strong);
+    background: var(--agent-soft);
+    color: var(--c-text);
+    transform: none;
+  }
+
+  .agent-file-browser-head button:active {
+    transform: scale(0.95);
+  }
+
+  /* Low-saturation editorial system: muted plum carries navigation and
+     selection, clay red is reserved for relationships and small moments of
+     emphasis. Neutral paper remains dominant for comfortable long reading. */
+  .agent-knowledge {
+    --agent-line: color-mix(
+      in srgb,
+      var(--c-text) 9%,
+      color-mix(in srgb, var(--c-accent) 8%, transparent)
+    );
+    --agent-line-strong: color-mix(
+      in srgb,
+      var(--c-text) 16%,
+      var(--c-accent) 7%
+    );
+    --agent-soft: color-mix(in srgb, var(--c-accent) 4.5%, var(--c-bg));
+    --agent-accent-soft: color-mix(in srgb, var(--c-accent) 9%, var(--c-bg));
+    --agent-alt-soft: color-mix(in srgb, var(--c-accent-alt) 7%, var(--c-bg));
+    background: transparent;
+  }
+
+  .agent-knowledge-head {
+    background: color-mix(in srgb, var(--c-surface-overlay) 88%, transparent);
+    border-bottom-color: color-mix(
+      in srgb,
+      var(--c-accent) 13%,
+      var(--agent-line)
+    );
+  }
+
+  .agent-wiki-nav,
+  .agent-page-toc {
+    background: color-mix(in srgb, var(--c-accent) 2.6%, var(--c-bg));
+  }
+
+  .agent-wiki-nav-head > div > span,
+  .agent-page-toc-inner > span,
+  .agent-map-section header > div > span,
+  .agent-diagram-eyebrow {
+    color: var(--c-accent-strong);
+  }
+
+  .agent-nav-search:focus-within,
+  .agent-file-search:focus-within {
+    background: var(--c-bg);
+    box-shadow: 0 0 0 2px var(--c-focus-ring);
+  }
+
+  .agent-wiki-pages button:hover {
+    background: transparent;
+    color: var(--c-text);
+  }
+
+  .agent-wiki-pages button.is-active {
+    background: transparent;
+    color: var(--c-text);
+    box-shadow: none;
+  }
+
+  .agent-wiki-pages button.is-active span {
+    color: var(--c-text);
+  }
+
+  .agent-knowledge-actions .agent-atlas-launch,
+  .agent-atlas-intro button,
+  .agent-wiki-error button,
+  .agent-wiki-error a {
+    border-color: var(--c-accent);
+    background: var(--c-accent);
+    color: var(--c-accent-contrast);
+  }
+
+  .agent-knowledge-actions .agent-atlas-launch:hover,
+  .agent-atlas-intro button:hover {
+    border-color: var(--c-accent-strong);
+    background: var(--c-accent-strong);
+    color: var(--c-accent-contrast);
+  }
+
+  .agent-atlas {
+    background: var(--c-bg);
+    border-left-color: color-mix(
+      in srgb,
+      var(--c-accent) 15%,
+      var(--agent-line)
+    );
+  }
+
+  .agent-atlas-head,
+  .agent-atlas-tabs {
+    background: color-mix(in srgb, var(--c-accent) 3.3%, var(--c-bg));
+  }
+
+  .agent-atlas-title > span,
+  .agent-mermaid-toolbar > span > i {
+    color: var(--c-accent);
+  }
+
+  .agent-atlas-tabs button:hover {
+    background: var(--agent-accent-soft);
+    color: var(--c-text);
+  }
+
+  .agent-atlas-tabs button.is-active {
+    background: var(--agent-accent-soft);
+    color: var(--c-accent-strong);
+    box-shadow: none;
+  }
+
+  .agent-atlas-tabs button::after {
+    background: var(--c-accent);
+  }
+
+  .agent-overview-facts > div:hover {
+    background: var(--agent-accent-soft);
+  }
+
+  .agent-overview-facts > div:nth-child(-n + 3) strong {
+    color: var(--c-accent-strong);
+  }
+
+  .agent-overview-facts > div:nth-child(n + 4):nth-child(-n + 6) strong {
+    color: color-mix(in srgb, var(--c-accent-alt) 76%, var(--c-text));
+  }
+
+  .agent-tree-entry.is-active > button,
+  .agent-file-list button.is-active {
+    background: var(--agent-accent-soft);
+    color: var(--c-accent-strong);
+    box-shadow: none;
+  }
+
+  /* Deep repository paths must grow the tree canvas instead of recursively
+     squeezing every child row until the selected filename disappears. */
+  .agent-file-list > .agent-tree-entry,
+  .agent-tree-entry,
+  .agent-tree-group {
+    width: max-content;
+    min-width: 100%;
+  }
+
+  .agent-tree-entry > button {
+    width: 100%;
+    min-width: max-content;
+    grid-template-columns: 0.9rem 1.35rem max-content;
+    padding-right: 0.85rem;
+  }
+
+  .agent-tree-entry > button > strong {
+    overflow: visible;
+    text-overflow: clip;
+  }
+
+  .agent-file-list .agent-material-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .agent-tree-entry.is-active > button {
+    background: color-mix(in srgb, var(--c-accent) 9%, var(--c-surface-soft));
+  }
+
+  .agent-tree-entry.is-active > button .agent-material-icon {
+    filter: saturate(1.08);
+    transform: scale(1.06);
+  }
+
+  .agent-file-browser-head,
+  .agent-file-viewer > header {
+    background: color-mix(in srgb, var(--c-accent) 3.5%, var(--c-bg));
+  }
+
+  .agent-mermaid {
+    border-color: color-mix(in srgb, var(--c-accent) 16%, var(--diagram-rule));
+  }
+
+  .agent-mermaid-viewport {
+    background-color: color-mix(in srgb, var(--c-accent) 1.8%, var(--c-bg));
+  }
+
+  /* Repository reader refinement. Side columns stay on the page canvas instead of
+     becoming two grey panels; hierarchy is carried by rules and typography. */
+  .agent-wiki-nav,
+  .agent-page-toc {
+    background: transparent;
+  }
+
+  /* The repository bar is context, not a second navbar. Keep it compact,
+     aligned with the reader grid and let the page canvas show through. */
+  .agent-knowledge {
+    --agent-reader-head: 3.65rem;
+  }
+
+  .agent-knowledge-head {
+    padding-inline: clamp(0.85rem, 2vw, 1.5rem);
+    background: color-mix(in srgb, var(--c-bg) 88%, transparent);
+    border-bottom-color: var(--agent-line);
+    backdrop-filter: blur(20px) saturate(120%);
+  }
+
+  .agent-knowledge-head-inner {
+    width: min(100%, 82rem);
+    height: 100%;
+    margin-inline: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .agent-knowledge-brand {
+    gap: 0.58rem;
+  }
+
+  .agent-back {
+    width: 2.15rem;
+    height: 2.15rem;
+    margin-right: 0.12rem;
+    border-radius: 50%;
+  }
+
+  .agent-knowledge-brand img {
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 0.48rem;
+  }
+
+  .agent-knowledge-brand > div {
+    gap: 0.3rem;
+  }
+
+  .agent-knowledge-brand p span,
+  .agent-knowledge-brand p i {
+    font-size: 0.78rem;
+  }
+
+  .agent-knowledge-brand h1 {
+    font-size: 0.98rem;
+    font-weight: 680;
+    letter-spacing: -0.015em;
+  }
+
+  .agent-source-state {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .agent-knowledge-actions {
+    gap: 0.18rem;
+  }
+
+  .agent-knowledge-actions > button,
+  .agent-knowledge-actions > a,
+  .agent-knowledge-actions .agent-atlas-launch {
+    min-height: 2.15rem;
+    padding-inline: 0.68rem;
+    border: 0;
+    border-radius: 0.5rem;
+    background: transparent;
+    color: var(--agent-muted);
+    box-shadow: none;
+    transform: none;
+  }
+
+  .agent-knowledge-actions > a {
+    width: 2.15rem;
+    padding: 0;
+  }
+
+  .agent-knowledge-actions > button:hover,
+  .agent-knowledge-actions > a:hover,
+  .agent-knowledge-actions .agent-atlas-launch:hover,
+  .agent-back:hover {
+    background: var(--agent-soft);
+    color: var(--c-text);
+    box-shadow: none;
+    transform: none;
+  }
+
+  /* Better Auth-inspired stepped outline. The rail moves with the heading
+     depth, while the active section strengthens only its local segment. */
+  .agent-page-toc nav {
+    --toc-rail-color: color-mix(in srgb, var(--c-text) 15%, transparent);
+    position: relative;
+    display: block;
+    margin-top: 0;
+    padding-block: 0.7rem;
+    border-left: 0;
+    scrollbar-width: none;
+    scrollbar-gutter: auto;
+    mask-image: linear-gradient(
+      to bottom,
+      transparent,
+      #000 0.7rem,
+      #000 calc(100% - 0.7rem),
+      transparent
+    );
+  }
+
+  .agent-page-toc nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .agent-toc-list {
+    position: relative;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .agent-page-toc nav a {
+    position: relative;
+    z-index: 1;
+    min-height: 2rem;
+    padding: 0.38rem 0.35rem 0.38rem 1.25rem;
+    border-radius: 0;
+    color: var(--agent-muted);
+    font-size: 0.76rem;
+    line-height: 1.25rem;
+    overflow-wrap: anywhere;
+    transition: color 180ms ease;
+  }
+
+  .agent-page-toc nav a[data-level='3'] {
+    padding-left: 2rem;
+    font-size: 0.72rem;
+  }
+
+  .agent-page-toc nav a > span {
+    display: block;
+    transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .agent-toc-track {
+    position: absolute;
+    z-index: 0;
+    top: 0;
+    left: 0;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .agent-toc-track path {
+    stroke-width: 1;
+    stroke-linecap: square;
+    stroke-linejoin: miter;
+  }
+
+  .agent-toc-track-base path {
+    stroke: var(--toc-rail-color);
+  }
+
+  .agent-toc-track-active {
+    --toc-track-bottom: 0px;
+    clip-path: polygon(
+      0 0,
+      100% 0,
+      100% var(--toc-track-bottom),
+      0 var(--toc-track-bottom)
+    );
+    transition: clip-path 320ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .agent-toc-track-active path {
+    stroke: var(--c-text);
+    stroke-width: 1.35;
+  }
+
+  .agent-page-toc nav a:hover {
+    background: transparent;
+    color: var(--c-text);
+    transform: none;
+  }
+
+  .agent-page-toc nav a:hover > span {
+    transform: translateX(0.14rem);
+  }
+
+  .agent-page-toc nav a.is-active {
+    color: var(--c-text);
+    font-weight: 660;
+  }
+
+  .agent-page-toc nav a:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+
+  .agent-page-toc nav a:focus-visible > span {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.22em;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .agent-toc-track-active,
+    .agent-page-toc nav a > span {
+      transition: none;
+    }
+  }
+
+  .agent-atlas-scrim {
+    z-index: 110;
+  }
+
+  .agent-atlas {
+    z-index: 120;
+    box-shadow: none;
+    border-left: 1px solid var(--agent-line);
+  }
+
+  .agent-knowledge {
+    --diagram-node-blue: #eaf2ff;
+    --diagram-node-blue-border: #4f6fdb;
+    --diagram-node-green: #e8f7ef;
+    --diagram-node-green-border: #2b8a62;
+    --diagram-node-amber: #fff3db;
+    --diagram-node-amber-border: #c77b18;
+    --diagram-node-violet: #f3ebff;
+    --diagram-node-violet-border: #8056c7;
+  }
+
+  html.dark .agent-knowledge {
+    --diagram-node-blue: #15203b;
+    --diagram-node-blue-border: #86a2ff;
+    --diagram-node-green: #102d24;
+    --diagram-node-green-border: #65c99d;
+    --diagram-node-amber: #332511;
+    --diagram-node-amber-border: #e6aa54;
+    --diagram-node-violet: #291b3d;
+    --diagram-node-violet-border: #b394ed;
+  }
+
+  .agent-mermaid svg g.node[data-palette='0'] > :is(rect, polygon, path) {
+    fill: var(--diagram-node-blue) !important;
+    stroke: var(--diagram-node-blue-border) !important;
+  }
+
+  .agent-mermaid svg g.node[data-palette='1'] > :is(rect, polygon, path) {
+    fill: var(--diagram-node-green) !important;
+    stroke: var(--diagram-node-green-border) !important;
+  }
+
+  .agent-mermaid svg g.node[data-palette='2'] > :is(rect, polygon, path) {
+    fill: var(--diagram-node-amber) !important;
+    stroke: var(--diagram-node-amber-border) !important;
+  }
+
+  .agent-mermaid svg g.node[data-palette='3'] > :is(rect, polygon, path) {
+    fill: var(--diagram-node-violet) !important;
+    stroke: var(--diagram-node-violet-border) !important;
+  }
+
+  .agent-mermaid svg g.cluster[data-palette='0'] > rect {
+    fill: color-mix(
+      in srgb,
+      var(--diagram-node-blue) 62%,
+      var(--diagram-paper)
+    ) !important;
+  }
+
+  .agent-mermaid svg g.cluster[data-palette='1'] > rect {
+    fill: color-mix(
+      in srgb,
+      var(--diagram-node-green) 62%,
+      var(--diagram-paper)
+    ) !important;
+  }
+
+  .agent-mermaid svg g.cluster[data-palette='2'] > rect {
+    fill: color-mix(
+      in srgb,
+      var(--diagram-node-amber) 62%,
+      var(--diagram-paper)
+    ) !important;
+  }
+
+  .agent-mermaid svg g.cluster[data-palette='3'] > rect {
+    fill: color-mix(
+      in srgb,
+      var(--diagram-node-violet) 62%,
+      var(--diagram-paper)
+    ) !important;
+  }
+
+  .agent-mermaid svg g.edgePath[data-palette='0'] path {
+    stroke: var(--diagram-node-blue-border) !important;
+  }
+
+  .agent-mermaid svg g.edgePath[data-palette='1'] path {
+    stroke: var(--diagram-node-green-border) !important;
+  }
+
+  .agent-mermaid svg g.edgePath[data-palette='2'] path {
+    stroke: var(--diagram-node-amber-border) !important;
+  }
+
+  .agent-mermaid svg g.edgePath[data-palette='3'] path {
+    stroke: var(--diagram-node-violet-border) !important;
+  }
+
+  .agent-mermaid-scale {
+    min-width: 4.4rem;
+    height: 2.75rem;
+    padding: 0 0.55rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.1rem;
+    border: 1px solid var(--diagram-rule);
+    border-radius: var(--diagram-radius-node);
+    background: var(--diagram-paper);
+    color: var(--diagram-muted);
+    font-family: var(--diagram-font-mono);
+    transition:
+      border-color 160ms ease,
+      background-color 160ms ease,
+      color 160ms ease;
+  }
+
+  .agent-mermaid-scale:focus-within {
+    border-color: var(--diagram-node-blue-border);
+    background: var(--diagram-paper-2);
+    color: var(--diagram-ink);
+    box-shadow: 0 0 0 2px
+      color-mix(in srgb, var(--diagram-node-blue-border) 18%, transparent);
+  }
+
+  .agent-mermaid-scale input {
+    width: 2.35rem;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: currentColor;
+    font: inherit;
+    text-align: right;
+    appearance: textfield;
+  }
+
+  .agent-mermaid-scale input::-webkit-inner-spin-button,
+  .agent-mermaid-scale input::-webkit-outer-spin-button {
+    margin: 0;
+    appearance: none;
+  }
+
+  .agent-mermaid.is-fullscreen {
+    z-index: 130;
+    inset: 0.75rem;
+  }
+
+  .agent-mermaid:fullscreen {
+    width: 100vw;
+    height: 100vh;
+    min-height: 0;
+    margin: 0;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    border: 0;
+    border-radius: 0;
+    background: var(--diagram-paper);
+  }
+
+  .agent-mermaid:fullscreen .agent-mermaid-viewport {
+    min-height: 0;
+    height: 100%;
+  }
+
+  .agent-diagram-loading {
+    position: relative;
+    width: min(22rem, 80%);
+    min-height: 10rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+    color: var(--diagram-soft);
+  }
+
+  .agent-diagram-loading::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 22%;
+    right: 22%;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      var(--diagram-node-blue-border),
+      var(--diagram-node-green-border),
+      var(--diagram-node-violet-border)
+    );
+    opacity: 0.42;
+  }
+
+  .agent-diagram-loading > span {
+    position: relative;
+    z-index: 1;
+    width: 3.1rem;
+    height: 1.8rem;
+    border: 1px solid var(--diagram-node-blue-border);
+    border-radius: var(--diagram-radius-node);
+    background: var(--diagram-node-blue);
+    animation: agent-diagram-node 1.35s ease-in-out infinite;
+  }
+
+  .agent-diagram-loading > span:nth-child(2) {
+    border-color: var(--diagram-node-green-border);
+    background: var(--diagram-node-green);
+    animation-delay: 150ms;
+  }
+
+  .agent-diagram-loading > span:nth-child(3) {
+    border-color: var(--diagram-node-violet-border);
+    background: var(--diagram-node-violet);
+    animation-delay: 300ms;
+  }
+
+  .agent-diagram-loading > em {
+    position: absolute;
+    top: calc(50% + 2.4rem);
+    font-size: 0.68rem;
+    font-style: normal;
+    letter-spacing: 0.06em;
+  }
+
+  @keyframes agent-diagram-node {
+    0%,
+    100% {
+      opacity: 0.5;
+      transform: translateY(0) scale(0.96);
+    }
+    50% {
+      opacity: 1;
+      transform: translateY(-0.22rem) scale(1);
+    }
+  }
+
+  .agent-diagram-error {
+    min-height: 18rem;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 0.65rem;
+    color: var(--diagram-muted);
+    text-align: center;
+  }
+
+  .agent-diagram-error > span {
+    color: var(--diagram-node-amber-border);
+    font-size: 1.35rem;
+  }
+
+  .agent-diagram-error > button {
+    min-height: 2.25rem;
+    padding: 0 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    border: 1px solid var(--diagram-rule);
+    border-radius: var(--diagram-radius-node);
+    background: var(--diagram-paper-2);
+    color: var(--diagram-ink);
+  }
+
+  .agent-diagram-error details {
+    max-width: min(36rem, 90%);
+    font-size: 0.7rem;
+  }
+
+  .agent-article-skeleton span,
+  .agent-list-skeleton span {
+    background: linear-gradient(
+      100deg,
+      color-mix(in srgb, var(--diagram-node-blue) 38%, var(--agent-soft)),
+      color-mix(in srgb, var(--diagram-node-green) 44%, var(--c-bg)),
+      color-mix(in srgb, var(--diagram-node-violet) 36%, var(--agent-soft))
+    );
+    background-size: 240% 100%;
+    animation-duration: 1.45s;
+  }
+
+  .agent-article-skeleton span:nth-child(2n),
+  .agent-list-skeleton span:nth-child(2n) {
+    animation-delay: 90ms;
+  }
+
+  @container agent-atlas (max-width: 54rem) {
+    .agent-files-shell {
+      grid-template-columns: 14rem minmax(0, 1fr);
+    }
+    .agent-file-browser-head,
+    .agent-file-viewer > header {
+      min-height: 3.7rem;
+      padding: 0.65rem 0.75rem;
+    }
+    .agent-file-search {
+      margin: 0.55rem;
+    }
+  }
+
+  @container agent-atlas (max-width: 42rem) {
+    .agent-files-shell {
+      grid-template-columns: 1fr;
+      grid-template-rows: 13rem minmax(0, 1fr);
+      gap: 0.6rem;
+    }
+    .agent-file-browser {
+      border-right: 0;
+      border-bottom: 0;
+    }
+  }
+
+  @media (max-width: 1180px) {
+    .agent-reader-shell {
+      grid-template-columns: 14rem minmax(0, 1fr) 11rem;
+    }
+  }
+  @media (max-width: 980px) {
+    .agent-reader-shell {
+      grid-template-columns: 14rem minmax(0, 1fr);
+    }
+    .agent-page-toc {
+      display: none;
+    }
+    .agent-wiki-main {
+      border-right: 0;
+    }
+    .agent-overview-facts {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .agent-overview-facts > div:nth-child(4) {
+      border: 0;
+    }
+    .agent-overview-facts > div:nth-child(-n + 4) {
+      border: 0;
+    }
+    .agent-module-detail {
+      grid-template-columns: 1.2fr 1fr;
+    }
+    .agent-module-detail > button {
+      justify-self: start;
+    }
+  }
+  @media (max-width: 760px) {
+    .agent-knowledge-head {
+      top: var(--navbar-height, 3.5rem);
+      height: 3.8rem;
+      padding-inline: 0.75rem;
+    }
+    .agent-knowledge-brand p,
+    .agent-source-state,
+    .agent-knowledge-actions
+      > button:not(.agent-mobile-nav):not(.agent-atlas-launch),
+    .agent-knowledge-actions > a {
+      display: none;
+    }
+    .agent-knowledge-brand h1 {
+      max-width: 7.5rem;
+    }
+    .agent-mobile-nav {
+      display: inline-flex !important;
+    }
+    .agent-knowledge-actions .agent-atlas-launch {
+      padding-inline: 0.65rem;
+    }
+    .agent-reader-shell {
+      display: block;
+    }
+    .agent-wiki-nav {
+      position: fixed;
+      z-index: 55;
+      inset: 0 auto 0 0;
+      width: min(20rem, 88vw);
+      height: auto;
+      background: var(--c-bg);
+      transform: translateX(-102%);
+      transition: transform 0.24s ease;
+    }
+    .agent-wiki-nav-head > button {
+      display: grid;
+      place-items: center;
+    }
+    .agent-wiki-nav-head {
+      display: flex;
+      justify-content: flex-end;
+      padding: 0 0 0.75rem;
+    }
+    .agent-knowledge[data-mobile-nav-open='true'] .agent-wiki-nav {
+      transform: none;
+    }
+    .agent-knowledge[data-mobile-nav-open='true'] .agent-mobile-scrim {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .agent-wiki-main {
+      padding: 1.5rem 1rem 4rem;
+    }
+    .agent-wiki-article > h1:first-child {
+      font-size: 2rem;
+    }
+    .agent-atlas {
+      width: 100vw;
+      min-width: 0;
+      border-left: 0;
+    }
+    .agent-atlas-resize {
+      display: none;
+    }
+    .agent-atlas-head {
+      min-height: 4rem;
+      padding-inline: 0.8rem;
+    }
+    .agent-atlas-head a {
+      display: none;
+    }
+    .agent-atlas-tabs {
+      padding-inline: 0.9rem;
+    }
+    .agent-atlas-body {
+      padding: 1.25rem 0.75rem 3rem;
+    }
+    .agent-atlas-intro {
+      display: grid;
+      gap: 1rem;
+    }
+    .agent-atlas-intro button {
+      justify-self: start;
+    }
+    .agent-overview-facts {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .agent-overview-facts > div:nth-child(4) {
+      border: 0;
+    }
+    .agent-overview-facts > div:nth-child(even) {
+      border: 0;
+    }
+    .agent-overview-facts > div:nth-child(-n + 6) {
+      border: 0;
+    }
+    .agent-repo-map {
+      min-height: 30rem;
+      padding: 0;
+      display: block;
+    }
+    .agent-graph-hint {
+      display: none;
+    }
+    .agent-module-detail {
+      grid-template-columns: 1fr;
+      gap: 0.85rem;
+    }
+    .agent-start-files {
+      grid-template-columns: 1fr;
+    }
+    .agent-start-files button:nth-child(odd) {
+      border-right: 0;
+    }
+    .agent-files-shell {
+      height: 100%;
+      min-height: 0;
+      grid-template-columns: 1fr;
+      grid-template-rows: 13rem minmax(0, 1fr);
+      border-radius: 0.7rem;
+    }
+    .agent-file-browser {
+      min-height: 0;
+      border-right: 0;
+      border-bottom: 0;
+    }
+    .agent-file-viewer {
+      min-height: 0;
+    }
+    .agent-file-markdown {
+      padding-inline: 1rem;
+    }
+    .agent-mermaid-viewport {
+      min-height: 16rem;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .agent-atlas,
+    .agent-atlas-head,
+    .agent-atlas-tabs,
+    .agent-atlas-body,
+    .agent-atlas-resize::before,
+    .agent-atlas-resize > span,
+    .agent-material-icon,
+    .agent-file-reference,
+    .agent-file-reference::after,
+    .agent-file-reference-icon,
+    .agent-external-link,
+    .agent-external-link::after,
+    .agent-external-link-icon,
+    .agent-atlas-head a,
+    .agent-atlas-head button,
+    .agent-atlas-tabs button,
+    .agent-atlas-tabs button::after,
+    .agent-file-list button,
+    .agent-start-files button,
+    .agent-atlas-docs button,
+    .agent-wiki-nav,
+    .agent-atlas-scrim,
+    .agent-mobile-scrim {
+      transition: none;
+    }
+    .agent-pulse,
+    .agent-article-skeleton span,
+    .agent-list-skeleton span {
+      animation: none;
+    }
+  }
+
+/* Next.js repository-reader behavior layered on the exact Astro reader skin. */
+.agent-knowledge-brand > .skill-avatar-lazy {
+  width: 1.75rem;
+  height: 1.75rem;
+  flex: 0 0 auto;
+  border-radius: .48rem;
+  background: var(--agent-soft);
+}
+.agent-knowledge-brand > .skill-avatar-lazy .skill-avatar-image { border-radius: inherit; }
+.agent-knowledge .agent-nav-search > svg,
+.agent-knowledge .agent-file-search > svg,
+.agent-knowledge .agent-knowledge-actions svg,
+.agent-knowledge .agent-back svg,
+.agent-knowledge .agent-page-links svg,
+.agent-knowledge .agent-atlas svg { width: 1em; height: 1em; stroke-width: 1.75; }
+.agent-knowledge .agent-nav-search > button { display: grid; width: 1.55rem; height: 1.55rem; flex: 0 0 auto; place-items: center; border: 0; border-radius: 50%; background: color-mix(in srgb, var(--c-text) 7%, transparent); }
+.agent-wiki-pages button { cursor: pointer; }
+.agent-wiki-pages button strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.agent-tree-entry > button .agent-material-icon { color: var(--agent-muted); fill: none; }
+.agent-tree-entry > button .agent-tree-chevron svg { width: .8rem; height: .8rem; }
+.agent-file-viewer > header svg { width: 1rem; height: 1rem; color: var(--agent-muted); }
+.agent-parity-graph { width: 1000px; height: 620px; transform-origin: center; transition: transform 120ms ease-out; }
+.agent-parity-graph > svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.agent-parity-graph > svg line { stroke: var(--diagram-rule-solid, var(--agent-line-strong)); stroke-width: 1; stroke-dasharray: 5 7; }
+.agent-parity-graph-node { position: absolute; z-index: 2; width: 9rem; min-height: 4.5rem; padding: .65rem .75rem; border: 1px solid var(--diagram-rule-solid, var(--agent-line-strong)); border-radius: var(--diagram-radius-node, .45rem); background: var(--diagram-paper, var(--c-bg)); color: var(--diagram-ink, var(--c-text)); text-align: left; transform: translate(-50%, -50%); box-shadow: 0 9px 28px color-mix(in srgb, var(--c-text) 8%, transparent); cursor: pointer; }
+.agent-parity-graph-node strong,.agent-parity-graph-node span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.agent-parity-graph-node strong { font: 650 .72rem/1.25 var(--font-mono); }
+.agent-parity-graph-node span { margin-top: .35rem; color: var(--diagram-muted, var(--agent-muted)); font: .56rem/1.2 var(--font-mono); }
+.agent-parity-graph-node.is-root { width: 11rem; min-height: 5.25rem; border-color: var(--diagram-ink, var(--c-text)); background: var(--diagram-ink, var(--c-text)); color: var(--diagram-paper, var(--c-bg)); }
+.agent-parity-graph-node.is-active { outline: 2px solid color-mix(in srgb, var(--c-accent, var(--c-text)) 45%, transparent); outline-offset: 3px; }
+.agent-parity-module { display: grid; grid-template-columns: auto auto 1fr; gap: .7rem; align-items: center; margin-top: .65rem; padding: .75rem .85rem; border: 1px solid var(--agent-line); }
+.agent-parity-module > span { color: var(--agent-muted); font: .56rem var(--font-mono); letter-spacing: .1em; }
+.agent-parity-module > strong { font-size: .72rem; }
+.agent-parity-module > p { margin: 0; color: var(--agent-muted); font-size: .68rem; }
+.agent-code-fallback { height: 100%; overflow: auto; background: color-mix(in srgb, var(--c-text) 3%, var(--c-bg)); }
+.agent-code-fallback > div { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; min-height: 2.8rem; padding: 0 .85rem; border-bottom: 1px solid var(--agent-line); background: var(--c-bg); color: var(--agent-muted); font: .66rem var(--font-mono); }
+.agent-code-fallback > div button { display: inline-flex; align-items: center; gap: .3rem; border: 0; background: transparent; color: inherit; }
+.agent-code-fallback pre { min-width: max-content; margin: 0; padding: 1rem 1.15rem 5rem; border: 0; background: transparent; font: .72rem/1.7 var(--font-mono); tab-size: 2; }
+.agent-file-image { height: 100%; display: grid; place-items: center; overflow: auto; padding: 2rem; background-image: linear-gradient(45deg,var(--agent-soft) 25%,transparent 25%),linear-gradient(-45deg,var(--agent-soft) 25%,transparent 25%),linear-gradient(45deg,transparent 75%,var(--agent-soft) 75%),linear-gradient(-45deg,transparent 75%,var(--agent-soft) 75%); background-size: 18px 18px; background-position: 0 0,0 9px,9px -9px,-9px 0; }
+.agent-file-image img { display: block; max-width: 100%; height: auto; }
+.agent-atlas-docs button > div { min-width: 0; display: grid; gap: .2rem; }
+.agent-atlas-docs button > div strong,.agent-atlas-docs button > div small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.agent-atlas-docs button > div small { color: var(--agent-muted); font-size: .64rem; }
+.agent-start-files button svg,.agent-atlas-docs button svg { width: .9rem; height: .9rem; }
+.agent-wiki-error > svg { width: 2rem; height: 2rem; color: var(--agent-muted); }
+@media (max-width: 760px) {
+  .agent-knowledge-brand > .skill-avatar-lazy { width: 1.65rem; height: 1.65rem; }
+  .agent-parity-graph { transform-origin: top left; }
+  .agent-parity-module { grid-template-columns: auto 1fr; }
+  .agent-parity-module > p { grid-column: 1 / -1; }
+}
+
+/* Package-manifest graph plus generated-document rendering. */
+.agent-parity-graph-controls { position: absolute; z-index: 4; top: .72rem; right: 3.1rem; display: inline-flex; overflow: hidden; border: 1px solid var(--c-border-soft); border-radius: .55rem; background: var(--c-surface-overlay); box-shadow: 0 .35rem 1.2rem rgb(0 0 0 / .07); }
+.agent-parity-graph-controls button { display: grid; width: 2rem; height: 2rem; place-items: center; border: 0; border-right: 1px solid var(--c-border-soft); background: transparent; color: var(--c-text-muted); cursor: pointer; }
+.agent-parity-graph-controls button:last-child { border-right: 0; }
+.agent-parity-graph-controls button:hover { background: var(--c-surface-active); color: var(--c-text); }
+.agent-parity-graph-controls svg { width: .86rem; height: .86rem; }
+.agent-parity-graph-node > span,.agent-parity-graph-node > small { display: block; overflow: hidden; color: var(--c-text-faint); font: .52rem/1.2 var(--font-mono); letter-spacing: .09em; text-overflow: ellipsis; white-space: nowrap; }
+.agent-parity-graph-node > strong { display: block; max-width: 8.5rem; margin: .15rem 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.agent-parity-graph > svg marker path { fill: var(--c-text-faint); }
+.agent-parity-module { grid-template-columns: repeat(3,minmax(0,1fr)) auto; align-items: stretch; }
+.agent-parity-module > div { min-width: 0; }
+.agent-parity-module > div > p { display: flex; flex-wrap: wrap; gap: .25rem; }
+.agent-parity-module > div > p button { border: 1px solid var(--agent-line); border-radius: .25rem; padding: .12rem .3rem; background: transparent; color: inherit; font: inherit; cursor: pointer; }
+
+.agent-mermaid-fallback { display: block; width: min(100%,52rem); min-width: 36rem; height: auto; margin: auto; }
+.agent-mermaid-fallback line { stroke: var(--diagram-rule-solid,var(--c-border-strong)); stroke-width: 1.4; }
+.agent-mermaid-fallback marker path { fill: var(--diagram-ink,var(--c-text)); }
+.agent-mermaid-fallback rect { fill: var(--diagram-paper,var(--c-bg)); stroke: var(--diagram-rule-solid,var(--c-border-strong)); }
+.agent-mermaid-fallback text { fill: var(--diagram-ink,var(--c-text)); font: 600 13px var(--font-sans); }
+.agent-highlighted-block > figcaption { display: flex; align-items: center; justify-content: space-between; min-height: 2.2rem; border-bottom: 1px solid var(--c-border-soft); padding: .3rem .7rem; color: var(--c-text-faint); font-size: .62rem; letter-spacing: .08em; text-transform: uppercase; }
+.agent-highlighted-block > figcaption button { display: inline-flex; align-items: center; gap: .3rem; border: 0; background: transparent; color: inherit; font: inherit; cursor: pointer; }
+.agent-highlighted-block > figcaption svg { width: .78rem; height: .78rem; }
+.agent-highlighted-block > div > pre.shiki { margin: 0; border: 0; border-radius: 0; }
+
+@media (max-width: 760px) {
+  .agent-parity-graph-controls { top: .7rem; right: .7rem; }
+  .agent-parity-module { grid-template-columns: 1fr; }
+  .agent-mermaid-fallback { min-width: 31rem; }
+}
+
+/* BaseLayout's reader owns its own 4rem navbar offset; avoid counting the
+   unified Next shell offset a second time on this route family. */
+.astro-site:has(.agent-knowledge) { padding-top: 0; }
+.astro-site:has(.agent-knowledge) .site-footer { display: none; }
+
+/* Scene directory/detail parity with d1ec7b0 and the live Astro build. */
+.agent-page-shell .scene-group { margin-top: 3rem; }
+.agent-page-shell .scene-group-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; margin-bottom: .9rem; }
+.agent-page-shell .scene-group-head > div { display: flex; flex-direction: column; align-items: flex-start; }
+.agent-page-shell .scene-group-head > div > span { color: var(--c-text-faint); font-family: ui-monospace,SFMono-Regular,Menlo,monospace; font-size: .62rem; letter-spacing: .1em; }
+.agent-page-shell .scene-group-head small { color: var(--c-text-faint); font-size: .68rem; }
+.agent-page-shell .scene-group-title { margin: .18rem 0 0; color: var(--c-text); font-size: 1.5rem; font-weight: 680; letter-spacing: -.035em; }
+.agent-page-shell .scene-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: .65rem; border: 0; }
+.agent-page-shell .scene-card { display: grid !important; grid-template-columns: auto minmax(0,1fr); gap: .3rem .7rem; min-height: 9.5rem; padding: 1rem; border: 1px solid var(--skills-border); border-radius: var(--skills-radius-lg); background: var(--c-bg); opacity: 1 !important; transition: background 160ms ease,border-color 160ms ease; }
+.agent-page-shell .scene-card:hover { border-color: var(--skills-border); background: var(--c-surface-soft); }
+.agent-page-shell .scene-card-index { color: var(--c-text-faint); font-family: ui-monospace,SFMono-Regular,Menlo,monospace; font-size: .62rem; }
+.agent-page-shell .scene-card-title { margin: 0; color: var(--c-text); font-size: .88rem; font-weight: 660; text-align: left; }
+.agent-page-shell .scene-card-desc { grid-column: 2; margin: 0; overflow: hidden; color: var(--c-text-muted); font-size: .72rem; line-height: 1.6; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.agent-page-shell .scene-card-count { grid-column: 2; display: flex; align-items: center; justify-content: space-between; gap: .4rem; margin-top: auto; padding-top: .7rem; border-top: 1px solid var(--skills-border); color: var(--c-text-faint); font-size: .65rem; }
+.agent-page-shell .scene-card-count svg { width: .8rem; height: .8rem; }
+.agent-page-shell .scene-detail-meta { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: .5rem; margin: 1.2rem 0 0; color: var(--c-text-faint); font-size: .8rem; }
+.agent-page-shell .scene-detail-meta a { display: inline-flex !important; align-items: center; gap: .25rem; color: var(--c-text-muted); opacity: 1 !important; }
+.agent-page-shell .scene-detail-meta a:hover { color: var(--c-text); }
+.agent-page-shell .scene-detail-meta svg { width: .9rem; height: .9rem; }
+.agent-page-shell .scene-detail-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(min(100%,300px),1fr)); gap: .65rem; margin-top: 1.2rem; padding-bottom: 2.4rem; }
+.agent-page-shell .scene-detail-empty { padding: 2.5rem 0; color: var(--c-text-faint); text-align: center; }
+@media (max-width:900px) { .agent-page-shell .scene-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+@media (max-width:560px) { .agent-page-shell .scene-grid { grid-template-columns: 1fr; } }
+
+/* SkillsNav originally establishes the shared catalog token scope on #main. */
+#main:has(.skills-nav-wrap) {
+  --skills-border: var(--c-border-strong);
+  --skills-radius-sm: var(--radius-sm);
+  --skills-radius: var(--radius-sm);
+  --skills-radius-lg: var(--radius-md);
+}
+
+/* Creator leaderboard exact component structure. */
+.masters-podium-avatar { width: 3.4rem; height: 3.4rem; flex: 0 0 auto; border: 1px solid var(--c-border-soft); border-radius: var(--skills-radius-sm); background: var(--c-surface-soft); }
+.masters-podium-card .masters-podium-avatar { margin-top: 0; }
+.masters-podium-card > .masters-podium-rank { position: absolute; top: 1rem; right: 1rem; opacity: .55; font-family: ui-monospace,SFMono-Regular,Menlo,monospace; font-size: .64rem; }
+.masters-podium-card > div:last-child { display: flex; align-items: flex-end; justify-content: space-between; width: 100%; margin-top: auto; padding-top: .75rem; border-top: 1px solid currentColor; border-color: color-mix(in srgb,currentColor 14%,transparent); }
+.masters-podium-card > div:last-child span { opacity: .58; font-size: .64rem; }
+.masters-podium-card > div:last-child strong { font-size: 1.5rem; letter-spacing: -.045em; }
+.masters-row > .masters-avatar { width: 2.4rem; height: 2.4rem; }
+.masters-repos > span { display: inline; }
+.masters-metrics svg { width: .85rem; height: .85rem; stroke-width: 1.6; }
+.masters-podium-card .masters-podium-avatar img { width: 100%; height: 100%; margin-top: 0; border-radius: inherit; }
+.masters-avatar img { width: 100%; height: 100%; border-radius: inherit; }
+
+/* Trend language distribution parity. */
+.agent-page-shell .trend-empty { padding: 1.6rem 0; color: var(--c-text-faint); font-size: .85rem; text-align: center; }
+.agent-page-shell .trend-langs { margin: .9rem 0 2.4rem; padding: .9rem 1.1rem; border: 1px solid var(--diagram-rule); border-radius: var(--diagram-radius-frame); background: var(--diagram-paper); }
+.agent-page-shell .trend-lang-row { display: grid; grid-template-columns: 7rem 1fr 2.6rem; align-items: center; gap: .7rem; padding: .32rem 0; border: 0; font-size: .82rem; }
+.agent-page-shell .trend-lang-name { overflow: hidden; color: var(--c-text-soft); text-overflow: ellipsis; white-space: nowrap; }
+.agent-page-shell .trend-lang-bar { height: .4rem; overflow: hidden; border: 1px solid var(--diagram-rule); border-radius: 2px; background: var(--diagram-paper-2); }
+.agent-page-shell .trend-lang-bar i { display: block; height: 100%; background: color-mix(in srgb,var(--diagram-muted) 36%,transparent); }
+.agent-page-shell .trend-lang-row[data-focal="true"] .trend-lang-bar i { background: var(--diagram-accent); }
+.agent-page-shell .trend-lang-count { color: var(--c-text-muted); text-align: right; font-variant-numeric: tabular-nums; }
+
+/* SkillsNav's source stylesheet replaces the generic mobile prose header.
+   Keep the Next wrapper geometrically identical to Astro's direct <header>. */
+@media (max-width: 640px) {
+  .astro-site[data-page-kind="agent"] .astro-main { padding-inline: 1.75rem; }
+  .agent-page-shell { padding-top: 0; }
+  .agent-page-head { padding: .25rem 0 0; }
+  .agent-page-head > h1 {
+    font-size: clamp(1.85rem, 9vw, 2.15rem);
+    line-height: 1.05;
+  }
+  .agent-page-head > p {
+    max-width: 38rem;
+    margin-top: .65rem;
+    padding-inline: .75rem;
+    font-size: .82rem;
+    line-height: 1.5;
+  }
+  .skills-nav-wrap { width: 100%; margin-top: .9rem; margin-left: 0; }
+  .skills-nav-tab,
+  .skills-nav-indicator-item { min-height: 2.75rem; }
+}
+
+/* Original monochrome category glyph contract. */
+.skill-category-icon { display: inline-grid; flex: none; place-items: center; overflow: visible; border: 0; background: transparent; color: var(--c-text-soft); }
+.skill-category-icon > :is(svg,.agent-source-icon) { display: block; width: 72%; height: 72%; stroke-width: 1.65; }
+.skill-category-icon.is-sm { width: 1.45rem; height: 1.45rem; border-radius: .5rem; }
+.skill-category-icon.is-md { width: 2.4rem; height: 2.4rem; border-radius: .5rem; }
+.skill-category-icon.is-lg { width: 3.5rem; height: 3.5rem; border-radius: .75rem; }
+
+/* Source Agent UI icons are mask spans, not inline SVG. Besides matching the
+   production DOM, this keeps decorative glyphs out of serialized text flow. */
+.agent-source-icon { display: inline-block; width: 1.2em; height: 1.2em; flex: 0 0 auto; color: inherit; vertical-align: text-bottom; background-color: currentColor; -webkit-mask: var(--agent-source-icon) no-repeat center / 100% 100%; mask: var(--agent-source-icon) no-repeat center / 100% 100%; }
+
+/* Production Agent custom select. The native control remains the no-JS
+   fallback; hydration enables the keyboard/listbox surface. */
+.skill-select { position: relative; display: inline-block; min-width: 8.25rem; color: var(--c-text); }
+.skill-select-native,.skill-select-trigger { width: 100%; min-height: 2.15rem; border: 0; border-radius: .5rem; padding: .5rem .65rem; background: var(--c-surface-soft); color: var(--c-text-muted); font-size: .7rem; }
+.skill-select-ui { display: none; }
+.skill-select[data-ready] .skill-select-native { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); padding: 0; white-space: nowrap; }
+.skill-select[data-ready] .skill-select-ui { display: block; }
+.skill-select-trigger { display: flex; align-items: center; justify-content: space-between; gap: .7rem; cursor: pointer; transition: background .15s,color .15s; }
+.skill-select-trigger:hover,.skill-select[data-open] .skill-select-trigger { background: var(--c-surface-active); color: var(--c-text); }
+.skill-select-trigger:focus-visible { outline: 0 !important; box-shadow: 0 0 0 2px color-mix(in srgb,var(--c-text) 18%,transparent); }
+.skill-select-current,.skill-select-option-main { display: flex; min-width: 0; align-items: center; gap: .48rem; }
+.skill-select-current > span:last-child,.skill-select-option-main > span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.skill-select-icon { display: grid; width: 1rem; height: 1rem; flex: none; place-items: center; }
+.skill-select-icon > span { display: block; width: 1rem; height: 1rem; object-fit: contain; }
+.skill-select-trigger > .agent-source-icon { flex: none; color: var(--c-text-faint); font-size: .95rem; transition: transform .16s cubic-bezier(.22,1,.36,1); }
+.skill-select[data-open] .skill-select-trigger > .agent-source-icon { transform: rotate(180deg); }
+.skill-select-menu { position: absolute; z-index: 50; top: calc(100% + .42rem); right: 0; min-width: max(100%,10.5rem); visibility: hidden; padding: .32rem; border-radius: .68rem; background: var(--c-bg); opacity: 0; pointer-events: none; transform: translateY(-.3rem) scale(.985); transform-origin: 100% 0; box-shadow: 0 18px 48px -24px #00000073,0 4px 12px -8px #00000038; transition: opacity .14s,transform .18s cubic-bezier(.22,1,.36,1),visibility .14s; }
+.skill-select[data-open] .skill-select-menu { visibility: visible; opacity: 1; pointer-events: auto; transform: translateY(0) scale(1); }
+.skill-select-option { display: flex; width: 100%; min-height: 2.2rem; align-items: center; justify-content: space-between; gap: .75rem; border: 0; border-radius: .42rem; padding: .48rem .55rem; background: transparent; color: var(--c-text-muted); font-size: .72rem; text-align: left; cursor: pointer; }
+.skill-select-option:hover,.skill-select-option:focus-visible { outline: 0; background: var(--c-surface-soft); color: var(--c-text); }
+.skill-select-option[aria-selected="true"] { background: var(--c-surface-active); color: var(--c-text); font-weight: 620; }
+.skill-select-option > .agent-source-icon { flex: none; opacity: 0; }
+.skill-select-option[aria-selected="true"] > .agent-source-icon { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .skill-select-trigger > .agent-source-icon,.skill-select-menu { transition: none; } }

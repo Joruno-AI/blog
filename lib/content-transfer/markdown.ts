@@ -178,6 +178,7 @@ export function parseArticleMarkdown(path: string, source: string) {
     content: parsed.content.replace(/^\n+/, '').replace(/\s+$/, ''),
     excerpt: data.description ?? null,
     ogImage: typeof data.ogImage === 'string' ? data.ogImage : null,
+    ogImageDisabled: data.ogImage === false,
     draft: data.draft,
     visibility: data.visibility,
     toc: data.toc,

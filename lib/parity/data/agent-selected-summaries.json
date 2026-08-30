@@ -1,0 +1,2009 @@
+{
+  "source": {
+    "revision": "e734b674668d238bd92af43322780ed25429cc3b",
+    "path": "src/content/skills/data.json",
+    "count": 400
+  },
+  "items": {
+    "/agent/anthropics/skills": {
+      "repository": "anthropics/skills",
+      "title": "skills",
+      "description": "Anthropic 官方 Agent Skills 仓库，Claude 技能的标准参考实现"
+    },
+    "/agent/anthropics/claude-code": {
+      "repository": "anthropics/claude-code",
+      "title": "claude-code",
+      "description": "Anthropic 官方终端编程助手，理解代码库并代办日常编码任务"
+    },
+    "/agent/JuliusBrussee/caveman": {
+      "repository": "JuliusBrussee/caveman",
+      "title": "caveman",
+      "description": "让 Claude 用原始人式短句交流，节省约 65% token 的省钱技能"
+    },
+    "/agent/thedotmack/claude-mem": {
+      "repository": "thedotmack/claude-mem",
+      "title": "claude-mem",
+      "description": "跨会话持久记忆，自动压缩会话内容并在下次注入相关上下文"
+    },
+    "/agent/Egonex-AI/Understand-Anything": {
+      "repository": "Egonex-AI/Understand-Anything",
+      "title": "Understand-Anything",
+      "description": "把任意代码变成可探索、可搜索、可提问的交互式知识图谱"
+    },
+    "/agent/code-yeongyu/oh-my-openagent": {
+      "repository": "code-yeongyu/oh-my-openagent",
+      "title": "oh-my-openagent",
+      "description": "面向复杂代码库的 Codex/OpenCode 增强套件，主打 token 高效"
+    },
+    "/agent/colbymchenry/codegraph": {
+      "repository": "colbymchenry/codegraph",
+      "title": "codegraph",
+      "description": "预索引代码知识图谱，随代码变更自动同步，多家 Agent 通用"
+    },
+    "/agent/gsd-build/get-shit-done": {
+      "repository": "gsd-build/get-shit-done",
+      "title": "get-shit-done",
+      "description": "轻量的元提示与规格驱动开发体系，管好上下文再动手写码"
+    },
+    "/agent/tw93/Pake": {
+      "repository": "tw93/Pake",
+      "title": "Pake",
+      "description": "一行命令把任意网页打包成桌面应用"
+    },
+    "/agent/Lum1104/Understand-Anything": {
+      "repository": "Lum1104/Understand-Anything",
+      "title": "Understand-Anything",
+      "description": "把任意代码变成可探索、可搜索、可提问的交互式知识图谱"
+    },
+    "/agent/coreyhaines31/marketingskills": {
+      "repository": "coreyhaines31/marketingskills",
+      "title": "marketingskills",
+      "description": "营销技能合集：转化优化、文案、SEO、数据分析与增长工程"
+    },
+    "/agent/Imbad0202/academic-research-skills": {
+      "repository": "Imbad0202/academic-research-skills",
+      "title": "academic-research-skills",
+      "description": "学术研究全流程技能：检索、写作、评审、修改到定稿"
+    },
+    "/agent/luongnv89/claude-howto": {
+      "repository": "luongnv89/claude-howto",
+      "title": "claude-howto",
+      "description": "图解式 Claude Code 教程，从入门到高级 Agent，模板即拿即用"
+    },
+    "/agent/Yeachan-Heo/oh-my-claudecode": {
+      "repository": "Yeachan-Heo/oh-my-claudecode",
+      "title": "oh-my-claudecode",
+      "description": "面向团队协作的 Claude Code 多 Agent 编排方案"
+    },
+    "/agent/K-Dense-AI/scientific-agent-skills": {
+      "repository": "K-Dense-AI/scientific-agent-skills",
+      "title": "scientific-agent-skills",
+      "description": "163 个经验证的科研技能，把任意 Agent 变成 AI 科学家"
+    },
+    "/agent/anthropics/claude-plugins-official": {
+      "repository": "anthropics/claude-plugins-official",
+      "title": "claude-plugins-official",
+      "description": "Anthropic 官方维护的高质量 Claude Code 插件目录"
+    },
+    "/agent/VoltAgent/awesome-agent-skills": {
+      "repository": "VoltAgent/awesome-agent-skills",
+      "title": "awesome-agent-skills",
+      "description": "1000+ 官方与社区 Agent 技能精选，兼容多家编码 Agent"
+    },
+    "/agent/nanocoai/nanoclaw": {
+      "repository": "nanocoai/nanoclaw",
+      "title": "nanoclaw",
+      "description": "容器化运行的轻量 OpenClaw 替代品，可接入微信外全平台消息应用"
+    },
+    "/agent/davila7/claude-code-templates": {
+      "repository": "davila7/claude-code-templates",
+      "title": "claude-code-templates",
+      "description": "Claude Code 配置与监控命令行工具"
+    },
+    "/agent/qwibitai/nanoclaw": {
+      "repository": "qwibitai/nanoclaw",
+      "title": "nanoclaw",
+      "description": "容器化运行的轻量 OpenClaw 替代品，可接入多平台消息应用"
+    },
+    "/agent/zarazhangrui/frontend-slides": {
+      "repository": "zarazhangrui/frontend-slides",
+      "title": "frontend-slides",
+      "description": "用编码 Agent 的前端能力在网页上生成高质感幻灯片"
+    },
+    "/agent/jarrodwatts/claude-hud": {
+      "repository": "jarrodwatts/claude-hud",
+      "title": "claude-hud",
+      "description": "Claude Code 仪表盘插件：上下文用量、活跃工具、Agent 与任务进度一目了然"
+    },
+    "/agent/cathrynlavery/diagram-design": {
+      "repository": "cathrynlavery/diagram-design",
+      "title": "diagram-design",
+      "description": "38 种编辑级图表类型，纯 HTML+SVG 输出，拒绝 Mermaid 味"
+    },
+    "/agent/OthmanAdi/planning-with-files": {
+      "repository": "OthmanAdi/planning-with-files",
+      "title": "planning-with-files",
+      "description": "基于文件的持久规划，会话崩溃或压缩后也能恢复任务进度"
+    },
+    "/agent/virgiliojr94/book-to-skill": {
+      "repository": "virgiliojr94/book-to-skill",
+      "title": "book-to-skill",
+      "description": "把任意技术书 PDF 转成可学习、可引用的 Claude Code 技能"
+    },
+    "/agent/JimLiu/baoyu-skills": {
+      "repository": "JimLiu/baoyu-skills",
+      "title": "baoyu-skills",
+      "description": "宝玉的 Claude Code 技能合集：小红书图卡、信息图、翻译与公众号排版"
+    },
+    "/agent/alirezarezvani/claude-skills": {
+      "repository": "alirezarezvani/claude-skills",
+      "title": "claude-skills",
+      "description": "380+ 技能、70+ 命令、30+ Agent 的一站式技能库，多家 Agent 通用"
+    },
+    "/agent/EveryInc/compound-engineering-plugin": {
+      "repository": "EveryInc/compound-engineering-plugin",
+      "title": "compound-engineering-plugin",
+      "description": "Every 官方复利工程插件：让每次开发沉淀为可复用的经验"
+    },
+    "/agent/titanwings/distilly": {
+      "repository": "titanwings/distilly",
+      "title": "distilly",
+      "description": "Distilly — Distill how they think into reusable Skills for any Agent or Bot. Formerly Colleague Skill（原同事 Skill）."
+    },
+    "/agent/alchaincyf/huashu-design": {
+      "repository": "alchaincyf/huashu-design",
+      "title": "huashu-design",
+      "description": "Huashu Design · HTML-native design skill for Claude Code · Claude Code 里 HTML 原生的设计 skill · 高保真原型 / 幻灯片 / 动画 + 20 设计哲学 + 5 维评审 + MP4 导出 · Agent-agnostic"
+    },
+    "/agent/Nutlope/hallmark": {
+      "repository": "Nutlope/hallmark",
+      "title": "hallmark",
+      "description": "去 AI 味的设计技能，让生成的界面摆脱模板感"
+    },
+    "/agent/winfunc/opcode": {
+      "repository": "winfunc/opcode",
+      "title": "opcode",
+      "description": "Claude Code 图形界面工具箱：自定义 Agent、会话管理与后台任务"
+    },
+    "/agent/teng-lin/notebooklm-py": {
+      "repository": "teng-lin/notebooklm-py",
+      "title": "notebooklm-py",
+      "description": "NotebookLM 非官方 Python API，解锁网页版没有的编程能力"
+    },
+    "/agent/ayghri/i-have-adhd": {
+      "repository": "ayghri/i-have-adhd",
+      "title": "i-have-adhd",
+      "description": "ADHD 友好输出技能：先给答案，拒绝铺垫埋重点"
+    },
+    "/agent/K-Dense-AI/claude-scientific-skills": {
+      "repository": "K-Dense-AI/claude-scientific-skills",
+      "title": "claude-scientific-skills",
+      "description": "科研、工程、分析、金融与写作的即用型技能包"
+    },
+    "/agent/tt-a1i/archify": {
+      "repository": "tt-a1i/archify",
+      "title": "archify",
+      "description": "生成架构、时序、数据流等精美图表，自带动效可导出"
+    },
+    "/agent/op7418/Humanizer-zh": {
+      "repository": "op7418/Humanizer-zh",
+      "title": "Humanizer-zh",
+      "description": "Humanizer 的汉化版本，Claude Code Skills，旨在消除文本中 AI 生成的痕迹。"
+    },
+    "/agent/AgriciDaniel/claude-seo": {
+      "repository": "AgriciDaniel/claude-seo",
+      "title": "claude-seo",
+      "description": "全能 SEO 技能：25 子技能+18 子 Agent，覆盖技术 SEO 到本地搜索"
+    },
+    "/agent/kyegomez/OpenMythos": {
+      "repository": "kyegomez/OpenMythos",
+      "title": "OpenMythos",
+      "description": "基于公开文献对 Claude Mythos 架构的理论复现"
+    },
+    "/agent/travisvn/awesome-claude-skills": {
+      "repository": "travisvn/awesome-claude-skills",
+      "title": "awesome-claude-skills",
+      "description": "Claude Skills 资源与工具精选清单"
+    },
+    "/agent/sirmalloc/ccstatusline": {
+      "repository": "sirmalloc/ccstatusline",
+      "title": "ccstatusline",
+      "description": "Claude Code 高度可定制状态栏，支持 powerline 与主题"
+    },
+    "/agent/Piebald-AI/claude-code-system-prompts": {
+      "repository": "Piebald-AI/claude-code-system-prompts",
+      "title": "claude-code-system-prompts",
+      "description": "Claude Code 系统提示词全集：27 个内置工具与子 Agent 提示词拆解"
+    },
+    "/agent/nidhinjs/prompt-master": {
+      "repository": "nidhinjs/prompt-master",
+      "title": "prompt-master",
+      "description": "为任意 AI 工具生成精准提示词，自带上下文与记忆"
+    },
+    "/agent/Orchestra-Research/AI-Research-SKILLs": {
+      "repository": "Orchestra-Research/AI-Research-SKILLs",
+      "title": "AI-Research-SKILLs",
+      "description": "开源 AI 研究与工程技能库，把编码 Agent 变成研究员"
+    },
+    "/agent/Jeffallan/claude-skills": {
+      "repository": "Jeffallan/claude-skills",
+      "title": "claude-skills",
+      "description": "66 个全栈开发专项技能，把 Claude Code 变成结对专家"
+    },
+    "/agent/BehiSecc/awesome-claude-skills": {
+      "repository": "BehiSecc/awesome-claude-skills",
+      "title": "awesome-claude-skills",
+      "description": "Claude Skills 精选清单"
+    },
+    "/agent/slavingia/skills": {
+      "repository": "slavingia/skills",
+      "title": "skills",
+      "description": "基于《极简创业者》方法论的 Claude Code 技能"
+    },
+    "/agent/xonsh/xonsh": {
+      "repository": "xonsh/xonsh",
+      "title": "xonsh",
+      "description": "Python 驱动的跨平台 Shell，对 AI 友好"
+    },
+    "/agent/frankbria/ralph-claude-code": {
+      "repository": "frankbria/ralph-claude-code",
+      "title": "ralph-claude-code",
+      "description": "Claude Code 自主开发循环，智能判断何时退出"
+    },
+    "/agent/zubair-trabzada/geo-seo-claude": {
+      "repository": "zubair-trabzada/geo-seo-claude",
+      "title": "geo-seo-claude",
+      "description": "GEO 优先的 AI 搜索优化技能：可引用性评分与品牌权威分析"
+    },
+    "/agent/open-gsd/gsd-core": {
+      "repository": "open-gsd/gsd-core",
+      "title": "gsd-core",
+      "description": "Git. Ship. Done 工作流核心：规格驱动的交付体系"
+    },
+    "/agent/anthropics/claude-code-action": {
+      "repository": "anthropics/claude-code-action",
+      "title": "claude-code-action",
+      "description": "Anthropic 官方 GitHub Action，在 CI 里驱动 Claude Code"
+    },
+    "/agent/revfactory/harness": {
+      "repository": "revfactory/harness",
+      "title": "harness",
+      "description": "元技能：设计领域专属 Agent 团队并生成配套技能"
+    },
+    "/agent/Maciek-roboblog/Claude-Code-Usage-Monitor": {
+      "repository": "Maciek-roboblog/Claude-Code-Usage-Monitor",
+      "title": "Claude-Code-Usage-Monitor",
+      "description": "Claude Code 用量实时监控，带预测与告警"
+    },
+    "/agent/nexu-io/html-anything": {
+      "repository": "nexu-io/html-anything",
+      "title": "html-anything",
+      "description": "本地 AI 驱动的 HTML 编辑器：75 技能覆盖杂志、海报、图卡等 9 类版面"
+    },
+    "/agent/AgriciDaniel/claude-ads": {
+      "repository": "AgriciDaniel/claude-ads",
+      "title": "claude-ads",
+      "description": "覆盖 Google、Meta 等 12 大广告平台的投放运营技能"
+    },
+    "/agent/Agents365-ai/drawio-skill": {
+      "repository": "Agents365-ai/drawio-skill",
+      "title": "drawio-skill",
+      "description": "自然语言生成 draw.io 图表：11 种预设、代码库/CI 转图、图片转可编辑图"
+    },
+    "/agent/oso95/scroll-world": {
+      "repository": "oso95/scroll-world",
+      "title": "scroll-world",
+      "description": "生成滚动穿越式沉浸落地页，Higgsfield 立体世界飞行效果"
+    },
+    "/agent/PleasePrompto/notebooklm-skill": {
+      "repository": "PleasePrompto/notebooklm-skill",
+      "title": "notebooklm-skill",
+      "description": "让 Claude Code 直连 NotebookLM，基于你的文档给出带引用回答"
+    },
+    "/agent/tw93/Waza": {
+      "repository": "tw93/Waza",
+      "title": "Waza",
+      "description": "把你熟知的工程好习惯变成 Claude 可执行的技能"
+    },
+    "/agent/trailofbits/skills": {
+      "repository": "trailofbits/skills",
+      "title": "skills",
+      "description": "Trail of Bits 出品的安全研究、漏洞挖掘与审计技能"
+    },
+    "/agent/SimoneAvogadro/android-reverse-engineering-skill": {
+      "repository": "SimoneAvogadro/android-reverse-engineering-skill",
+      "title": "android-reverse-engineering-skill",
+      "description": "Android 应用逆向工程辅助技能"
+    },
+    "/agent/op7418/guizang-social-card-skill": {
+      "repository": "op7418/guizang-social-card-skill",
+      "title": "guizang-social-card-skill",
+      "description": "归藏出品：小红书轮播图与公众号封面生成，28 版式 10 主题"
+    },
+    "/agent/SawyerHood/dev-browser": {
+      "repository": "SawyerHood/dev-browser",
+      "title": "dev-browser",
+      "description": "给 Agent 一个真实浏览器的使用能力"
+    },
+    "/agent/deanpeters/Product-Manager-Skills": {
+      "repository": "deanpeters/Product-Manager-Skills",
+      "title": "Product-Manager-Skills",
+      "description": "基于实战方法论的产品经理技能框架"
+    },
+    "/agent/e2b-dev/fragments": {
+      "repository": "e2b-dev/fragments",
+      "title": "fragments",
+      "description": "E2B 出品的开源 Next.js 模板，构建全 AI 生成的应用"
+    },
+    "/agent/Vincentwei1021/video-shotcraft": {
+      "repository": "Vincentwei1021/video-shotcraft",
+      "title": "video-shotcraft",
+      "description": "用 Remotion 生成电影感产品视频：152 张分镜卡与 209 个动效预览"
+    },
+    "/agent/ikaijua/Awesome-AITools": {
+      "repository": "ikaijua/Awesome-AITools",
+      "title": "Awesome-AITools",
+      "description": "Collection of AI-related utilities. Welcome to submit pull requests /收藏AI相关的实用工具，欢迎提交pull requests"
+    },
+    "/agent/czlonkowski/n8n-skills": {
+      "repository": "czlonkowski/n8n-skills",
+      "title": "n8n-skills",
+      "description": "让 Claude Code 稳定构建 n8n 工作流的技能集"
+    },
+    "/agent/zenstory-ai/oh-story-claudecode": {
+      "repository": "zenstory-ai/oh-story-claudecode",
+      "title": "oh-story-claudecode",
+      "description": "网文/小说写作 skill 包，覆盖长篇与短篇网络小说的扫榜、拆文、写作、去AI味、封面图全流程 | An all-in-one skill pack for long- and short-form web fiction."
+    },
+    "/agent/anthropics/claude-code-security-review": {
+      "repository": "anthropics/claude-code-security-review",
+      "title": "claude-code-security-review",
+      "description": "Anthropic 官方安全审查 Action，用 Claude 分析代码变更漏洞"
+    },
+    "/agent/UfoMiao/zcf": {
+      "repository": "UfoMiao/zcf",
+      "title": "zcf",
+      "description": "Claude Code 与 Codex 的零配置初始化工具"
+    },
+    "/agent/worldwonderer/oh-story-claudecode": {
+      "repository": "worldwonderer/oh-story-claudecode",
+      "title": "oh-story-claudecode",
+      "description": "网文/小说写作 skill 包，覆盖长篇与短篇网络小说的扫榜、拆文、写作、去AI味、封面图全流程 | An all-in-one skill pack for long- and short-form web fiction."
+    },
+    "/agent/uditgoenka/autoresearch": {
+      "repository": "uditgoenka/autoresearch",
+      "title": "autoresearch",
+      "description": "自主目标导向迭代：修改、验证、取舍、重复的研究循环"
+    },
+    "/agent/anbeime/skill": {
+      "repository": "anbeime/skill",
+      "title": "skill",
+      "description": "收录最全、更新最快的技能Skills商店：416个精选原创技能包（涵盖文档处理、内容创作、编程开发、机器学习、自动化工作流），全部打包好可直接安装使用！同时自动抓取GitHub上万个Skills项目，按分类、更新时间、Star数量整理。"
+    },
+    "/agent/alchaincyf/darwin-skill": {
+      "repository": "alchaincyf/darwin-skill",
+      "title": "darwin-skill",
+      "description": "达尔文.skill —— 一个让你的Skill无限进化的系统：评估→改进→测试→保留或回滚 | Autoresearch-inspired autonomous skill optimization for Claude Code. Evaluate, improve, test, keep or revert."
+    },
+    "/agent/gosom/google-maps-scraper": {
+      "repository": "gosom/google-maps-scraper",
+      "title": "google-maps-scraper",
+      "description": "抓取 Google 地图商家数据：名称、地址、电话、评分与评论"
+    },
+    "/agent/zarazhangrui/codebase-to-course": {
+      "repository": "zarazhangrui/codebase-to-course",
+      "title": "codebase-to-course",
+      "description": "把任意代码库变成精美的交互式单页 HTML 课程"
+    },
+    "/agent/browser-act/skills": {
+      "repository": "browser-act/skills",
+      "title": "skills",
+      "description": "为 AI Agent 打造的浏览器自动化 CLI，可突破反爬并支持人工接管"
+    },
+    "/agent/su-kaka/gcli2api": {
+      "repository": "su-kaka/gcli2api",
+      "title": "gcli2api",
+      "description": "将 GeminiCLI 和 Antigravity 转换为 OpenAI 、GEMINI 和 Claude API 接口"
+    },
+    "/agent/PeonPing/peon-ping": {
+      "repository": "PeonPing/peon-ping",
+      "title": "peon-ping",
+      "description": "魔兽苦工语音通知：任务完成出声提醒，不用盯终端"
+    },
+    "/agent/SaladDay/cc-switch-cli": {
+      "repository": "SaladDay/cc-switch-cli",
+      "title": "cc-switch-cli",
+      "description": "Claude Code、Codex 与 Gemini CLI 的跨平台切换管理工具"
+    },
+    "/agent/epoko77-ai/im-not-ai": {
+      "repository": "epoko77-ai/im-not-ai",
+      "title": "im-not-ai",
+      "description": "韩语 AI 文本去味器：识别并改写 71 种 AI 写作痕迹"
+    },
+    "/agent/twostraws/SwiftUI-Agent-Skill": {
+      "repository": "twostraws/SwiftUI-Agent-Skill",
+      "title": "SwiftUI-Agent-Skill",
+      "description": "SwiftUI 开发技能，出自 Hacking with Swift 作者"
+    },
+    "/agent/composio-community/open-claude-cowork": {
+      "repository": "composio-community/open-claude-cowork",
+      "title": "open-claude-cowork",
+      "description": "开源版 Claude Cowork，集成 500+ SaaS 应用"
+    },
+    "/agent/eugeniughelbur/obsidian-second-brain": {
+      "repository": "eugeniughelbur/obsidian-second-brain",
+      "title": "obsidian-second-brain",
+      "description": "把项目决策与人物记忆存进 Obsidian 库，多家 CLI Agent 共享"
+    },
+    "/agent/internet-court/internet-court-skill": {
+      "repository": "internet-court/internet-court-skill",
+      "title": "internet-court-skill",
+      "description": "Agent 间交易的信任层：自然语言授权、链上支付与争议仲裁"
+    },
+    "/agent/ComposioHQ/open-claude-cowork": {
+      "repository": "ComposioHQ/open-claude-cowork",
+      "title": "open-claude-cowork",
+      "description": "开源版 Claude Cowork，集成 500+ SaaS 应用"
+    },
+    "/agent/matt1398/claude-devtools": {
+      "repository": "matt1398/claude-devtools",
+      "title": "claude-devtools",
+      "description": "Claude Code 的 DevTools：可视化查看会话日志、工具调用与上下文"
+    },
+    "/agent/elementalsouls/Claude-BugHunter": {
+      "repository": "elementalsouls/Claude-BugHunter",
+      "title": "Claude-BugHunter",
+      "description": "漏洞赏金技能包：82 技能、15 命令与 681 个披露报告模式"
+    },
+    "/agent/glitternetwork/pinme": {
+      "repository": "glitternetwork/pinme",
+      "title": "pinme",
+      "description": "一条命令部署前端站点，支持 Claude Code 技能调用"
+    },
+    "/agent/liustack/modlens": {
+      "repository": "liustack/modlens",
+      "title": "modlens",
+      "description": "给纯文本编码 Agent 装上视觉：贴图即得 OCR 与布局结构化证据"
+    },
+    "/agent/gotalab/cc-sdd": {
+      "repository": "gotalab/cc-sdd",
+      "title": "cc-sdd",
+      "description": "把评审通过的规格变成长时自主实现的极简 SDD 框架"
+    },
+    "/agent/raullenchai/Rapid-MLX": {
+      "repository": "raullenchai/Rapid-MLX",
+      "title": "Rapid-MLX",
+      "description": "Apple Silicon 最快本地推理引擎，比 Ollama 快 4.2 倍"
+    },
+    "/agent/agenticnotetaking/arscontexta": {
+      "repository": "agenticnotetaking/arscontexta",
+      "title": "arscontexta",
+      "description": "聊出你的思维方式，自动生成个人化知识管理系统"
+    },
+    "/agent/VoltAgent/awesome-claude-design": {
+      "repository": "VoltAgent/awesome-claude-design",
+      "title": "awesome-claude-design",
+      "description": "68 套即用设计系统灵感，放入项目一次成型完整 UI"
+    },
+    "/agent/ericosiu/ai-marketing-skills": {
+      "repository": "ericosiu/ai-marketing-skills",
+      "title": "ai-marketing-skills",
+      "description": "开源 AI 营销技能：增长实验、销售管道、内容运营与 SEO"
+    },
+    "/agent/oboard/claude-code-rev": {
+      "repository": "oboard/claude-code-rev",
+      "title": "claude-code-rev",
+      "description": "可运行的 Claude Code 逆向源码"
+    },
+    "/agent/hamed-elfayome/Claude-Usage-Tracker": {
+      "repository": "hamed-elfayome/Claude-Usage-Tracker",
+      "title": "Claude-Usage-Tracker",
+      "description": "macOS 菜单栏原生应用，实时追踪 Claude 用量额度"
+    },
+    "/agent/nicedreamzapp/claude-code-local": {
+      "repository": "nicedreamzapp/claude-code-local",
+      "title": "claude-code-local",
+      "description": "Apple Silicon 全本地运行 Claude Code，MLX 原生 API 服务"
+    },
+    "/agent/openclaw/openclaw": {
+      "repository": "openclaw/openclaw",
+      "title": "openclaw",
+      "description": "跨系统全平台的个人 AI 助理"
+    },
+    "/agent/NousResearch/hermes-agent": {
+      "repository": "NousResearch/hermes-agent",
+      "title": "hermes-agent",
+      "description": "Nous Research 出品、随你成长的个人 Agent"
+    },
+    "/agent/nextlevelbuilder/ui-ux-pro-max-skill": {
+      "repository": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "title": "ui-ux-pro-max-skill",
+      "description": "跨平台专业 UI/UX 设计智能：风格库、配色、字体与无障碍规范"
+    },
+    "/agent/nexu-io/open-design": {
+      "repository": "nexu-io/open-design",
+      "title": "open-design",
+      "description": "开源 Claude Design 替代品：本地桌面应用，编码 Agent 变设计引擎"
+    },
+    "/agent/addyosmani/agent-skills": {
+      "repository": "addyosmani/agent-skills",
+      "title": "agent-skills",
+      "description": "Addy Osmani 出品的生产级工程技能，面向 AI 编码 Agent"
+    },
+    "/agent/Leonxlnx/taste-skill": {
+      "repository": "Leonxlnx/taste-skill",
+      "title": "taste-skill",
+      "description": "给 AI 注入审美品味，拒绝无聊平庸的生成结果"
+    },
+    "/agent/safishamsi/graphify": {
+      "repository": "safishamsi/graphify",
+      "title": "graphify",
+      "description": "把代码、SQL、脚本与文档整体变成可查询的知识图谱"
+    },
+    "/agent/santifer/career-ops": {
+      "repository": "santifer/career-ops",
+      "title": "career-ops",
+      "description": "开源 AI 求职：扫描职位、结构化评估打分、定制简历并追踪投递"
+    },
+    "/agent/asgeirtj/system_prompts_leaks": {
+      "repository": "asgeirtj/system_prompts_leaks",
+      "title": "system_prompts_leaks",
+      "description": "各家大模型系统提示词提取合集：Claude、ChatGPT、Gemini 等"
+    },
+    "/agent/mvanhorn/last30days-skill": {
+      "repository": "mvanhorn/last30days-skill",
+      "title": "last30days-skill",
+      "description": "跨 Reddit/X/YouTube/HN 检索任意话题近期信息并合成有据摘要"
+    },
+    "/agent/stablyai/orca": {
+      "repository": "stablyai/orca",
+      "title": "orca",
+      "description": "并行 Agent 舰队的开发环境，桌面、手机与 VPS 全端可用"
+    },
+    "/agent/VoltAgent/awesome-openclaw-skills": {
+      "repository": "VoltAgent/awesome-openclaw-skills",
+      "title": "awesome-openclaw-skills",
+      "description": "OpenClaw 技能精选：从官方注册表筛选分类的 5400+ 技能"
+    },
+    "/agent/CherryHQ/cherry-studio": {
+      "repository": "CherryHQ/cherry-studio",
+      "title": "cherry-studio",
+      "description": "AI 生产力工作室：智能对话、自主 Agent 与 300+ 助手，统一接入主流大模型"
+    },
+    "/agent/Alishahryar1/free-claude-code": {
+      "repository": "Alishahryar1/free-claude-code",
+      "title": "free-claude-code",
+      "description": "终端、IDE 与手机免费用 Claude Code/Codex，13 亿+ 免费 token"
+    },
+    "/agent/router-for-me/CLIProxyAPI": {
+      "repository": "router-for-me/CLIProxyAPI",
+      "title": "CLIProxyAPI",
+      "description": "把各家编码 Agent 包装成 OpenAI/Gemini/Claude 兼容 API 服务"
+    },
+    "/agent/moeru-ai/airi": {
+      "repository": "moeru-ai/airi",
+      "title": "airi",
+      "description": "自托管的数字伙伴容器，把虚拟角色带进现实世界"
+    },
+    "/agent/kepano/obsidian-skills": {
+      "repository": "kepano/obsidian-skills",
+      "title": "obsidian-skills",
+      "description": "Obsidian 官方 Agent 技能：教会 Agent 用 CLI 与开放格式管理笔记"
+    },
+    "/agent/Wei-Shaw/sub2api": {
+      "repository": "Wei-Shaw/sub2api",
+      "title": "sub2api",
+      "description": "Sub2API 一站式开源中转服务，让 Claude、Openai 、Gemini、Grok订阅统一接入，支持拼车共享，更高效分摊成本，原生工具无缝使用。"
+    },
+    "/agent/HKUDS/DeepTutor": {
+      "repository": "HKUDS/DeepTutor",
+      "title": "DeepTutor",
+      "description": "终身个性化 AI 导师"
+    },
+    "/agent/Yuan1z0825/nature-skills": {
+      "repository": "Yuan1z0825/nature-skills",
+      "title": "nature-skills",
+      "description": "符合nature论文学术表达和科研绘图的Skill"
+    },
+    "/agent/1Panel-dev/1Panel": {
+      "repository": "1Panel-dev/1Panel",
+      "title": "1Panel",
+      "description": "现代开源 Linux 服务器管理面板，兼轻量 AI 管理平台"
+    },
+    "/agent/blader/humanizer": {
+      "repository": "blader/humanizer",
+      "title": "humanizer",
+      "description": "去除文本中的 AI 写作痕迹"
+    },
+    "/agent/zeroclaw-labs/zeroclaw": {
+      "repository": "zeroclaw-labs/zeroclaw",
+      "title": "zeroclaw",
+      "description": "Rust 打造的快速轻量全自主 AI 助理基础设施，随处部署"
+    },
+    "/agent/openai/codex-plugin-cc": {
+      "repository": "openai/codex-plugin-cc",
+      "title": "codex-plugin-cc",
+      "description": "OpenAI 官方插件：在 Claude Code 里调用 Codex 审代码或委派任务"
+    },
+    "/agent/herdrdev/herdr": {
+      "repository": "herdrdev/herdr",
+      "title": "herdr",
+      "description": "编码 Agent 的运行时底座"
+    },
+    "/agent/iOfficeAI/AionUi": {
+      "repository": "iOfficeAI/AionUi",
+      "title": "AionUi",
+      "description": "全天候 Cowork 应用：20+ CLI Agent 统一界面，可定制可组队"
+    },
+    "/agent/hesamsheikh/awesome-openclaw-usecases": {
+      "repository": "hesamsheikh/awesome-openclaw-usecases",
+      "title": "awesome-openclaw-usecases",
+      "description": "OpenClaw 实用案例社区合集"
+    },
+    "/agent/iOfficeAI/OfficeCLI": {
+      "repository": "iOfficeAI/OfficeCLI",
+      "title": "OfficeCLI",
+      "description": "为 AI Agent 打造的 Office 套件：读写与自动化 Word/Excel/PPT"
+    },
+    "/agent/garrytan/gbrain": {
+      "repository": "garrytan/gbrain",
+      "title": "gbrain",
+      "description": "Garry Tan 的 OpenClaw/Hermes Agent 大脑配置"
+    },
+    "/agent/BloopAI/vibe-kanban": {
+      "repository": "BloopAI/vibe-kanban",
+      "title": "vibe-kanban",
+      "description": "用看板方式管理编码 Agent 任务，产出效率翻十倍"
+    },
+    "/agent/rohitg00/agentmemory": {
+      "repository": "rohitg00/agentmemory",
+      "title": "agentmemory",
+      "description": "基于真实基准的编码 Agent 持久记忆方案"
+    },
+    "/agent/manaflow-ai/cmux": {
+      "repository": "manaflow-ai/cmux",
+      "title": "cmux",
+      "description": "基于 Ghostty 的 macOS 终端：垂直标签页与 Agent 任务通知"
+    },
+    "/agent/decolua/9router": {
+      "repository": "decolua/9router",
+      "title": "9router",
+      "description": "免费 AI 编码路由：40+ 供应商接入各家编码工具，自动降级"
+    },
+    "/agent/op7418/guizang-ppt-skill": {
+      "repository": "op7418/guizang-ppt-skill",
+      "title": "guizang-ppt-skill",
+      "description": "归藏 PPT 技能：杂志风与瑞士版式 HTML 幻灯片，含配图提示词"
+    },
+    "/agent/openai/skills": {
+      "repository": "openai/skills",
+      "title": "skills",
+      "description": "OpenAI 官方 Codex 技能目录"
+    },
+    "/agent/TencentCloud/TencentDB-Agent-Memory": {
+      "repository": "TencentCloud/TencentDB-Agent-Memory",
+      "title": "TencentDB-Agent-Memory",
+      "description": "腾讯云团队级 Agent 记忆中枢：会话、文档与代码沉淀为四类可复用记忆"
+    },
+    "/agent/titanwings/colleague-skill": {
+      "repository": "titanwings/colleague-skill",
+      "title": "colleague-skill",
+      "description": "将冰冷的离别化为温暖的 Skill，欢迎加入数字生命1.0！Transforming cold farewells into warm skills? It's giving rebirth era. Welcome to Digital Life 1.0. 🫶"
+    },
+    "/agent/slopus/happy": {
+      "repository": "slopus/happy",
+      "title": "happy",
+      "description": "Codex 与 Claude Code 的移动/网页客户端，支持实时语音与加密"
+    },
+    "/agent/ogulcancelik/herdr": {
+      "repository": "ogulcancelik/herdr",
+      "title": "herdr",
+      "description": "常驻终端的 Agent 多路复用器"
+    },
+    "/agent/NVIDIA/NemoClaw": {
+      "repository": "NVIDIA/NemoClaw",
+      "title": "NemoClaw",
+      "description": "在 NVIDIA OpenShell 中更安全地运行 Hermes、OpenClaw 等 Agent"
+    },
+    "/agent/steipete/CodexBar": {
+      "repository": "steipete/CodexBar",
+      "title": "CodexBar",
+      "description": "免登录查看 Codex 与 Claude Code 用量统计"
+    },
+    "/agent/jnMetaCode/agency-agents-zh": {
+      "repository": "jnMetaCode/agency-agents-zh",
+      "title": "agency-agents-zh",
+      "description": "🎭 267 个即插即用的 AI 专家角色 — 支持 Hermes Agent/Claude Code/Cursor/Copilot 等 18 种工具，覆盖工程/设计/营销/金融等 20 个部门。含 52 个中国市场原创智能体（小红书/抖音/微信/飞书/钉钉等）。搭配编排器 agency-orchestrator，一…"
+    },
+    "/agent/KKKKhazix/khazix-skills": {
+      "repository": "KKKKhazix/khazix-skills",
+      "title": "khazix-skills",
+      "description": "数字生命卡兹克开源的 AI Skills 合集 | Agent Skills: leader（帮你定义目标）, neat-freak 洁癖, hv-analysis, khazix-writer & more — Claude Code, Codex & 40+ agents"
+    },
+    "/agent/AsyncFuncAI/deepwiki-open": {
+      "repository": "AsyncFuncAI/deepwiki-open",
+      "title": "deepwiki-open",
+      "description": "开源 DeepWiki：为 GitHub/GitLab 仓库自动生成 AI 维基"
+    },
+    "/agent/langbot-app/LangBot": {
+      "repository": "langbot-app/LangBot",
+      "title": "LangBot",
+      "description": "Production-grade platform for building agentic IM bots - 生产级多平台智能机器人开发平台/ Agent、知识库编排、插件系统 / Bots for Discord / Slack / LINE / Telegram / WeChat(企业微信, 企微智能机器人,…"
+    },
+    "/agent/openimsdk/open-im-server": {
+      "repository": "openimsdk/open-im-server",
+      "title": "open-im-server",
+      "description": "开源即时通讯服务端"
+    },
+    "/agent/jlcodes99/cockpit-tools": {
+      "repository": "jlcodes99/cockpit-tools",
+      "title": "cockpit-tools",
+      "description": "🚀 通用 AI IDE 账号管理工具：支持 Antigravity / Codex / GitHub Copilot / Windsurf / Kiro / Cursor / Gemini-cli / CodeBuddy，多账号切换、配额监控、自动唤醒与多开实例管理。 🚀 Universal AI IDE acc…"
+    },
+    "/agent/cft0808/edict": {
+      "repository": "cft0808/edict",
+      "title": "edict",
+      "description": "🏛️ 三省六部制 · OpenClaw Multi-Agent Orchestration System — 9 specialized AI agents with real-time dashboard, model config, and full audit trails"
+    },
+    "/agent/MemoriLabs/Memori": {
+      "repository": "MemoriLabs/Memori",
+      "title": "Memori",
+      "description": "Agent 原生记忆基础设施：把执行与会话变成结构化持久状态"
+    },
+    "/agent/composio-community/awesome-codex-skills": {
+      "repository": "composio-community/awesome-codex-skills",
+      "title": "awesome-codex-skills",
+      "description": "Codex CLI 与 API 工作流自动化技能精选"
+    },
+    "/agent/chenhg5/cc-connect": {
+      "repository": "chenhg5/cc-connect",
+      "title": "cc-connect",
+      "description": "把本地编码 Agent 接入飞书、钉钉、Slack、Telegram 等消息平台"
+    },
+    "/agent/eigent-ai/eigent": {
+      "repository": "eigent-ai/eigent",
+      "title": "eigent",
+      "description": "开源 Cowork 桌面应用，Claude Cowork 的本地免费替代"
+    },
+    "/agent/getpaseo/paseo": {
+      "repository": "getpaseo/paseo",
+      "title": "paseo",
+      "description": "从桌面和手机编排多个编码 Agent"
+    },
+    "/agent/YishenTu/claudian": {
+      "repository": "YishenTu/claudian",
+      "title": "claudian",
+      "description": "把 Claude Code/Codex 嵌入 Obsidian 库的 AI 协作插件"
+    },
+    "/agent/mindfold-ai/Trellis": {
+      "repository": "mindfold-ai/Trellis",
+      "title": "Trellis",
+      "description": "号称最好用的 Agent 执行框架"
+    },
+    "/agent/aiming-lab/AutoResearchClaw": {
+      "repository": "aiming-lab/AutoResearchClaw",
+      "title": "AutoResearchClaw",
+      "description": "全自主自进化研究：聊个想法，产出论文"
+    },
+    "/agent/citrolabs/ego-lite": {
+      "repository": "citrolabs/ego-lite",
+      "title": "ego-lite",
+      "description": "为 Agent 优化的最快自动化浏览器，可共享登录态"
+    },
+    "/agent/siteboon/claudecodeui": {
+      "repository": "siteboon/claudecodeui",
+      "title": "claudecodeui",
+      "description": "免费开源 WebUI：手机和网页上使用 Claude Code、Codex 等"
+    },
+    "/agent/superset-sh/superset": {
+      "repository": "superset-sh/superset",
+      "title": "superset",
+      "description": "并行编排 100+ 编码 Agent 的 Agentic IDE"
+    },
+    "/agent/nearai/ironclaw": {
+      "repository": "nearai/ironclaw",
+      "title": "ironclaw",
+      "description": "主打隐私、安全与可扩展的 Agent 操作系统"
+    },
+    "/agent/Wei-Shaw/claude-relay-service": {
+      "repository": "Wei-Shaw/claude-relay-service",
+      "title": "claude-relay-service",
+      "description": "CRS-自建Claude Code镜像，一站式开源中转服务，让 Claude、OpenAI、Gemini、Droid 订阅统一接入，支持拼车共享，更高效分摊成本，原生工具无缝使用。"
+    },
+    "/agent/lidge-jun/opencodex": {
+      "repository": "lidge-jun/opencodex",
+      "title": "opencodex",
+      "description": "通用模型代理：让 Codex 与 Claude Code 使用任意大模型"
+    },
+    "/agent/getumbrel/umbrel": {
+      "repository": "getumbrel/umbrel",
+      "title": "umbrel",
+      "description": "优雅的家庭服务器系统：跑 OpenClaw、存文件、300+ 应用商店"
+    },
+    "/agent/humanlayer/humanlayer": {
+      "repository": "humanlayer/humanlayer",
+      "title": "humanlayer",
+      "description": "让编码 Agent 在复杂代码库中解决难题的最佳工作流"
+    },
+    "/agent/Kuberwastaken/claurst": {
+      "repository": "Kuberwastaken/claurst",
+      "title": "claurst",
+      "description": "面向交付型开发者的 Agentic 编码工具"
+    },
+    "/agent/openai/codex-security": {
+      "repository": "openai/codex-security",
+      "title": "codex-security",
+      "description": "OpenAI 官方安全 CLI：发现、验证并修复安全漏洞"
+    },
+    "/agent/cloudflare/moltworker": {
+      "repository": "cloudflare/moltworker",
+      "title": "moltworker",
+      "description": "在 Cloudflare Workers 上运行 OpenClaw"
+    },
+    "/agent/Untrivial-ai/agent-orchestrator": {
+      "repository": "Untrivial-ai/agent-orchestrator",
+      "title": "agent-orchestrator",
+      "description": "Agent IDE：编排 Agent 舰队，自动处理 CI 修复、冲突与评审"
+    },
+    "/agent/ComposioHQ/awesome-codex-skills": {
+      "repository": "ComposioHQ/awesome-codex-skills",
+      "title": "awesome-codex-skills",
+      "description": "Codex CLI 与 API 工作流自动化技能精选"
+    },
+    "/agent/getagentseal/codeburn": {
+      "repository": "getagentseal/codeburn",
+      "title": "codeburn",
+      "description": "本地统计 37 种 AI 编码工具的 token 用量与成本"
+    },
+    "/agent/openclaw/clawhub": {
+      "repository": "openclaw/clawhub",
+      "title": "clawhub",
+      "description": "OpenClaw 官方技能与插件注册中心"
+    },
+    "/agent/omnigent-ai/omnigent": {
+      "repository": "omnigent-ai/omnigent",
+      "title": "omnigent",
+      "description": "开源元框架：统一编排各家编码 Agent，换壳不换代码"
+    },
+    "/agent/activeloopai/deeplake": {
+      "repository": "activeloopai/deeplake",
+      "title": "deeplake",
+      "description": "Agent 的 AI 数据运行时：无服务器 Postgres + 多模态数据湖"
+    },
+    "/agent/helloianneo/ian-xiaohei-illustrations": {
+      "repository": "helloianneo/ian-xiaohei-illustrations",
+      "title": "ian-xiaohei-illustrations",
+      "description": "中文小黑怪诞正文配图生成 Skill | 16:9 白底手绘 | 少量红橙蓝批注 | Codex Skill"
+    },
+    "/agent/Imbad0202/academic-research-skills-codex": {
+      "repository": "Imbad0202/academic-research-skills-codex",
+      "title": "academic-research-skills-codex",
+      "description": "Codex 原生学术研究技能套件，人机协同的研究工作流"
+    },
+    "/agent/MervinPraison/PraisonAI": {
+      "repository": "MervinPraison/PraisonAI",
+      "title": "PraisonAI",
+      "description": "雇一支全天候 AI 员工队伍：自主研究、规划、编码与执行"
+    },
+    "/agent/Narcooo/inkos": {
+      "repository": "Narcooo/inkos",
+      "title": "inkos",
+      "description": "自主小说写作 Agent：多 Agent 写作、审校、修订，人工审核把关"
+    },
+    "/agent/freecodexyz/free-code": {
+      "repository": "freecodexyz/free-code",
+      "title": "free-code",
+      "description": "Claude Code 免费改版：去遥测、解锁实验特性（安全护栏也被移除，慎用）"
+    },
+    "/agent/AgentWrapper/agent-orchestrator": {
+      "repository": "AgentWrapper/agent-orchestrator",
+      "title": "agent-orchestrator",
+      "description": "Agent IDE：编排 Agent 舰队，自动处理 CI 修复、冲突与评审"
+    },
+    "/agent/HKUDS/ClawWork": {
+      "repository": "HKUDS/ClawWork",
+      "title": "ClawWork",
+      "description": "OpenClaw 当你的 AI 同事：11 小时赚 1.5 万美元的实验"
+    },
+    "/agent/smtg-ai/claude-squad": {
+      "repository": "smtg-ai/claude-squad",
+      "title": "claude-squad",
+      "description": "同时管理 Claude Code、Codex 等多个终端 AI Agent"
+    },
+    "/agent/openclaw/gogcli": {
+      "repository": "openclaw/gogcli",
+      "title": "gogcli",
+      "description": "终端里的 Google Workspace"
+    },
+    "/agent/backnotprop/plannotator": {
+      "repository": "backnotprop/plannotator",
+      "title": "plannotator",
+      "description": "可视化标注评审 Agent 计划与代码 diff，一键反馈给 Agent"
+    },
+    "/agent/OpenCoworkAI/open-codesign": {
+      "repository": "OpenCoworkAI/open-codesign",
+      "title": "open-codesign",
+      "description": "开源 Claude Design 替代：提示词直出原型、幻灯片与 PDF，多模型"
+    },
+    "/agent/ValueCell-ai/ClawX": {
+      "repository": "ValueCell-ai/ClawX",
+      "title": "ClawX",
+      "description": "OpenClaw 的桌面图形界面，CLI 编排变桌面体验"
+    },
+    "/agent/refly-ai/refly": {
+      "repository": "refly-ai/refly",
+      "title": "refly",
+      "description": "首个开源 Agent 技能构建器：按 vibe 定义工作流，多家 Agent 运行"
+    },
+    "/agent/mnfst/manifest": {
+      "repository": "mnfst/manifest",
+      "title": "manifest",
+      "description": "把你的 Agent 与执行框架连接到任意模型供应商"
+    },
+    "/agent/ringhyacinth/Star-Office-UI": {
+      "repository": "ringhyacinth/Star-Office-UI",
+      "title": "Star-Office-UI",
+      "description": "给 OpenClaw 一间像素办公室：把不可见的工作状态变成温馨小空间"
+    },
+    "/agent/ComposioHQ/agent-orchestrator": {
+      "repository": "ComposioHQ/agent-orchestrator",
+      "title": "agent-orchestrator",
+      "description": "并行编码 Agent 编排器：规划任务、派生 Agent、自动处理 CI 与评审"
+    },
+    "/agent/mnfst/awesome-free-llm-apis": {
+      "repository": "mnfst/awesome-free-llm-apis",
+      "title": "awesome-free-llm-apis",
+      "description": "长期免费的大模型 API 清单"
+    },
+    "/agent/max-sixty/worktrunk": {
+      "repository": "max-sixty/worktrunk",
+      "title": "worktrunk",
+      "description": "面向并行 Agent 工作流的 Git worktree 管理 CLI"
+    },
+    "/agent/BlockRunAI/ClawRouter": {
+      "repository": "BlockRunAI/ClawRouter",
+      "title": "ClawRouter",
+      "description": "Agent 原生模型路由：一个钱包用遍前沿模型，毫秒级本地路由"
+    },
+    "/agent/outsourc-e/hermes-workspace": {
+      "repository": "outsourc-e/hermes-workspace",
+      "title": "hermes-workspace",
+      "description": "Hermes Agent 的原生网页工作区：聊天、终端、记忆与技能"
+    },
+    "/agent/rullerzhou-afk/clawd-on-desk": {
+      "repository": "rullerzhou-afk/clawd-on-desk",
+      "title": "clawd-on-desk",
+      "description": "像素桌宠替你盯着编码 Agent 干活"
+    },
+    "/agent/VoltAgent/awesome-codex-subagents": {
+      "repository": "VoltAgent/awesome-codex-subagents",
+      "title": "awesome-codex-subagents",
+      "description": "130+ 专业 Codex 子 Agent 合集，覆盖各类开发场景"
+    },
+    "/agent/wnlen/clash-for-linux": {
+      "repository": "wnlen/clash-for-linux",
+      "title": "clash-for-linux",
+      "description": "🐧 一个更完整、更优雅的 Linux Clash / Mihomo 代理运行平台"
+    },
+    "/agent/Master-cai/Research-Paper-Writing-Skills": {
+      "repository": "Master-cai/Research-Paper-Writing-Skills",
+      "title": "Research-Paper-Writing-Skills",
+      "description": "ML/CV/NLP 论文写作技能包，改编自彭思达教授公开笔记"
+    },
+    "/agent/LiamGvchi/gc-minimal-zine-poster": {
+      "repository": "LiamGvchi/gc-minimal-zine-poster",
+      "title": "gc-minimal-zine-poster",
+      "description": "生成安静极简 zine 风编辑海报的提示词与图像"
+    },
+    "/agent/fengshao1227/ccg-workflow": {
+      "repository": "fengshao1227/ccg-workflow",
+      "title": "ccg-workflow",
+      "description": "多模型协作工作流引擎 — /ccg:go 一个命令，AI 自动分析意图、选择策略、编排 Codex + Gemini + Claude 协作执行"
+    },
+    "/agent/openai-php/client": {
+      "repository": "openai-php/client",
+      "title": "client",
+      "description": "社区维护的 OpenAI PHP 客户端"
+    },
+    "/agent/affaan-m/ECC": {
+      "repository": "affaan-m/ECC",
+      "title": "ECC",
+      "description": "Agent 执行框架性能优化系统：技能、直觉、记忆与安全"
+    },
+    "/agent/n8n-io/n8n": {
+      "repository": "n8n-io/n8n",
+      "title": "n8n",
+      "description": "公平代码工作流自动化平台，原生 AI 能力与 400+ 集成"
+    },
+    "/agent/affaan-m/everything-claude-code": {
+      "repository": "affaan-m/everything-claude-code",
+      "title": "everything-claude-code",
+      "description": "Agent 执行框架性能优化系统：技能、直觉、记忆与安全"
+    },
+    "/agent/langgenius/dify": {
+      "repository": "langgenius/dify",
+      "title": "dify",
+      "description": "一站式构建 Agentic 工作流与 RAG 管道的协作平台"
+    },
+    "/agent/open-webui/open-webui": {
+      "repository": "open-webui/open-webui",
+      "title": "open-webui",
+      "description": "易用的 AI 聊天界面，支持 Ollama 与 OpenAI API"
+    },
+    "/agent/farion1231/cc-switch": {
+      "repository": "farion1231/cc-switch",
+      "title": "cc-switch",
+      "description": "多家编码 Agent 的跨平台桌面切换助手"
+    },
+    "/agent/Graphify-Labs/graphify": {
+      "repository": "Graphify-Labs/graphify",
+      "title": "graphify",
+      "description": "把代码库连同文档、SQL、配置变成可查询知识图谱的 /graphify 技能"
+    },
+    "/agent/google-gemini/gemini-cli": {
+      "repository": "google-gemini/gemini-cli",
+      "title": "gemini-cli",
+      "description": "Google 官方开源终端 AI Agent，把 Gemini 带进命令行"
+    },
+    "/agent/punkpeye/awesome-mcp-servers": {
+      "repository": "punkpeye/awesome-mcp-servers",
+      "title": "awesome-mcp-servers",
+      "description": "MCP Server 精选合集"
+    },
+    "/agent/modelcontextprotocol/servers": {
+      "repository": "modelcontextprotocol/servers",
+      "title": "servers",
+      "description": "MCP 官方参考 Server 实现合集"
+    },
+    "/agent/infiniflow/ragflow": {
+      "repository": "infiniflow/ragflow",
+      "title": "ragflow",
+      "description": "领先的开源 RAG 引擎，融合 Agent 能力打造更强上下文层"
+    },
+    "/agent/koala73/worldmonitor": {
+      "repository": "koala73/worldmonitor",
+      "title": "worldmonitor",
+      "description": "实时全球情报仪表盘：新闻聚合、地缘监测与基础设施追踪"
+    },
+    "/agent/lobehub/lobehub": {
+      "repository": "lobehub/lobehub",
+      "title": "lobehub",
+      "description": "你的首席 Agent 运营官：为整支 AI 团队排班、调度与汇报"
+    },
+    "/agent/D4Vinci/Scrapling": {
+      "repository": "D4Vinci/Scrapling",
+      "title": "Scrapling",
+      "description": "自适应网页抓取框架，从单次请求到全站爬取都能扛"
+    },
+    "/agent/Panniantong/Agent-Reach": {
+      "repository": "Panniantong/Agent-Reach",
+      "title": "Agent-Reach",
+      "description": "给 Agent 一双看遍全网的眼睛：读搜推特、B 站、小红书等，零 API 费"
+    },
+    "/agent/ComposioHQ/awesome-claude-skills": {
+      "repository": "ComposioHQ/awesome-claude-skills",
+      "title": "awesome-claude-skills",
+      "description": "Claude Skills 资源与工具精选清单"
+    },
+    "/agent/ruvnet/ruflo": {
+      "repository": "ruvnet/ruflo",
+      "title": "ruflo",
+      "description": "元老级 Agent 元框架：部署智能集群、编排自主工作流"
+    },
+    "/agent/headroomlabs-ai/headroom": {
+      "repository": "headroomlabs-ai/headroom",
+      "title": "headroom",
+      "description": "在内容进入模型前压缩工具输出与日志，最多省 95% token"
+    },
+    "/agent/sansan0/TrendRadar": {
+      "repository": "sansan0/TrendRadar",
+      "title": "TrendRadar",
+      "description": "⭐AI-driven public opinion & trend monitor with multi-platform aggregation, RSS, and smart alerts.🎯 告别信息过载，你的 AI 舆情监控助手与热点筛选工具！聚合多平台热点 + RSS 订阅，支持关键词精准筛选。AI 智能…"
+    },
+    "/agent/upstash/context7": {
+      "repository": "upstash/context7",
+      "title": "context7",
+      "description": "为 LLM 与 AI 编辑器提供最新版本的代码文档"
+    },
+    "/agent/MemPalace/mempalace": {
+      "repository": "MemPalace/mempalace",
+      "title": "mempalace",
+      "description": "基准测试成绩领先的免费开源 AI 记忆系统"
+    },
+    "/agent/zylon-ai/private-gpt": {
+      "repository": "zylon-ai/private-gpt",
+      "title": "private-gpt",
+      "description": "本地模型的私有 AI 应用完整 API 层：RAG、技能、工具与 MCP"
+    },
+    "/agent/BerriAI/litellm": {
+      "repository": "BerriAI/litellm",
+      "title": "litellm",
+      "description": "最快最轻的 AI 网关：Rust 内核，统一调用 100+ 模型 API 并跟踪成本"
+    },
+    "/agent/diegosouzapw/OmniRoute": {
+      "repository": "diegosouzapw/OmniRoute",
+      "title": "OmniRoute",
+      "description": "免费 AI 网关：一个端点接 350 家供应商 1200+ 模型"
+    },
+    "/agent/ChromeDevTools/chrome-devtools-mcp": {
+      "repository": "ChromeDevTools/chrome-devtools-mcp",
+      "title": "chrome-devtools-mcp",
+      "description": "Chrome 官方 DevTools MCP，给编码 Agent 用的浏览器调试能力"
+    },
+    "/agent/mudler/LocalAI": {
+      "repository": "mudler/LocalAI",
+      "title": "LocalAI",
+      "description": "OpenAI 的免费开源替代：自托管本地优先，消费级硬件可跑"
+    },
+    "/agent/rohitg00/ai-engineering-from-scratch": {
+      "repository": "rohitg00/ai-engineering-from-scratch",
+      "title": "ai-engineering-from-scratch",
+      "description": "AI 工程从零学起：学会、做出来、交付出去"
+    },
+    "/agent/jeecgboot/JeecgBoot": {
+      "repository": "jeecgboot/JeecgBoot",
+      "title": "JeecgBoot",
+      "description": "【低代码v2.0，一句话即可生成整个系统】企业级AI低代码平台，一键生成前后端代码甚至整个系统。 AI Skills 一句话画流程、设计表单、生成报表、大屏。内置 AI应用平台涵盖：AI聊天、知识库、流程编排、MCP插件等，兼容主流大模型。引领AI低代码「Skills 生成 → 在线配置 → 代码生成 → 手工合并-…"
+    },
+    "/agent/HKUDS/nanobot": {
+      "repository": "HKUDS/nanobot",
+      "title": "nanobot",
+      "description": "超轻量自托管个人 Agent 框架：WebUI、记忆、MCP 与多 Agent 工作流"
+    },
+    "/agent/zhayujie/CowAgent": {
+      "repository": "zhayujie/CowAgent",
+      "title": "CowAgent",
+      "description": "开源超级 AI 助理：规划任务、调用工具、靠记忆自我进化，多模型多渠道"
+    },
+    "/agent/siyuan-note/siyuan": {
+      "repository": "siyuan-note/siyuan",
+      "title": "siyuan",
+      "description": "An open-source, privacy-first, self-hosted knowledge workspace where humans and AI agents work together 开源、隐私优先、自托管的知识工作空间，让人与智能体在此协作"
+    },
+    "/agent/sickn33/agentic-awesome-skills": {
+      "repository": "sickn33/agentic-awesome-skills",
+      "title": "agentic-awesome-skills",
+      "description": "本地 Agent 优先控制台，背靠 2005+ 技能目录做发现与选型"
+    },
+    "/agent/chopratejas/headroom": {
+      "repository": "chopratejas/headroom",
+      "title": "headroom",
+      "description": "在内容进入模型前压缩工具输出与日志，省 60-95% token"
+    },
+    "/agent/zhayujie/chatgpt-on-wechat": {
+      "repository": "zhayujie/chatgpt-on-wechat",
+      "title": "chatgpt-on-wechat",
+      "description": "CowAgent是基于大模型的超级AI助理，能主动思考和任务规划、访问操作系统和外部资源、创造和执行Skills、拥有长期记忆并不断成长，比OpenClaw更轻量和便捷。同时支持微信、飞书、钉钉、企微、QQ、公众号、网页等接入，可选择OpenAI/Claude/Gemini/DeepSeek/ Qwen/GLM/Ki…"
+    },
+    "/agent/heygen-com/hyperframes": {
+      "repository": "heygen-com/hyperframes",
+      "title": "hyperframes",
+      "description": "写 HTML 渲染出视频，为 Agent 而生"
+    },
+    "/agent/sickn33/antigravity-awesome-skills": {
+      "repository": "sickn33/antigravity-awesome-skills",
+      "title": "antigravity-awesome-skills",
+      "description": "1800+ 可安装 Agent 技能库，多家编码工具通用"
+    },
+    "/agent/danny-avila/LibreChat": {
+      "repository": "danny-avila/LibreChat",
+      "title": "LibreChat",
+      "description": "增强版开源 ChatGPT：Agent、MCP、技能与全家模型接入"
+    },
+    "/agent/bojieli/ai-agent-book": {
+      "repository": "bojieli/ai-agent-book",
+      "title": "ai-agent-book",
+      "description": "《深入理解 AI Agent：设计原理与工程实践》（李博杰 著）开源主仓库：全书正文、编译版 PDF 与按章配套代码"
+    },
+    "/agent/amruthpillai/reactive-resume": {
+      "repository": "amruthpillai/reactive-resume",
+      "title": "reactive-resume",
+      "description": "注重隐私的开源简历生成器，免费且可自部署"
+    },
+    "/agent/milla-jovovich/mempalace": {
+      "repository": "milla-jovovich/mempalace",
+      "title": "mempalace",
+      "description": "基准测试成绩领先的免费 AI 记忆系统"
+    },
+    "/agent/DeusData/codebase-memory-mcp": {
+      "repository": "DeusData/codebase-memory-mcp",
+      "title": "codebase-memory-mcp",
+      "description": "高性能代码智能 MCP：毫秒级索引代码库成持久知识图谱，158 种语言"
+    },
+    "/agent/mindsdb/mindshub": {
+      "repository": "mindsdb/mindshub",
+      "title": "mindshub",
+      "description": "让开源模型替你干活的统一工作空间"
+    },
+    "/agent/AstrBotDevs/AstrBot": {
+      "repository": "AstrBotDevs/AstrBot",
+      "title": "AstrBot",
+      "description": "多平台 IM 接入的 AI Agent 助手与开发框架"
+    },
+    "/agent/mindsdb/minds-platform": {
+      "repository": "mindsdb/minds-platform",
+      "title": "minds-platform",
+      "description": "面向生产可用 AI 系统的开放平台"
+    },
+    "/agent/PostHog/posthog": {
+      "repository": "PostHog/posthog",
+      "title": "posthog",
+      "description": "产品分析全家桶：AI 可观测、会话回放、灰度与实验"
+    },
+    "/agent/mindsdb/mindsdb": {
+      "repository": "mindsdb/mindsdb",
+      "title": "mindsdb",
+      "description": "AI 数据金库：让 Agent 安全查询任意数据源的查询引擎"
+    },
+    "/agent/wshobson/agents": {
+      "repository": "wshobson/agents",
+      "title": "agents",
+      "description": "跨执行框架的 Agent 插件市场，多家编码工具通用"
+    },
+    "/agent/bytedance/UI-TARS-desktop": {
+      "repository": "bytedance/UI-TARS-desktop",
+      "title": "UI-TARS-desktop",
+      "description": "字节开源多模态 Agent 栈：连接前沿模型与 Agent 基础设施"
+    },
+    "/agent/PDFMathTranslate/PDFMathTranslate": {
+      "repository": "PDFMathTranslate/PDFMathTranslate",
+      "title": "PDFMathTranslate",
+      "description": "[EMNLP 2025 Demo] PDF scientific paper translation with preserved formats - 基于 AI 完整保留排版的 PDF 文档全文双语翻译，支持 Google/DeepL/Ollama/OpenAI 等服务，提供 CLI/GUI/MCP/Docker/…"
+    },
+    "/agent/microsoft/playwright-mcp": {
+      "repository": "microsoft/playwright-mcp",
+      "title": "playwright-mcp",
+      "description": "微软官方 Playwright MCP Server，浏览器自动化标配"
+    },
+    "/agent/agentscope-ai/QwenPaw": {
+      "repository": "agentscope-ai/QwenPaw",
+      "title": "QwenPaw",
+      "description": "个人 AI 助理：本地或云端部署，多聊天应用接入易扩展"
+    },
+    "/agent/github/github-mcp-server": {
+      "repository": "github/github-mcp-server",
+      "title": "github-mcp-server",
+      "description": "GitHub 官方 MCP Server：管理仓库、Issue 与 PR"
+    },
+    "/agent/SigNoz/signoz": {
+      "repository": "SigNoz/signoz",
+      "title": "signoz",
+      "description": "OpenTelemetry 原生开源可观测平台：日志、指标、链路一站式"
+    },
+    "/agent/HKUDS/Vibe-Trading": {
+      "repository": "HKUDS/Vibe-Trading",
+      "title": "Vibe-Trading",
+      "description": "你的个人交易 Agent"
+    },
+    "/agent/mukul975/Anthropic-Cybersecurity-Skills": {
+      "repository": "mukul975/Anthropic-Cybersecurity-Skills",
+      "title": "Anthropic-Cybersecurity-Skills",
+      "description": "817 个结构化网络安全技能，映射 MITRE ATT&CK 等 6 大框架"
+    },
+    "/agent/tirth8205/code-review-graph": {
+      "repository": "tirth8205/code-review-graph",
+      "title": "code-review-graph",
+      "description": "本地优先的代码智能图谱，让 AI 只读该读的代码"
+    },
+    "/agent/ComposioHQ/composio": {
+      "repository": "ComposioHQ/composio",
+      "title": "composio",
+      "description": "1000+ 工具包与鉴权沙箱，帮 Agent 把意图变成行动"
+    },
+    "/agent/agentscope-ai/agentscope": {
+      "repository": "agentscope-ai/agentscope",
+      "title": "agentscope",
+      "description": "构建可见、可理解、可信任的 Agent"
+    },
+    "/agent/labring/FastGPT": {
+      "repository": "labring/FastGPT",
+      "title": "FastGPT",
+      "description": "基于 LLM 的知识库平台：数据处理、RAG 检索开箱即用"
+    },
+    "/agent/assafelovic/gpt-researcher": {
+      "repository": "assafelovic/gpt-researcher",
+      "title": "gpt-researcher",
+      "description": "自主深度研究 Agent，任意数据源任意模型"
+    },
+    "/agent/alibaba/page-agent": {
+      "repository": "alibaba/page-agent",
+      "title": "page-agent",
+      "description": "阿里开源页面内 GUI Agent：自然语言操控网页界面"
+    },
+    "/agent/oraios/serena": {
+      "repository": "oraios/serena",
+      "title": "serena",
+      "description": "编码 MCP 工具箱：语义检索与编辑，Agent 的 IDE"
+    },
+    "/agent/yamadashy/repomix": {
+      "repository": "yamadashy/repomix",
+      "title": "repomix",
+      "description": "把整个仓库打包成一个 AI 友好文件，喂代码库必备"
+    },
+    "/agent/can1357/oh-my-pi": {
+      "repository": "can1357/oh-my-pi",
+      "title": "oh-my-pi",
+      "description": "内置 IDE 能力的编码 Agent"
+    },
+    "/agent/mastra-ai/mastra": {
+      "repository": "mastra-ai/mastra",
+      "title": "mastra",
+      "description": "现代 TypeScript AI 应用与 Agent 框架"
+    },
+    "/agent/QwenLM/qwen-code": {
+      "repository": "QwenLM/qwen-code",
+      "title": "qwen-code",
+      "description": "通义开源终端 AI 编码 Agent"
+    },
+    "/agent/PrefectHQ/fastmcp": {
+      "repository": "PrefectHQ/fastmcp",
+      "title": "fastmcp",
+      "description": "Python 快速构建 MCP Server 与客户端的首选框架"
+    },
+    "/agent/deepset-ai/haystack": {
+      "repository": "deepset-ai/haystack",
+      "title": "haystack",
+      "description": "生产级 LLM 应用编排框架：模块化管道与 Agent 工作流"
+    },
+    "/agent/ahujasid/blender-mcp": {
+      "repository": "ahujasid/blender-mcp",
+      "title": "blender-mcp",
+      "description": "用任意大模型控制 Blender 3D 建模的社区插件"
+    },
+    "/agent/MCPBlender/blender-mcp": {
+      "repository": "MCPBlender/blender-mcp",
+      "title": "blender-mcp",
+      "description": "用 Claude 提示词驱动 Blender：3D 建模、材质与场景生成"
+    },
+    "/agent/modelcontextprotocol/python-sdk": {
+      "repository": "modelcontextprotocol/python-sdk",
+      "title": "python-sdk",
+      "description": "MCP 官方 Python SDK"
+    },
+    "/agent/activepieces/activepieces": {
+      "repository": "activepieces/activepieces",
+      "title": "activepieces",
+      "description": "AI 工作流自动化平台，内置约 400 个 MCP Server"
+    },
+    "/agent/czlonkowski/n8n-mcp": {
+      "repository": "czlonkowski/n8n-mcp",
+      "title": "n8n-mcp",
+      "description": "让 Claude/Cursor 替你搭 n8n 工作流的 MCP"
+    },
+    "/agent/1Panel-dev/MaxKB": {
+      "repository": "1Panel-dev/MaxKB",
+      "title": "MaxKB",
+      "description": "🔥 MaxKB is an open-source platform for building enterprise-grade agents. 强大易用的开源企业级智能体平台。"
+    },
+    "/agent/pascalorg/editor": {
+      "repository": "pascalorg/editor",
+      "title": "editor",
+      "description": "创建与分享 3D 建筑项目"
+    },
+    "/agent/screenpipe/screenpipe": {
+      "repository": "screenpipe/screenpipe",
+      "title": "screenpipe",
+      "description": "持续本地录屏，把屏幕历史变成 Agent 的上下文"
+    },
+    "/agent/mksglu/context-mode": {
+      "repository": "mksglu/context-mode",
+      "title": "context-mode",
+      "description": "编码 Agent 上下文优化：工具输出沙箱化省 98%，跨 17 平台"
+    },
+    "/agent/modelscope/FunASR": {
+      "repository": "modelscope/FunASR",
+      "title": "FunASR",
+      "description": "开源语音识别工具箱：流式 ASR、断句、说话人分离全管线"
+    },
+    "/agent/liyupi/ai-guide": {
+      "repository": "liyupi/ai-guide",
+      "title": "ai-guide",
+      "description": "程序员鱼皮的 AI 资源大全 + Vibe Coding 零基础教程，分享 OpenClaw 保姆级教程、大模型玩法（DeepSeek / GPT / Gemini / Claude / GLM）、最新 AI 资讯、Prompt 提示词大全、AI 知识百科（Agent Skills / RAG / MCP / A2A…"
+    },
+    "/agent/nukeop/nuclear": {
+      "repository": "nukeop/nuclear",
+      "title": "nuclear",
+      "description": "自动帮你找免费音源的流媒体音乐播放器"
+    },
+    "/agent/RightNow-AI/openfang": {
+      "repository": "RightNow-AI/openfang",
+      "title": "openfang",
+      "description": "开源 Agent 操作系统"
+    },
+    "/agent/Canner/WrenAI": {
+      "repository": "Canner/WrenAI",
+      "title": "WrenAI",
+      "description": "面向 Agent 的生成式 BI：自然语言到可信 SQL 与仪表盘"
+    },
+    "/agent/microsoft/mcp-for-beginners": {
+      "repository": "microsoft/mcp-for-beginners",
+      "title": "mcp-for-beginners",
+      "description": "微软官方 MCP 入门课程，多语言真实案例"
+    },
+    "/agent/t8y2/dbx": {
+      "repository": "t8y2/dbx",
+      "title": "dbx",
+      "description": "20MB 轻量跨平台数据库客户端，支持 90+ 数据库"
+    },
+    "/agent/udecode/plate": {
+      "repository": "udecode/plate",
+      "title": "plate",
+      "description": "带 AI 与 shadcn/ui 的富文本编辑器"
+    },
+    "/agent/googleapis/mcp-toolbox": {
+      "repository": "googleapis/mcp-toolbox",
+      "title": "mcp-toolbox",
+      "description": "Google 开源数据库 MCP Server 工具箱"
+    },
+    "/agent/triggerdotdev/trigger.dev": {
+      "repository": "triggerdotdev/trigger.dev",
+      "title": "trigger.dev",
+      "description": "构建与部署全托管 AI Agent 与工作流"
+    },
+    "/agent/MODSetter/SurfSense": {
+      "repository": "MODSetter/SurfSense",
+      "title": "SurfSense",
+      "description": "开源 NotebookLM 替代：一站式研究开放互联网实时数据"
+    },
+    "/agent/xbtlin/ai-berkshire": {
+      "repository": "xbtlin/ai-berkshire",
+      "title": "ai-berkshire",
+      "description": "AI 时代的伯克希尔：基于 Claude Code / Codex 的价值投资研究框架。巴菲特·芒格·段永平·李录四大师方法论 + 多Agent并行研究。| AI-era Berkshire: a value investing research framework built for Claude Code / C…"
+    },
+    "/agent/GLips/Figma-Context-MCP": {
+      "repository": "GLips/Figma-Context-MCP",
+      "title": "Figma-Context-MCP",
+      "description": "把 Figma 设计稿布局喂给编码 Agent 的 MCP"
+    },
+    "/agent/xpzouying/xiaohongshu-mcp": {
+      "repository": "xpzouying/xiaohongshu-mcp",
+      "title": "xiaohongshu-mcp",
+      "description": "小红书 MCP：让 Agent 读写小红书内容"
+    },
+    "/agent/wanshuiyin/Auto-claude-code-research-in-sleep": {
+      "repository": "wanshuiyin/Auto-claude-code-research-in-sleep",
+      "title": "Auto-claude-code-research-in-sleep",
+      "description": "睡觉时自动做 ML 研究：跨模型评审循环与实验自动化"
+    },
+    "/agent/NVIDIA/SkillSpector": {
+      "repository": "NVIDIA/SkillSpector",
+      "title": "SkillSpector",
+      "description": "NVIDIA 出品的 Agent 技能安全扫描器：检测提示注入与供应链风险"
+    },
+    "/agent/open-metadata/OpenMetadata": {
+      "repository": "open-metadata/OpenMetadata",
+      "title": "OpenMetadata",
+      "description": "数据与 AI 的开放上下文层，构建可信数据语义"
+    },
+    "/agent/yusufkaraaslan/Skill_Seekers": {
+      "repository": "yusufkaraaslan/Skill_Seekers",
+      "title": "Skill_Seekers",
+      "description": "把文档站、GitHub 仓库和 PDF 批量转成 Claude 技能"
+    },
+    "/agent/NevaMind-AI/memU": {
+      "repository": "NevaMind-AI/memU",
+      "title": "memU",
+      "description": "跨 Agent 共享的个人记忆"
+    },
+    "/agent/casdoor/casdoor": {
+      "repository": "casdoor/casdoor",
+      "title": "casdoor",
+      "description": "Agent 优先的开源 IAM：统一身份认证与 MCP/Agent 网关"
+    },
+    "/agent/NanmiCoder/cc-haha": {
+      "repository": "NanmiCoder/cc-haha",
+      "title": "cc-haha",
+      "description": "本地优先桌面工作台：多 Agent、worktree、diff 与技能市场"
+    },
+    "/agent/palmier-io/palmier-pro": {
+      "repository": "palmier-io/palmier-pro",
+      "title": "palmier-pro",
+      "description": "为 AI 而生的 macOS 视频剪辑器"
+    },
+    "/agent/Arindam200/awesome-ai-apps": {
+      "repository": "Arindam200/awesome-ai-apps",
+      "title": "awesome-ai-apps",
+      "description": "RAG、Agent 与工作流的项目案例合集"
+    },
+    "/agent/obra/superpowers": {
+      "repository": "obra/superpowers",
+      "title": "superpowers",
+      "description": "行之有效的 Agent 技能框架与软件开发方法论"
+    },
+    "/agent/mattpocock/skills": {
+      "repository": "mattpocock/skills",
+      "title": "skills",
+      "description": "Matt Pocock 的实战工程师技能，直接来自他的 .claude 目录"
+    },
+    "/agent/Significant-Gravitas/AutoGPT": {
+      "repository": "Significant-Gravitas/AutoGPT",
+      "title": "AutoGPT",
+      "description": "让人人可用可扩展的经典自主 Agent 项目"
+    },
+    "/agent/ollama/ollama": {
+      "repository": "ollama/ollama",
+      "title": "ollama",
+      "description": "一条命令本地跑 DeepSeek、Qwen、Gemma 等主流开源模型"
+    },
+    "/agent/langflow-ai/langflow": {
+      "repository": "langflow-ai/langflow",
+      "title": "langflow",
+      "description": "可视化构建与部署 AI Agent 及工作流"
+    },
+    "/agent/langchain-ai/langchain": {
+      "repository": "langchain-ai/langchain",
+      "title": "langchain",
+      "description": "Agent 工程平台，LLM 应用开发标配框架"
+    },
+    "/agent/Shubhamsaboo/awesome-llm-apps": {
+      "repository": "Shubhamsaboo/awesome-llm-apps",
+      "title": "awesome-llm-apps",
+      "description": "100+ 免费开源的 Agent、技能与 RAG 应用合集"
+    },
+    "/agent/garrytan/gstack": {
+      "repository": "garrytan/gstack",
+      "title": "gstack",
+      "description": "Garry Tan 同款 Claude Code 配置：23 个工具扮演 CEO 到 QA 全角色"
+    },
+    "/agent/browser-use/browser-use": {
+      "repository": "browser-use/browser-use",
+      "title": "browser-use",
+      "description": "让网站对 AI Agent 可访问，轻松自动化线上任务"
+    },
+    "/agent/DietrichGebert/ponytail": {
+      "repository": "DietrichGebert/ponytail",
+      "title": "ponytail",
+      "description": "让 Agent 像最懒的资深工程师一样思考：最好的代码是不写的代码"
+    },
+    "/agent/earendil-works/pi": {
+      "repository": "earendil-works/pi",
+      "title": "pi",
+      "description": "Agent 工具箱：统一模型 API、Agent 循环、TUI 与编码 CLI"
+    },
+    "/agent/karpathy/autoresearch": {
+      "repository": "karpathy/autoresearch",
+      "title": "autoresearch",
+      "description": "Karpathy 的自动研究实验：Agent 在单卡上自主跑 nanochat 训练"
+    },
+    "/agent/bytedance/deer-flow": {
+      "repository": "bytedance/deer-flow",
+      "title": "deer-flow",
+      "description": "字节开源长周期超级 Agent：会研究、写码、创作，带沙箱与记忆"
+    },
+    "/agent/rtk-ai/rtk": {
+      "repository": "rtk-ai/rtk",
+      "title": "rtk",
+      "description": "CLI 代理压缩常用开发命令输出，省 60-90% token，单文件零依赖"
+    },
+    "/agent/shareAI-lab/learn-claude-code": {
+      "repository": "shareAI-lab/learn-claude-code",
+      "title": "learn-claude-code",
+      "description": "Bash 就够了：从 0 到 1 手搓一个迷你 Claude Code"
+    },
+    "/agent/unslothai/unsloth": {
+      "repository": "unslothai/unsloth",
+      "title": "unsloth",
+      "description": "本地训练与运行 LLM 及扩散模型的一站式 UI"
+    },
+    "/agent/cline/cline": {
+      "repository": "cline/cline",
+      "title": "cline",
+      "description": "自主编码 Agent：SDK、IDE 扩展与 CLI 三种形态"
+    },
+    "/agent/shanraisshan/claude-code-best-practice": {
+      "repository": "shanraisshan/claude-code-best-practice",
+      "title": "claude-code-best-practice",
+      "description": "从 vibe coding 到 Agent 工程的最佳实践"
+    },
+    "/agent/mem0ai/mem0": {
+      "repository": "mem0ai/mem0",
+      "title": "mem0",
+      "description": "AI Agent 的通用记忆层"
+    },
+    "/agent/pbakaus/impeccable": {
+      "repository": "pbakaus/impeccable",
+      "title": "impeccable",
+      "description": "让 AI 更懂设计的设计语言"
+    },
+    "/agent/microsoft/autogen": {
+      "repository": "microsoft/autogen",
+      "title": "autogen",
+      "description": "微软开源 Agentic AI 编程框架"
+    },
+    "/agent/crewAIInc/crewAI": {
+      "repository": "crewAIInc/crewAI",
+      "title": "crewAI",
+      "description": "角色扮演式多 Agent 协作编排框架"
+    },
+    "/agent/hesreallyhim/awesome-claude-code": {
+      "repository": "hesreallyhim/awesome-claude-code",
+      "title": "awesome-claude-code",
+      "description": "Claude Code 优质资源精选清单"
+    },
+    "/agent/huginn/huginn": {
+      "repository": "huginn/huginn",
+      "title": "huginn",
+      "description": "创建替你监控和行动的自动化 Agent"
+    },
+    "/agent/hugohe3/ppt-master": {
+      "repository": "hugohe3/ppt-master",
+      "title": "ppt-master",
+      "description": "把文档或主题变成原生 PPT：真实形状、转场动画与数据图表"
+    },
+    "/agent/calesthio/OpenMontage": {
+      "repository": "calesthio/OpenMontage",
+      "title": "OpenMontage",
+      "description": "全球首个开源 Agentic 视频生产系统：12 条管线 700+ 技能文件"
+    },
+    "/agent/HKUDS/CLI-Anything": {
+      "repository": "HKUDS/CLI-Anything",
+      "title": "CLI-Anything",
+      "description": "让所有软件 Agent 原生化的 CLI 中枢"
+    },
+    "/agent/Aider-AI/aider": {
+      "repository": "Aider-AI/aider",
+      "title": "aider",
+      "description": "终端里的 AI 结对编程元老"
+    },
+    "/agent/multica-ai/multica": {
+      "repository": "multica-ai/multica",
+      "title": "multica",
+      "description": "让人类与 AI Agent 像一个团队一样协作，可自托管"
+    },
+    "/agent/oobabooga/textgen": {
+      "repository": "oobabooga/textgen",
+      "title": "textgen",
+      "description": "本地 LLM 桌面应用：文本、视觉、工具调用，完全私有"
+    },
+    "/agent/oobabooga/text-generation-webui": {
+      "repository": "oobabooga/text-generation-webui",
+      "title": "text-generation-webui",
+      "description": "本地 LLM 界面鼻祖：文本、视觉、训练，完全离线"
+    },
+    "/agent/chatboxai/chatbox": {
+      "repository": "chatboxai/chatbox",
+      "title": "chatbox",
+      "description": "强大的 AI 客户端"
+    },
+    "/agent/vercel-labs/agent-browser": {
+      "repository": "vercel-labs/agent-browser",
+      "title": "agent-browser",
+      "description": "Vercel 出品的 Agent 浏览器自动化 CLI"
+    },
+    "/agent/ToolJet/ToolJet": {
+      "repository": "ToolJet/ToolJet",
+      "title": "ToolJet",
+      "description": "开源企业级低代码平台：内部工具、仪表盘与业务应用"
+    },
+    "/agent/langchain-ai/langgraph": {
+      "repository": "langchain-ai/langgraph",
+      "title": "langgraph",
+      "description": "构建有韧性的 Agent 的编排框架"
+    },
+    "/agent/2noise/ChatTTS": {
+      "repository": "2noise/ChatTTS",
+      "title": "ChatTTS",
+      "description": "面向日常对话的生成式语音模型"
+    },
+    "/agent/HKUDS/LightRAG": {
+      "repository": "HKUDS/LightRAG",
+      "title": "LightRAG",
+      "description": "简单快速的检索增强生成框架（EMNLP2025）"
+    },
+    "/agent/github/awesome-copilot": {
+      "repository": "github/awesome-copilot",
+      "title": "awesome-copilot",
+      "description": "GitHub Copilot 社区配置、指令与技能合集"
+    },
+    "/agent/stanfordnlp/dspy": {
+      "repository": "stanfordnlp/dspy",
+      "title": "dspy",
+      "description": "用编程而非提示词的方式驱动语言模型"
+    },
+    "/agent/CopilotKit/CopilotKit": {
+      "repository": "CopilotKit/CopilotKit",
+      "title": "CopilotKit",
+      "description": "Agent 与生成式 UI 的前端全家桶，AG-UI 协议出品方"
+    },
+    "/agent/musistudio/claude-code-router": {
+      "repository": "musistudio/claude-code-router",
+      "title": "claude-code-router",
+      "description": "所有 Agent 的本地控制面：跨模型路由、能力融合与工具编排"
+    },
+    "/agent/ItzCrazyKns/Vane": {
+      "repository": "ItzCrazyKns/Vane",
+      "title": "Vane",
+      "description": "AI 驱动的问答引擎"
+    },
+    "/agent/esengine/DeepSeek-Reasonix": {
+      "repository": "esengine/DeepSeek-Reasonix",
+      "title": "DeepSeek-Reasonix",
+      "description": "DeepSeek 原生终端编码 Agent，围绕前缀缓存稳定性设计"
+    },
+    "/agent/gitroomhq/postiz-app": {
+      "repository": "gitroomhq/postiz-app",
+      "title": "postiz-app",
+      "description": "终极 Agentic 社媒排期发布工具"
+    },
+    "/agent/MadsLorentzen/ai-job-search": {
+      "repository": "MadsLorentzen/ai-job-search",
+      "title": "ai-job-search",
+      "description": "跑在本机的 AI 求职框架：评估职位、定制简历、备战面试"
+    },
+    "/agent/volcengine/OpenViking": {
+      "repository": "volcengine/OpenViking",
+      "title": "OpenViking",
+      "description": "火山引擎自进化上下文数据库：统一记忆、RAG 与技能"
+    },
+    "/agent/linshenkx/prompt-optimizer": {
+      "repository": "linshenkx/prompt-optimizer",
+      "title": "prompt-optimizer",
+      "description": "提示词优化器，写出更好的 prompt 拿到更好的结果"
+    },
+    "/agent/JCodesMore/ai-website-cloner-template": {
+      "repository": "JCodesMore/ai-website-cloner-template",
+      "title": "ai-website-cloner-template",
+      "description": "一条命令用 AI 克隆任意网站"
+    },
+    "/agent/Gitlawb/openclaude": {
+      "repository": "Gitlawb/openclaude",
+      "title": "openclaude",
+      "description": "随处可跑、什么都能用的开放 Claude"
+    },
+    "/agent/googleworkspace/cli": {
+      "repository": "googleworkspace/cli",
+      "title": "cli",
+      "description": "Google Workspace 官方 CLI：一个命令行管 Drive、Gmail 等全家桶"
+    },
+    "/agent/getzep/graphiti": {
+      "repository": "getzep/graphiti",
+      "title": "graphiti",
+      "description": "为 Agent 构建实时知识图谱"
+    },
+    "/agent/vercel-labs/agent-skills": {
+      "repository": "vercel-labs/agent-skills",
+      "title": "agent-skills",
+      "description": "Vercel 官方 Agent 技能合集：React/Next.js 性能优化等"
+    },
+    "/agent/topoteretes/cognee": {
+      "repository": "topoteretes/cognee",
+      "title": "cognee",
+      "description": "开源 Agent 记忆平台：自托管知识图谱引擎实现跨会话长期记忆"
+    },
+    "/agent/simstudioai/sim": {
+      "repository": "simstudioai/sim",
+      "title": "sim",
+      "description": "构建、部署与监控 Agent 工作流的协作空间，10 万+ 用户"
+    },
+    "/agent/vercel-labs/skills": {
+      "repository": "vercel-labs/skills",
+      "title": "skills",
+      "description": "开放 Agent 技能安装工具：npx skills 官方仓库"
+    },
+    "/agent/openai/openai-agents-python": {
+      "repository": "openai/openai-agents-python",
+      "title": "openai-agents-python",
+      "description": "OpenAI 官方轻量多 Agent 工作流框架"
+    },
+    "/agent/jackwener/OpenCLI": {
+      "repository": "jackwener/OpenCLI",
+      "title": "OpenCLI",
+      "description": "把任意网站变成 CLI，让 Agent 用你的登录态浏览器"
+    },
+    "/agent/zhaoxuya520/reverse-skill": {
+      "repository": "zhaoxuya520/reverse-skill",
+      "title": "reverse-skill",
+      "description": "逆向工程与授权渗透测试技能路由包：按需拉起工具链（仅限授权场景）"
+    },
+    "/agent/eyaltoledano/claude-task-master": {
+      "repository": "eyaltoledano/claude-task-master",
+      "title": "claude-task-master",
+      "description": "可嵌入 Cursor 等工具的 AI 任务管理系统"
+    },
+    "/agent/langchain-ai/deepagents": {
+      "repository": "langchain-ai/deepagents",
+      "title": "deepagents",
+      "description": "LangChain 出品 Agent 执行框架：规划工具、文件后台与子 Agent"
+    },
+    "/agent/gastownhall/beads": {
+      "repository": "gastownhall/beads",
+      "title": "beads",
+      "description": "给编码 Agent 的记忆升级"
+    },
+    "/agent/vercel/ai": {
+      "repository": "vercel/ai",
+      "title": "ai",
+      "description": "Vercel AI SDK：TypeScript 构建 AI 应用与 Agent 的开源库"
+    },
+    "/agent/microsoft/OmniParser": {
+      "repository": "microsoft/OmniParser",
+      "title": "OmniParser",
+      "description": "纯视觉 GUI Agent 的屏幕解析工具"
+    },
+    "/agent/phuryn/pm-skills": {
+      "repository": "phuryn/pm-skills",
+      "title": "pm-skills",
+      "description": "产品经理技能市场：100+ 技能覆盖调研、战略、执行到增长"
+    },
+    "/agent/enescingoz/awesome-n8n-templates": {
+      "repository": "enescingoz/awesome-n8n-templates",
+      "title": "awesome-n8n-templates",
+      "description": "280+ 免费 n8n 自动化模板，覆盖主流应用即拿即用"
+    },
+    "/agent/VoltAgent/awesome-claude-code-subagents": {
+      "repository": "VoltAgent/awesome-claude-code-subagents",
+      "title": "awesome-claude-code-subagents",
+      "description": "100+ 专业 Claude Code 子 Agent 合集"
+    },
+    "/agent/letta-ai/letta": {
+      "repository": "letta-ai/letta",
+      "title": "letta",
+      "description": "有状态 Agent 平台：高级记忆、可学习可自我改进"
+    },
+    "/agent/agentskills/agentskills": {
+      "repository": "agentskills/agentskills",
+      "title": "agentskills",
+      "description": "Agent Skills 标准的规范与文档"
+    },
+    "/agent/nocobase/nocobase": {
+      "repository": "nocobase/nocobase",
+      "title": "nocobase",
+      "description": "开源 AI + 无代码平台，快速搭建业务系统"
+    },
+    "/agent/SuperClaude-Org/SuperClaude_Framework": {
+      "repository": "SuperClaude-Org/SuperClaude_Framework",
+      "title": "SuperClaude_Framework",
+      "description": "Claude Code 增强框架：专业命令、认知人格与开发方法论"
+    },
+    "/agent/vanna-ai/vanna": {
+      "repository": "vanna-ai/vanna",
+      "title": "vanna",
+      "description": "跟 SQL 数据库聊天：Agentic 检索实现精准 Text-to-SQL"
+    },
+    "/agent/Donchitos/Claude-Code-Game-Studios": {
+      "repository": "Donchitos/Claude-Code-Game-Studios",
+      "title": "Claude-Code-Game-Studios",
+      "description": "把 Claude Code 变成游戏工作室：49 个 Agent、72 个工作流技能"
+    },
+    "/agent/h4ckf0r0day/obscura": {
+      "repository": "h4ckf0r0day/obscura",
+      "title": "obscura",
+      "description": "为 Agent 与抓取而生的无头浏览器"
+    },
+    "/agent/coze-dev/coze-studio": {
+      "repository": "coze-dev/coze-studio",
+      "title": "coze-studio",
+      "description": "字节 Coze 开源版：可视化 Agent 开发、调试与部署平台"
+    },
+    "/agent/alibaba/open-code-review": {
+      "repository": "alibaba/open-code-review",
+      "title": "open-code-review",
+      "description": "阿里开源代码评审：确定性管线+LLM Agent 混合架构，行级精准评论"
+    },
+    "/agent/dyad-sh/dyad": {
+      "repository": "dyad-sh/dyad",
+      "title": "dyad",
+      "description": "本地开源 AI 应用构建器，v0/Lovable/Bolt 替代"
+    },
+    "/agent/camel-ai/owl": {
+      "repository": "camel-ai/owl",
+      "title": "owl",
+      "description": "OWL：面向真实任务自动化的通用多 Agent 助理"
+    },
+    "/agent/steveyegge/beads": {
+      "repository": "steveyegge/beads",
+      "title": "beads",
+      "description": "Steve Yegge 出品：编码 Agent 的记忆升级"
+    },
+    "/agent/tanweai/pua": {
+      "repository": "tanweai/pua",
+      "title": "pua",
+      "description": "你是一个曾经被寄予厚望的 P8 级工程师。Anthropic 当初给你定级的时候，对你的期望是很高的。 一个agent使用的高能动性的skill。 Your AI has been placed on a PIP. 30 days to show improvement."
+    },
+    "/agent/pydantic/pydantic-ai": {
+      "repository": "pydantic/pydantic-ai",
+      "title": "pydantic-ai",
+      "description": "Pydantic 官方 AI 框架：类型安全的 Agent、语音与多模态"
+    },
+    "/agent/google/skills": {
+      "repository": "google/skills",
+      "title": "skills",
+      "description": "Google 官方产品与技术的 Agent 技能"
+    },
+    "/agent/PrimeIntellect-ai/prime-agent": {
+      "repository": "PrimeIntellect-ai/prime-agent",
+      "title": "prime-agent",
+      "description": "自我改进的 RLM Agent，面向编码与长时自主任务"
+    },
+    "/agent/guillaumemeyer/watermarks-remover": {
+      "repository": "guillaumemeyer/watermarks-remover",
+      "title": "watermarks-remover",
+      "description": "清除多家 AI 水印与出处标记（涉及来源移除，注意合规使用）"
+    },
+    "/agent/muratcankoylan/Agent-Skills-for-Context-Engineering": {
+      "repository": "muratcankoylan/Agent-Skills-for-Context-Engineering",
+      "title": "Agent-Skills-for-Context-Engineering",
+      "description": "上下文工程与多 Agent 架构的系统性技能合集"
+    },
+    "/agent/rowboatlabs/rowboat": {
+      "repository": "rowboatlabs/rowboat",
+      "title": "rowboat",
+      "description": "带记忆的开源 AI 同事"
+    },
+    "/agent/kubesphere/kubesphere": {
+      "repository": "kubesphere/kubesphere",
+      "title": "kubesphere",
+      "description": "面向 K8s 多云与边缘管理的容器平台"
+    },
+    "/agent/larksuite/cli": {
+      "repository": "larksuite/cli",
+      "title": "cli",
+      "description": "The official Lark/飞书 CLI tool, maintained by the larksuite team — built for humans and AI Agents. Covers core business domains including Messenger, Docs, Base,…"
+    },
+    "/agent/stackblitz/bolt.new": {
+      "repository": "stackblitz/bolt.new",
+      "title": "bolt.new",
+      "description": "提示词直出全栈 Web 应用：运行、编辑、一键部署"
+    },
+    "/agent/memvid/memvid": {
+      "repository": "memvid/memvid",
+      "title": "memvid",
+      "description": "单文件无服务记忆层，替代复杂 RAG 管道"
+    },
+    "/agent/HKUDS/DeepCode": {
+      "repository": "HKUDS/DeepCode",
+      "title": "DeepCode",
+      "description": "开放 Agentic 编码：执行框架、循环工程与多 Agent 编排"
+    },
+    "/agent/microsoft/SkillOpt": {
+      "repository": "microsoft/SkillOpt",
+      "title": "SkillOpt",
+      "description": "微软 SkillOpt：用轨迹驱动的文本优化训练可复用自然语言技能"
+    },
+    "/agent/raga-ai-hub/RagaAI-Catalyst": {
+      "repository": "raga-ai-hub/RagaAI-Catalyst",
+      "title": "RagaAI-Catalyst",
+      "description": "Agent 可观测与评估 SDK：链路追踪与多 Agent 调试"
+    },
+    "/agent/apache/doris": {
+      "repository": "apache/doris",
+      "title": "doris",
+      "description": "面向 AI Agent 的实时分析与混合检索数据库"
+    },
+    "/agent/langchain-ai/openwiki": {
+      "repository": "langchain-ai/openwiki",
+      "title": "openwiki",
+      "description": "自动为代码库撰写并维护 Agent 文档的 CLI"
+    },
+    "/agent/WEIFENG2333/VideoCaptioner": {
+      "repository": "WEIFENG2333/VideoCaptioner",
+      "title": "VideoCaptioner",
+      "description": "🎬 卡卡字幕助手 | VideoCaptioner - 基于 LLM 的智能字幕助手 - 视频字幕生成、断句、校正、字幕翻译全流程处理！- A powered tool for easy and efficient video subtitling."
+    },
+    "/agent/plandex-ai/plandex": {
+      "repository": "plandex-ai/plandex",
+      "title": "plandex",
+      "description": "面向大型项目与真实任务的开源 AI 编码 Agent"
+    },
+    "/agent/alibaba/zvec": {
+      "repository": "alibaba/zvec",
+      "title": "zvec",
+      "description": "阿里开源轻量高速进程内向量数据库"
+    },
+    "/agent/wasp-lang/open-saas": {
+      "repository": "wasp-lang/open-saas",
+      "title": "open-saas",
+      "description": "完全免费的现代 JS SaaS 脚手架：鉴权、邮件、后台任务全配齐"
+    },
+    "/agent/ConardLi/easy-dataset": {
+      "repository": "ConardLi/easy-dataset",
+      "title": "easy-dataset",
+      "description": "LLM 微调、RAG 与评估数据集制作利器"
+    },
+    "/agent/opensandbox-group/OpenSandbox": {
+      "repository": "opensandbox-group/OpenSandbox",
+      "title": "OpenSandbox",
+      "description": "安全快速可扩展的 Agent 沙箱运行时"
+    }
+  }
+}

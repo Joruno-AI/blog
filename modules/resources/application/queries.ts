@@ -3,14 +3,20 @@ import {
   countEditableResources,
   countPublishedResources,
   findEditableResourceById,
+  findPublicChangelogResourceBySlug,
   findPublishedResourceByPath,
+  findPublishedResourceSummaryByPath,
   findRedirectByPath,
   listEditableResources,
   listPublicResourceRoutes,
   listPublishedResources,
+  listPublishedResourceSummaries,
+  listPublishedResourceSummariesByPathPrefix,
   listPublishedResourcesByTypes,
   listPublishedResourcesByPathPrefix,
   searchPublishedResources,
+  publicSearchCollections,
+  type PublicSearchCollection,
 } from "@/modules/resources/infrastructure/resource-repository";
 import {
   canAccessResource,
@@ -27,8 +33,43 @@ export async function getPublicResource(
   );
   if (!resource) return null;
 
-  const allowed = await canAccessResource(viewer, resource);
-  return allowed ? resource : null;
+  const [resourceAllowed, revisionAllowed] = await Promise.all([
+    canAccessResource(viewer, resource),
+    canAccessResource(viewer, {
+      id: resource.id,
+      visibility: resource.revisionVisibility,
+    }),
+  ]);
+  if (!resourceAllowed || !revisionAllowed) return null;
+
+  const { revisionVisibility: _revisionVisibility, ...publicResource } = resource;
+  return publicResource;
+}
+
+export async function getPublicChangelogResourceBySlug(slug: string) {
+  return findPublicChangelogResourceBySlug(slug);
+}
+
+export async function getPublicResourceSummary(
+  path: string,
+  viewer: ResourceViewer = null
+) {
+  const resource = await findPublishedResourceSummaryByPath(
+    normalizeResourcePath(path)
+  );
+  if (!resource) return null;
+
+  const [resourceAllowed, revisionAllowed] = await Promise.all([
+    canAccessResource(viewer, resource),
+    canAccessResource(viewer, {
+      id: resource.id,
+      visibility: resource.revisionVisibility,
+    }),
+  ]);
+  if (!resourceAllowed || !revisionAllowed) return null;
+
+  const { revisionVisibility: _revisionVisibility, ...publicResource } = resource;
+  return publicResource;
 }
 
 export async function getStudioResource(id: string) {
@@ -55,6 +96,14 @@ export async function getPublishedResources(options: {
   return listPublishedResources(options);
 }
 
+export async function getPublishedResourceSummaries(options: {
+  type?: ResourceType;
+  limit?: number;
+  offset?: number;
+} = {}) {
+  return listPublishedResourceSummaries(options);
+}
+
 export async function getPublishedResourcesByTypes(options: {
   types: ResourceType[];
   limit?: number;
@@ -67,6 +116,10 @@ export async function getPublishedResourcesByPathPrefix(prefix: string, limit?: 
   return listPublishedResourcesByPathPrefix(prefix, limit);
 }
 
+export async function getPublishedResourceSummariesByPathPrefix(prefix: string, limit?: number) {
+  return listPublishedResourceSummariesByPathPrefix(prefix, limit);
+}
+
 export async function getPublishedResourceCount(type?: ResourceType) {
   return countPublishedResources(type);
 }
@@ -75,8 +128,20 @@ export async function getPublicResourceRoutes() {
   return listPublicResourceRoutes();
 }
 
-export async function searchPublicResources(query: string, limit?: number) {
-  return searchPublishedResources(query, limit);
+export function parsePublicSearchCollection(
+  value: string | null
+): PublicSearchCollection | null {
+  return publicSearchCollections.includes(value as PublicSearchCollection)
+    ? value as PublicSearchCollection
+    : null;
+}
+
+export async function searchPublicResources(
+  query: string,
+  collection: PublicSearchCollection,
+  limit?: number
+) {
+  return searchPublishedResources(query, collection, limit);
 }
 
 export async function getPublicRedirect(path: string) {

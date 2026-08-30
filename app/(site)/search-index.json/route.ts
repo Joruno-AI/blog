@@ -1,6 +1,11 @@
-import { getPublishedResourcesByTypes } from "@/modules/resources/application/queries";
-export const dynamic = "force-dynamic";
-export async function GET() {
-  const resources = await getPublishedResourcesByTypes({ types: ["article", "short", "document", "project", "tool"], limit: 1000 });
-  return Response.json(resources.map(({ id, type, title, path, description, content, publishedAt }) => ({ id, type, title, path, description, content, publishedAt })), { headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=3600" } });
+import { buildSnapshotSearchIndexJson } from "@/lib/parity/public-content-endpoints";
+
+export const dynamic = "force-static";
+
+export function GET() {
+  return new Response(buildSnapshotSearchIndexJson(), {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 }

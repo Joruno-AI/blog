@@ -1,4 +1,5 @@
-import { and, asc, count, desc, eq, inArray, like, ne } from "drizzle-orm";
+import { and, asc, count, desc, eq, inArray, like, ne, sql } from "drizzle-orm";
+import { alias } from "drizzle-orm/sqlite-core";
 
 import { db } from "@/lib/db";
 import {
@@ -9,17 +10,49 @@ import {
   tracks,
 } from "@/lib/db/schema";
 import { resolveMusicResourceId } from "@/modules/music/application/music-service";
-import { getSongsByAlbumId } from "./songs";
+import { publishedMusicVisibilityCondition } from "./music-visibility";
+import {
+  albumMutableFieldsFromRevision,
+  musicRevisionIntegerOrder,
+} from "./music-snapshot";
+import { getSongsByAlbumId, getSongsByAlbumResourceIds } from "./songs";
 
-function parseMetadata(value: string) {
-  try {
-    const metadata: unknown = JSON.parse(value);
-    return metadata && typeof metadata === "object" && !Array.isArray(metadata)
-      ? metadata as Record<string, unknown>
-      : {};
-  } catch {
-    return {};
+const albumTracks = alias(tracks, "album_tracks");
+const albumTrackResources = alias(resources, "album_track_resources");
+const albumTrackPublishedRevisions = alias(
+  resourceRevisions,
+  "album_track_published_revisions",
+);
+
+/**
+ * Counts the same tracks exposed by the public song query. A correlated
+ * subquery keeps albums with zero public tracks in the result while excluding
+ * draft/archived/private tracks and broken published-revision pointers.
+ */
+export function albumSongCountSelection(publishedRevision: boolean) {
+  if (!publishedRevision) {
+    return sql<number>`(
+      select count(*)
+      from ${tracks} as album_tracks
+      where ${albumTracks.albumResourceId} = ${resources.id}
+    )`;
   }
+
+  return sql<number>`(
+    select count(*)
+    from ${tracks} as album_tracks
+    inner join ${resources} as album_track_resources
+      on ${albumTrackResources.id} = ${albumTracks.resourceId}
+      and ${albumTrackResources.type} = 'track'
+    inner join ${resourceRevisions} as album_track_published_revisions
+      on ${albumTrackPublishedRevisions.id} = ${albumTrackResources.publishedRevisionId}
+    where ${albumTracks.albumResourceId} = ${resources.id}
+      and ${publishedMusicVisibilityCondition({
+        status: albumTrackResources.status,
+        resourceVisibility: albumTrackResources.visibility,
+        revisionVisibility: albumTrackPublishedRevisions.visibility,
+      })}
+  )`;
 }
 
 async function queryAlbums(options: {
@@ -44,11 +77,19 @@ async function queryAlbums(options: {
     ? resources.publishedRevisionId
     : resources.currentRevisionId;
   const conditions = [eq(resources.type, "album"), ne(resources.status, "archived")];
-  if (published === true) conditions.push(eq(resources.status, "published"));
+  if (published === true) conditions.push(publishedMusicVisibilityCondition()!);
   if (published === false) conditions.push(ne(resources.status, "published"));
   if (search) conditions.push(like(resourceRevisions.title, `%${search}%`));
   if (slug) conditions.push(eq(resourceRevisions.slug, slug));
   if (ids?.length) conditions.push(inArray(resources.id, ids));
+  const albumOrder = publishedRevision
+    ? musicRevisionIntegerOrder(
+        resourceRevisions.metadataJson,
+        "order",
+        resourceAlbums.sortOrder,
+      )
+    : resourceAlbums.sortOrder;
+  const songCount = albumSongCountSelection(publishedRevision);
 
   return db
     .select({
@@ -65,16 +106,14 @@ async function queryAlbums(options: {
       releaseDate: resourceAlbums.releaseDate,
       createdAt: resources.createdAt,
       updatedAt: resources.updatedAt,
-      songCount: count(tracks.resourceId),
+      songCount,
     })
     .from(resources)
     .innerJoin(resourceRevisions, eq(resourceRevisions.id, revisionPointer))
     .innerJoin(resourceAlbums, eq(resourceAlbums.resourceId, resources.id))
     .leftJoin(assets, eq(assets.id, resources.coverAssetId))
-    .leftJoin(tracks, eq(tracks.albumResourceId, resources.id))
     .where(and(...conditions))
-    .groupBy(resources.id)
-    .orderBy(asc(resourceAlbums.sortOrder), desc(resources.createdAt))
+    .orderBy(asc(albumOrder), desc(resources.createdAt))
     .limit(Math.min(Math.max(limit, 1), 1_000))
     .offset(Math.max(offset, 0));
 }
@@ -82,18 +121,24 @@ async function queryAlbums(options: {
 type AlbumRow = Awaited<ReturnType<typeof queryAlbums>>[number];
 
 function albumDto(row: AlbumRow) {
-  const metadata = parseMetadata(row.metadataJson);
+  const snapshot = albumMutableFieldsFromRevision(row.metadataJson, {
+    artist: row.artist,
+    cover: row.cover,
+    color: row.color,
+    order: row.order,
+    releaseDate: row.releaseDate,
+  });
   return {
     id: row.id,
     name: row.name,
     slug: row.slug,
     description: row.description,
-    artist: row.artist,
-    cover: row.cover ?? (typeof metadata.cover === "string" ? metadata.cover : null),
-    color: row.color,
+    artist: snapshot.artist,
+    cover: snapshot.cover,
+    color: snapshot.color,
     published: row.status === "published",
-    order: row.order,
-    releaseDate: row.releaseDate,
+    order: snapshot.order,
+    releaseDate: snapshot.releaseDate,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
     songCount: row.songCount,
@@ -132,10 +177,53 @@ export async function getAlbumsCount(options?: { published?: boolean }) {
   return result?.total ?? 0;
 }
 
-export async function getAlbumsWithSongs(options?: { published?: boolean }) {
-  const albumRows = await getAlbums({ limit: 1_000, published: options?.published });
-  return Promise.all(albumRows.map(async (album) => ({
+type AlbumDto = ReturnType<typeof albumDto>;
+type SongDto = Awaited<ReturnType<typeof getSongsByAlbumResourceIds>>[number];
+
+export interface AlbumCatalogQueries {
+  getAlbums: (options: {
+    limit: number;
+    published?: boolean;
+  }) => Promise<AlbumDto[]>;
+  getSongsByAlbumResourceIds: (
+    albumResourceIds: readonly string[],
+    publishedRevision: boolean,
+  ) => Promise<SongDto[]>;
+}
+
+const albumCatalogQueries: AlbumCatalogQueries = {
+  getAlbums,
+  getSongsByAlbumResourceIds,
+};
+
+/**
+ * Loads the complete music catalog with two D1 statements: one for albums and
+ * one batched statement for every song. The optional dependency seam keeps the
+ * query-count contract directly regression-testable without request-scoped D1.
+ */
+export async function getAlbumsWithSongs(
+  options?: { published?: boolean },
+  queries: AlbumCatalogQueries = albumCatalogQueries,
+) {
+  const albumRows = await queries.getAlbums({
+    limit: 1_000,
+    published: options?.published,
+  });
+  if (albumRows.length === 0) return [];
+
+  const songRows = await queries.getSongsByAlbumResourceIds(
+    albumRows.map((album) => album.id),
+    options?.published === true,
+  );
+  const songsByAlbumId = new Map<string, SongDto[]>();
+  for (const song of songRows) {
+    const albumSongs = songsByAlbumId.get(song.albumId);
+    if (albumSongs) albumSongs.push(song);
+    else songsByAlbumId.set(song.albumId, [song]);
+  }
+
+  return albumRows.map((album) => ({
     ...album,
-    songs: await getSongsByAlbumId(album.id, options?.published === true),
-  })));
+    songs: songsByAlbumId.get(album.id) ?? [],
+  }));
 }

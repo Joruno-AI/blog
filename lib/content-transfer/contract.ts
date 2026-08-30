@@ -12,6 +12,7 @@ export const bundleFileSchema = z.object({
   mediaType: z.string().trim().min(1).max(255),
   content: z.string().optional(),
   url: z.string().url().max(4_000).optional(),
+  sourceKey: z.string().trim().min(1).max(1_500).optional(),
   checksum: z.string().max(256).nullable().optional(),
   size: z.number().int().nonnegative().optional(),
 }).superRefine((file, context) => {
@@ -41,6 +42,7 @@ const transferRevisionSchema = z.object({
   metadata: z.record(z.string(), z.unknown()),
   sourceHash: z.string().nullable(),
   changeSummary: z.string().nullable(),
+  createdBy: z.string().nullable().optional(),
   createdAt: z.string().datetime(),
 })
 
@@ -58,6 +60,7 @@ export const transferResourceSchema = z.object({
   publishedRevisionId: z.string().nullable(),
   publishedAt: z.string().datetime().nullable(),
   scheduledAt: z.string().datetime().nullable(),
+  authorId: z.string().nullable().optional(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
   revisions: z.array(transferRevisionSchema).min(1),
@@ -127,11 +130,14 @@ export const contentSnapshotSchema = z.object({
   routes: z.array(z.object({
     path: z.string(), resourceId: z.string(), canonical: z.boolean(), createdAt: z.string().datetime(),
   })),
-  redirects: z.array(z.object({ fromPath: z.string(), toPath: z.string(), statusCode: z.number().int() })),
+  redirects: z.array(z.object({
+    fromPath: z.string(), toPath: z.string(), statusCode: z.number().int(),
+    createdAt: z.string().datetime().optional(),
+  })),
   publicationEvents: z.array(z.object({
     id: z.string(), resourceId: z.string(), revisionId: z.string().nullable(),
     eventType: z.enum(['created', 'draft_saved', 'scheduled', 'published', 'unpublished', 'archived', 'restored']),
-    data: z.record(z.string(), z.unknown()), createdAt: z.string().datetime(),
+    actorId: z.string().nullable().optional(), data: z.record(z.string(), z.unknown()), createdAt: z.string().datetime(),
   })),
   settings: z.array(z.object({
     id: z.string(), key: z.string(), value: z.string().nullable(),

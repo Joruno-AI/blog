@@ -1,8 +1,17 @@
-import Link from "next/link";
+import type { Metadata } from "next";
 
-import { LegacyPage } from "@/components/site/legacy-page";
-import { WarningCallout } from "@/components/site/warning-callout";
+import { GithubActivityEmpty } from "@/components/site/github-activity-empty";
+import { LegacyPageFooter } from "@/components/site/legacy-page-footer";
+import { legacyMetadata } from "@/lib/parity/legacy-metadata";
+import "@/app/github-activity-parity.css";
+
+export const metadata: Metadata = legacyMetadata({
+  title: "AstroEco is Contributing...",
+  description: "Display your GitHub pull requests using astro-loader-github-prs",
+  path: "/prs/",
+  image: "/og-images/prs.png",
+});
 
 export default function PrsPage() {
-  return <LegacyPage title="AstroEco is Contributing..." subtitle="Display your GitHub pull requests using astro-loader-github-prs"><WarningCallout>No GitHub data available for display. See <Link href="/blog/customizing-github-activity-pages">Customizing GitHub Activity Pages</Link> for details.</WarningCallout></LegacyPage>;
+  return <><GithubActivityEmpty action="Contributing" loader="astro-loader-github-prs" /><LegacyPageFooter /></>;
 }

@@ -1,5 +1,6 @@
 name = "personal-platform"
 main = "custom-worker.ts"
+minify = true
 compatibility_date = "2026-08-28"
 compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
 workers_dev = true
@@ -23,6 +24,14 @@ crons = ["* * * * *"]
 binding = "WORKER_SELF_REFERENCE"
 service = "personal-platform"
 
+[[ratelimits]]
+name = "AGENT_RATE_LIMITER"
+namespace_id = "1710642275"
+
+[ratelimits.simple]
+limit = 90
+period = 60
+
 # Cloudflare D1 database
 [[d1_databases]]
 binding = "DB"
@@ -34,3 +43,61 @@ migrations_dir = "lib/db/d1/migrations"
 [[r2_buckets]]
 binding = "R2_BUCKET"
 bucket_name = "blog-cms-media"
+
+# Private durable workspace for resumable imports. This bucket must not have a
+# public r2.dev/custom domain; only the Worker binding can read its manifests.
+[[r2_buckets]]
+binding = "CONTENT_IMPORT_BUCKET"
+bucket_name = "blog-cms-import-private"
+
+# Review deployments are isolated from production traffic and scheduled jobs.
+# They intentionally share the migrated read model and media bucket so the
+# preview renders the same C-end content that will be cut over after approval.
+[env.review]
+workers_dev = true
+preview_urls = true
+routes = []
+
+[env.review.assets]
+directory = ".open-next/assets"
+binding = "ASSETS"
+
+[env.review.images]
+binding = "IMAGES"
+
+[[env.review.services]]
+binding = "WORKER_SELF_REFERENCE"
+service = "personal-platform-review"
+
+[env.review.observability]
+enabled = true
+
+[[env.review.ratelimits]]
+name = "AGENT_RATE_LIMITER"
+namespace_id = "1710642276"
+
+[env.review.ratelimits.simple]
+limit = 90
+period = 60
+
+[env.review.triggers]
+crons = []
+
+[env.review.vars]
+BETTER_AUTH_URL = "https://personal-platform-review.wsl1710642275.workers.dev"
+R2_PUBLIC_URL = "https://pub-563a1d32732a43a4ba208b4eff1536ac.r2.dev"
+REVIEW_READ_ONLY = "true"
+
+[[env.review.d1_databases]]
+binding = "DB"
+database_name = "blog-cms-db"
+database_id = "0e818d28-2d7c-43af-b703-ceaa39a3e445"
+migrations_dir = "lib/db/d1/migrations"
+
+[[env.review.r2_buckets]]
+binding = "R2_BUCKET"
+bucket_name = "blog-cms-media"
+
+[[env.review.r2_buckets]]
+binding = "CONTENT_IMPORT_BUCKET"
+bucket_name = "blog-cms-import-private"

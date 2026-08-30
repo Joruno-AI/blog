@@ -4,5 +4,6 @@ export function requiresPlatformSession(pathname: string) {
   return within("/api")
     && !within("/api/public")
     && !within("/api/auth")
-    && pathname !== "/api/jobs/run";
+    && pathname !== "/api/jobs/run"
+    && pathname !== "/api/jobs/public-content-rebuild/ack";
 }

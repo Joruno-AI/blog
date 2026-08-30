@@ -1,0 +1,262 @@
+/* Exact React equivalent of the Astro CardView/TagFilter used by /shorts. */
+.astro-site .shorts-page-header {
+  width: min(100%, 65ch);
+  margin: 0 auto;
+  text-align: center;
+}
+
+.astro-site .shorts-page-header .subtitle {
+  margin-top: -1rem;
+  opacity: .5;
+  font-style: italic;
+}
+
+.astro-site .shorts-page-body {
+  width: 100%;
+  margin-inline: auto;
+}
+
+.astro-site .shorts-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 15.625rem;
+  align-items: flex-start;
+  gap: 2rem;
+  margin-inline: 5rem;
+  transform: translate3d(0, 0, 0);
+}
+.astro-site .shorts-layout.fade-in { animation: .3s forwards fade-in; }
+
+.astro-site .shorts-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11.25rem, 1fr));
+  grid-auto-rows: minmax(12.5rem, 1fr);
+  align-items: stretch;
+  gap: 1rem;
+}
+
+.astro-site .shorts-card-item {
+  min-width: 0;
+  min-height: 10rem;
+  transition: transform var(--motion-base) var(--ease-out-expo);
+}
+
+.astro-site .shorts-card-surface {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--c-border-soft);
+  border-radius: var(--radius-lg);
+  background: var(--c-bg);
+  transition:
+    border-color var(--motion-fast) ease,
+    background-color var(--motion-fast) ease;
+}
+
+.astro-site .shorts-card-link {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1rem 1rem .75rem;
+  border: 0;
+  color: inherit;
+  opacity: 1;
+  text-decoration: none;
+}
+
+.astro-site .shorts-card-link > p.prose {
+  width: auto;
+  max-width: none;
+  margin: 0;
+  color: var(--c-text-soft);
+  line-height: 1.75;
+}
+
+.astro-site .shorts-card-grow { flex-grow: 1; }
+
+.astro-site .shorts-card-link time {
+  color: var(--c-text-soft);
+  font-size: .875rem;
+  line-height: 1.25rem;
+  opacity: .6;
+}
+
+.astro-site .shorts-card-rule {
+  display: block;
+  width: calc(100% + 2rem);
+  height: 1px;
+  margin: .875rem 0 .875rem -1rem;
+  background: #8884;
+}
+
+.astro-site .shorts-card-tags,
+.astro-site .shorts-tag-options {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: .75rem .625rem;
+  color: var(--c-text);
+  font-size: .875rem;
+  line-height: 1.25rem;
+}
+
+.astro-site .shorts-card-tags {
+  flex-wrap: nowrap;
+  margin: .125rem 0 .25rem;
+  overflow-x: auto;
+  opacity: .6;
+}
+
+.astro-site .shorts-card-tags > span,
+.astro-site .shorts-tag-options > button {
+  flex: none;
+  padding: .1rem .3rem;
+  border: 0;
+  border-radius: .25rem;
+  color: inherit;
+  background: #88888825;
+  font: inherit;
+  line-height: inherit;
+  opacity: .6;
+  white-space: nowrap;
+  transition: opacity var(--motion-fast) ease;
+}
+
+.dark .astro-site .shorts-card-tags > span,
+.dark .astro-site .shorts-tag-options > button { background: #88888840; }
+.astro-site .shorts-card-tags > span[data-active="true"],
+.astro-site .shorts-tag-options > button[aria-selected="true"] { opacity: 1; }
+.astro-site .shorts-tag-options > button:not(:disabled):hover { opacity: 1; }
+.astro-site .shorts-tag-options > button:disabled { cursor: not-allowed; opacity: .2; }
+
+.astro-site .shorts-tags-aside {
+  position: sticky;
+  /* Compensate for the unified shell's sticky containing block so the first
+     row remains pixel-aligned with the Astro layout. */
+  top: 7.75rem;
+  display: flex;
+  width: 15.625rem;
+  max-height: 70vh;
+  flex-direction: column;
+  gap: .75rem;
+  overflow: hidden;
+  color: var(--c-text);
+  font-size: .875rem;
+  line-height: 1.25rem;
+}
+
+.astro-site .shorts-tags-aside > p {
+  overflow: hidden;
+  margin: 0;
+  color: #555;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.astro-site .shorts-tags-aside .shorts-tag-options {
+  max-height: 54vh;
+  overflow-y: auto;
+  opacity: .6;
+}
+
+.astro-site .skip-tags-link {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.astro-site .shorts-tag-open {
+  right: calc(1.25rem - (100vw - 100%));
+  bottom: 2rem;
+  width: 3rem;
+  height: 3rem;
+  background: color-mix(in srgb, var(--c-bg) 30%, transparent);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(.35rem) scale(.96);
+  visibility: hidden;
+}
+
+.astro-site .shorts-mobile-tags { position: fixed; z-index: 200; inset: 0; }
+.astro-site .shorts-tag-backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #ffffffcc;
+}
+.dark .astro-site .shorts-tag-backdrop { background: #000000cc; }
+.astro-site .shorts-tag-panel {
+  position: fixed;
+  z-index: 1;
+  top: 10%;
+  left: 50%;
+  display: flex;
+  width: 90%;
+  max-height: 80vh;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 1rem 1.5rem;
+  border-radius: .5rem;
+  color: var(--c-text);
+  background: var(--c-bg);
+  box-shadow: 0 0 10px rgb(0 0 0 / 20%);
+  transform: translateX(-50%);
+}
+.astro-site .shorts-tag-panel > header {
+  margin-bottom: .75rem;
+  padding-bottom: .25rem;
+  border-bottom: 1px solid var(--c-text);
+  opacity: .5;
+}
+.astro-site .shorts-tag-panel .shorts-tag-options { opacity: .6; }
+.dark .astro-site .shorts-tag-panel { box-shadow: 0 0 10px rgb(255 255 255 / 25%); }
+.astro-site .shorts-empty { padding-block: .5rem; opacity: .5; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .astro-site .shorts-tag-backdrop.fade-in,
+  .astro-site .shorts-tag-panel.fade-in { animation: .3s forwards fade-in; }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .astro-site .shorts-card-item:hover { transform: translateY(-3px); }
+  .astro-site .shorts-card-item:hover .shorts-card-surface {
+    border-color: var(--c-border-strong);
+    background: var(--c-surface-soft);
+  }
+}
+.astro-site .shorts-card-item:active { transform: translateY(-1px) scale(.995); }
+
+@media (max-width: 1127px) {
+  .astro-site .shorts-layout {
+    grid-template-columns: minmax(0, 1fr);
+    margin-inline: 2.5rem;
+  }
+  .astro-site .shorts-tags-aside { display: none; }
+  .astro-site .shorts-tag-open {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+    visibility: visible;
+  }
+}
+
+@media (max-width: 767px) {
+  .astro-site .shorts-page-header,
+  .astro-site .shorts-page-body,
+  .astro-site .shorts-page-body ~ footer { width: calc(100% - .5rem); }
+  .astro-site .shorts-page-header h1 { font-size: 1.75rem; line-height: 1.3; }
+  .astro-site .shorts-layout { margin-inline: .25rem; }
+  .astro-site .shorts-card-item { min-height: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .astro-site .shorts-card-item,
+  .astro-site .shorts-card-surface { transition-duration: .01ms; }
+}

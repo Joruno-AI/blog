@@ -5,7 +5,7 @@
 
 ## 决策
 
-公开站点与 Studio 合并为一个 Next.js App Router 应用。采用“模块化单体”，而不是先拆微服务：UI、认证、内容发布、搜索和产品授权共享一个部署单元，但业务代码按 `modules/<domain>` 保持清晰边界。
+公开站点与 Studio 合并为一个 Next.js App Router 应用。采用“模块化单体”，而不是先拆微服务：UI、认证、内容发布和搜索共享一个部署单元，但业务代码按 `modules/<domain>` 保持清晰边界。本阶段明确不引入产品、支付、会员或授权领域。
 
 ## 为什么不是继续维护前后台两个系统
 
@@ -17,8 +17,8 @@
 - `resource_revisions`：不可变内容快照。
 - `resource_routes` / `redirects`：稳定 URL 与历史地址。
 - `assets`：R2 对象的权威元数据。
-- 扩展表：`articles`、`documents`、`resource_albums`、`tracks`、`products`。
-- 关系表：分类、标签、资源关系、集合项、产品项、授权。
+- 扩展表：`articles`、`documents`、`resource_albums`、`tracks`。
+- 关系表：分类、标签、资源关系与集合项。
 - `publication_events`：内容生命周期审计。
 - `resource_search`：只包含已发布 revision 的 FTS 投影。
 

@@ -1,0 +1,258 @@
+/* Exact C-side photo gallery ported from d1ec7b0 PhotoView.astro. */
+.astro-photos-index {
+  width: 100%;
+}
+
+.astro-photo-header {
+  text-align: center;
+}
+
+.astro-photo-header > p {
+  margin-top: -1rem !important;
+  opacity: 0.5;
+  font-style: italic;
+}
+
+.astro-photo-view-shell {
+  margin: 1.25rem 5rem 0;
+}
+
+.astro-photos-index .photo-view {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+.astro-photos-index .photo-container {
+  position: static;
+  width: 100%;
+}
+
+.astro-photos-index .photo-view[data-layout="square"] .photo-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--min-photo-width), 1fr));
+  gap: var(--photo-gap);
+}
+
+.astro-photos-index .photo-figure {
+  overflow: hidden;
+  width: auto;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background-color: transparent;
+  background-image: var(--photo-placeholder);
+  background-position: center;
+  background-size: cover;
+  break-inside: auto;
+  cursor: pointer;
+}
+
+.astro-photos-index .photo-view[data-layout="masonry"] .photo-figure {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--photo-width);
+  height: var(--photo-height);
+  border-radius: 0.375rem;
+  transform: translate(var(--photo-left), var(--photo-top));
+}
+
+.astro-photos-index .photo-view[data-layout="square"] .photo-figure {
+  position: relative;
+  aspect-ratio: 1;
+}
+
+.astro-photos-index .photo-figure img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: var(--photo-opacity, 0);
+  object-fit: cover;
+  filter: none;
+  transform: none;
+  transition: all 0.3s ease-in-out;
+}
+
+.astro-photos-index .photo-figure:hover img,
+.astro-photos-index .photo-figure:focus img,
+.astro-photos-index .photo-figure:focus-within img {
+  filter: none;
+  transform: scale(1.05);
+}
+
+.astro-photos-index .photo-figure figcaption {
+  position: absolute;
+  right: auto;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 1rem 0.6rem 0.6rem;
+  color: white;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.5), transparent);
+  font-size: 0.875rem;
+  line-height: normal;
+  opacity: 0;
+  text-align: left;
+  text-shadow: none;
+  transform: none;
+  transition: all 0.3s ease-in-out;
+}
+
+.astro-photos-index .photo-figure:hover figcaption,
+.astro-photos-index .photo-figure:focus figcaption,
+.astro-photos-index .photo-figure:focus-within figcaption {
+  opacity: 1;
+  transform: none;
+}
+
+.astro-photos-index .photo-layout-toggle {
+  position: fixed;
+  z-index: 50;
+  bottom: 1.5rem;
+  left: 1.25rem;
+  display: flex;
+  width: 2.5rem;
+  height: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  appearance: none;
+  padding: 0;
+  border: 0;
+  border-radius: 9999px;
+  color: var(--c-text);
+  background: transparent;
+  box-shadow: none;
+  opacity: 0.3;
+  cursor: pointer;
+  backdrop-filter: none;
+  transform: none;
+  transition: opacity 0.3s ease-in-out, background-color 0.3s ease-in-out;
+}
+
+.astro-photos-index .photo-layout-toggle:hover,
+.astro-photos-index .photo-layout-toggle:focus-visible {
+  background: rgba(136, 136, 136, 0.2);
+  opacity: 1;
+  transform: none;
+}
+
+.astro-photos-index .photo-layout-toggle .icon-masonry,
+.astro-photos-index .photo-layout-toggle .icon-grid {
+  display: none;
+  width: 1.2em;
+  height: 1.2em;
+}
+
+.astro-photos-index .photo-layout-toggle svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.astro-photos-index .photo-view[data-layout="masonry"] .icon-masonry,
+.astro-photos-index .photo-view[data-layout="square"] .icon-grid {
+  display: block;
+}
+
+.astro-photos-index .photo-loader {
+  display: flex;
+  min-height: 4rem;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.astro-photos-index .photo-loader i {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 9999px;
+  background: rgba(136, 136, 136, 0.31);
+  animation: photo-dot-pulse 1.5s ease-in-out both infinite;
+}
+
+.astro-photos-index .photo-loader i:nth-child(2) {
+  animation-delay: 0.16s;
+}
+
+.astro-photos-index .photo-loader i:nth-child(3) {
+  animation-delay: 0.32s;
+}
+
+.astro-photos-index .photo-load-error {
+  width: 100%;
+  margin: 2rem auto;
+  color: var(--c-text-muted);
+  text-align: center;
+}
+
+.astro-photos-index .photo-image-viewer-host {
+  display: contents;
+}
+
+@keyframes photo-dot-pulse {
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 1127px) {
+  .astro-photo-view-shell {
+    margin-inline: 2.5rem;
+  }
+
+  .astro-photos-index .photo-layout-toggle {
+    background: rgba(136, 136, 136, 0.2);
+    opacity: 0.5;
+  }
+
+  .dark .astro-photos-index .photo-layout-toggle {
+    background: rgba(136, 136, 136, 0.4);
+  }
+}
+
+@media (max-width: 767px) {
+  .astro-site .astro-main:has(> .astro-photos-index) {
+    padding-inline: 1.75rem;
+  }
+
+  .astro-site .astro-photo-header {
+    line-height: 1.8;
+  }
+
+  .astro-site .astro-photo-header > h1 {
+    margin-bottom: 0.8888889em;
+    font-size: 1.75rem;
+    line-height: 1.3;
+  }
+
+  .astro-site .astro-photo-header > p {
+    line-height: 1.8;
+  }
+
+  .astro-photo-view-shell {
+    margin-inline: 0.25rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .astro-photos-index .photo-figure img,
+  .astro-photos-index .photo-figure figcaption,
+  .astro-photos-index .photo-layout-toggle {
+    transition: none;
+  }
+}
+
+@media print {
+  .astro-photos-index .photo-layout-toggle,
+  .astro-photos-index .photo-loader,
+  .astro-photos-index .photo-image-viewer-host {
+    display: none !important;
+  }
+}

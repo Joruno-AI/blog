@@ -1,0 +1,122 @@
+/* Astro RenderPost/PostMeta/ShareLink parity for changelog and shorts. */
+.astro-site .astro-post-reader { width: 100%; }
+.astro-site .astro-post-column { min-width: 0; }
+.astro-site .astro-post-header,
+.astro-site .astro-post-body {
+  width: min(100%, 65ch);
+  max-width: 65ch;
+  margin-inline: auto;
+}
+.astro-site .astro-post-header h1 { text-wrap: balance; }
+.astro-site .post-meta-wrapper {
+  margin-top: -1.5rem;
+  margin-bottom: 1.5rem;
+  color: var(--c-text-muted);
+  font-size: .82rem;
+  font-variant-numeric: tabular-nums;
+}
+.astro-site .post-meta-primary { color: var(--c-text-muted); }
+.astro-site .post-meta-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem;
+  margin-top: .75rem;
+}
+.astro-site .post-meta-tag-icon {
+  width: .875rem;
+  height: .875rem;
+  color: var(--c-text-faint);
+}
+.astro-site .post-meta-tags .tag-item {
+  display: inline-flex;
+  align-items: center;
+  padding: .1rem 0;
+  border-bottom: 1px solid var(--c-border-soft);
+  color: var(--c-text-muted);
+  font-size: .76rem;
+  font-weight: 540;
+  transition: border-color var(--motion-fast) ease, color var(--motion-fast) ease;
+}
+.astro-site .post-meta-tags .tag-item::before {
+  margin-right: .12rem;
+  color: var(--c-text-faint);
+  content: "#";
+}
+.astro-site .post-meta-tags .tag-item:hover { border-color: var(--c-border-strong); color: var(--c-text); }
+.astro-site .astro-post-share {
+  color: var(--c-text-soft);
+  font-size: 1rem;
+}
+.astro-site .astro-post-share > * { opacity: .5; }
+.astro-site .astro-post-share .share-prompt { font-family: var(--font-mono); }
+.astro-site .astro-post-share a { border: 0; opacity: .5; }
+
+/* MobileControl/TocPanel parity for legacy post routes (without changing Blog). */
+.astro-site .astro-post-reader .blog-toc-trigger {
+  background: color-mix(in srgb, var(--c-bg) 30%, transparent);
+  box-shadow: none;
+}
+.astro-site .astro-post-reader .blog-toc-overlay { background: #ffffffcc; }
+.dark .astro-site .astro-post-reader .blog-toc-overlay { background: #000000cc; }
+.astro-site .astro-post-reader .blog-toc-panel {
+  width: 90%;
+  max-width: none;
+  overflow-y: auto;
+  border: 0;
+  box-shadow: 0 0 10px rgb(0 0 0 / 20%);
+}
+.dark .astro-site .astro-post-reader .blog-toc-panel { box-shadow: 0 0 10px rgb(255 255 255 / 25%); }
+.astro-site .astro-post-reader .blog-toc-panel > header {
+  display: block;
+  min-height: 0;
+  padding-bottom: .25rem;
+  border-bottom-color: var(--c-text);
+  opacity: .5;
+}
+.astro-site .astro-post-reader .blog-toc-panel > header > button { display: none; }
+.astro-site .astro-post-reader .blog-toc-mobile-nav { padding: .75rem 0 0; }
+.astro-site .astro-post-reader .blog-toc-mobile-nav a {
+  padding: .2rem 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+@media (min-width: 1128px) {
+  .astro-site .astro-post-reader .article-toc-desktop {
+    position: fixed;
+    z-index: 100;
+    top: 8.875rem;
+    bottom: 1rem;
+    left: 2rem;
+    display: flex;
+    width: 15.625rem;
+    height: calc(100vh - 9.875rem);
+    max-height: none;
+    flex-direction: column;
+    gap: .75rem;
+  }
+  .astro-site .astro-post-reader .article-toc-desktop > nav {
+    width: 15.625rem;
+    max-height: 100%;
+    gap: 0;
+    font-size: .875rem;
+    opacity: 1;
+  }
+  .astro-site .astro-post-reader .article-toc-desktop > nav a {
+    padding: .28rem 0;
+    font-size: .875rem;
+  }
+}
+
+@media (max-width: 1127px) {
+  .astro-site .astro-post-reader .article-toc-desktop { display: none !important; }
+}
+
+@media (max-width: 767px) {
+  .astro-site .astro-post-reader .blog-toc-trigger { right: calc(-.9375rem - (100vw - 100%)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .astro-site .post-meta-tags .tag-item { transition: none; }
+}

@@ -1,5 +1,35 @@
-/* Astro Docs parity styles, migrated from the C-side course library. */
+/* Docs parity: d1ec7b0 / src/pages/docs, adapted for the Next.js client components. */
 
+/* StandardLayout parity for the Docs-only shell. */
+.astro-site[data-page-kind="docs"] {
+  overflow: visible;
+}
+
+.astro-site[data-page-kind="docs"] .astro-main {
+  padding-inline: 1.75rem;
+}
+
+.docs-library-header {
+  max-width: 65ch;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.docs-library-header .docs-library-subtitle {
+  margin: -1rem 0 0;
+  opacity: 0.5;
+  font-style: italic;
+}
+
+.docs-library-shell {
+  width: 100%;
+  max-width: 86rem;
+  margin-inline: auto;
+}
+
+.docs-reader-shell {
+  width: 100%;
+}
 
 .geektime-shell {
     --library-line: var(--c-border-soft);
@@ -1028,12 +1058,12 @@
     font-size: 0.82rem;
   }
 
-  .reader-content :not(pre > code) {
+  .reader-content :not(pre) > code {
     color: color-mix(in srgb, var(--c-text) 70%, #b45372 30%);
     font-weight: 520;
   }
 
-  .dark .reader-content :not(pre > code) {
+  .dark .reader-content :not(pre) > code {
     color: color-mix(in srgb, var(--c-text) 72%, #f9a8d4 28%);
   }
 
@@ -1305,6 +1335,10 @@
   }
 
   .reader-neighbors a[hidden] {
+    visibility: hidden;
+  }
+
+  .reader-neighbors .reader-neighbor-hidden {
     visibility: hidden;
   }
 
@@ -1599,126 +1633,6 @@
       margin-inline: auto;
     }
   }
-
-/* Next.js component bindings for the migrated Astro course library. */
-.docs-library-shell {
-  width: min(100%, 86rem);
-  margin-inline: auto;
-  padding-block: clamp(3rem, 7vw, 6rem);
-}
-
-.docs-library-shell > .standard-header {
-  margin-bottom: 0;
-}
-
-.geektime-search-box > svg,
-.geektime-search-clear svg,
-.geektime-course-meta svg,
-.reader-aside-heading svg,
-.reader-panel-toggle svg,
-.reader-mindmap-trigger svg,
-.reader-mindmap-close svg,
-.reader-neighbors svg {
-  width: 1rem;
-  height: 1rem;
-  flex: none;
-}
-
-.docs-search-empty {
-  margin: 0;
-  padding: 1rem;
-  color: var(--c-text-muted);
-  font-size: .8rem;
-  text-align: center;
-}
-
-.docs-reader-shell {
-  width: 100%;
-  padding-block: clamp(1rem, 3vw, 2.5rem) clamp(4rem, 8vw, 7rem);
-}
-
-.reader-course-link {
-  width: 100%;
-  border: 0;
-  background: transparent;
-  font-family: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-
-.reader-course-link strong {
-  min-width: 0;
-  overflow: hidden;
-  font: inherit;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.reader-actions > .article-actions {
-  margin: 0;
-}
-
-.reader-neighbors a > span {
-  display: inline-flex;
-  align-items: center;
-  gap: .25rem;
-}
-
-.reader-mindmap-dialog[open] {
-  display: block;
-  position: fixed;
-  inset: 50% auto auto 50%;
-  transform: translate(-50%, -50%);
-}
-
-.reader-mindmap-close {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: auto;
-}
-
-.reader-mindmap-tree {
-  width: min(100%, 52rem);
-  margin: 0 auto;
-  padding: 1.25rem;
-  list-style: none;
-  color: var(--c-text-soft);
-}
-
-.reader-mindmap-tree li {
-  position: relative;
-  margin: .45rem 0;
-  padding-left: 1.4rem;
-}
-
-.reader-mindmap-tree li::before {
-  position: absolute;
-  top: .7rem;
-  left: .3rem;
-  width: .4rem;
-  height: .4rem;
-  border-radius: 50%;
-  background: var(--c-text-faint);
-  content: "";
-}
-
-.reader-mindmap-tree .depth-3 {
-  margin-left: 1.5rem;
-}
-
-.reader-mindmap-tree a {
-  color: inherit;
-  text-decoration: none;
-}
-
-@media (max-width: 1127px) {
-  .reader-course-panel[data-reader-panel-ready],
-  .reader-toc-panel[data-reader-panel-ready] {
-    top: 4.75rem;
-    bottom: 1rem;
-  }
-}
 
   @media (max-width: 640px) {
     .reader-breadcrumb {
@@ -2116,3 +2030,348 @@
       opacity: 1;
     }
   }
+
+/* React/Next bindings for the source Astro DOM. */
+.geektime-reader,
+.reader-mindmap-dialog.diagram-design {
+  --diagram-paper: var(--c-bg);
+  --diagram-paper-2: var(--c-surface-sunken, var(--c-surface-soft));
+  --diagram-ink: var(--c-text);
+  --diagram-muted: var(--c-text-muted);
+  --diagram-soft: var(--c-text-faint);
+  --diagram-rule: var(--c-border-soft);
+  --diagram-rule-solid: var(--c-border-strong);
+  --diagram-accent: var(--c-accent);
+  --diagram-accent-contrast: var(--c-accent-contrast, var(--c-bg));
+  --diagram-accent-tint: var(--c-accent-tint, var(--c-surface-soft));
+  --diagram-link: var(--c-accent-alt, var(--c-accent));
+  --diagram-font-title: var(--font-article-title, ui-serif, serif);
+  --diagram-font-node: var(--font-sans, ui-sans-serif, system-ui, sans-serif);
+  --diagram-font-mono: var(--font-mono, ui-monospace, monospace);
+  --diagram-radius-node: 6px;
+  --diagram-radius-frame: 8px;
+}
+
+.geektime-search-box > svg,
+.geektime-search-clear svg,
+.geektime-course-meta svg,
+.reader-aside-heading svg,
+.reader-mindmap-trigger svg,
+.reader-mindmap-tools svg,
+.reader-neighbors svg {
+  width: 1rem;
+  height: 1rem;
+  flex: none;
+}
+
+.geektime-course-meta svg {
+  width: 1.2em;
+  height: 1.2em;
+}
+
+.geektime-course-arrow {
+  width: 1.2em;
+  height: 1.2em;
+  flex: none;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='black' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M7 17 17 7M7 7h10v10'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='black' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M7 17 17 7M7 7h10v10'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* The scoped Astro variable never reaches StandardLayout's wrapper in the
+   reference build, so these rules resolve without a border in production. */
+.geektime-course-grid,
+.geektime-course-card {
+  border-width: 0;
+}
+
+.reader-panel-toggle > span > svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.reader-actions > .article-actions {
+  display: contents;
+  margin: 0;
+}
+
+.reader-neighbors a > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.reader-content .reader-code-block .hljs {
+  background: transparent;
+}
+
+.reader-content .reader-code-copy svg {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+@media (max-width: 767px) {
+  .docs-library-header {
+    max-width: 65ch;
+  }
+
+  .astro-site[data-page-kind="docs"] .docs-library-header h1 {
+    margin-bottom: 0.888889em;
+    font-size: 1.75rem;
+    line-height: 1.3;
+  }
+
+  .astro-site[data-page-kind="docs"] .docs-library-subtitle {
+    line-height: 1.8;
+  }
+}
+
+/* PostActions parity (d1ec7b0/src/components/widgets/PostActions.astro). */
+.geektime-reader .post-actions {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.geektime-reader .post-action {
+  --post-action-hover-color: var(--c-text);
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--c-border-soft);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--c-text-muted);
+  font-size: 0.8rem;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, transform 0.14s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.geektime-reader .post-action:hover,
+.geektime-reader .post-action:focus-visible {
+  border-color: var(--post-action-hover-color);
+  background: transparent;
+  color: var(--post-action-hover-color);
+}
+
+.geektime-reader .post-action[data-copy-md] {
+  --post-action-hover-color: rgb(251 113 133);
+  position: relative;
+}
+
+.geektime-reader .post-action[data-open-trigger] {
+  --post-action-hover-color: rgb(250 204 21);
+}
+
+.geektime-reader .post-action[data-immersive-toggle] {
+  --post-action-hover-color: rgb(163 230 53);
+}
+
+.geektime-reader .post-action-menu[data-open] .post-action {
+  border-color: var(--post-action-hover-color);
+  color: var(--post-action-hover-color);
+}
+
+.geektime-reader .post-action:active {
+  transform: scale(0.97);
+}
+
+.geektime-reader .post-action > svg {
+  width: 1.2em;
+  height: 1.2em;
+  flex: none;
+}
+
+.geektime-reader .post-action > .site-icon,
+.geektime-reader .post-action-item > .site-icon,
+.geektime-reader .reader-code-copy > .site-icon,
+.geektime-reader .reader-aside-heading > .site-icon {
+  width: 1.2em;
+  height: 1.2em;
+  flex: none;
+}
+
+.geektime-reader .post-action > svg.post-action-caret {
+  width: 1.08em;
+  height: 1.08em;
+}
+
+.geektime-reader .post-action > .site-icon.post-action-caret {
+  width: 1.2em;
+  height: 1.2em;
+}
+
+.geektime-reader .reader-mindmap-trigger svg {
+  width: 1.2em;
+  height: 1.2em;
+}
+
+.geektime-reader .reader-aside-heading svg,
+.geektime-reader .reader-mindmap-tools svg {
+  width: 1.2em;
+  height: 1.2em;
+}
+
+.geektime-reader .copy-tooltip {
+  position: absolute;
+  bottom: calc(100% + 0.5rem);
+  left: 50%;
+  z-index: 30;
+  padding: 0.25rem 0.55rem;
+  border-radius: 0.35rem;
+  background: var(--c-text);
+  color: var(--c-bg);
+  font-size: 0.72rem;
+  font-weight: 500;
+  line-height: 1.3;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, 0.25rem);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+}
+
+.geektime-reader .copy-tooltip::after {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  border: 0.3rem solid transparent;
+  border-top-color: var(--c-text);
+  content: '';
+  transform: translateX(-50%);
+}
+
+.geektime-reader .copy-tooltip[data-visible] {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0);
+}
+
+.geektime-reader .post-action-caret {
+  width: 0.9em;
+  height: 0.9em;
+  font-size: 0.9em;
+  opacity: 0.6;
+  transition: transform 0.2s ease;
+}
+
+.geektime-reader .post-action-menu[data-open] .post-action-caret {
+  transform: rotate(180deg);
+}
+
+.geektime-reader .post-action-menu {
+  display: inline-flex;
+  position: relative;
+}
+
+.geektime-reader .post-action-dropdown {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 0.35rem);
+  left: 0;
+  min-width: 11rem;
+  padding: 0.35rem;
+  border: 1px solid var(--c-border-soft);
+  border-radius: 0.65rem;
+  background: var(--c-bg);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.12);
+}
+
+.geektime-reader .post-action-dropdown[hidden] {
+  display: none;
+}
+
+.geektime-reader .post-action-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.6rem;
+  border: none !important;
+  border-radius: 0.4rem;
+  color: var(--c-text-muted);
+  font-size: 0.85rem;
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.geektime-reader .post-action-item:hover,
+.geektime-reader .post-action-item:focus-visible {
+  background: var(--c-surface-hover);
+  color: var(--c-text);
+}
+
+.geektime-reader .post-action-item > svg {
+  width: 1em;
+  height: 1em;
+  flex: none;
+}
+
+.geektime-reader .post-action-ext {
+  margin-left: auto;
+  font-size: 0.9em;
+  opacity: 0.5;
+}
+
+/* Beat the later global `.prose` max-width rule while retaining the source
+   reader's full center column. */
+.geektime-reader .reader-content {
+  max-width: none;
+  margin-inline: 0;
+}
+
+/* The Astro scope attribute gives this source rule enough specificity to
+   beat the generic inline-code skin; reproduce that ordering in React. */
+.geektime-reader .reader-content .reader-code-block pre code {
+  padding: 0;
+  border-width: 0;
+  background: transparent;
+}
+
+.geektime-reader .reader-actions .post-actions {
+  display: contents;
+  margin-bottom: 0;
+}
+
+@media (max-width: 400px) {
+  .geektime-reader .post-actions {
+    gap: 0.25rem;
+  }
+
+  .geektime-reader .post-action {
+    gap: 0.3rem;
+    padding-inline: 0.45rem;
+    font-size: 0.76rem;
+  }
+}
+
+/* BaseLayout's final mobile prose pass comes after the generic desktop prose
+   rules in the Astro bundle. Keep that cascade local to the Docs reader. */
+@media (max-width: 768px) {
+  .geektime-reader .reader-content {
+    font-size: 1rem;
+    line-height: 1.8;
+  }
+
+  .geektime-reader .reader-content h1 {
+    font-size: 1.75rem;
+    line-height: 1.3;
+  }
+
+  .geektime-reader .reader-content h2 {
+    font-size: 1.5rem;
+    line-height: 1.35;
+  }
+
+  .geektime-reader .reader-content h3 {
+    font-size: 1.25rem;
+    line-height: 1.4;
+  }
+}

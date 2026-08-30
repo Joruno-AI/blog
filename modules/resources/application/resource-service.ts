@@ -41,6 +41,20 @@ const genericResourceSchema = z.object({
 
 export type GenericResourceInput = z.input<typeof genericResourceSchema>;
 
+const dedicatedResourceTypes = new Set<(typeof resourceTypes)[number]>([
+  "article",
+  "album",
+  "track",
+]);
+
+export function assertGenericResourceType(
+  type: (typeof resourceTypes)[number],
+) {
+  if (dedicatedResourceTypes.has(type)) {
+    throw new Error(`Use the dedicated ${type} editor for this resource type.`);
+  }
+}
+
 const sectionByType: Record<(typeof resourceTypes)[number], string> = {
   article: "/blog",
   document: "/docs",
@@ -129,9 +143,7 @@ async function setGenericExtension(
 
 export async function createGenericResource(input: GenericResourceInput) {
   const parsed = genericResourceSchema.parse(input);
-  if (parsed.type === "article" || parsed.type === "album" || parsed.type === "track") {
-    throw new Error(`Use the dedicated ${parsed.type} editor for this resource type.`);
-  }
+  assertGenericResourceType(parsed.type);
   const slug = genericSlug(parsed.slug || parsed.title);
   if (!slug) throw new Error("Resource slug is empty after normalization.");
   const created = await createResource({
@@ -154,9 +166,13 @@ export async function createGenericResource(input: GenericResourceInput) {
     throw error;
   }
   if (parsed.scheduledAt && parsed.scheduledAt > new Date()) {
-    await scheduleResource(created.id, parsed.scheduledAt, parsed.authorId);
+    await scheduleResource(created.id, parsed.scheduledAt, parsed.authorId, {
+      expectedCurrentRevisionId: created.revisionId,
+    });
   } else if (parsed.published) {
-    await publishResource(created.id, parsed.authorId, parsed.publishedAt ?? undefined);
+    await publishResource(created.id, parsed.authorId, parsed.publishedAt ?? undefined, {
+      expectedCurrentRevisionId: created.revisionId,
+    });
   }
   return created;
 }
@@ -166,9 +182,11 @@ export async function updateGenericResource(id: string, input: GenericResourceIn
   if (!current) throw new Error(`Resource ${id} was not found.`);
   const parsed = genericResourceSchema.parse(input);
   if (parsed.type !== current.type) throw new Error("Resource type cannot be changed.");
+  assertGenericResourceType(current.type);
   const slug = genericSlug(parsed.slug || parsed.title);
   if (!slug) throw new Error("Resource slug is empty after normalization.");
   const revision = await saveResourceRevision(id, {
+    expectedCurrentRevisionId: current.revisionId,
     title: parsed.title,
     slug,
     path: resourcePath(parsed.type, slug, parsed.path),
@@ -182,9 +200,13 @@ export async function updateGenericResource(id: string, input: GenericResourceIn
   });
   await setGenericExtension(id, parsed.type, parsed.metadata);
   if (parsed.scheduledAt && parsed.scheduledAt > new Date()) {
-    await scheduleResource(id, parsed.scheduledAt, parsed.authorId);
+    await scheduleResource(id, parsed.scheduledAt, parsed.authorId, {
+      expectedCurrentRevisionId: revision.revisionId,
+    });
   } else if (parsed.published === true) {
-    await publishResource(id, parsed.authorId, parsed.publishedAt ?? undefined);
+    await publishResource(id, parsed.authorId, parsed.publishedAt ?? undefined, {
+      expectedCurrentRevisionId: revision.revisionId,
+    });
   }
   if (parsed.published === false && !parsed.scheduledAt && (current.status === "published" || current.status === "scheduled")) {
     await unpublishResource(id, parsed.authorId);
@@ -195,5 +217,6 @@ export async function updateGenericResource(id: string, input: GenericResourceIn
 export async function archiveGenericResource(id: string, actorId?: string | null) {
   const current = await getStudioResource(id);
   if (!current) throw new Error(`Resource ${id} was not found.`);
+  assertGenericResourceType(current.type);
   return archiveResourceIds([id], actorId);
 }

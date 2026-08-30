@@ -1,14 +1,21 @@
-import Link from "next/link";
+import type { Metadata } from "next";
+
+import { LegacyPageFooter } from "@/components/site/legacy-page-footer";
+import { legacyMetadata } from "@/lib/parity/legacy-metadata";
+import "@/app/not-found-parity.css";
+
+export const metadata: Metadata = legacyMetadata({ title: "404", description: "Page not found", path: "/404/" });
 
 export default function SiteNotFound() {
   return (
-    <section className="site-shell site-state">
-      <p className="site-kicker">404</p>
-      <h1>这份内容还不在这里</h1>
-      <p>它可能已经移动，或仍在工作台里继续生长。</p>
-      <Link className="site-button site-button--primary" href="/">
-        返回首页
-      </Link>
-    </section>
+    <>
+      <header className="prose mx-auto legacy-not-found-header">
+        <h1>404</h1>
+      </header>
+      <article className="slide-enter-content prose mx-auto legacy-not-found-body">
+        <p>Nice to meet you tho!</p>
+      </article>
+      <LegacyPageFooter />
+    </>
   );
 }

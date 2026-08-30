@@ -3,7 +3,7 @@ import { getAlbumBySlug } from "@/lib/db/queries/albums";
 
 
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ albumId: string }> }
 ) {
   try {

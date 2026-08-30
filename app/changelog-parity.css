@@ -1,0 +1,231 @@
+/* Astro TabbedLayout/ListView parity for /changelog. */
+.astro-site .changelog-tabs,
+.astro-site .changelog-content { width: min(100%, 65ch); max-width: 65ch; margin-inline: auto; }
+.astro-site .changelog-content { line-height: 1.8; }
+.astro-site .changelog-tabs { margin-bottom: 2rem; }
+.astro-site .changelog-tabs > div { display: flex; gap: .75rem; margin: 0; font-size: 1.875rem; line-height: 2.25rem; user-select: none; }
+.astro-site .changelog-tabs a { border: 0; transition: opacity .2s ease; }
+.astro-site .changelog-tabs a.active { opacity: 1; }
+.astro-site .changelog-tabs a.inactive { opacity: .2; }
+.astro-site .changelog-tabs a.inactive:hover { opacity: .5; }
+.astro-site .changelog-directory { position: relative; }
+.astro-site .changelog-groups { padding-bottom: 0; }
+.astro-site .changelog-groups section { position: relative; }
+.astro-site .changelog-year-heading { position: relative; height: 0; min-height: 0; margin: 0; pointer-events: none; user-select: none; }
+.astro-site .changelog-year-heading > span {
+  position: absolute;
+  top: -1rem;
+  left: -3rem;
+  color: transparent;
+  font-size: 6rem;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  opacity: .1;
+  -webkit-text-stroke: 2px #aaa;
+}
+.dark .astro-site .changelog-year-heading > span { opacity: .08; }
+.astro-site .changelog-list-link {
+  display: flex;
+  width: calc(100% + .5rem);
+  min-height: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem;
+  margin: .375rem 0 1.25rem -.5rem;
+  padding: .35rem .5rem .45rem;
+  color: var(--c-text) !important;
+}
+.astro-site .changelog-list-link .list-item-title-row { display: inline-flex; min-width: 0; align-items: center; gap: .55rem; }
+.astro-site .changelog-list-link .list-item-title { overflow: visible; color: inherit; font-size: 1.125rem; line-height: 1.3; text-overflow: clip; white-space: normal; }
+.astro-site .changelog-list-link .list-item-meta { display: flex; flex: none; align-items: center; gap: .5rem; color: var(--c-text-faint); white-space: nowrap; }
+.astro-site .changelog-list-link .list-item-meta > time,
+.astro-site .changelog-list-link .list-item-meta > span:not(.site-icon) { font-size: .875rem; line-height: 1.25rem; }
+.astro-site .changelog-list-link .list-item-arrow { width: .9rem; height: .9rem; flex: none; opacity: 0; transform: translateX(-.3rem); transition: opacity .18s ease, transform .22s cubic-bezier(.22,1,.36,1); }
+.astro-site .changelog-list-link:hover .list-item-arrow { opacity: .8; transform: none; }
+.astro-site .changelog-year-heading + .changelog-list-item .changelog-list-link { margin-top: 0; }
+.astro-site .changelog-groups section:last-child .changelog-list-item:last-child .changelog-list-link { margin-bottom: 0; }
+.astro-site .changelog-directory .article-toc-desktop {
+  position: fixed;
+  z-index: 100;
+  top: 8.875rem;
+  bottom: 1rem;
+  left: 2rem;
+  display: flex;
+  width: 15.625rem;
+  height: calc(100vh - 9.875rem);
+  max-height: none;
+  flex-direction: column;
+  gap: .75rem;
+}
+.astro-site .changelog-directory .article-toc-heading {
+  display: flex;
+  width: 100%;
+  min-height: 1.2rem;
+  flex: none;
+  align-items: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--c-text);
+  font: inherit;
+  line-height: 1.75;
+  opacity: .6;
+}
+.astro-site .changelog-directory .article-toc-heading > .site-icon { width: 1rem; height: 1rem; }
+.astro-site .changelog-directory .article-toc-controller { min-height: 0; flex: none; }
+.astro-site .changelog-directory .article-toc-nav {
+  display: flex;
+  width: 15.625rem;
+  height: auto;
+  min-height: 0;
+  flex-direction: column;
+  gap: 0;
+  overflow: hidden;
+  color: var(--c-text);
+  font-size: .875rem;
+  line-height: 1.4285714;
+}
+.astro-site .changelog-directory .article-toc-nav > ul {
+  min-height: 0;
+  flex: 1;
+  margin: -.5rem 0 1.09375rem;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+.astro-site .changelog-directory .article-toc-nav li {
+  margin: .5em 0;
+  padding: 0;
+  line-height: 1.6em;
+  list-style: none;
+}
+.astro-site .changelog-directory .article-toc-nav li::before { display: none; content: none; }
+.astro-site .changelog-directory .article-toc-nav li > a {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  padding: 0;
+  border: 0;
+  color: var(--c-text);
+  font-size: inherit;
+  line-height: inherit;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: .5;
+}
+.astro-site .changelog-directory .article-toc-nav li > a:is(:hover, :focus-visible, [aria-current="true"]) { opacity: 1; }
+.astro-site .changelog-directory .article-toc-skip {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+.astro-site .changelog-tags-aside {
+  position: fixed;
+  z-index: 100;
+  top: 8.875rem;
+  left: calc(100vw - 15.625rem - 3.2rem);
+  display: flex;
+  width: 15.625rem;
+  max-height: 70vh;
+  flex-direction: column;
+  gap: .75rem;
+  color: var(--c-text);
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+.astro-site .changelog-tags-aside > .site-icon { width: 1rem; height: 1rem; opacity: .3; }
+.astro-site .changelog-tag-options { display: flex; flex-wrap: wrap; align-content: flex-start; align-items: flex-start; gap: .75rem .625rem; overflow-y: auto; font-size: .875rem; line-height: 1.25rem; opacity: 0; transition: opacity .7s cubic-bezier(.4,0,.2,1); }
+.astro-site:has(.changelog-content:hover) .changelog-tag-options,
+.astro-site .changelog-tags-aside:hover .changelog-tag-options,
+.astro-site .changelog-tags-aside:focus-within .changelog-tag-options { opacity: .6; }
+.astro-site .changelog-tag-options button {
+  padding: .1rem .3rem;
+  border: 0;
+  border-radius: .25rem;
+  color: inherit;
+  background: #88888825;
+  font: inherit;
+  line-height: 1.25rem;
+  opacity: .6;
+  white-space: nowrap;
+  transition: opacity .2s ease;
+}
+.dark .astro-site .changelog-tag-options button { background: #88888840; }
+.astro-site .changelog-tag-options button[aria-selected="true"],
+.astro-site .changelog-tag-options button:not(:disabled):hover { opacity: 1; }
+.astro-site .changelog-tag-options button:disabled { cursor: not-allowed; opacity: .2; }
+.astro-site .changelog-tag-open { right: calc(1.25rem - (100vw - 100%)); bottom: 14rem; width: 3rem; height: 3rem; background: color-mix(in srgb, var(--c-bg) 30%, transparent); opacity: 0; pointer-events: none; visibility: hidden; }
+.astro-site .changelog-mobile-tags { position: fixed; z-index: 220; inset: 0; }
+.astro-site .changelog-tags-backdrop { position: absolute; inset: 0; width: 100%; border: 0; background: #ffffffcc; }
+.dark .astro-site .changelog-tags-backdrop { background: #000000cc; }
+.astro-site .changelog-tag-panel { position: fixed; z-index: 1; top: 10%; left: 50%; display: flex; width: 90%; max-height: 80vh; flex-direction: column; overflow-y: auto; padding: 1rem 1.5rem; border-radius: .5rem; color: var(--c-text); background: var(--c-bg); box-shadow: 0 0 10px rgb(0 0 0 / 20%); transform: translateX(-50%); }
+.dark .astro-site .changelog-tag-panel { box-shadow: 0 0 10px rgb(255 255 255 / 25%); }
+.astro-site .changelog-mobile-tags header { margin-bottom: .75rem; padding-bottom: .25rem; border-bottom: 1px solid var(--c-text); opacity: .5; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .astro-site .changelog-tags-backdrop.fade-in,
+  .astro-site .changelog-tag-panel.fade-in { animation: .3s forwards fade-in; }
+}
+
+@media (max-width: 1127px) {
+  .astro-site .changelog-directory .article-toc-desktop,
+  .astro-site .changelog-tags-aside { display: none !important; }
+  .astro-site .changelog-tag-open { opacity: 1; pointer-events: auto; visibility: visible; }
+}
+@media (max-width: 767px) {
+  .astro-site .changelog-tabs,
+  .astro-site .changelog-content,
+  .astro-site .changelog-content ~ footer { width: calc(100% - .5rem); }
+  .astro-site .changelog-tabs,
+  .astro-site .changelog-content .legacy-empty { line-height: 1.8; }
+  .astro-site .changelog-groups { padding-bottom: 0; }
+  .astro-site .changelog-list-link { width: 100%; margin-inline-start: 0; padding: .55rem .625rem; }
+  .astro-site .changelog-year-heading > span { left: 0; top: 50%; font-size: 3.2rem; transform: translateY(-50%); }
+  .astro-site .changelog-directory .blog-toc-trigger { right: calc(-.9375rem - (100vw - 100%)); }
+}
+@media (max-width: 639px) {
+  .astro-site .changelog-tabs > div { flex-flow: column wrap; gap: .25rem; }
+  .astro-site .changelog-list-link { align-items: flex-start; flex-direction: column; }
+}
+.astro-site .changelog-tabs .tabbed-subtitle {
+  margin: 1rem 0 0;
+  opacity: .5;
+  font-style: italic;
+}
+.astro-site .changelog-content .legacy-empty { line-height: 1.75; }
+
+/* Legacy MobileControl/TocPanel geometry, scoped away from Blog articles. */
+.astro-site .changelog-directory .blog-toc-trigger {
+  background: color-mix(in srgb, var(--c-bg) 30%, transparent);
+  box-shadow: none;
+}
+.astro-site .changelog-directory .blog-toc-overlay { background: #ffffffcc; }
+.dark .astro-site .changelog-directory .blog-toc-overlay { background: #000000cc; }
+.astro-site .changelog-directory .blog-toc-panel {
+  width: 90%;
+  max-width: none;
+  overflow-y: auto;
+  border: 0;
+  box-shadow: 0 0 10px rgb(0 0 0 / 20%);
+}
+.dark .astro-site .changelog-directory .blog-toc-panel { box-shadow: 0 0 10px rgb(255 255 255 / 25%); }
+.astro-site .changelog-directory .blog-toc-panel > header {
+  display: block;
+  min-height: 0;
+  padding-bottom: .25rem;
+  border-bottom-color: var(--c-text);
+  opacity: .5;
+}
+.astro-site .changelog-directory .blog-toc-panel > header > button { display: none; }
+.astro-site .changelog-directory .blog-toc-mobile-nav { padding: .75rem 0 0; }
+.astro-site .changelog-directory .blog-toc-mobile-nav a {
+  padding: .2rem 0;
+  border-radius: 0;
+  background: transparent;
+}

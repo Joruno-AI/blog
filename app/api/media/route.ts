@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { requirePlatformEditor } from "@/lib/auth/require-platform-editor";
 import { mutationErrorResponse } from "@/lib/http/api-error";
 import { assetDto, createAsset, listAssets } from "@/modules/assets/application/asset-service";
 
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const authorizationError = await requirePlatformEditor(request);
+  if (authorizationError) return authorizationError;
+
   try {
     return NextResponse.json((await listAssets()).map(assetDto));
   } catch (error) {
@@ -14,6 +18,9 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  const authorizationError = await requirePlatformEditor(request);
+  if (authorizationError) return authorizationError;
+
   try {
     const formData = await request.formData();
     const file = formData.get("file");

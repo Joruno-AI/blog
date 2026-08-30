@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
-import { DocsReader } from "@/components/site/docs-reader";
+import { DocsReaderFromQuery } from "@/components/site/docs-reader";
+import { DocsReaderLoadingShell } from "@/components/site/docs-reader-loading-shell";
+import { legacyMetadata } from "@/lib/parity/legacy-metadata";
 
-export const dynamic = "force-dynamic";
-export const metadata: Metadata = { title: "课程文档", description: "技术课程文档阅读页" };
+export const metadata: Metadata = legacyMetadata({ title: "课程文档", description: "技术课程文档阅读页", path: "/docs/read/", image: "/og-images/docs/read.png" });
 
-export default async function Page({ searchParams }: { searchParams: Promise<{ source?: string; path?: string; course?: string }> }) {
-  const { source = "geektime", path, course } = await searchParams;
-  if (!path) redirect("/docs");
-  return <DocsReader sourceId={source} path={path} courseId={course} />;
+export default function Page() {
+  return (
+    <Suspense fallback={<DocsReaderLoadingShell />}>
+      <DocsReaderFromQuery />
+    </Suspense>
+  );
 }

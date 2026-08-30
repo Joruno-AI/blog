@@ -1,6 +1,4 @@
 @import 'tailwindcss';
-@import '@heroui/styles';
-@import '@heroui-pro/react/css';
 @import 'tw-animate-css';
 
 :root {
@@ -429,29 +427,36 @@ body {
 }
 
 /* Scrollbar */
-::-webkit-scrollbar {
+/* Keep the compact CMS scrollbar out of the Astro-parity public surface. */
+html:not(:has(.astro-site))::-webkit-scrollbar,
+html:not(:has(.astro-site)) ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
-::-webkit-scrollbar-track {
+html:not(:has(.astro-site))::-webkit-scrollbar-track,
+html:not(:has(.astro-site)) ::-webkit-scrollbar-track {
   background: transparent;
 }
 
-::-webkit-scrollbar-thumb {
+html:not(:has(.astro-site))::-webkit-scrollbar-thumb,
+html:not(:has(.astro-site)) ::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.15);
   border-radius: 3px;
 }
 
-::-webkit-scrollbar-thumb:hover {
+html:not(:has(.astro-site))::-webkit-scrollbar-thumb:hover,
+html:not(:has(.astro-site)) ::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 0, 0, 0.25);
 }
 
-.dark ::-webkit-scrollbar-thumb {
+.dark:not(:has(.astro-site))::-webkit-scrollbar-thumb,
+.dark:not(:has(.astro-site)) ::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.15);
 }
 
-.dark ::-webkit-scrollbar-thumb:hover {
+.dark:not(:has(.astro-site))::-webkit-scrollbar-thumb:hover,
+.dark:not(:has(.astro-site)) ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.25);
 }
 

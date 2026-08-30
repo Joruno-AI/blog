@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 
-import { getPublicResource } from "@/modules/resources/application/queries";
+import {
+  getPublicChangelogResourceBySlug,
+  getPublicResource,
+} from "@/modules/resources/application/queries";
 
 
 export async function GET(
@@ -8,9 +11,12 @@ export async function GET(
   { params }: { params: Promise<{ path: string[] }> }
 ) {
   const { path } = await params;
-  const resource = await getPublicResource(
-    `/${path.map((segment) => decodeURIComponent(segment)).join("/")}`
-  );
+  const resourcePath = `/${path.map((segment) => decodeURIComponent(segment)).join("/")}`;
+  const changelogSlug = resourcePath.match(/^\/changelog\/([^/]+)$/)?.[1];
+  const resource = await getPublicResource(resourcePath)
+    ?? (changelogSlug
+      ? await getPublicChangelogResourceBySlug(changelogSlug)
+      : null);
 
   if (!resource) {
     return NextResponse.json({ error: "Resource not found" }, { status: 404 });
@@ -18,7 +24,7 @@ export async function GET(
 
   return NextResponse.json(resource, {
     headers: {
-      "Cache-Control": "public, max-age=60, s-maxage=300, stale-while-revalidate=3600",
+      "Cache-Control": "private, no-store",
     },
   });
 }

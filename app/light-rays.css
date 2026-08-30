@@ -1,0 +1,348 @@
+/* Exact port of src/components/backgrounds/LightRays.astro at d1ec7b0. */
+.ambient-light-rays {
+    position: fixed;
+    z-index: 0;
+    inset: 0;
+    display: none;
+    overflow: hidden;
+    --album-color: var(--music-album-color, #7c8796);
+    --album-tint: color-mix(in srgb, var(--album-color) 42%, #eef1f5 58%);
+    --ambient-stage: color-mix(in srgb, var(--album-color) 12%, #eef2f7 88%);
+    --ambient-edge: rgb(255 255 255 / 62%);
+    --ambient-edge-soft: rgb(0 0 0 / 2.5%);
+    background-color: var(--c-bg);
+    background-image:
+      radial-gradient(
+        ellipse 110% 60% at 50% -8%,
+        var(--ambient-stage) 0%,
+        color-mix(in srgb, var(--ambient-stage) 66%, transparent) 42%,
+        transparent 70%
+      ),
+      radial-gradient(
+        ellipse at 78% 46%,
+        color-mix(in srgb, var(--album-tint) 9%, transparent),
+        transparent 42%
+      ),
+      radial-gradient(
+        ellipse at 18% 78%,
+        color-mix(in srgb, var(--album-color) 5%, transparent),
+        transparent 48%
+      ),
+      linear-gradient(
+        180deg,
+        var(--c-bg) 0,
+        transparent 16%,
+        transparent 82%,
+        var(--c-bg) 100%
+      ),
+      linear-gradient(
+        100deg,
+        var(--ambient-edge) 0%,
+        var(--ambient-edge-soft) 32%,
+        transparent 62%,
+        var(--ambient-edge-soft) 86%,
+        var(--ambient-edge) 100%
+      );
+    background-size:
+      100% 100%,
+      140% 140%,
+      130% 130%,
+      100% 100%,
+      100% 100%;
+    pointer-events: none;
+  }
+
+    .ambient-light-rays::before {
+    position: absolute;
+    z-index: 1;
+    inset: -8% -16% 8%;
+    content: '';
+    background: conic-gradient(
+      at 50% -8%,
+      transparent 0deg 142deg,
+      rgb(255 255 255 / 72%) 149deg 158deg,
+      transparent 165deg 174deg,
+      rgb(255 255 255 / 92%) 181deg 194deg,
+      transparent 201deg 211deg,
+      rgb(255 255 255 / 58%) 218deg 226deg,
+      transparent 233deg 360deg
+    );
+    filter: blur(20px);
+    opacity: 0.82;
+    transform-origin: 50% 0;
+    animation: ambient-ray-breathe 13s ease-in-out infinite alternate;
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      black 0%,
+      black 46%,
+      rgb(0 0 0 / 76%) 66%,
+      transparent 90%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      black 0%,
+      black 46%,
+      rgb(0 0 0 / 76%) 66%,
+      transparent 90%
+    );
+  }
+
+  .ambient-light-rays::after {
+    position: absolute;
+    z-index: 0;
+    inset: -8% -16% 12%;
+    content: '';
+    background: conic-gradient(
+      at 50% -8%,
+      transparent 0deg 157deg,
+      rgb(74 88 108 / 18%) 166deg 176deg,
+      transparent 182deg 195deg,
+      rgb(74 88 108 / 14%) 203deg 214deg,
+      transparent 222deg 360deg
+    );
+    filter: blur(26px);
+    opacity: 0.52;
+    transform-origin: 50% 0;
+    animation: ambient-ray-breathe 15s ease-in-out infinite alternate-reverse;
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      black 0%,
+      rgb(0 0 0 / 86%) 48%,
+      rgb(0 0 0 / 56%) 68%,
+      transparent 88%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      black 0%,
+      rgb(0 0 0 / 86%) 48%,
+      rgb(0 0 0 / 56%) 68%,
+      transparent 88%
+    );
+  }
+
+  .ambient-light-rays span {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .ambient-light-rays .ambient-cover {
+    inset: -12%;
+    background-image: var(--music-album-cover, none);
+    background-position: center;
+    background-size: cover;
+    filter: blur(76px) saturate(0.42) brightness(1.2);
+    opacity: 0.055;
+    transform: scale(1.1);
+    animation: ambient-cover-drift 24s ease-in-out infinite alternate;
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      black 18%,
+      black 82%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      black 18%,
+      black 82%,
+      transparent 100%
+    );
+  }
+
+  .ambient-light-rays .ambient-light {
+    background:
+      radial-gradient(
+        circle at 71% 43%,
+        color-mix(in srgb, var(--album-tint) 12%, transparent),
+        transparent 35%
+      ),
+      radial-gradient(
+        ellipse at 18% 72%,
+        color-mix(in srgb, var(--album-color) 14%, transparent),
+        transparent 45%
+      ),
+      linear-gradient(
+        90deg,
+        var(--ambient-edge-soft),
+        transparent 46% 74%,
+        var(--ambient-edge-soft)
+      );
+    opacity: 0.1;
+    animation: ambient-light-drift 16s ease-in-out infinite alternate;
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      black 16%,
+      black 84%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      black 16%,
+      black 84%,
+      transparent 100%
+    );
+  }
+
+  .ambient-light-rays .ambient-noise {
+    z-index: 2;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.52'/%3E%3C/svg%3E");
+    mix-blend-mode: soft-light;
+    opacity: 0.012;
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      black 12%,
+      black 88%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      black 12%,
+      black 88%,
+      transparent 100%
+    );
+  }
+
+  .ambient-light-rays canvas {
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    filter: invert(1) brightness(1.1) contrast(1.14) saturate(0.14)
+      drop-shadow(0 5px 16px rgb(74 88 108 / 26%))
+      drop-shadow(0 0 1px rgb(74 88 108 / 36%));
+    opacity: 1;
+    mix-blend-mode: normal;
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      black 0%,
+      black 44%,
+      rgb(0 0 0 / 72%) 72%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      black 0%,
+      black 44%,
+      rgb(0 0 0 / 72%) 72%,
+      transparent 100%
+    );
+  }
+
+  .dark .ambient-light-rays {
+    display: block;
+    --ambient-stage: transparent;
+    --ambient-edge: rgba(7, 8, 10, 0.72);
+    --ambient-edge-soft: rgba(7, 8, 10, 0.28);
+  }
+
+  .dark .ambient-light-rays::before,
+  .dark .ambient-light-rays::after {
+    display: none;
+  }
+
+  .dark .ambient-light-rays .ambient-cover {
+    filter: blur(82px) saturate(1.02) brightness(0.58);
+    opacity: 0.38;
+  }
+
+  .dark .ambient-light-rays .ambient-light {
+    opacity: 0.82;
+  }
+
+  .dark .ambient-light-rays .ambient-noise {
+    opacity: 0.045;
+  }
+
+  .dark .ambient-light-rays canvas {
+    filter: none;
+    opacity: 1;
+    mix-blend-mode: normal;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  @keyframes ambient-cover-drift {
+    from {
+      transform: scale(1.1) translate3d(-1.5%, -1%, 0);
+    }
+    to {
+      transform: scale(1.15) translate3d(1.5%, 1%, 0);
+    }
+  }
+
+  @keyframes ambient-light-drift {
+    from {
+      transform: translate3d(-1.5%, 0, 0) scale(1.02);
+    }
+    to {
+      transform: translate3d(1.5%, -1%, 0) scale(1.06);
+    }
+  }
+
+  @keyframes ambient-ray-breathe {
+    from {
+      transform: translate3d(-1.2%, 0, 0) rotate(-0.7deg) scaleX(0.98);
+    }
+    to {
+      transform: translate3d(1.2%, -0.5%, 0) rotate(0.7deg) scaleX(1.03);
+    }
+  }
+
+  @media (max-width: 767px) {
+    .ambient-light-rays {
+      background-size:
+        100% 100%,
+        160% 140%,
+        150% 140%,
+        100% 100%,
+        100% 100%;
+    }
+
+    .ambient-light-rays .ambient-cover {
+      filter: blur(72px) saturate(0.4) brightness(1.2);
+      opacity: 0.05;
+    }
+
+    .ambient-light-rays::before,
+    .ambient-light-rays::after {
+      inset-inline: -42%;
+      filter: blur(16px);
+    }
+
+    .ambient-light-rays::before {
+      opacity: 0.74;
+    }
+
+    .ambient-light-rays::after {
+      opacity: 0.46;
+    }
+
+    .ambient-light-rays canvas {
+      opacity: 0.9;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ambient-light-rays .ambient-cover,
+    .ambient-light-rays .ambient-light,
+    .ambient-light-rays::before,
+    .ambient-light-rays::after {
+      animation: none;
+    }
+  }
+
+  @media print {
+    .ambient-light-rays {
+      display: none;
+    }
+  }

@@ -3,18 +3,23 @@ import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import test from "node:test";
 
-import { astroPublicRouteContract, excludedMemberRoutes, excludedProductRoutes } from "../lib/parity/route-contract";
+import {
+  astroPublicRouteContract,
+  excludedInterimPublicRoutes,
+  excludedMemberRoutes,
+  excludedProductRoutes,
+} from "../lib/parity/route-contract";
 
 const app = path.resolve(process.cwd(), "app");
 const filesByRoute: Record<string, string> = {
   "/": "(site)/page.tsx", "/404": "(site)/404/page.tsx",
   "/blog": "(site)/blog/page.tsx", "/blog/[...slug]": "(site)/blog/[...slug]/page.tsx",
   "/docs": "(site)/docs/page.tsx", "/docs/read": "(site)/docs/read/page.tsx",
-  "/docs/course/[id]": "(site)/docs/course/[id]/page.tsx", "/docs/catalog.json": "(site)/docs/catalog.json/route.ts",
+  "/docs/course/[id]": "(site)/docs/course/[id]/route.ts", "/docs/catalog.json": "(site)/docs/catalog.json/route.ts",
   "/projects": "(site)/projects/page.tsx", "/photos": "(site)/photos/page.tsx",
   "/photos/photos.[hash].json": "(site)/photos/[file]/route.ts",
   "/shorts": "(site)/shorts/page.tsx", "/shorts/[...slug]": "(site)/shorts/[...slug]/page.tsx",
-  "/music": "(site)/music/page.tsx", "/music/data.json": "(site)/music/data.json/route.ts",
+  "/music": "(site)/music/page.tsx", "/music/data.json": "../public/music/data.json",
   "/music/lyrics/[album].json": "(site)/music/lyrics/[file]/route.ts",
   "/streams": "(site)/streams/page.tsx", "/agent": "(site)/agent/page.tsx",
   "/agent/[...id]": "(site)/agent/[...id]/page.tsx", "/agent/about": "(site)/agent/about/page.tsx",
@@ -26,8 +31,10 @@ const filesByRoute: Record<string, string> = {
   "/changelog": "(site)/changelog/page.tsx", "/changelog/[slug]": "(site)/changelog/[slug]/page.tsx",
   "/feeds": "(site)/feeds/page.tsx", "/prs": "(site)/prs/page.tsx", "/releases": "(site)/releases/page.tsx",
   "/rss.xml": "(site)/rss.xml/route.ts", "/search-index.json": "(site)/search-index.json/route.ts",
-  "/og-images/[...slug].png": "(site)/og-images/[...file]/route.tsx",
+  "/og-images/[...slug].png": "(site)/og-images/[...file]/route.ts",
   "/giscus/[theme].css": "(site)/giscus/[file]/route.ts", "/app.webmanifest": "(site)/app.webmanifest/route.ts",
+  "/robots.txt": "(site)/robots.txt/route.ts", "/sitemap-index.xml": "(site)/sitemap-index.xml/route.ts",
+  "/sitemap-0.xml": "(site)/sitemap-0.xml/route.ts",
 };
 
 test("every Astro public route has a Next App Router owner", () => {
@@ -42,10 +49,28 @@ test("removed product routes are absent", () => {
   }
 });
 
+test("interim redesign pages do not leak into the Astro-compatible C-end", () => {
+  const candidates: Record<(typeof excludedInterimPublicRoutes)[number], string> = {
+    "/knowledge": "(site)/knowledge/page.tsx",
+    "/search": "(site)/search/page.tsx",
+    "/tools": "(site)/tools/page.tsx",
+    "/music/albums/[slug]": "(site)/music/albums/[slug]/page.tsx",
+    "/projects/[...slug]": "(site)/projects/[...slug]/page.tsx",
+    "/docs/[...slug]": "(site)/docs/[...slug]/page.tsx",
+  };
+  for (const route of excludedInterimPublicRoutes) {
+    assert.equal(existsSync(path.join(app, candidates[route])), false, route);
+  }
+});
+
 test("removed member registration is absent and server-side sign-up is disabled", () => {
   for (const route of excludedMemberRoutes) {
     assert.equal(existsSync(path.join(app, "(auth)", route.slice(1), "page.tsx")), false, route);
   }
   const authSource = readFileSync(path.resolve(process.cwd(), "lib/auth/index.ts"), "utf8");
   assert.match(authSource, /disableSignUp:\s*true/);
+});
+
+test("does not reintroduce the non-Astro sitemap.xml alias", () => {
+  assert.equal(existsSync(path.join(app, "sitemap.ts")), false);
 });

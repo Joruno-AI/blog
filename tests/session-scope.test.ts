@@ -15,6 +15,7 @@ test("validates sessions only for login, Studio and private APIs", () => {
   assert.equal(requiresPlatformSession("/api/public/posts"), false);
   assert.equal(requiresPlatformSession("/api/auth/get-session"), false);
   assert.equal(requiresPlatformSession("/api/jobs/run"), false);
+  assert.equal(requiresPlatformSession("/api/jobs/public-content-rebuild/ack"), false);
   assert.equal(requiresPlatformSession("/studio-preview"), false);
   assert.equal(requiresPlatformSession("/api/publication"), true);
 });

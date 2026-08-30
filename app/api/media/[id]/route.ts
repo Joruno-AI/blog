@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+import { requirePlatformEditor } from "@/lib/auth/require-platform-editor";
 import { mutationErrorResponse } from "@/lib/http/api-error";
 import { deleteAsset, renameAsset } from "@/modules/assets/application/asset-service";
 
@@ -8,6 +9,9 @@ import { deleteAsset, renameAsset } from "@/modules/assets/application/asset-ser
 const renameSchema = z.object({ name: z.string().trim().min(1).max(500) });
 
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const authorizationError = await requirePlatformEditor(request);
+  if (authorizationError) return authorizationError;
+
   try {
     const { id } = await params;
     const { name } = renameSchema.parse(await request.json());
@@ -19,7 +23,10 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   }
 }
 
-export async function DELETE(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const authorizationError = await requirePlatformEditor(request);
+  if (authorizationError) return authorizationError;
+
   try {
     const { id } = await params;
     await deleteAsset(id);

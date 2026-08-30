@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getPostBySlug } from "@/lib/db/queries/posts";
+import { getPublicPostBySlug } from "@/lib/db/queries/posts";
 
 
 /**
@@ -16,7 +16,9 @@ export async function GET(
     // Decode the slug in case it contains URL-encoded characters
     const decodedSlug = decodeURIComponent(slug);
 
-    const post = await getPostBySlug(decodedSlug);
+    // Unlisted posts preserve the historical direct-link contract, while
+    // private revisions remain inaccessible to anonymous callers.
+    const post = await getPublicPostBySlug(decodedSlug, { allowUnlisted: true });
 
     if (!post || post.draft) {
       return NextResponse.json({ error: "Post not found" }, { status: 404 });

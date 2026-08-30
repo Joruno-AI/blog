@@ -46,11 +46,53 @@ interface ImportPlan {
   conflicts: string[]
 }
 
+interface ImportJobResponse {
+  jobId: string
+  status: 'pending' | 'running' | 'waiting' | 'completed' | 'failed' | 'cancelled'
+  progress: number
+  plan: ImportPlan | null
+  error: string | null
+  done: boolean
+  retryAt?: string
+}
+
+const IMPORT_JOB_STORAGE_KEY = 'joruno:active-content-import-job'
+const EXPORT_JOB_STORAGE_KEY = 'joruno:active-content-export-job'
+
+interface ExportJobResponse {
+  jobId: string
+  mode: 'download' | 'github'
+  status: 'pending' | 'running' | 'waiting' | 'completed' | 'failed' | 'cancelled'
+  progress: number
+  error: string | null
+  done: boolean
+  retryAt?: string
+  downloadUrl?: string
+}
+
+function wait(milliseconds: number) {
+  return new Promise((resolve) => window.setTimeout(resolve, milliseconds))
+}
+
 async function jsonRequest(url: string, body: unknown) {
   const response = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
+  })
+  const payload = await response.json() as Record<string, unknown>
+  if (!response.ok) throw new Error(typeof payload.error === 'string' ? payload.error : `Request failed (${response.status})`)
+  return payload
+}
+
+async function bundleImportRequest(file: File, dryRun: boolean) {
+  const response = await fetch(`/api/content-transfer/import?dryRun=${dryRun ? 'true' : 'false'}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(!dryRun ? { 'X-Content-Import-Confirm': 'APPLY_CONTENT_IMPORT' } : {}),
+    },
+    body: file,
   })
   const payload = await response.json() as Record<string, unknown>
   if (!response.ok) throw new Error(typeof payload.error === 'string' ? payload.error : `Request failed (${response.status})`)
@@ -67,10 +109,59 @@ export default function SettingsPage() {
   const [config, setConfig] = useState<Config | null>(null)
   const [loading, setLoading] = useState(true)
   const [action, setAction] = useState<string | null>(null)
-  const [bundle, setBundle] = useState<unknown>(null)
+  const [bundle, setBundle] = useState<File | null>(null)
   const [plan, setPlan] = useState<ImportPlan | null>(null)
   const [confirmation, setConfirmation] = useState<'apply-file' | 'push' | 'import' | null>(null)
+  const [importProgress, setImportProgress] = useState<number | null>(null)
+  const [exportProgress, setExportProgress] = useState<number | null>(null)
   const fileInput = useRef<HTMLInputElement>(null)
+  const resumeStarted = useRef(false)
+
+  async function finishImportJob(initial: unknown) {
+    let job = initial as unknown as ImportJobResponse
+    if (!job.jobId) throw new Error('导入作业未返回持久化 ID')
+    window.localStorage.setItem(IMPORT_JOB_STORAGE_KEY, job.jobId)
+    setImportProgress(job.progress ?? 0)
+    while (!job.done) {
+      const retryDelay = job.retryAt ? Math.max(0, new Date(job.retryAt).valueOf() - Date.now()) : 0
+      await wait(Math.max(100, retryDelay))
+      job = await jsonRequest(`/api/content-transfer/jobs/${encodeURIComponent(job.jobId)}`, {}) as unknown as ImportJobResponse
+      setImportProgress(job.progress ?? 0)
+    }
+    window.localStorage.removeItem(IMPORT_JOB_STORAGE_KEY)
+    if (job.status !== 'completed') throw new Error(job.error || '导入作业失败')
+    return job
+  }
+
+  async function finishExportJob(initial: unknown) {
+    let job = initial as ExportJobResponse
+    if (!job.jobId) throw new Error('导出作业未返回持久化 ID')
+    window.localStorage.setItem(EXPORT_JOB_STORAGE_KEY, job.jobId)
+    setExportProgress(job.progress ?? 0)
+    while (!job.done) {
+      const retryDelay = job.retryAt ? Math.max(0, new Date(job.retryAt).valueOf() - Date.now()) : 0
+      await wait(Math.max(150, retryDelay))
+      job = await jsonRequest(`/api/content-transfer/export/jobs/${encodeURIComponent(job.jobId)}`, {}) as unknown as ExportJobResponse
+      setExportProgress(job.progress ?? 0)
+    }
+    window.localStorage.removeItem(EXPORT_JOB_STORAGE_KEY)
+    if (job.status !== 'completed') throw new Error(job.error || '导出作业失败')
+    return job
+  }
+
+  async function saveCompletedDownload(job: ExportJobResponse) {
+    const response = await fetch(job.downloadUrl || `/api/content-transfer/export?jobId=${encodeURIComponent(job.jobId)}`)
+    if (!response.ok) throw new Error('导出文件读取失败')
+    const blob = await response.blob()
+    const disposition = response.headers.get('content-disposition') || ''
+    const filename = disposition.match(/filename="([^"]+)"/)?.[1] || 'joruno-content.json'
+    const url = URL.createObjectURL(blob)
+    const anchor = document.createElement('a')
+    anchor.href = url
+    anchor.download = filename
+    anchor.click()
+    URL.revokeObjectURL(url)
+  }
 
   useEffect(() => {
     void fetch('/api/settings/config')
@@ -80,24 +171,58 @@ export default function SettingsPage() {
       .finally(() => setLoading(false))
   }, [])
 
+  useEffect(() => {
+    const storedId = window.localStorage.getItem(EXPORT_JOB_STORAGE_KEY)
+    if (!storedId) return
+    setAction('resume-export')
+    void fetch(`/api/content-transfer/export/jobs/${encodeURIComponent(storedId)}`, { cache: 'no-store' })
+      .then((response) => response.ok ? response.json() : Promise.reject(new Error('导出作业状态读取失败')))
+      .then(async (active: ExportJobResponse) => {
+        const completed = await finishExportJob(active)
+        if (completed.mode === 'download') await saveCompletedDownload(completed)
+        toast.success(completed.mode === 'download' ? '已恢复并下载完整内容包' : '已恢复并完成 GitHub 导出')
+      })
+      .catch((error) => toast.error(error instanceof Error ? error.message : '导出作业恢复失败'))
+      .finally(() => {
+        setExportProgress(null)
+        setAction(null)
+      })
+  }, [])
+
+  useEffect(() => {
+    if (resumeStarted.current) return
+    resumeStarted.current = true
+    void fetch('/api/content-transfer/jobs', { cache: 'no-store' })
+      .then((response) => response.ok ? response.json() : Promise.reject(new Error('导入作业状态读取失败')))
+      .then(async (payload: { jobs?: ImportJobResponse[] }) => {
+        const storedId = window.localStorage.getItem(IMPORT_JOB_STORAGE_KEY)
+        const active = payload.jobs?.find((job) => job.jobId === storedId) ?? payload.jobs?.[0]
+        if (!active) {
+          window.localStorage.removeItem(IMPORT_JOB_STORAGE_KEY)
+          return
+        }
+        setAction('resume-import')
+        await finishImportJob(active)
+        toast.success('已恢复并完成上次的持久化导入作业')
+      })
+      .catch((error) => toast.error(error instanceof Error ? error.message : '导入作业恢复失败'))
+      .finally(() => {
+        setImportProgress(null)
+        setAction(null)
+      })
+  }, [])
+
   async function downloadBundle() {
     setAction('download')
     try {
-      const response = await fetch('/api/content-transfer/export')
-      if (!response.ok) throw new Error('导出失败')
-      const blob = await response.blob()
-      const disposition = response.headers.get('content-disposition') || ''
-      const filename = disposition.match(/filename="([^"]+)"/)?.[1] || 'joruno-content.json'
-      const url = URL.createObjectURL(blob)
-      const anchor = document.createElement('a')
-      anchor.href = url
-      anchor.download = filename
-      anchor.click()
-      URL.revokeObjectURL(url)
+      const started = await jsonRequest('/api/content-transfer/export', {})
+      const completed = await finishExportJob(started)
+      await saveCompletedDownload(completed)
       toast.success('内容包已导出')
     } catch (error) {
       toast.error(error instanceof Error ? error.message : '导出失败')
     } finally {
+      setExportProgress(null)
       setAction(null)
     }
   }
@@ -105,10 +230,11 @@ export default function SettingsPage() {
   async function previewFile(file: File) {
     setAction('preview-file')
     try {
-      const parsed: unknown = JSON.parse(await file.text())
-      const result = await jsonRequest('/api/content-transfer/import', { bundle: parsed, dryRun: true })
-      setBundle(parsed)
-      setPlan(result.plan as ImportPlan)
+      const started = await bundleImportRequest(file, true)
+      const result = await finishImportJob(started)
+      if (!result.plan) throw new Error('内容包预检未返回计划')
+      setBundle(file)
+      setPlan(result.plan)
       toast.success('校验完成，尚未写入数据库')
     } catch (error) {
       setBundle(null)
@@ -124,13 +250,15 @@ export default function SettingsPage() {
     if (!bundle || !plan || plan.conflicts.length) return
     setAction('apply-file')
     try {
-      await jsonRequest('/api/content-transfer/import', { bundle, dryRun: false, confirm: 'APPLY_CONTENT_IMPORT' })
+      const started = await bundleImportRequest(bundle, false)
+      await finishImportJob(started)
       toast.success('内容包已安全合并到 D1')
       setBundle(null)
       setPlan(null)
     } catch (error) {
       toast.error(error instanceof Error ? error.message : '导入失败')
     } finally {
+      setImportProgress(null)
       setAction(null)
     }
   }
@@ -140,15 +268,27 @@ export default function SettingsPage() {
     const applying = kind === 'push' || kind === 'import'
     setAction(kind)
     try {
-      const result = await jsonRequest(`/api/content-transfer/github/${isExport ? 'export' : 'import'}`, {
+      const started = await jsonRequest(`/api/content-transfer/github/${isExport ? 'export' : 'import'}`, {
         dryRun: !applying,
         confirm: kind === 'push' ? 'PUSH_CONTENT_TO_GITHUB' : kind === 'import' ? 'APPLY_GITHUB_CONTENT' : undefined,
       })
-      if (!isExport && !applying) setPlan(result.plan as ImportPlan)
+      const result = isExport && applying
+        ? await finishExportJob(started)
+        : isExport
+          ? started
+          : await finishImportJob(started)
+      if (!isExport && !applying) {
+        const nextPlan = (result as ImportJobResponse).plan
+        if (!nextPlan) throw new Error('GitHub 导入预检未返回计划')
+        setPlan(nextPlan)
+        if (nextPlan.conflicts.length) throw new Error(`预检发现 ${nextPlan.conflicts.length} 个冲突`)
+      }
       toast.success(applying ? 'GitHub 同步完成' : 'GitHub 同步预检通过')
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'GitHub 同步失败')
     } finally {
+      setImportProgress(null)
+      setExportProgress(null)
       setAction(null)
     }
   }
@@ -245,6 +385,8 @@ export default function SettingsPage() {
               <Button variant="outline" onPress={() => void githubAction('preview-import')} isDisabled={Boolean(action) || !config?.hasGitHubConfig}><ShieldCheck className="size-4" />导入预检</Button>
               <Button variant="secondary" onPress={() => setConfirmation('import')} isDisabled={Boolean(action) || !config?.hasGitHubConfig}><Download className="size-4" />从 GitHub 合并</Button>
             </div>
+            {importProgress !== null ? <p className="text-xs text-muted-foreground">持久化导入进度：{importProgress}%（可安全分批恢复）</p> : null}
+            {exportProgress !== null ? <p className="text-xs text-muted-foreground">持久化导出进度：{exportProgress}%（按页生成，可安全恢复）</p> : null}
           </Card.Content>
         </Card>
       </section>

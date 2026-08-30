@@ -1,0 +1,826 @@
+@import "./expressive-code-base.css";
+
+/* Mechanical, scoped port of d1ec7b0:src/styles/markdown.css. */
+/* Prose Complement */
+:where(.astro-site) .prose {
+  --fg-light: var(--c-text-faint);
+  --fg: var(--c-text-soft);
+  --fg-deep: var(--c-text);
+  --fg-deeper: var(--c-text);
+
+  color: var(--fg);
+}
+
+.dark :where(.astro-site) .prose {
+  --fg-light: var(--c-text-faint);
+  --fg: var(--c-text-soft);
+  --fg-deep: var(--c-text);
+  --fg-deeper: var(--c-text);
+}
+
+:where(.astro-site) .prose a {
+  border-bottom: 1px solid var(--c-border-soft);
+  transition:
+    border-color var(--motion-fast) ease,
+    color var(--motion-fast) ease;
+}
+
+:where(.astro-site) .prose a:hover {
+  border-bottom-color: var(--c-border-strong);
+  color: var(--c-text);
+}
+
+:where(.astro-site) .prose a code {
+  color: inherit;
+}
+
+:where(.astro-site) .prose hr {
+  width: 50px;
+  margin: 2em auto;
+}
+
+:where(.astro-site) .prose blockquote {
+  font-weight: 400;
+  font-style: normal;
+  line-height: 1.6em;
+  padding: 0.5em 1em;
+  margin-left: -1.1em;
+}
+
+:where(.astro-site) .prose blockquote > * {
+  opacity: 0.7;
+}
+
+:where(.astro-site) .prose blockquote > :first-child {
+  margin-top: 0;
+}
+
+:where(.astro-site) .prose blockquote > :last-child {
+  margin-bottom: 0;
+}
+
+:where(.astro-site) .prose blockquote p:first-of-type::before {
+  content: none;
+}
+
+:where(.astro-site) .prose blockquote p:first-of-type::after {
+  content: none;
+}
+
+:where(.astro-site) .prose s {
+  opacity: 0.5;
+}
+
+:where(.astro-site) .prose em {
+  color: var(--fg-deep);
+  font-size: 1.05em;
+  font-family: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+}
+
+:where(.astro-site) .prose details summary {
+  padding-left: 1px;
+  cursor: pointer;
+}
+
+:where(.astro-site) .prose details:not(.expressive-code *) {
+  margin-top: 1.25em;
+  margin-bottom: 1.25em;
+}
+
+:where(.astro-site) .prose li details {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+:where(.astro-site) .prose thead th,:where(.astro-site)
+.prose tbody td:first-child {
+  white-space: nowrap;
+}
+
+:where(.astro-site) .prose code:not(.expressive-code code) {
+  border: 1px solid var(--c-border-soft);
+  border-radius: 0.3rem;
+  padding: 0.15rem 0.3rem;
+  background-color: var(--c-surface-soft);
+}
+
+:where(.astro-site) .prose div:has(> table) {
+  overflow-x: auto;
+}
+
+:where(.astro-site) .prose code:not(.expressive-code code):not(table td code) {
+  overflow-wrap: anywhere;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+/* Toc */
+:where(.astro-site) .toc-desktop {
+  position: fixed;
+  top: 5.5rem;
+  bottom: 0;
+  left: 2.05rem;
+
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  --uno: 'lt-lgp:hidden';
+  overflow: hidden;
+
+  width: 15.625rem;
+
+  font-size: 0.875em;
+}
+
+/* 目录搜索框 - 使用下划线动画 */
+:where(.astro-site) .toc-search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  height: 1.75rem;
+}
+
+/* 下划线效果 */
+:where(.astro-site) .toc-search-box::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 1.75rem;
+  right: 0;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.2;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+:where(.astro-site) .toc-search-box.expanded::after {
+  transform: scaleX(1);
+}
+
+/* 搜索触发按钮 */
+:where(.astro-site) .toc-search-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  opacity: 0.5;
+  font-size: 0.875rem;
+  border-radius: 50%;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+:where(.astro-site) .toc-search-trigger:hover {
+  opacity: 1;
+}
+
+:where(.astro-site) .toc-search-box.expanded .toc-search-trigger {
+  opacity: 0.6;
+  cursor: default;
+  pointer-events: none;
+  transform: scale(0.9);
+}
+
+/* 搜索输入框 */
+:where(.astro-site) .toc-search-input {
+  position: absolute;
+  left: 1.75rem;
+  right: 1.25rem;
+  border: none;
+  background: transparent;
+  font-size: 0.75rem;
+  color: inherit;
+  outline: none;
+  padding: 0.2rem 0;
+  opacity: 0;
+  transform: translateX(-8px);
+  pointer-events: none;
+  transition:
+    opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+:where(.astro-site) .toc-search-box.expanded .toc-search-input {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+:where(.astro-site) .toc-search-input::placeholder {
+  opacity: 0.4;
+  color: inherit;
+}
+
+/* 清除按钮 */
+:where(.astro-site) .toc-search-clear {
+  position: absolute;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  opacity: 0;
+  font-size: 0.625rem;
+  transform: scale(0.8);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+:where(.astro-site) .toc-search-box.expanded .toc-search-clear:not(.hidden) {
+  opacity: 0.5;
+  transform: scale(1);
+}
+
+:where(.astro-site) .toc-search-clear:hover {
+  opacity: 1 !important;
+}
+
+:where(.astro-site) .toc-search-clear.hidden {
+  display: none;
+}
+
+/* 目录搜索匹配 */
+:where(.astro-site) .toc-search-no-match {
+  display: none !important;
+}
+
+:where(.astro-site) .toc-desktop-anchor {
+  display: flex;
+  align-items: center;
+
+  font-size: 1rem;
+  opacity: 0.6;
+  transition: all 700ms;
+}
+
+:where(.astro-site) .toc-desktop-on > .toc-desktop-anchor,:where(.astro-site)
+.prose:hover .toc-desktop-content > .toc-desktop-anchor,:where(.astro-site)
+.toc-desktop:hover > .toc-desktop-anchor {
+  opacity: 0.8;
+}
+
+:where(.astro-site) .toc-desktop > ul {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(125, 125, 125, 0.3) transparent;
+
+  height: 100%;
+  margin-top: 0.25rem;
+  padding-right: 0.5rem;
+
+  opacity: 0.7;
+  transition: all 700ms;
+}
+
+/* Webkit 滚动条样式 */
+:where(.astro-site) .toc-desktop > ul::-webkit-scrollbar {
+  width: 4px;
+}
+
+:where(.astro-site) .toc-desktop > ul::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 2px;
+}
+
+:where(.astro-site) .toc-desktop > ul::-webkit-scrollbar-thumb {
+  background: rgba(125, 125, 125, 0.25);
+  border-radius: 2px;
+  transition: background 0.2s;
+}
+
+:where(.astro-site) .toc-desktop > ul::-webkit-scrollbar-thumb:hover {
+  background: rgba(125, 125, 125, 0.4);
+}
+
+.dark :where(.astro-site) .toc-desktop > ul::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.dark :where(.astro-site) .toc-desktop > ul::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+:where(.astro-site) .toc-desktop-on > ul,:where(.astro-site)
+.prose:hover .toc-desktop-content > ul,:where(.astro-site)
+.toc-desktop:hover > ul {
+  opacity: 0.9;
+}
+
+:where(.astro-site) .toc-desktop ul > li::before {
+  display: none !important;
+  content: none !important;
+}
+
+:where(.astro-site) .toc-desktop ul > li {
+  padding-left: 0.8rem;
+  margin-top: 0.5em;
+
+  line-height: 1.6em;
+}
+
+:where(.astro-site) .toc-desktop > ul > li {
+  padding-left: 0rem;
+}
+
+:where(.astro-site) .toc-desktop ul > li > a {
+  display: block;
+  overflow-x: hidden;
+
+  border-bottom: 0px;
+
+  color: var(--c-text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  opacity: 0.75;
+
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+:where(.astro-site) .toc-desktop ul > li > a:hover {
+  border-bottom: 0px;
+}
+
+:where(.astro-site) .toc-desktop-right.toc-desktop {
+  left: auto;
+  right: 0rem;
+}
+
+:where(.astro-site) .toc-desktop [aria-current='true'] {
+  opacity: 1;
+}
+
+/* Expressive Code */
+:where(.astro-site) .expressive-code {
+  margin: 1em 0;
+}
+
+:where(.astro-site) .expressive-code .frame {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--c-border-soft) !important;
+  border-radius: 0.4rem !important;
+  background: var(--c-bg);
+  box-shadow: 0 1px 2px rgb(15 23 42 / 5%) !important;
+}
+
+.dark :where(.astro-site) .expressive-code .frame {
+  background: #121212;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 16%) !important;
+}
+
+:where(.astro-site) .expressive-code .frame .header {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  margin: 0 !important;
+  min-height: 2.1rem !important;
+  padding: 0.45rem 0.65rem !important;
+  border-bottom: 1px solid var(--c-border-soft) !important;
+  background: var(--c-bg) !important;
+}
+
+:where(.astro-site) .expressive-code .frame:not(.is-terminal):not(.has-title) > .header {
+  display: none !important;
+}
+
+:where(.astro-site) .prose .expressive-code pre {
+  margin: 0 !important;
+  padding: 0.85rem 1rem !important;
+  border-radius: 0 !important;
+  font-size: 0.875rem !important;
+  line-height: 1.55 !important;
+}
+
+.dark :where(.astro-site) .expressive-code .frame .header {
+  background: #121212 !important;
+}
+
+:where(.astro-site) .expressive-code .copy {
+  position: absolute !important;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  top: 0.175rem !important;
+  right: 0.25rem !important;
+  width: 1.75rem !important;
+  height: 1.75rem !important;
+}
+
+:where(.astro-site) .expressive-code .copy button::before {
+  display: none;
+}
+
+:where(.astro-site) .expressive-code .copy button > div {
+  display: none !important;
+}
+
+:where(.astro-site) .expressive-code .copy button {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem !important;
+  height: 1.75rem !important;
+  border: 0 !important;
+  border-radius: 0.3rem !important;
+  background: transparent !important;
+  color: var(--c-text-muted) !important;
+  cursor: pointer;
+  opacity: 0.68 !important;
+  transition:
+    opacity 160ms ease,
+    background-color 160ms ease,
+    color 160ms ease,
+    transform 140ms cubic-bezier(0.23, 1, 0.32, 1) !important;
+}
+
+:where(.astro-site) .expressive-code .copy button::after {
+  content: '' !important;
+  display: block !important;
+  width: 0.95rem !important;
+  height: 0.95rem !important;
+  margin: auto;
+  background-color: currentColor !important;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 6V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-3v3c0 .552-.45 1-1.007 1H4.007A1 1 0 0 1 3 21l.003-14c0-.552.45-1 1.006-1zM5.002 8L5 20h10V8zM9 6h8v10h2V4H9z'/%3E%3C/svg%3E") !important;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 6V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-3v3c0 .552-.45 1-1.007 1H4.007A1 1 0 0 1 3 21l.003-14c0-.552.45-1 1.006-1zM5.002 8L5 20h10V8zM9 6h8v10h2V4H9z'/%3E%3C/svg%3E") !important;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  opacity: 1 !important;
+}
+
+:where(.astro-site) .expressive-code .copy button:focus-visible,:where(.astro-site)
+.expressive-code .copy button:hover::after,:where(.astro-site)
+.expressive-code .copy button:active::after {
+  opacity: 1 !important;
+}
+
+:where(.astro-site) .expressive-code .copy button:hover,:where(.astro-site)
+.expressive-code .copy button:focus-visible {
+  background: var(--c-surface-hover) !important;
+  color: var(--c-text) !important;
+  opacity: 1 !important;
+}
+
+:where(.astro-site) .expressive-code .copy button:focus-visible {
+  outline: 2px solid var(--c-border-strong) !important;
+  outline-offset: 1px;
+}
+
+:where(.astro-site) .expressive-code .copy button:active {
+  transform: scale(0.96);
+}
+
+:where(.astro-site) .expressive-code .copy .feedback {
+  padding: 0.25rem 0.55rem !important;
+  border: 0 !important;
+  border-radius: 0.35rem !important;
+  background: var(--c-text) !important;
+  box-shadow: 0 4px 14px rgb(0 0 0 / 12%);
+  color: var(--c-bg) !important;
+  font-family: var(--font-sans) !important;
+  font-size: 0.72rem !important;
+  font-weight: 500;
+  line-height: 1.3 !important;
+  opacity: 0;
+  transform: translateX(0.25rem) scale(0.97) !important;
+  transform-origin: right center;
+  transition:
+    opacity 160ms cubic-bezier(0.23, 1, 0.32, 1),
+    transform 160ms cubic-bezier(0.23, 1, 0.32, 1) !important;
+}
+
+:where(.astro-site) .expressive-code .copy > [aria-live] {
+  position: absolute;
+  top: 50%;
+  right: calc(100% + 0.5rem);
+  transform: translateY(-50%);
+}
+
+:where(.astro-site) .expressive-code .copy .feedback.show {
+  opacity: 1;
+  transform: translateX(0) scale(1) !important;
+}
+
+/* Match terminal frames with native macOS traffic-light controls. */
+:where(.astro-site) .expressive-code .frame.is-terminal .header::before {
+  content: '' !important;
+  display: block !important;
+  flex: 0 0 auto;
+  width: 2.2rem !important;
+  height: 0.55rem !important;
+  background-color: transparent !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 35 9'%3E%3Ccircle cx='4.5' cy='4.5' r='4.5' fill='%23ff5f57'/%3E%3Ccircle cx='17.5' cy='4.5' r='4.5' fill='%23ffbd2e'/%3E%3Ccircle cx='30.5' cy='4.5' r='4.5' fill='%2328c840'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+  opacity: 1 !important;
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+}
+
+:where(.astro-site) .expressive-code .ec-section summary {
+  list-style: none;
+}
+
+:where(.astro-site) .expressive-code .ec-section summary::-webkit-details-marker {
+  display: none;
+}
+
+:where(.astro-site) .expressive-code .ec-section summary .code {
+  display: flex;
+  align-items: center;
+}
+
+:where(.astro-site) .expressive-code .ec-section summary svg {
+  display: inline-block;
+}
+
+:where(.astro-site) .expressive-code .gutter .ln {
+  padding-inline: 1ch !important;
+}
+
+:where(.astro-site) .expressive-code .collapsible-start .code {
+  height: 1.4em;
+}
+
+/* viewerjs */
+:where(.astro-site) .viewer-canvas.viewer-loading > img {
+  opacity: 0;
+}
+
+:where(.astro-site) .viewer-backdrop {
+  background-color: rgba(0, 0, 0, 0.9);
+}
+
+:where(.astro-site) .viewer-navbar {
+  margin-bottom: 5px;
+  background-color: transparent;
+}
+
+:where(.astro-site) .viewer-list > li {
+  margin-right: -1px;
+  border-radius: 1px;
+  border: 1px solid #000;
+}
+
+:where(.astro-site) article img:not(.no-zoom):not(a img) {
+  cursor: zoom-in;
+}
+
+/* rehype-autolink-headings */
+:where(.astro-site) a.header-anchor {
+  float: left;
+  margin-left: -0.9em;
+  border: 0 !important;
+  opacity: 0;
+  font-size: 1em;
+  text-decoration: none;
+}
+
+:where(.astro-site) a.header-anchor:hover,:where(.astro-site)
+a.header-anchor:focus {
+  text-decoration: none;
+}
+
+:where(.astro-site) h1:hover .header-anchor,:where(.astro-site)
+h1:focus .header-anchor,:where(.astro-site)
+h2:hover .header-anchor,:where(.astro-site)
+h2:focus .header-anchor,:where(.astro-site)
+h3:hover .header-anchor,:where(.astro-site)
+h3:focus .header-anchor,:where(.astro-site)
+h4:hover .header-anchor,:where(.astro-site)
+h4:focus .header-anchor,:where(.astro-site)
+h5:hover .header-anchor,:where(.astro-site)
+h5:focus .header-anchor,:where(.astro-site)
+h6:hover .header-anchor,:where(.astro-site)
+h6:focus .header-anchor {
+  opacity: 0.5;
+}
+
+/* rehype-callouts */
+:where(.astro-site) .callout {
+  padding-left: 16px;
+  font-size: 15px;
+}
+
+:where(.astro-site) .callout p {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+:where(.astro-site) .callout-title-icon {
+  padding-right: 2px;
+}
+
+/* :::iamge */
+.dark :where(.astro-site) .img-light {
+  display: none;
+}
+
+html:not(.dark) :where(.astro-site) .img-dark {
+  display: none;
+}
+
+/* ::vedio */
+:where(.astro-site) .rds-video {
+  z-index: 150;
+  position: relative;
+
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 0.5rem;
+  margin: 5rem 0;
+
+  scale: 1.2;
+}
+
+@media (max-width: 1023.9px) {
+  :where(.astro-site) .rds-video {
+    margin: 1rem 0;
+    scale: 1;
+  }
+}
+
+:where(.astro-site) .rds-video.no-scale {
+  margin: 1rem 0;
+  scale: 1;
+}
+
+/* :link */
+:where(.astro-site) [data-link='github-acct'],:where(.astro-site)
+[data-link='custom-url'].rounded {
+  display: inline-flex;
+  align-items: center;
+  padding-right: 0.5rem;
+  border-radius: 9999px;
+  border-width: 0px !important;
+
+  font-family: var(--font-condensed);
+  color: var(--fg-light) !important;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+
+  background: #8882;
+  transform: translateY(6px);
+  transition: all 300ms ease-in-out !important;
+}
+
+:where(.astro-site) [data-link='github-acct'] > img,:where(.astro-site)
+[data-link='custom-url'].rounded > img {
+  display: inline-block;
+  height: 1.6em;
+  width: 1.6em;
+  border-radius: 50%;
+  margin: 0 0.25rem 0 0;
+
+  object-fit: cover;
+}
+
+:where(.astro-site) [data-link='github-repo']:not(.github),:where(.astro-site)
+[data-link='custom-url'].square {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.375rem;
+  border-radius: 0.25rem;
+  border-width: 0px !important;
+
+  font-family: var(--font-condensed);
+  color: var(--fg-light) !important;
+  line-height: 100%;
+
+  background: #8882;
+  transform: translateY(3px);
+  transition: all 300ms ease-in-out !important;
+}
+
+:where(.astro-site) [data-link='github-repo']:not(.github) > img,:where(.astro-site)
+[data-link='custom-url'].square > img {
+  display: inline-block;
+  height: 1.1em;
+  width: 1.1em;
+  border-radius: 2px;
+  margin: 0 0.25rem 0 0;
+
+  object-fit: cover;
+}
+
+:where(.astro-site) [data-link='github-acct']:hover,:where(.astro-site)
+[data-link='github-repo']:not(.github):hover,:where(.astro-site)
+[data-link='custom-url'].rounded:hover,:where(.astro-site)
+[data-link='custom-url'].square:hover {
+  color: var(--fg) !important;
+
+  background: #8883;
+}
+
+:where(.astro-site) [data-link='github-repo'].github,:where(.astro-site)
+[data-link='npm-pkg'] {
+  font-family: var(--font-mono);
+}
+
+:where(.astro-site) [data-link='custom-url'] > img,:where(.astro-site)
+[data-link='github-repo'].github > img,:where(.astro-site)
+[data-link='npm-pkg'] > img {
+  display: inline-block;
+  width: 1.05em;
+  height: 1.05em;
+  border-radius: 0;
+  margin: 0 0.25rem 0.2rem 0.1rem;
+}
+
+/* :badge */
+:where(.astro-site) .rds-badge {
+  display: inline-block;
+
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  margin-right: 0.5rem;
+
+  color: white;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  text-transform: uppercase;
+
+  background-color: var(--badge-color-light, #a8a29e);
+}
+
+.dark :where(.astro-site) .rds-badge {
+  color: black;
+  background-color: var(--badge-color-dark, #a8a29e);
+}
+
+:where(.astro-site) [data-badge='n'] {
+  --badge-color-light: #f87171;
+  --badge-color-dark: #fecaca;
+}
+
+:where(.astro-site) [data-badge='a'] {
+  --badge-color-light: #fb923c;
+  --badge-color-dark: #fed7aa;
+}
+
+:where(.astro-site) [data-badge='v'] {
+  --badge-color-light: #facc15;
+  --badge-color-dark: #fef08a;
+}
+
+/* rehype-external-links */
+:where(.astro-site) .new-tab-icon {
+  margin-left: 0.1rem;
+  margin-bottom: 0.3rem;
+
+  font-size: 0.6em;
+}
+
+:where(.astro-site) .external-link-cursor {
+  cursor: var(--external-link-cursor);
+}
+
+/* Code block language label.
+   Shows the language (ts / py / json ...) in the bottom-right corner of
+   non-terminal code blocks that have no explicit filename title. Terminal
+   frames already carry their own decoration, and titled frames show the
+   filename, so both are excluded via :has(). */
+:where(.astro-site) .expressive-code .frame:not(.is-terminal):not(:has(figcaption .title)) {
+  position: relative;
+}
+
+:where(.astro-site) .expressive-code
+  .frame:not(.is-terminal):not(:has(figcaption .title))
+  pre[data-language]:not([data-language='text']):not(
+    [data-language='plaintext']
+  )::before {
+  content: attr(data-language);
+  position: absolute;
+  right: 0.4rem;
+  bottom: 0.4rem;
+  z-index: 1;
+  padding: 0.15rem 0.6rem;
+  border-top-left-radius: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  line-height: 1.4;
+  color: var(--c-text-muted);
+  background: var(--c-surface-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  pointer-events: none;
+  opacity: 0.75;
+}

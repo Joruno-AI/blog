@@ -5,10 +5,15 @@ import {
   insertRevisionAndSelectIt,
   nextResourceVersion,
   publishCurrentRevision,
+  ResourcePublicationConflictError,
   scheduleCurrentRevision,
-  synchronizeSearchIndex,
   unpublishResourceRecord,
 } from "@/modules/resources/infrastructure/resource-repository";
+import type {
+  PublishCurrentRevisionTransaction,
+} from "@/modules/resources/infrastructure/resource-repository";
+import type { BatchItem } from "drizzle-orm/batch";
+import { db } from "@/lib/db";
 import {
   assertContentFitsD1,
   resourceDraftSchema,
@@ -17,6 +22,7 @@ import {
   type RevisionDraftInput,
 } from "@/modules/resources/domain/types";
 import { normalizeResourcePath } from "@/modules/resources/domain/path";
+import { prepareArticlePublicationTransaction } from "@/modules/articles/infrastructure/article-projection";
 
 async function hashContent(content: string) {
   const digest = await crypto.subtle.digest(
@@ -95,10 +101,22 @@ export async function saveResourceRevision(
     slug?: string;
     path?: string;
     visibility?: ResourceDraftInput["visibility"];
-  }
+    expectedCurrentRevisionId?: string;
+  },
+  transaction: {
+    guardStatements?: readonly BatchItem<"sqlite">[];
+    additionalStatements?: readonly BatchItem<"sqlite">[];
+  } = {},
 ) {
   const resource = await findEditableResourceById(resourceId);
   if (!resource) throw new Error(`Resource ${resourceId} was not found.`);
+  const expectedCurrentRevisionId = input.expectedCurrentRevisionId
+    ?? resource.revisionId;
+  if (resource.revisionId !== expectedCurrentRevisionId) {
+    throw new Error(
+      `Resource ${resourceId} changed while its revision was being prepared.`,
+    );
+  }
 
   const parsed = revisionDraftSchema.parse(input);
   assertContentFitsD1(parsed.content);
@@ -111,6 +129,7 @@ export async function saveResourceRevision(
 
   await insertRevisionAndSelectIt({
     resourceId,
+    expectedCurrentRevisionId,
     revision: {
       id: revisionId,
       resourceId,
@@ -129,6 +148,8 @@ export async function saveResourceRevision(
       createdAt: new Date(),
     },
     actorId: input.actorId,
+    guardStatements: transaction.guardStatements,
+    additionalStatements: transaction.additionalStatements,
   });
 
   return { resourceId, revisionId, version };
@@ -137,21 +158,61 @@ export async function saveResourceRevision(
 export async function publishResource(
   resourceId: string,
   actorId?: string | null,
-  publishedAt?: Date
+  publishedAt?: Date,
+  transaction: PublishCurrentRevisionTransaction = {},
+  database: typeof db = db,
 ) {
-  const resource = await publishCurrentRevision({ resourceId, actorId, publishedAt });
+  let articleTransaction: Awaited<ReturnType<typeof prepareArticlePublicationTransaction>>;
+  try {
+    articleTransaction = await prepareArticlePublicationTransaction(
+      resourceId,
+      transaction.expectedCurrentRevisionId
+        ?? transaction.expectedLifecycle?.currentRevisionId
+        ?? undefined,
+      database,
+    );
+  } catch (error) {
+    if (
+      transaction.expectedLifecycle
+      && error instanceof Error
+      && error.message.includes("changed while publication was being prepared")
+    ) {
+      throw new ResourcePublicationConflictError(error.message, { cause: error });
+    }
+    throw error;
+  }
+  const resource = await publishCurrentRevision({
+    resourceId,
+    actorId,
+    publishedAt,
+    ...transaction,
+    expectedCurrentRevisionId: transaction.expectedCurrentRevisionId
+      ?? articleTransaction?.expectedCurrentRevisionId,
+    guardStatements: [
+      ...(articleTransaction?.guardStatements ?? []),
+      ...(transaction.guardStatements ?? []),
+    ],
+    additionalStatements: [
+      ...(articleTransaction?.additionalStatements ?? []),
+      ...(transaction.additionalStatements ?? []),
+    ],
+  }, database);
   if (!resource) throw new Error(`Resource ${resourceId} was not found.`);
-
-  await synchronizeSearchIndex(resourceId);
   return resource;
 }
 
 export async function scheduleResource(
   resourceId: string,
   scheduledAt: Date,
-  actorId?: string | null
+  actorId?: string | null,
+  options: { expectedCurrentRevisionId?: string } = {},
 ) {
-  const resource = await scheduleCurrentRevision({ resourceId, scheduledAt, actorId });
+  const resource = await scheduleCurrentRevision({
+    resourceId,
+    scheduledAt,
+    actorId,
+    ...options,
+  });
   if (!resource) throw new Error(`Resource ${resourceId} was not found.`);
   return resource;
 }

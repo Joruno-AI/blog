@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getPosts, getPostsCount, getPostsWithCategoryPath } from "@/lib/db/queries/posts";
+import {
+  getPublicPosts,
+  getPublicPostsCount,
+  getPublicPostsWithCategoryPath,
+} from "@/lib/db/queries/posts";
 
 
 /**
@@ -26,18 +30,17 @@ export async function GET(request: NextRequest) {
     let postsResult;
     if (includeContent) {
       // Use enhanced query that includes categoryPath
-      postsResult = await getPostsWithCategoryPath({
+      postsResult = await getPublicPostsWithCategoryPath({
         limit,
         offset,
         categoryId,
         categoryPath,
-        draft: false,
       });
     } else {
-      postsResult = await getPosts({ limit, offset, categoryId, draft: false });
+      postsResult = await getPublicPosts({ limit, offset, categoryId });
     }
 
-    const total = await getPostsCount({ categoryId, draft: false });
+    const total = await getPublicPostsCount({ categoryId });
 
     // Add CORS headers for external access
     return NextResponse.json(

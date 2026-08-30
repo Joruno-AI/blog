@@ -1,67 +1,83 @@
-import Link from "next/link";
-import { ArrowRight, Radio, Video } from "lucide-react";
+import { Fragment, type CSSProperties } from "react";
 
+import {
+  ExternalLinkIcon,
+  StreamArrowIcon,
+  StreamFilmIcon,
+  StreamRadioIcon,
+} from "@/components/site/projects-streams-icons";
+import { StreamYearNavigation } from "@/components/site/stream-year-navigation";
+import {
+  formatAstroStreamDate,
+  groupAstroStreams,
+  restoreAstroStreams,
+} from "@/lib/parity/projects-streams";
 import type { PublishedResource } from "@/modules/resources/infrastructure/resource-repository";
 
-type StreamMetadata = {
-  externalUrl?: string;
-  radio?: boolean;
-  video?: boolean;
-  platform?: string;
-};
-
-const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
-  year: "numeric",
-  month: "2-digit",
-  day: "2-digit",
-});
-
-function metadata(resource: PublishedResource): StreamMetadata {
-  try {
-    const value: unknown = JSON.parse(resource.metadataJson);
-    return value && typeof value === "object" && !Array.isArray(value) ? value as StreamMetadata : {};
-  } catch {
-    return {};
-  }
-}
-
 export function StreamDirectory({ resources }: { resources: PublishedResource[] }) {
-  if (resources.length === 0) return <div className="legacy-empty">nothing here yet</div>;
-  const groups = new Map<number, PublishedResource[]>();
-  resources.forEach((resource) => {
-    const year = resource.publishedAt?.getFullYear() ?? 0;
-    groups.set(year, [...(groups.get(year) ?? []), resource]);
-  });
-  const sections = [...groups.entries()].sort(([a], [b]) => b - a);
+  const groups = groupAstroStreams(restoreAstroStreams(resources));
+  const years = groups.map(({ year }) => year);
+
+  if (!groups.length) return <div className="legacy-empty">nothing here yet</div>;
 
   return (
-    <div className="stream-directory-layout">
-      <nav className="stream-year-nav" aria-label="年份目录">
-        {sections.map(([year]) => <a href={`#streams-${year}`} key={year}>{year || "其他"}</a>)}
-      </nav>
+    <>
+      <StreamYearNavigation years={years} />
       <div className="stream-list" aria-label="Stream list">
-        {sections.map(([year, items]) => (
-          <section className="stream-year" key={year}>
-            <h2 id={`streams-${year}`}>{year || "其他"}</h2>
-            {items.map((resource) => {
-              const meta = metadata(resource);
-              const href = meta.externalUrl || resource.path;
+        {groups.map(({ year, startIndex, items }) => (
+          <Fragment key={year}>
+            <div
+              id={year}
+              className="toc-heading stream-year-heading slide-enter"
+              style={{ "--enter-stage": startIndex - 2 } as CSSProperties}
+            >
+              <span>{year}</span>
+            </div>
+            {items.map((item, itemIndex) => {
+              const index = startIndex + itemIndex;
+              const dateTime = new Date(`${item.pubDate}T00:00:00Z`).toISOString();
               return (
-                <Link className="stream-item" href={href} key={resource.id} target="_blank" rel="noreferrer">
-                  <span className="stream-item__title">{resource.title}</span>
-                  <span className="stream-item__meta">
-                    {meta.video ? <Video aria-label="Provided in video" /> : null}
-                    {meta.radio ? <Radio aria-label="Provided in radio" /> : null}
-                    {resource.publishedAt ? <time dateTime={resource.publishedAt.toISOString()}>{dateFormatter.format(resource.publishedAt)}</time> : null}
-                    {meta.platform ? <span>· {meta.platform}</span> : null}
-                    <ArrowRight aria-hidden="true" />
-                  </span>
-                </Link>
+                <div
+                  className="stream-list-item slide-enter"
+                  style={{ "--enter-stage": index % 5 } as CSSProperties}
+                  key={item.id}
+                >
+                  <a
+                    className="blog-list-link stream-item"
+                    href={item.link}
+                    title={item.id}
+                    aria-label={item.id}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span className="stream-item__title-wrap">
+                      <span className="stream-item__title-row">
+                        <span className="stream-item__title">{item.id}</span>
+                      </span>
+                      <span className="stream-new-tab-icon"><ExternalLinkIcon /></span>
+                    </span>
+                    <span className="stream-item__meta">
+                      {item.video ? (
+                        <span className="stream-media-icon" title="Provided in video" aria-label="Provided in video">
+                          <StreamFilmIcon />
+                        </span>
+                      ) : null}
+                      {item.radio ? (
+                        <span className="stream-media-icon" title="Provided in radio" aria-label="Provided in radio">
+                          <StreamRadioIcon />
+                        </span>
+                      ) : null}
+                      <time dateTime={dateTime}>{formatAstroStreamDate(item.pubDate)}</time>
+                      <span>· {item.platform}</span>
+                      <span className="stream-item__arrow"><StreamArrowIcon /></span>
+                    </span>
+                  </a>
+                </div>
               );
             })}
-          </section>
+          </Fragment>
         ))}
       </div>
-    </div>
+    </>
   );
 }

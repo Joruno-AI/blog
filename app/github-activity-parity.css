@@ -1,0 +1,72 @@
+/* Exact StandardLayout/GithubView empty-state structure from Astro d1ec7b0. */
+.astro-site .github-activity-header {
+  width: min(100%, 65ch);
+  max-width: 65ch;
+  margin-inline: auto;
+  text-align: center;
+}
+.astro-site .github-activity-header > p {
+  margin-top: -1rem !important;
+  opacity: .5;
+  font-style: italic;
+}
+.astro-site .github-activity-header > p a { opacity: 1; }
+.astro-site .github-activity-content {
+  width: min(100%, 65ch);
+  max-width: 65ch;
+  margin-inline: auto;
+}
+.astro-site .warning-callout-shell { width: 100%; margin-inline: auto; }
+.astro-site .github-activity-content .callout {
+  margin: 0;
+  padding: 1rem 1rem .5rem;
+  border: 1px solid transparent;
+  border-radius: .5rem;
+  color: #555;
+  background: rgb(234 179 8 / 14%);
+  font-size: .9375rem;
+  line-height: 1.5rem;
+}
+.dark .astro-site .github-activity-content .callout { color: #ccc; }
+.astro-site .github-activity-content .callout-title {
+  gap: .375rem;
+  color: inherit;
+  font-family: inherit;
+  font-size: .9375rem;
+  font-weight: 400;
+  letter-spacing: normal;
+  line-height: 1.5rem;
+}
+.astro-site .github-activity-content .callout-title-icon {
+  display: inline-flex;
+  width: 1.125rem;
+  height: 1.5rem;
+  align-items: center;
+  padding-right: .125rem;
+}
+.astro-site .github-activity-content .callout-title-icon svg { width: 1rem; height: 1rem; }
+.astro-site .github-activity-content .callout-content,
+.astro-site .github-activity-content .callout-content p {
+  color: inherit;
+  font-size: .9375rem;
+  line-height: 1.5rem;
+}
+.astro-site .github-activity-content .callout-content p { margin: 1rem 0; }
+.astro-site .github-activity-pulse { animation: github-activity-pulse 2s cubic-bezier(.4, 0, .6, 1) infinite; }
+
+@keyframes github-activity-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .5; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .astro-site .github-activity-pulse { animation: none; }
+}
+
+@media (max-width: 767px) {
+  .astro-site .github-activity-header,
+  .astro-site .github-activity-content,
+  .astro-site .github-activity-content ~ footer { width: calc(100% - .5rem); }
+  .astro-site .github-activity-header { line-height: 1.8; }
+  .astro-site .github-activity-header h1 { font-size: 1.75rem; line-height: 1.3; }
+}

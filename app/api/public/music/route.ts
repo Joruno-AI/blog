@@ -1,15 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { getAlbumsWithSongs } from "@/lib/db/queries/albums";
 
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const searchParams = request.nextUrl.searchParams;
-    const publishedOnly = searchParams.get("published") !== "false";
-
-    const albumsData = await getAlbumsWithSongs({
-      published: publishedOnly ? true : undefined,
-    });
+    // Anonymous callers never get a draft override. Public visibility is
+    // enforced again inside the album and track queries.
+    const albumsData = await getAlbumsWithSongs({ published: true });
 
     // Transform to match the original JSON format from the blog project
     const albums = albumsData.map((album) => ({

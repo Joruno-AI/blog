@@ -55,6 +55,21 @@ const statements = [
     0,
   ],
   [
+    "public projection resources without published timestamps",
+    `SELECT count(*) AS value
+     FROM resources r
+     JOIN resource_revisions rr ON rr.id = r.published_revision_id
+     WHERE r.status = 'published'
+       AND r.visibility = 'public'
+       AND rr.visibility = 'public'
+       AND r.published_at IS NULL
+       AND (
+         r.type IN ('article', 'short', 'project', 'photo')
+         OR (r.type = 'document' AND (rr.path LIKE '/changelog/%' OR rr.path LIKE '/streams/%'))
+       )`,
+    0,
+  ],
+  [
     "duplicate canonical paths",
     "SELECT count(*) AS value FROM (SELECT path FROM resource_routes WHERE canonical = 1 GROUP BY path HAVING count(*) > 1)",
     0,
@@ -65,6 +80,57 @@ const statements = [
     0,
   ],
 ];
+
+// Review deployments intentionally do not apply pending production migrations.
+// Production CI opts into these post-migration invariants after Wrangler has
+// applied the outbox migration, while ordinary pre-cutover remote audits remain
+// compatible with the currently deployed schema.
+if (process.env.REQUIRE_PUBLIC_REBUILD_OUTBOX === "true") {
+  const expectedPublicRebuildTriggers = [
+    "public_content_rebuild_signal_insert",
+    "public_content_resources_insert",
+    "public_content_resources_update",
+    "public_content_resources_delete",
+    "public_content_revisions_update",
+    "public_content_revisions_delete",
+    "public_content_categories_insert",
+    "public_content_categories_update",
+    "public_content_categories_delete",
+    "public_content_tags_insert",
+    "public_content_tags_update",
+    "public_content_tags_delete",
+    "public_content_resource_albums_insert",
+    "public_content_resource_albums_update",
+    "public_content_resource_albums_delete",
+    "public_content_tracks_insert",
+    "public_content_tracks_update",
+    "public_content_tracks_delete",
+    "public_content_assets_update",
+    "public_content_assets_delete",
+  ];
+  statements.push(
+    [
+      "public rebuild outbox table",
+      "SELECT count(*) AS value FROM sqlite_schema WHERE type = 'table' AND name = 'public_content_rebuild_outbox'",
+      1,
+    ],
+    ...expectedPublicRebuildTriggers.map((trigger) => [
+      `public rebuild trigger ${trigger}`,
+      `SELECT count(*) AS value FROM sqlite_schema WHERE type = 'trigger' AND name = '${trigger}'`,
+      1,
+    ]),
+    [
+      "unexpected public rebuild triggers",
+      `SELECT count(*) AS value FROM sqlite_schema WHERE type = 'trigger' AND name LIKE 'public_content_%' AND name NOT IN (${expectedPublicRebuildTriggers.map((trigger) => `'${trigger}'`).join(", ")})`,
+      0,
+    ],
+    [
+      "missing public rebuild generation columns",
+      "SELECT 2 - count(*) AS value FROM pragma_table_info('public_content_rebuild_outbox') WHERE name IN ('submitted_generation', 'deployed_generation')",
+      0,
+    ],
+  );
+}
 
 function queryAll(entries) {
   const sql = entries.map(([, statement]) => `${statement};`).join("\n");

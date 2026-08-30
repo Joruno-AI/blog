@@ -16,11 +16,22 @@ import {
   publishResource,
   saveResourceRevision,
   scheduleResource,
-  unpublishResource,
 } from "@/modules/resources/application/commands";
 import { getStudioResource } from "@/modules/resources/application/queries";
 import { articleResourceIdCandidates } from "@/modules/articles/domain/id";
 import { resourceSlug } from "@/modules/resources/domain/slug";
+import {
+  articleProjectionFromMetadata,
+  articleProjectionGuard,
+  articleProjectionWriteStatements,
+  articlePublishedPointerGuard,
+  articleRevisionMetadataGuard,
+  freezeLegacyPublishedArticleStatement,
+  parseArticleMetadata,
+  readArticleProjection,
+  readArticlePublicationSnapshot,
+  type ArticleProjection,
+} from "@/modules/articles/infrastructure/article-projection";
 
 const articleInputSchema = z.object({
   title: z.string().trim().min(1).max(300),
@@ -164,6 +175,21 @@ function articleMetadata(
   };
 }
 
+function projectionFromInput(
+  input: z.output<typeof articleInputSchema>,
+  tagIds: string[],
+): ArticleProjection {
+  return {
+    categoryId: input.categoryId ?? null,
+    tagIds,
+    toc: input.toc,
+    share: input.share,
+    giscus: input.giscus,
+    search: input.search,
+    minutesRead: input.minutesRead ?? null,
+  };
+}
+
 export async function resolveArticleResourceId(id: string) {
   const candidates = articleResourceIdCandidates(id);
   const [direct] = await db
@@ -213,9 +239,13 @@ export async function createArticle(input: ArticleMutationInput) {
 
   if (!parsed.draft) {
     if (parsed.pubDate && parsed.pubDate > new Date()) {
-      await scheduleResource(created.id, parsed.pubDate, parsed.authorId);
+      await scheduleResource(created.id, parsed.pubDate, parsed.authorId, {
+        expectedCurrentRevisionId: created.revisionId,
+      });
     } else {
-      await publishResource(created.id, parsed.authorId, parsed.pubDate);
+      await publishResource(created.id, parsed.authorId, parsed.pubDate, {
+        expectedCurrentRevisionId: created.revisionId,
+      });
     }
   }
   return created;
@@ -233,8 +263,48 @@ export async function updateArticle(id: string, input: ArticleMutationInput) {
   const slug = articleSlug(parsed.slug || parsed.title);
   if (!slug) throw new Error("Article slug is empty after normalization.");
   const tagIds = await validateTaxonomy(parsed.categoryId ?? null, parsed.tagIds);
+  const nextProjection = projectionFromInput(parsed, tagIds);
+  const [currentProjection, publicationSnapshot] = await Promise.all([
+    readArticleProjection(resourceId),
+    readArticlePublicationSnapshot(resourceId),
+  ]);
+  if (!publicationSnapshot || publicationSnapshot.type !== "article") {
+    throw new Error(`Article ${id} was not found.`);
+  }
+
+  const guardStatements = [
+    articlePublishedPointerGuard(resourceId, publicationSnapshot.publishedRevisionId),
+    articleProjectionGuard(resourceId, currentProjection),
+  ];
+  const additionalStatements = [];
+  if (publicationSnapshot.publishedRevisionId) {
+    const publishedMetadataJson = publicationSnapshot.publishedMetadataJson;
+    if (publishedMetadataJson === null) {
+      throw new Error("The published article revision is missing.");
+    }
+    const publishedMetadata = parseArticleMetadata(publishedMetadataJson);
+    const publishedProjection = articleProjectionFromMetadata(publishedMetadata);
+    if (!publishedProjection
+      && publicationSnapshot.currentRevisionId !== publicationSnapshot.publishedRevisionId) {
+      throw new Error(
+        "The legacy published article projection must be repaired before saving another draft.",
+      );
+    }
+    guardStatements.push(articleRevisionMetadataGuard(
+      publicationSnapshot.publishedRevisionId,
+      publishedMetadataJson,
+    ));
+    const freezeStatement = freezeLegacyPublishedArticleStatement({
+      revisionId: publicationSnapshot.publishedRevisionId,
+      metadataJson: publishedMetadataJson,
+      projection: currentProjection,
+    });
+    if (freezeStatement) additionalStatements.push(freezeStatement);
+  }
+  additionalStatements.push(...articleProjectionWriteStatements(resourceId, nextProjection));
 
   const revision = await saveResourceRevision(resourceId, {
+    expectedCurrentRevisionId: current.revisionId,
     title: parsed.title,
     slug,
     path: `/blog/${slug}`,
@@ -245,27 +315,21 @@ export async function updateArticle(id: string, input: ArticleMutationInput) {
     metadata: articleMetadata(readMetadata(current.metadataJson), parsed),
     changeSummary: parsed.changeSummary ?? "Updated in Studio",
     actorId: parsed.authorId,
-  });
-
-  await setArticleFields({
-    resourceId,
-    categoryId: parsed.categoryId ?? null,
-    tagIds,
-    toc: parsed.toc,
-    share: parsed.share,
-    giscus: parsed.giscus,
-    searchable: parsed.search,
-    readingMinutes: parsed.minutesRead ?? null,
+  }, {
+    guardStatements,
+    additionalStatements,
   });
 
   if (!parsed.draft) {
     if (parsed.pubDate && parsed.pubDate > new Date()) {
-      await scheduleResource(resourceId, parsed.pubDate, parsed.authorId);
+      await scheduleResource(resourceId, parsed.pubDate, parsed.authorId, {
+        expectedCurrentRevisionId: revision.revisionId,
+      });
     } else {
-      await publishResource(resourceId, parsed.authorId, parsed.pubDate);
+      await publishResource(resourceId, parsed.authorId, parsed.pubDate, {
+        expectedCurrentRevisionId: revision.revisionId,
+      });
     }
-  } else if (current.status === "scheduled") {
-    await unpublishResource(resourceId, parsed.authorId);
   }
   return revision;
 }

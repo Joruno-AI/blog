@@ -13,6 +13,7 @@
 
 # Production
 /build
+/lib/parity/data/public-content-build.json
 
 # Misc
 .DS_Store

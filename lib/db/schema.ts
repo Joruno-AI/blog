@@ -739,6 +739,90 @@ export const platformJobs = sqliteTable(
   ]
 );
 
+/**
+ * A single-row, generation-based transactional outbox for public projection
+ * rebuilds. Database triggers advance `generation` in the same transaction as
+ * CMS writes. GitHub acceptance advances `submittedGeneration`; only the
+ * post-smoke callback advances `deployedGeneration`.
+ */
+export const publicContentRebuildOutbox = sqliteTable(
+  "public_content_rebuild_outbox",
+  {
+    id: text("id").primaryKey(),
+    generation: integer("generation").notNull().default(0),
+    submittedGeneration: integer("submitted_generation").notNull().default(0),
+    deployedGeneration: integer("deployed_generation").notNull().default(0),
+    status: text("status", {
+      enum: ["pending", "processing", "submitted", "deployed"],
+    })
+      .notNull()
+      .default("pending"),
+    attempts: integer("attempts").notNull().default(0),
+    availableAt: integer("available_at", { mode: "timestamp" }).notNull(),
+    leaseId: text("lease_id"),
+    leaseGeneration: integer("lease_generation"),
+    leaseExpiresAt: integer("lease_expires_at", { mode: "timestamp" }),
+    lastReason: text("last_reason").notNull(),
+    lastResourceId: text("last_resource_id"),
+    lastError: text("last_error"),
+    lastSubmittedAt: integer("last_submitted_at", { mode: "timestamp" }),
+    lastDeployedAt: integer("last_deployed_at", { mode: "timestamp" }),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .$defaultFn(() => new Date()),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .$defaultFn(() => new Date()),
+  },
+  (table) => [
+    index("public_content_rebuild_outbox_ready_idx").on(
+      table.status,
+      table.availableAt,
+      table.leaseExpiresAt,
+    ),
+  ],
+);
+
+/**
+ * Durable, non-public write set for large content imports. Rows are populated
+ * over many Worker invocations and become visible only through the guarded,
+ * atomic cut-over in the final invocation.
+ */
+export const contentImportStaging = sqliteTable(
+  "content_import_staging",
+  {
+    jobId: text("job_id")
+      .notNull()
+      .references(() => platformJobs.id, { onDelete: "cascade" }),
+    entityType: text("entity_type").notNull(),
+    entityKey: text("entity_key").notNull(),
+    ordinal: integer("ordinal").notNull(),
+    payloadJson: text("payload_json").notNull(),
+    contentText: text("content_text"),
+    baselineRevisionId: text("baseline_revision_id"),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .$defaultFn(() => new Date()),
+  },
+  (table) => [
+    primaryKey({ columns: [table.jobId, table.entityType, table.entityKey] }),
+    index("content_import_staging_job_ordinal_idx").on(
+      table.jobId,
+      table.ordinal
+    ),
+  ]
+);
+
+/** A row exists only when every source baseline still matches at cut-over. */
+export const contentImportCommits = sqliteTable("content_import_commits", {
+  jobId: text("job_id")
+    .primaryKey()
+    .references(() => platformJobs.id, { onDelete: "cascade" }),
+  committedAt: integer("committed_at", { mode: "timestamp" })
+    .notNull()
+    .$defaultFn(() => new Date()),
+});
+
 export const publicationEvents = sqliteTable(
   "publication_events",
   {
@@ -797,5 +881,6 @@ export type ResourceRevision = typeof resourceRevisions.$inferSelect;
 export type NewResourceRevision = typeof resourceRevisions.$inferInsert;
 export type Collection = typeof collections.$inferSelect;
 export type PlatformJob = typeof platformJobs.$inferSelect;
+export type PublicContentRebuildOutbox = typeof publicContentRebuildOutbox.$inferSelect;
 export type ResourceAlbum = typeof resourceAlbums.$inferSelect;
 export type Track = typeof tracks.$inferSelect;

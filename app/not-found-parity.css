@@ -1,0 +1,12 @@
+/* Astro StandardLayout parity for the explicit and catch-all 404 routes. */
+@media (max-width: 767px) {
+  .astro-site .legacy-not-found-header,
+  .astro-site .legacy-not-found-body,
+  .astro-site main:has(.legacy-not-found-header) > footer {
+    width: calc(100% - .5rem);
+  }
+
+  .astro-site .legacy-not-found-header,
+  .astro-site .legacy-not-found-body { line-height: 1.8; }
+  .astro-site .legacy-not-found-header h1 { font-size: 1.75rem; line-height: 1.3; }
+}

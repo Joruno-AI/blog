@@ -6,7 +6,6 @@ import {
   inArray,
   like,
   ne,
-  or,
   sql,
   type SQL,
 } from "drizzle-orm";
@@ -24,6 +23,10 @@ import {
 } from "@/lib/db/schema";
 import { getCategoryWithDescendantIds } from "./categories";
 import { articleResourceIdCandidates } from "@/modules/articles/domain/id";
+import {
+  articleProjectionFromMetadata,
+  type ArticleProjection,
+} from "@/modules/articles/infrastructure/article-projection";
 
 type ArticleQueryOptions = {
   limit?: number;
@@ -34,7 +37,28 @@ type ArticleQueryOptions = {
   draft?: boolean;
   search?: string;
   publishedRevision?: boolean;
+  publishedVisibility?: PublishedArticleVisibilityScope;
 };
+
+export type PublishedArticleVisibilityScope = "public" | "public-or-unlisted";
+
+/**
+ * Public article reads must agree on both the resource row and its immutable
+ * published revision. Checking both columns prevents a stale visibility
+ * pointer from exposing a revision that the editor marked private.
+ */
+export function publishedArticleVisibilityCondition(
+  scope: PublishedArticleVisibilityScope = "public"
+): SQL {
+  const allowed = scope === "public-or-unlisted"
+    ? ["public", "unlisted"] as const
+    : ["public"] as const;
+
+  return and(
+    inArray(resources.visibility, [...allowed]),
+    inArray(resourceRevisions.visibility, [...allowed])
+  )!;
+}
 
 function parseMetadata(value: string) {
   try {
@@ -47,34 +71,34 @@ function parseMetadata(value: string) {
   }
 }
 
-function hasMetadataField(metadata: Record<string, unknown>, field: string) {
-  return Object.prototype.hasOwnProperty.call(metadata, field);
-}
+const SAFE_LEGACY_PUBLIC_PROJECTION: ArticleProjection = {
+  categoryId: null,
+  tagIds: [],
+  toc: true,
+  share: true,
+  giscus: true,
+  search: true,
+  minutesRead: null,
+};
 
-function metadataCategoryId(metadata: Record<string, unknown>) {
-  if (!hasMetadataField(metadata, "categoryId")) return undefined;
-  return typeof metadata.categoryId === "string" ? metadata.categoryId : null;
-}
-
-function metadataTagIds(metadata: Record<string, unknown>) {
-  if (!hasMetadataField(metadata, "tagIds")) return undefined;
-  if (!Array.isArray(metadata.tagIds)) return [];
-  return metadata.tagIds.filter((id): id is string => typeof id === "string");
+/** Public callers consume only the immutable revision snapshot. A legacy
+ * partial row fails closed to stable defaults instead of consulting mutable
+ * current side tables. Migration 0003 and the Studio save compatibility path
+ * freeze complete projections for real published rows. */
+export function publishedArticleProjection(
+  metadata: Record<string, unknown>,
+): ArticleProjection {
+  return articleProjectionFromMetadata(metadata)
+    ?? SAFE_LEGACY_PUBLIC_PROJECTION;
 }
 
 function categoryCondition(categoryIds: string[], publishedRevision: boolean): SQL {
   if (!publishedRevision) return inArray(resourceCategories.categoryId, categoryIds);
 
-  return or(
-    inArray(
-      sql<string>`json_extract(${resourceRevisions.metadataJson}, '$.categoryId')`,
-      categoryIds
-    ),
-    and(
-      sql`json_type(${resourceRevisions.metadataJson}, '$.categoryId') IS NULL`,
-      inArray(resourceCategories.categoryId, categoryIds)
-    )
-  )!;
+  return inArray(
+    sql<string>`json_extract(${resourceRevisions.metadataJson}, '$.categoryId')`,
+    categoryIds
+  );
 }
 
 async function queryArticles(options: ArticleQueryOptions = {}) {
@@ -87,6 +111,7 @@ async function queryArticles(options: ArticleQueryOptions = {}) {
     draft,
     search,
     publishedRevision = false,
+    publishedVisibility,
   } = options;
   const conditions: SQL[] = [
     eq(resources.type, "article"),
@@ -96,6 +121,9 @@ async function queryArticles(options: ArticleQueryOptions = {}) {
   if (slug) conditions.push(eq(resources.slug, slug));
   if (draft === true) conditions.push(eq(resources.status, "draft"));
   if (draft === false) conditions.push(eq(resources.status, "published"));
+  if (publishedVisibility) {
+    conditions.push(publishedArticleVisibilityCondition(publishedVisibility));
+  }
   if (search) conditions.push(like(resourceRevisions.title, `%${search}%`));
   if (categoryIds?.length) {
     conditions.push(categoryCondition(categoryIds, publishedRevision));
@@ -197,18 +225,17 @@ async function queryArticles(options: ArticleQueryOptions = {}) {
   const categoryIdsToHydrate = new Set<string>();
   const tagIdsToHydrate = new Set<string>();
   for (const row of preparedRows) {
-    const snapshotCategoryId = publishedRevision
-      ? metadataCategoryId(row.metadata)
-      : undefined;
-    const categoryId = snapshotCategoryId === undefined
-      ? categoryRelationByResource.get(row.id) ?? null
-      : snapshotCategoryId;
+    const publishedProjection = publishedRevision
+      ? publishedArticleProjection(row.metadata)
+      : null;
+    const categoryId = publishedRevision
+      ? publishedProjection!.categoryId
+      : categoryRelationByResource.get(row.id) ?? null;
     if (categoryId) categoryIdsToHydrate.add(categoryId);
 
-    const snapshotTagIds = publishedRevision
-      ? metadataTagIds(row.metadata)
-      : undefined;
-    for (const tagId of snapshotTagIds ?? tagRelationByResource.get(row.id) ?? []) {
+    for (const tagId of publishedRevision
+      ? publishedProjection!.tagIds
+      : tagRelationByResource.get(row.id) ?? []) {
       tagIdsToHydrate.add(tagId);
     }
   }
@@ -244,23 +271,16 @@ async function queryArticles(options: ArticleQueryOptions = {}) {
 
   return preparedRows.map((row) => {
     const metadata = row.metadata;
-    const snapshotCategoryId = publishedRevision
-      ? metadataCategoryId(metadata)
-      : undefined;
-    const categoryId = snapshotCategoryId === undefined
-      ? categoryRelationByResource.get(row.id) ?? null
-      : snapshotCategoryId;
+    const publishedProjection = publishedRevision
+      ? publishedArticleProjection(metadata)
+      : null;
+    const categoryId = publishedRevision
+      ? publishedProjection!.categoryId
+      : categoryRelationByResource.get(row.id) ?? null;
     const category = categoryId ? categoryById.get(categoryId) ?? null : null;
-    const snapshotTagIds = publishedRevision ? metadataTagIds(metadata) : undefined;
-    const effectiveTagIds = snapshotTagIds ?? tagRelationByResource.get(row.id) ?? [];
-    const metadataBoolean = (field: string, fallback: boolean) =>
-      publishedRevision && typeof metadata[field] === "boolean"
-        ? metadata[field] as boolean
-        : fallback;
-    const metadataNumber = (field: string, fallback: number | null) =>
-      publishedRevision && typeof metadata[field] === "number"
-        ? metadata[field] as number
-        : fallback;
+    const effectiveTagIds = publishedRevision
+      ? publishedProjection!.tagIds
+      : tagRelationByResource.get(row.id) ?? [];
     return {
       id: row.id,
       title: row.title,
@@ -272,10 +292,10 @@ async function queryArticles(options: ArticleQueryOptions = {}) {
       draft: row.status !== "published",
       status: row.status,
       visibility: row.visibility,
-      toc: metadataBoolean("toc", row.toc ?? true),
-      share: metadataBoolean("share", row.share ?? true),
-      giscus: metadataBoolean("giscus", row.giscus ?? true),
-      search: metadataBoolean("search", row.searchable ?? true),
+      toc: publishedProjection?.toc ?? row.toc ?? true,
+      share: publishedProjection?.share ?? row.share ?? true,
+      giscus: publishedProjection?.giscus ?? row.giscus ?? true,
+      search: publishedProjection?.search ?? row.searchable ?? true,
       radio: metadata.radio === true,
       video: metadata.video === true,
       platform: typeof metadata.platform === "string" ? metadata.platform : null,
@@ -289,7 +309,9 @@ async function queryArticles(options: ArticleQueryOptions = {}) {
       podcastError: null,
       podcastAttempts: 0,
       podcastGeneratedAt: null,
-      minutesRead: metadataNumber("minutesRead", row.readingMinutes),
+      minutesRead: publishedRevision
+        ? publishedProjection!.minutesRead
+        : row.readingMinutes,
       pubDate: row.pubDate,
       lastModDate: row.updatedAt,
       categoryId,
@@ -314,6 +336,222 @@ async function queryArticles(options: ArticleQueryOptions = {}) {
       }),
     };
   });
+}
+
+/**
+ * Public catalog/search/sidebar reads must not transport article bodies from
+ * D1. Keep this projection explicit so adding a field to the detail query
+ * cannot silently make every Blog page fetch the full Markdown corpus again.
+ */
+export const publicArticleSummarySelection = {
+  id: resources.id,
+  title: resourceRevisions.title,
+  slug: resourceRevisions.slug,
+  path: resourceRevisions.path,
+  metadataJson: resourceRevisions.metadataJson,
+  excerpt: resourceRevisions.description,
+  status: resources.status,
+  visibility: resourceRevisions.visibility,
+  pubDate: resources.publishedAt,
+  updatedAt: resources.updatedAt,
+} as const;
+
+type PublicArticleSummaryOptions = {
+  limit?: number;
+  offset?: number;
+  slug?: string;
+  search?: string;
+  categoryIds?: string[];
+  publishedVisibility?: PublishedArticleVisibilityScope;
+};
+
+async function queryPublicArticleSummaries(
+  options: PublicArticleSummaryOptions = {}
+) {
+  const {
+    limit = 20,
+    offset = 0,
+    slug,
+    search,
+    categoryIds,
+    publishedVisibility = "public",
+  } = options;
+  const conditions: SQL[] = [
+    eq(resources.type, "article"),
+    eq(resources.status, "published"),
+    publishedArticleVisibilityCondition(publishedVisibility),
+  ];
+  if (slug) conditions.push(eq(resourceRevisions.slug, slug));
+  if (search) conditions.push(like(resourceRevisions.title, `%${search}%`));
+  if (categoryIds?.length) {
+    conditions.push(categoryCondition(categoryIds, true));
+  }
+
+  const rows = await db
+    .select(publicArticleSummarySelection)
+    .from(resources)
+    .innerJoin(
+      resourceRevisions,
+      eq(resourceRevisions.id, resources.publishedRevisionId)
+    )
+    .where(and(...conditions))
+    .orderBy(
+      desc(resources.publishedAt),
+      desc(resources.updatedAt),
+      desc(resources.id)
+    )
+    .limit(Math.min(Math.max(limit, 1), 1_000))
+    .offset(Math.max(offset, 0));
+
+  if (rows.length === 0) return [];
+  const preparedRows = rows.map((row) => ({
+    ...row,
+    metadata: parseMetadata(row.metadataJson),
+  }));
+
+  const categoryIdsToHydrate = new Set<string>();
+  const tagIdsToHydrate = new Set<string>();
+  for (const row of preparedRows) {
+    const projection = publishedArticleProjection(row.metadata);
+    if (projection.categoryId) categoryIdsToHydrate.add(projection.categoryId);
+    for (const tagId of projection.tagIds) {
+      tagIdsToHydrate.add(tagId);
+    }
+  }
+
+  const categoryRows: Array<typeof categories.$inferSelect> = [];
+  const tagRows: Array<typeof tags.$inferSelect> = [];
+  const categoryIdsList = [...categoryIdsToHydrate];
+  const tagIdsList = [...tagIdsToHydrate];
+  for (let index = 0; index < categoryIdsList.length; index += 80) {
+    categoryRows.push(...await db
+      .select()
+      .from(categories)
+      .where(inArray(categories.id, categoryIdsList.slice(index, index + 80))));
+  }
+  for (let index = 0; index < tagIdsList.length; index += 80) {
+    tagRows.push(...await db
+      .select()
+      .from(tags)
+      .where(inArray(tags.id, tagIdsList.slice(index, index + 80))));
+  }
+  const categoryById = new Map(categoryRows.map((category) => [category.id, category]));
+  const tagById = new Map(tagRows.map((tag) => [tag.id, tag]));
+
+  return preparedRows.map((row) => {
+    const metadata = row.metadata;
+    const projection = publishedArticleProjection(metadata);
+    const categoryId = projection.categoryId;
+    return {
+      id: row.id,
+      title: row.title,
+      slug: row.slug,
+      path: row.path,
+      subtitle: typeof metadata.subtitle === "string" ? metadata.subtitle : null,
+      excerpt: row.excerpt,
+      ogImage: typeof metadata.ogImage === "string" ? metadata.ogImage : null,
+      draft: false,
+      status: row.status,
+      visibility: row.visibility,
+      toc: projection.toc,
+      share: projection.share,
+      giscus: projection.giscus,
+      search: projection.search,
+      radio: metadata.radio === true,
+      video: metadata.video === true,
+      platform: typeof metadata.platform === "string" ? metadata.platform : null,
+      minutesRead: projection.minutesRead,
+      pubDate: row.pubDate,
+      lastModDate: row.updatedAt,
+      categoryId,
+      updatedAt: row.updatedAt,
+      category: categoryId ? categoryById.get(categoryId) ?? null : null,
+      postTags: projection.tagIds.flatMap((tagId) => {
+        const tag = tagById.get(tagId);
+        if (!tag) return [];
+        return [{
+          postId: row.id,
+          tagId: tag.id,
+          tag: {
+            id: tag.id,
+            name: tag.name,
+            slug: tag.slug,
+            createdAt: tag.createdAt,
+          },
+        }];
+      }),
+    };
+  });
+}
+
+export async function getPublicPostSummaryBySlug(
+  slug: string,
+  options: { allowUnlisted?: boolean } = {}
+) {
+  const rows = await queryPublicArticleSummaries({
+    slug,
+    limit: 1,
+    publishedVisibility: options.allowUnlisted
+      ? "public-or-unlisted"
+      : "public",
+  });
+  return rows[0] ?? null;
+}
+
+export async function getPublicPostTagProjections(options: {
+  limit?: number;
+  offset?: number;
+} = {}) {
+  const rows = await db
+    .select({
+      id: resources.id,
+      metadataJson: resourceRevisions.metadataJson,
+    })
+    .from(resources)
+    .innerJoin(
+      resourceRevisions,
+      eq(resourceRevisions.id, resources.publishedRevisionId)
+    )
+    .where(and(
+      eq(resources.type, "article"),
+      eq(resources.status, "published"),
+      publishedArticleVisibilityCondition("public")
+    ))
+    .orderBy(desc(resources.publishedAt), desc(resources.id))
+    .limit(Math.min(Math.max(options.limit ?? 1_000, 1), 1_000))
+    .offset(Math.max(options.offset ?? 0, 0));
+  if (rows.length === 0) return [];
+
+  const metadataByResource = new Map(
+    rows.map((row) => [row.id, parseMetadata(row.metadataJson)])
+  );
+  const resourceIds = rows.map((row) => row.id);
+
+  const effectiveIds = new Map<string, string[]>();
+  const tagIds = new Set<string>();
+  for (const resourceId of resourceIds) {
+    const ids = publishedArticleProjection(
+      metadataByResource.get(resourceId) ?? {},
+    ).tagIds;
+    effectiveIds.set(resourceId, ids);
+    ids.forEach((id) => tagIds.add(id));
+  }
+  const tagRows: Array<Pick<typeof tags.$inferSelect, "id" | "name">> = [];
+  const tagIdList = [...tagIds];
+  for (let index = 0; index < tagIdList.length; index += 80) {
+    tagRows.push(...await db
+      .select({ id: tags.id, name: tags.name })
+      .from(tags)
+      .where(inArray(tags.id, tagIdList.slice(index, index + 80))));
+  }
+  const tagNameById = new Map(tagRows.map((tag) => [tag.id, tag.name]));
+  return resourceIds.map((id) => ({
+    id,
+    tagNames: (effectiveIds.get(id) ?? []).flatMap((tagId) => {
+      const name = tagNameById.get(tagId);
+      return name ? [name] : [];
+    }),
+  }));
 }
 
 export async function getPosts(options?: {
@@ -342,18 +580,50 @@ export async function getPosts(options?: {
   }));
 }
 
+export async function getPublicPosts(options?: {
+  limit?: number;
+  offset?: number;
+  categoryId?: string;
+  search?: string;
+}) {
+  const rows = await queryPublicArticleSummaries({
+    limit: options?.limit,
+    offset: options?.offset,
+    search: options?.search,
+    categoryIds: options?.categoryId ? [options.categoryId] : undefined,
+  });
+  return rows.map((post) => ({
+    id: post.id,
+    title: post.title,
+    slug: post.slug,
+    excerpt: post.excerpt,
+    draft: post.draft,
+    status: post.status,
+    pubDate: post.pubDate,
+    updatedAt: post.updatedAt,
+    categoryId: post.categoryId,
+    categoryName: post.category?.name ?? null,
+  }));
+}
+
 export async function getPostById(id: string) {
   const ids = articleResourceIdCandidates(id);
   const rows = await queryArticles({ ids, limit: 2 });
   return rows[0] ?? null;
 }
 
-export async function getPostBySlug(slug: string) {
+export async function getPublicPostBySlug(
+  slug: string,
+  options: { allowUnlisted?: boolean } = {}
+) {
   const rows = await queryArticles({
     slug,
     limit: 1,
     draft: false,
     publishedRevision: true,
+    publishedVisibility: options.allowUnlisted
+      ? "public-or-unlisted"
+      : "public",
   });
   return rows[0] ?? null;
 }
@@ -389,6 +659,29 @@ export async function getPostsCount(options?: {
   return result?.total ?? 0;
 }
 
+export async function getPublicPostsCount(options?: {
+  categoryId?: string;
+}) {
+  const conditions: SQL[] = [
+    eq(resources.type, "article"),
+    eq(resources.status, "published"),
+    publishedArticleVisibilityCondition("public"),
+  ];
+  if (options?.categoryId) {
+    conditions.push(categoryCondition([options.categoryId], true));
+  }
+
+  const [result] = await db
+    .select({ total: countDistinct(resources.id) })
+    .from(resources)
+    .innerJoin(
+      resourceRevisions,
+      eq(resourceRevisions.id, resources.publishedRevisionId)
+    )
+    .where(and(...conditions));
+  return result?.total ?? 0;
+}
+
 export async function getPostsWithContent(options?: {
   limit?: number;
   offset?: number;
@@ -402,13 +695,26 @@ export async function getPostsWithContent(options?: {
   });
 }
 
-export async function getPostsWithCategoryPath(options?: {
+export async function getPublicPostsWithContent(options?: {
+  limit?: number;
+  offset?: number;
+  categoryId?: string;
+}) {
+  return queryArticles({
+    ...options,
+    categoryIds: options?.categoryId ? [options.categoryId] : undefined,
+    draft: false,
+    publishedRevision: true,
+    publishedVisibility: "public",
+  });
+}
+
+export async function getPublicPostSummariesWithCategoryPath(options: {
   limit?: number;
   offset?: number;
   categoryId?: string;
   categoryPath?: string;
-  draft?: boolean;
-}) {
+} = {}) {
   const allCategories = await db.query.categories.findMany();
   const categoryMap = new Map(
     allCategories.map((category) => [category.id, category])
@@ -427,8 +733,8 @@ export async function getPostsWithCategoryPath(options?: {
     return { slugPath: slugs.join("/"), namePath: names.join("/") };
   };
 
-  let categoryId = options?.categoryId;
-  if (options?.categoryPath) {
+  let categoryId = options.categoryId;
+  if (options.categoryPath) {
     categoryId = allCategories.find(
       (category) => buildPath(category.id).slugPath === options.categoryPath
     )?.id;
@@ -437,10 +743,9 @@ export async function getPostsWithCategoryPath(options?: {
   const categoryIds = categoryId
     ? await getCategoryWithDescendantIds(categoryId)
     : undefined;
-  const rows = await queryArticles({
+  const rows = await queryPublicArticleSummaries({
     ...options,
     categoryIds,
-    publishedRevision: options?.draft === false,
   });
 
   return rows.map((post) => {
@@ -452,5 +757,87 @@ export async function getPostsWithCategoryPath(options?: {
       categoryPath: paths.slugPath,
       categoryNamePath: paths.namePath,
     };
+  });
+}
+
+type PostsWithCategoryPathOptions = {
+  limit?: number;
+  offset?: number;
+  categoryId?: string;
+  categoryPath?: string;
+  draft?: boolean;
+  publishedVisibility?: PublishedArticleVisibilityScope;
+};
+
+async function queryPostsWithCategoryPath(
+  options: PostsWithCategoryPathOptions = {}
+) {
+  const allCategories = await db.query.categories.findMany();
+  const categoryMap = new Map(
+    allCategories.map((category) => [category.id, category])
+  );
+  const buildPath = (id: string) => {
+    const slugs: string[] = [];
+    const names: string[] = [];
+    let currentId: string | null = id;
+    while (currentId) {
+      const category = categoryMap.get(currentId);
+      if (!category) break;
+      slugs.unshift(category.slug);
+      names.unshift(category.name);
+      currentId = category.parentId;
+    }
+    return { slugPath: slugs.join("/"), namePath: names.join("/") };
+  };
+
+  let categoryId = options.categoryId;
+  if (options.categoryPath) {
+    categoryId = allCategories.find(
+      (category) => buildPath(category.id).slugPath === options.categoryPath
+    )?.id;
+    if (!categoryId) return [];
+  }
+  const categoryIds = categoryId
+    ? await getCategoryWithDescendantIds(categoryId)
+    : undefined;
+  const rows = await queryArticles({
+    ...options,
+    categoryIds,
+    publishedRevision: options.draft === false,
+    publishedVisibility: options.publishedVisibility,
+  });
+
+  return rows.map((post) => {
+    const paths = post.categoryId
+      ? buildPath(post.categoryId)
+      : { slugPath: null, namePath: null };
+    return {
+      ...post,
+      categoryPath: paths.slugPath,
+      categoryNamePath: paths.namePath,
+    };
+  });
+}
+
+export async function getPostsWithCategoryPath(options?: {
+  limit?: number;
+  offset?: number;
+  categoryId?: string;
+  categoryPath?: string;
+  draft?: boolean;
+}) {
+  return queryPostsWithCategoryPath(options);
+}
+
+export async function getPublicPostsWithCategoryPath(options?: {
+  limit?: number;
+  offset?: number;
+  categoryId?: string;
+  categoryPath?: string;
+}) {
+  return queryPostsWithCategoryPath({
+    ...options,
+    draft: false,
+    publishedVisibility: "public",
   });
 }

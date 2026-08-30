@@ -4,27 +4,45 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+  repository_dispatch:
+    types:
+      - content-published
 
 concurrency:
   group: personal-platform-production
-  cancel-in-progress: false
+  # A newer CMS generation always contains every earlier D1 change. Cancel an
+  # older build so only the newest generated projection reaches production.
+  cancel-in-progress: true
 
 jobs:
   deploy:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    environment: production
     permissions:
       contents: read
       deployments: write
 
     steps:
+      - name: Validate repository dispatch
+        if: github.event_name == 'repository_dispatch'
+        run: |
+          source="$(jq -er '.client_payload.source | select(. == "cms-outbox")' "$GITHUB_EVENT_PATH")"
+          generation="$(jq -er '.client_payload.generation | select(type == "number" and . == floor and . > 0 and . <= 9007199254740991) | tostring' "$GITHUB_EVENT_PATH")"
+          test "$source" = "cms-outbox"
+          test "$generation" -gt 0
+
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '22'
           cache: pnpm
@@ -33,26 +51,18 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Install HeroUI Pro package contents
-        run: pnpm dlx hpsetup@latest "$HEROUI_HP_KEY" react --auto
+        run: pnpm heroui:install:ci
         env:
           HEROUI_HP_KEY: ${{ secrets.HEROUI_HP_KEY }}
 
-      - name: Lint, test and typecheck
+      # Run every gate that only depends on the checkout before touching the
+      # production database. Remote projection generation stays after the D1
+      # migration/verification that defines its source schema.
+      - name: Lint, typecheck and test
         run: |
           pnpm lint
-          pnpm test
           pnpm exec tsc --noEmit
-
-      - name: Build Cloudflare Worker with OpenNext
-        run: pnpm cloudflare:build
-        env:
-          NODE_OPTIONS: "--max-old-space-size=4096"
-          NODE_ENV: production
-          BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
-          BETTER_AUTH_URL: ${{ secrets.BETTER_AUTH_URL }}
-          CRON_SECRET: ${{ secrets.CRON_SECRET }}
-          NEXT_PUBLIC_BETTER_AUTH_URL: ${{ secrets.BETTER_AUTH_URL }}
-          R2_PUBLIC_URL: ${{ secrets.R2_PUBLIC_URL }}
+          pnpm test
 
       - name: Apply D1 migrations
         run: pnpm exec wrangler d1 migrations apply blog-cms-db --remote
@@ -65,9 +75,38 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          REQUIRE_PUBLIC_REBUILD_OUTBOX: "true"
+
+      - name: Generate public projection from remote D1
+        run: pnpm data:generate:public-content:remote
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Build Cloudflare Worker with OpenNext
+        run: pnpm cloudflare:build
+        env:
+          NODE_OPTIONS: "--max-old-space-size=4096"
+          NODE_ENV: production
+          # Only public routing configuration is present during compilation.
+          # Authentication secrets are supplied by Cloudflare at runtime.
+          BETTER_AUTH_URL: "https://personal-platform.wsl1710642275.workers.dev"
+          NEXT_PUBLIC_BETTER_AUTH_URL: "https://personal-platform.wsl1710642275.workers.dev"
+          R2_PUBLIC_URL: "https://pub-563a1d32732a43a4ba208b4eff1536ac.r2.dev"
+
+      - name: Produce auditable production bundle
+        run: pnpm exec wrangler deploy --dry-run --outdir .open-next/deploy-audit
+
+      - name: Verify bundled Worker contains no known secrets
+        run: pnpm security:verify:open-next -- --bundle .open-next/deploy-audit/custom-worker.js
+        env:
+          SCAN_SECRET_BETTER_AUTH: ${{ secrets.BETTER_AUTH_SECRET }}
+          SCAN_SECRET_CRON: ${{ secrets.CRON_SECRET }}
+          SCAN_SECRET_CLOUDFLARE_API: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          SCAN_SECRET_HEROUI: ${{ secrets.HEROUI_HP_KEY }}
 
       - name: Deploy Cloudflare Worker
-        run: pnpm exec opennextjs-cloudflare deploy
+        run: pnpm cloudflare:deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -78,3 +117,19 @@ jobs:
           # Verify the unified Next.js public site, Studio, D1 data and static
           # Astro-compatible indexes on the production Worker.
           SMOKE_BASE_URL: https://personal-platform.wsl1710642275.workers.dev
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+
+      - name: Acknowledge deployed public projection
+        if: github.event_name == 'repository_dispatch'
+        env:
+          ACK_URL: https://personal-platform.wsl1710642275.workers.dev/api/jobs/public-content-rebuild/ack
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          source="$(jq -er '.client_payload.source | select(. == "cms-outbox")' "$GITHUB_EVENT_PATH")"
+          generation="$(jq -er '.client_payload.generation | select(type == "number" and . == floor and . > 0 and . <= 9007199254740991) | tostring' "$GITHUB_EVENT_PATH")"
+          test "$source" = "cms-outbox"
+          curl --fail-with-body --show-error --silent --retry 3 --retry-all-errors \
+            --request POST "$ACK_URL" \
+            --header "Authorization: Bearer $CRON_SECRET" \
+            --header "Content-Type: application/json" \
+            --data "$(jq -cn --argjson generation "$generation" '{generation: $generation}')"

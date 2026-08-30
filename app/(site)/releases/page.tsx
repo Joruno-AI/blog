@@ -1,8 +1,17 @@
-import Link from "next/link";
+import type { Metadata } from "next";
 
-import { LegacyPage } from "@/components/site/legacy-page";
-import { WarningCallout } from "@/components/site/warning-callout";
+import { GithubActivityEmpty } from "@/components/site/github-activity-empty";
+import { LegacyPageFooter } from "@/components/site/legacy-page-footer";
+import { legacyMetadata } from "@/lib/parity/legacy-metadata";
+import "@/app/github-activity-parity.css";
+
+export const metadata: Metadata = legacyMetadata({
+  title: "AstroEco is Releasing...",
+  description: "Display your GitHub releases using astro-loader-github-releases",
+  path: "/releases/",
+  image: "/og-images/releases.png",
+});
 
 export default function ReleasesPage() {
-  return <LegacyPage title="AstroEco is Releasing..." subtitle="Display your GitHub releases using astro-loader-github-releases"><WarningCallout>No GitHub data available for display. See <Link href="/blog/customizing-github-activity-pages">Customizing GitHub Activity Pages</Link> for details.</WarningCallout></LegacyPage>;
+  return <><GithubActivityEmpty action="Releasing" loader="astro-loader-github-releases" /><LegacyPageFooter /></>;
 }

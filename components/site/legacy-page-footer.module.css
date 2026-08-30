@@ -1,0 +1,19 @@
+.footer {
+  width: min(100%, 65ch);
+  max-width: 65ch;
+  margin: 2rem auto 0;
+}
+
+.backLink {
+  border: 0 !important;
+  font-family: var(--font-mono);
+  opacity: .5;
+}
+
+@media print {
+  .footer { display: none; }
+}
+
+@media (max-width: 767px) {
+  .footer { line-height: 1.8; }
+}

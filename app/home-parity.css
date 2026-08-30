@@ -1,0 +1,24 @@
+/* Mobile typography emitted by the production Astro typography pipeline. */
+@media (max-width: 639px) {
+  .astro-site[data-page-kind="home"] article.prose {
+    line-height: 1.8;
+  }
+
+  .astro-site[data-page-kind="home"] .home-shell > h1 {
+    max-width: 10ch;
+    margin-bottom: 0.8888889em;
+    font-size: 1.75rem;
+    font-weight: 800;
+    line-height: 1.3;
+    letter-spacing: -0.065em;
+  }
+
+  .astro-site[data-page-kind="home"] .home-shell > h2 {
+    margin-top: 2em;
+    margin-bottom: 1em;
+    font-size: 1.5rem;
+    font-weight: 800;
+    line-height: 1.35;
+    letter-spacing: -0.035em;
+  }
+}

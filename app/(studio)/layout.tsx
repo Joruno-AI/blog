@@ -1,6 +1,7 @@
 import React from 'react'
 import { DashboardLayout } from '@/components/layout/studio-layout'
 import { AppProviders } from '@/components/platform/app-providers'
+import '../studio-global.css'
 
 // Studio pages are authenticated, session-aware application routes. Rendering
 // them at request time also prevents client-only form and upload libraries from

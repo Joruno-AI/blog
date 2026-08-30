@@ -1,19 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { z } from 'zod'
 
 import { getRequestViewer } from '@/lib/auth/request-viewer'
-import { CONTENT_SNAPSHOT_PATH, contentBundleSchema } from '@/lib/content-transfer/contract'
-import { applyContentImport, planContentImport } from '@/lib/content-transfer/import-service'
-import { applyLegacyAstroImport, planLegacyAstroImport } from '@/lib/content-transfer/legacy-astro-import'
+import { createUploadedContentImportJob } from '@/lib/content-transfer/import-jobs'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
-
-const importRequestSchema = z.object({
-  bundle: z.unknown(),
-  dryRun: z.boolean().default(true),
-  confirm: z.string().optional(),
-})
 
 export async function POST(request: NextRequest) {
   const viewer = await getRequestViewer()
@@ -22,40 +13,31 @@ export async function POST(request: NextRequest) {
   }
 
   const contentLength = Number(request.headers.get('content-length') || 0)
+  if (!Number.isSafeInteger(contentLength) || contentLength <= 0) {
+    return NextResponse.json({ error: 'Content-Length is required for streamed content import' }, { status: 411 })
+  }
   if (contentLength > 50 * 1024 * 1024) {
     return NextResponse.json({ error: 'Content bundle exceeds the 50 MB request limit' }, { status: 413 })
   }
+  if (!request.body) return NextResponse.json({ error: 'Content bundle body is required' }, { status: 400 })
+
+  const dryRun = request.nextUrl.searchParams.get('dryRun') !== 'false'
+  const confirm = request.headers.get('x-content-import-confirm')
+  if (!dryRun && confirm !== 'APPLY_CONTENT_IMPORT') {
+    return NextResponse.json({ error: 'Set X-Content-Import-Confirm to APPLY_CONTENT_IMPORT before applying changes' }, { status: 400 })
+  }
 
   try {
-    const input = importRequestSchema.parse(await request.json())
-    const parsedBundle = contentBundleSchema.parse(input.bundle)
-    const isSnapshot = parsedBundle.files.some((file) => file.path === CONTENT_SNAPSHOT_PATH)
-    if (input.dryRun) {
-      const { bundle, plan } = isSnapshot
-        ? await planContentImport(parsedBundle)
-        : await planLegacyAstroImport(parsedBundle)
-      return NextResponse.json({
-        dryRun: true,
-        schemaVersion: bundle.schemaVersion,
-        generatedAt: bundle.generatedAt,
-        plan,
-      }, { status: plan.conflicts.length ? 409 : 200 })
-    }
-    if (input.confirm !== 'APPLY_CONTENT_IMPORT') {
-      return NextResponse.json({ error: 'Set confirm to APPLY_CONTENT_IMPORT before applying changes' }, { status: 400 })
-    }
-    return NextResponse.json(isSnapshot
-      ? await applyContentImport(parsedBundle)
-      : await applyLegacyAstroImport(parsedBundle, viewer.id))
+    return NextResponse.json(await createUploadedContentImportJob({
+      body: request.body,
+      contentLength,
+      dryRun,
+      ownerId: viewer.id,
+    }), { status: 202 })
   } catch (error) {
-    const conflicts = error && typeof error === 'object' && 'conflicts' in error
-      ? (error as { conflicts?: unknown }).conflicts
-      : undefined
-    if (conflicts) return NextResponse.json({ error: 'Content import conflict', conflicts }, { status: 409 })
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Invalid content bundle', issues: error.issues }, { status: 400 })
-    }
-    console.error('Failed to import content bundle', error)
-    return NextResponse.json({ error: 'Failed to import content bundle' }, { status: 500 })
+    console.error('Failed to persist content bundle import', error)
+    const message = error instanceof Error ? error.message : 'Failed to import content bundle'
+    const status = /50 MB request limit|Content-Length/i.test(message) ? 413 : /Invalid content/i.test(message) ? 400 : 500
+    return NextResponse.json({ error: message }, { status })
   }
 }

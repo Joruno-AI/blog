@@ -1,0 +1,3 @@
+/* Application-only design system. Keep HeroUI out of the Astro-parity C-end cascade. */
+@import '@heroui/styles';
+@import '@heroui-pro/react/css';

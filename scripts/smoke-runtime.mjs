@@ -2,26 +2,33 @@ const base = (process.env.SMOKE_BASE_URL || process.argv[2] || "http://127.0.0.1
 
 const checks = [
   ["/", 200],
-  ["/blog", 200],
-  ["/music", 200],
-  ["/photos", 200],
-  ["/docs", 200],
-  ["/agent", 200],
-  ["/agent/all", 200],
-  ["/agent/scenes", 200],
-  ["/agent/anthropics/skills", 200],
-  ["/knowledge", 200],
-  ["/projects", 200],
-  ["/feeds", 200],
-  ["/prs", 200],
-  ["/releases", 200],
-  ["/login", 200],
+  ["/404", 200],
+  ["/404/", 308],
+  ["/blog/", 200],
+  ["/music/", 200],
+  ["/photos/", 200],
+  ["/docs/", 200],
+  ["/agent/", 200],
+  ["/agent/all/", 200],
+  ["/agent/scenes/", 200],
+  ["/agent/anthropics/skills/", 200],
+  ["/projects/", 200],
+  ["/feeds/", 200],
+  ["/prs/", 200],
+  ["/releases/", 200],
+  ["/login/", 200],
   ["/studio", 307],
-  ["/search?q=Next", 200],
+  ["/knowledge/", 404],
+  ["/tools/", 404],
+  ["/search/?q=Next", 404],
+  ["/music/albums/__removed_public_route__/", 404],
+  ["/projects/__removed_public_route__/", 404],
+  ["/docs/__removed_public_route__/", 404],
   ["/rss.xml", 200],
-  ["/sitemap.xml", 200],
-  ["/og-images/smoke.png", 307],
-  ["/blog/__smoke_missing_resource__", 404],
+  ["/sitemap-index.xml", 200],
+  ["/sitemap-0.xml", 200],
+  ["/sitemap.xml", 404],
+  ["/blog/__smoke_missing_resource__/", 404],
 ];
 
 for (const [path, expected] of checks) {
@@ -50,15 +57,41 @@ if (schedulerWithoutSecret.status !== 401) {
 }
 console.log("PASS 401 /api/jobs/run without secret");
 
-const music = await fetch(`${base}/api/public/music`).then((response) => response.json());
-if (!Array.isArray(music.albums) || music.albums.length === 0) {
-  throw new Error("Public music API returned no migrated albums");
+const ackWithoutSecret = await fetch(`${base}/api/jobs/public-content-rebuild/ack`, {
+  method: "POST",
+  headers: { "content-type": "application/json" },
+  body: JSON.stringify({ generation: 1 }),
+  redirect: "manual",
+});
+if (ackWithoutSecret.status !== 401) {
+  throw new Error(
+    `/api/jobs/public-content-rebuild/ack without secret: expected 401, received ${ackWithoutSecret.status}`,
+  );
 }
-const albumResponse = await fetch(`${base}/music/albums/${encodeURIComponent(music.albums[0].id)}`);
-if (albumResponse.status !== 200) {
-  throw new Error(`First album page: expected 200, received ${albumResponse.status}`);
+console.log("PASS 401 /api/jobs/public-content-rebuild/ack without secret");
+
+const cronSecret = process.env.CRON_SECRET;
+if (!cronSecret) {
+  throw new Error("CRON_SECRET is required so smoke can verify the production rebuild configuration");
 }
-console.log(`PASS 200 /music/albums/${music.albums[0].id}`);
+const configuredScheduler = await fetch(`${base}/api/jobs/run`, {
+  method: "POST",
+  headers: { authorization: `Bearer ${cronSecret}` },
+  redirect: "manual",
+});
+const configuredSchedulerBody = await configuredScheduler.json().catch(() => null);
+if (configuredScheduler.status !== 200) {
+  throw new Error(
+    `/api/jobs/run with secret: expected success, received ${configuredScheduler.status}`,
+  );
+}
+const rebuildState = configuredSchedulerBody?.publicContentRebuild;
+if (!rebuildState || rebuildState.status === "failed" || rebuildState.status === "disabled") {
+  throw new Error(
+    `Production public rebuild configuration is unhealthy: ${JSON.stringify(rebuildState)}`,
+  );
+}
+console.log(`PASS configured public rebuild runner (${rebuildState.status})`);
 
 const photosHtml = await fetch(`${base}/photos`).then((response) => response.text());
 const photoUrl = photosHtml.match(/\\"url\\":\\"(https:[^"\\]+)/)?.[1];
@@ -76,6 +109,24 @@ if (!ogImageResponse.ok || ogImageResponse.headers.get("content-type") !== "imag
   throw new Error(`Fallback OG image: expected image/png, received ${ogImageResponse.status}`);
 }
 console.log("PASS 200 /og-images/og-image.png");
+
+const missingOgImage = await fetch(`${base}/og-images/__smoke_missing__.png`);
+if (
+  missingOgImage.status !== 200
+  || missingOgImage.headers.get("content-type") !== "image/png"
+  || missingOgImage.headers.get("x-og-image-fallback") !== "generic"
+) {
+  throw new Error(
+    `Missing OG image: expected generic image/png fallback, received ${missingOgImage.status}`,
+  );
+}
+console.log("PASS generic fallback for missing .png OG image");
+
+const invalidOgImage = await fetch(`${base}/og-images/__smoke_invalid__.svg`);
+if (invalidOgImage.status !== 404) {
+  throw new Error(`Invalid OG path: expected 404, received ${invalidOgImage.status}`);
+}
+console.log("PASS 404 invalid non-PNG OG path");
 
 const docsCatalog = await fetch(`${base}/docs/catalog.json`).then((response) => response.json());
 if (docsCatalog.stats?.courses !== 349 || docsCatalog.stats?.articles !== 13_034) {

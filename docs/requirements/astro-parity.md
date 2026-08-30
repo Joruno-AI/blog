@@ -6,7 +6,7 @@
 
 - 单一 Next.js App Router 工程同时承载 C 端、`/studio` CMS 与 API。
 - `blog` Astro 工程及其线上 Pages 部署是 C 端唯一的视觉、路由、内容与交互基准。
-- CMS 使用独立的 shadcn/ui 设计系统；其 CSS、组件与信息架构不得改变 C 端。
+- CMS 使用独立的 HeroUI 设计系统；其 CSS、组件与信息架构不得改变 C 端。
 - 不迁移或保留产品、付费内容、会员权益等新增业务能力。
 
 ## 内容主权
@@ -34,6 +34,7 @@
 - `/changelog`、`/changelog/[slug]`
 - `/feeds`、`/prs`、`/releases`
 - `/rss.xml`、`/search-index.json`
+- `/robots.txt`、`/sitemap-index.xml`、`/sitemap-0.xml`
 - `/og-images/[...slug].png`
 - `/giscus/[theme].css`
 - `/app.webmanifest`
@@ -62,8 +63,9 @@
 3. Astro Pages 与 Next.js Preview 在桌面和移动断点逐页截图对比。
 4. Light/Dark、首屏、长页、空状态、错误状态及交互状态均有视觉样本。
 5. 搜索、音乐播放、歌词、目录、过滤、图片查看等功能具有浏览器回归测试。
-6. `/studio` 的 shadcn/ui 样式不得出现在任何公开页面的 CSS 依赖链中。
+6. `/studio` 的 HeroUI 样式不得出现在任何公开页面的 CSS 依赖链中。
 7. 原 Astro Pages 保持生产流量，直到上述门槛全部通过并获得切换确认。
+8. 所有迁移修复只能提交到独立审查分支；用户明确完成视觉验收前，不得合并或直接推送到 `main`。
 
 ## 明确排除
 
@@ -71,3 +73,5 @@
 - `product_items`、`entitlements` 及会员付费访问。
 - 为“个人数字产品平台”新增的 C 端首页、导航或视觉语言。
 - 未经确认的新公开栏目或对原 Astro 信息架构的改造。
+- 过渡架构曾暴露但 Astro 不存在的 `/knowledge`、`/tools`、`/search`、
+  `/music/albums/[slug]`、`/projects/[...slug]`、`/docs/[...slug]` 页面。
