@@ -171,6 +171,7 @@ test("keeps Blog, Streams and Changelog public navigation and desktop projection
   const reader = readFileSync(join(root, "components/site/blog-reader-sidebar.tsx"), "utf8");
   const filter = readFileSync(join(root, "components/site/blog-filter-view.tsx"), "utf8");
   const article = readFileSync(join(root, "app/(site)/blog/[...slug]/page.tsx"), "utf8");
+  const blogCss = readFileSync(join(root, "app/blog-parity.css"), "utf8");
   const streamsCss = readFileSync(join(root, "app/projects-streams-parity.css"), "utf8");
   const changelogPage = readFileSync(join(root, "app/(site)/changelog/page.tsx"), "utf8");
   const changelogDirectory = readFileSync(join(root, "components/site/changelog-directory.tsx"), "utf8");
@@ -183,6 +184,15 @@ test("keeps Blog, Streams and Changelog public navigation and desktop projection
   assert.match(article, /canonicalPath\.split\("\/"\)\.map\(\(segment\) => encodeURIComponent\(segment\)\)\.join\("\/"\)/);
   assert.match(article, /href=\{`\/blog\/\$\{post\.slug\}\/`\}/);
   assert.match(article, /<Link className="site-link no-underline font-mono" href="\/blog\/" \/>/);
+  assert.match(blogCss, /\.astro-site\[data-page-kind="article"\]\s*\{[^}]*overflow-x:\s*clip;[^}]*overflow-y:\s*visible;/);
+  assert.doesNotMatch(blogCss, /\.blog-parity-page \.reader-catalog-desktop\s*\{[^}]*top:\s*1\.5rem;/);
+  assert.doesNotMatch(blogCss, /\.blog-parity-page \.article-toc-desktop\s*\{[^}]*top:\s*1\.5rem;/);
+  assert.match(blogCss, /\.blog-parity-page \.reader-catalog-desktop\s*\{[^}]*top:\s*5\.5rem;[^}]*height:\s*calc\(100dvh - 7rem\);/);
+  assert.match(blogCss, /\.blog-parity-page \.article-toc-desktop\s*\{[^}]*top:\s*5\.5rem;[^}]*height:\s*calc\(100dvh - 7rem\);/);
+  assert.match(blogCss, /--article-accent:\s*#087653;/);
+  assert.match(blogCss, /\.reader-content h2::after\s*\{[^}]*background:\s*var\(--article-accent\);/);
+  assert.match(blogCss, /\.reader-content blockquote\s*\{[^}]*background:\s*var\(--article-accent-surface\);/);
+  assert.match(blogCss, /\.reader-content code:not\(\.expressive-code code\)\s*\{[^}]*color:\s*var\(--article-accent-emphasis\);/);
 
   assert.match(streamsCss, /\.streams-parity-content \.stream-item \{[\s\S]*?color:\s*var\(--c-text\) !important;/);
   assert.match(streamsCss, /\.streams-toc-desktop \{[\s\S]*?left:\s*2rem;/);
