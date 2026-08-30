@@ -1,7 +1,7 @@
 "use client";
 
 import { PanelRightOpen } from "lucide-react";
-import type { ReactNode } from "react";
+import type { MouseEvent as ReactMouseEvent, ReactNode } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { SiteIcon } from "@/components/site/site-icon";
@@ -26,7 +26,7 @@ function TocTree({
 }: {
   nodes: TocNode[];
   activeId: string | null;
-  onNavigate?: () => void;
+  onNavigate: (id: string, event: ReactMouseEvent<HTMLAnchorElement>) => void;
 }) {
   return (
     <ul>
@@ -36,7 +36,7 @@ function TocTree({
             href={`#${heading.id}`}
             aria-label={`Scroll to ${heading.text}`}
             aria-current={activeId === heading.id ? "true" : undefined}
-            onClick={onNavigate}
+            onClick={(event) => onNavigate(heading.id, event)}
           >
             {heading.text}
           </a>
@@ -78,19 +78,35 @@ export function BlogArticleToc({
       .filter((element): element is HTMLElement => Boolean(element));
     if (!elements.length) return;
 
-    const observer = new IntersectionObserver((entries) => {
-      const latest = entries.reduce(
-        (current, entry) => (entry.time > current.time ? entry : current),
-        entries[0],
-      );
-      const index = elements.indexOf(latest.target as HTMLElement);
-      const targetIndex = latest.boundingClientRect.top > window.innerHeight / 4 ? index - 1 : index;
-      const target = targetIndex >= 0 ? elements[targetIndex] : null;
-      setActiveId(target?.id ?? null);
-    }, { root: null, rootMargin: "0% 0% -75% 0%", threshold: 0 });
+    let frame = 0;
+    const updateActiveHeading = () => {
+      frame = 0;
+      const activationLine = Math.max(96, window.innerHeight * 0.2);
+      const atPageEnd = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2;
+      let active = atPageEnd ? elements.at(-1)! : elements[0];
+      if (!atPageEnd) {
+        for (const element of elements) {
+          if (element.getBoundingClientRect().top > activationLine) break;
+          active = element;
+        }
+      }
+      setActiveId((current) => current === active.id ? current : active.id);
+    };
+    const scheduleUpdate = () => {
+      if (!frame) frame = window.requestAnimationFrame(updateActiveHeading);
+    };
 
-    elements.forEach((element) => observer.observe(element));
-    return () => observer.disconnect();
+    scheduleUpdate();
+    window.addEventListener("scroll", scheduleUpdate, { passive: true });
+    window.addEventListener("resize", scheduleUpdate);
+    const resizeObserver = "ResizeObserver" in window ? new ResizeObserver(scheduleUpdate) : null;
+    elements.forEach((element) => resizeObserver?.observe(element));
+    return () => {
+      if (frame) window.cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", scheduleUpdate);
+      window.removeEventListener("resize", scheduleUpdate);
+      resizeObserver?.disconnect();
+    };
     // headingKey tracks the serializable heading identity without re-running on an equivalent array.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [headingKey]);
@@ -105,7 +121,7 @@ export function BlogArticleToc({
       const containerRect = container.getBoundingClientRect();
       const targetTop = container.scrollTop + linkRect.top - containerRect.top
         - (container.clientHeight - linkRect.height) / 2;
-      container.scrollTo({ top: Math.max(0, targetTop), behavior: "smooth" });
+      container.scrollTo({ top: Math.max(0, targetTop), behavior: "auto" });
     }
   }, [activeId]);
 
@@ -126,6 +142,18 @@ export function BlogArticleToc({
     if (restoreFocus) window.setTimeout(() => triggerRef.current?.focus(), 0);
   }
 
+  function navigateToHeading(id: string, event: ReactMouseEvent<HTMLAnchorElement>) {
+    const heading = document.getElementById(id);
+    if (!heading) return;
+    event.preventDefault();
+    setActiveId(id);
+    close();
+    heading.scrollIntoView({ block: "start", behavior: "auto" });
+    const url = new URL(window.location.href);
+    url.hash = encodeURIComponent(id);
+    window.history.pushState(window.history.state, "", url);
+  }
+
   return (
     <>
       <aside
@@ -141,7 +169,7 @@ export function BlogArticleToc({
         <div className="article-toc-controller">
           <nav ref={desktopListRef} className="article-toc-nav" aria-label="Table of contents">
             <a className="article-toc-skip" href="#skip-toc">Skip toc</a>
-            <TocTree nodes={tree} activeId={activeId} />
+            <TocTree nodes={tree} activeId={activeId} onNavigate={navigateToHeading} />
             <span id="skip-toc" hidden />
           </nav>
         </div>
@@ -179,7 +207,7 @@ export function BlogArticleToc({
           aria-label="文章目录"
         >
           <div className="blog-toc-panel-title">Table of Contents</div>
-          <TocTree nodes={tree} activeId={activeId} onNavigate={() => close()} />
+          <TocTree nodes={tree} activeId={activeId} onNavigate={navigateToHeading} />
         </nav>
       </div>
     </>

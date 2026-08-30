@@ -21,6 +21,7 @@ import {
   assertArchifyType,
   canonicalArchifyJson,
 } from "../../lib/archify/artifact-address.mjs";
+import { withArchifyEmbedBridge } from "../../lib/archify/embed-bridge.mjs";
 
 const scriptDirectory = dirname(fileURLToPath(import.meta.url));
 
@@ -137,7 +138,7 @@ export function compileArchifyArtifact({
     writeFileSync(inputPath, `${canonicalIr}\n`, "utf8");
     runArchifyCli(vendorRoot, ["validate", type, inputPath, "--json"], "validation");
     runArchifyCli(vendorRoot, ["render", type, inputPath, renderedPath], "render");
-    const html = readFileSync(renderedPath, "utf8");
+    const html = withArchifyEmbedBridge(readFileSync(renderedPath, "utf8"));
     assertStandaloneArchifyHtml(html);
     const changed = write ? atomicWriteFile(outputPath, html) : false;
 

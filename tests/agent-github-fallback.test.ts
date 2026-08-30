@@ -1,13 +1,21 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 
+import { GET as getAgentGithub } from "../app/api/agent/github/[...path]/route";
 import {
   fallbackRepositoryOverview,
   fetchPublicGithubJson,
+  getRepositoryTreeSnapshot,
+  mergeRepositoryTreeSnapshot,
   probeRawRepositoryRoot,
   PublicGithubApiError,
 } from "../lib/agent/github-public";
 import { cachedAgentResponse } from "../lib/agent/platform-cache";
+import {
+  agentRepositoryPathCandidates,
+  repositoryDocumentFiles,
+} from "../lib/agent/repository";
 
 test("selected Agent metadata supplies an anonymous overview fallback", () => {
   const openclaw = fallbackRepositoryOverview("OPENCLAW", "OPENCLAW");
@@ -18,6 +26,9 @@ test("selected Agent metadata supplies an anonymous overview fallback", () => {
   assert.equal(openclaw.default_branch, "HEAD");
   assert.ok(openclaw.stargazers_count > 300_000);
   assert.match(openclaw.description, /个人 AI 助理/);
+
+  const superpowers = fallbackRepositoryOverview("obra", "superpowers");
+  assert.equal(superpowers.default_branch, "main");
 
   const generic = fallbackRepositoryOverview("owner", "repository");
   assert.equal(generic.full_name, "owner/repository");
@@ -65,6 +76,66 @@ test("raw root probing returns a bounded useful tree outside the REST quota", as
     assert.equal(requests.length, 10);
     assert.equal(requests.every((request) => request.method === "HEAD"), true);
     assert.equal(requests.every((request) => request.url.includes("/openclaw/openclaw/HEAD/")), true);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("versioned repository snapshot restores a complete Atlas tree from a quota-limited root", () => {
+  const snapshot = getRepositoryTreeSnapshot("OBRA", "SUPERPOWERS", "HEAD");
+  assert.ok(snapshot);
+  assert.equal(snapshot.ref, "main");
+  assert.match(snapshot.commit, /^[a-f0-9]{40}$/);
+  assert.equal(snapshot.tree.filter((entry) => entry.type === "blob").length, 195);
+  assert.equal(snapshot.tree.filter((entry) => entry.type === "tree").length, 60);
+
+  const restored = mergeRepositoryTreeSnapshot("obra", "superpowers", "HEAD", [
+    { path: "README.md", type: "blob", size: 1 },
+    { path: "package.json", type: "blob", size: 2 },
+    { path: "LICENSE", type: "blob", size: 3 },
+  ]);
+  assert.ok(restored);
+  assert.equal(restored.truncated, false);
+  assert.equal(restored.partial, false);
+  assert.equal(restored.tree.filter((entry) => entry.type === "blob").length, 195);
+  assert.equal(restored.tree.find((entry) => entry.path === "README.md")?.size, 1);
+  assert.equal(repositoryDocumentFiles(restored.tree).length, 94);
+  assert.equal(
+    agentRepositoryPathCandidates("docs/superpowers/specs/tests/skill-triggering/run-test.sh", restored.tree)[0],
+    "tests/explicit-skill-requests/run-test.sh",
+  );
+});
+
+test("Agent tree API serves the complete snapshot when anonymous GitHub quota is exhausted", async () => {
+  const originalFetch = globalThis.fetch;
+  const suggestIndex = readFileSync("lib/parity/data/agent-suggest-index.json", "utf8");
+  const githubRequests: string[] = [];
+  globalThis.fetch = (async (input) => {
+    const url = String(input);
+    if (url === "https://example.test/agent/suggest-index.json") {
+      return new Response(suggestIndex, { status: 200, headers: { "content-type": "application/json" } });
+    }
+    if (url.startsWith("https://api.github.com/")) {
+      githubRequests.push(url);
+      return new Response('{"message":"API rate limit exceeded"}', { status: 403 });
+    }
+    throw new Error(`Unexpected request: ${url}`);
+  }) as typeof fetch;
+  try {
+    const response = await getAgentGithub(
+      new Request("https://example.test/api/agent/github/obra/superpowers/tree?ref=HEAD"),
+      { params: Promise.resolve({ path: ["obra", "superpowers", "tree"] }) },
+    );
+    assert.equal(response.status, 200);
+    const payload = await response.json() as Record<string, unknown>;
+    const tree = payload.tree as Array<{ path: string; type: "blob" | "tree"; size: number | null }>;
+    assert.equal(payload.source, "snapshot");
+    assert.equal(payload.truncated, false);
+    assert.equal(payload.partial, false);
+    assert.equal(tree.filter((entry) => entry.type === "blob").length, 195);
+    assert.equal(repositoryDocumentFiles(tree).length, 94);
+    assert.equal(tree.some((entry) => entry.path === "tests/explicit-skill-requests/run-test.sh"), true);
+    assert.equal(githubRequests.length, 2);
   } finally {
     globalThis.fetch = originalFetch;
   }

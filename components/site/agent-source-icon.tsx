@@ -15,6 +15,7 @@ const MASKED_ICONS = new Set([
   "i-ri-star-line",
   "i-ri-git-repository-line",
   "i-ri-arrow-right-up-line",
+  "i-ri-close-line",
   "i-ri-book-open-line",
   "i-ri-book-2-line",
   "i-ri-file-code-line",

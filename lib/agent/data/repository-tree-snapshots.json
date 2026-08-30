@@ -1,0 +1,1288 @@
+{
+  "schemaVersion": 1,
+  "repositories": {
+    "obra/superpowers": {
+      "repository": "obra/superpowers",
+      "ref": "main",
+      "commit": "b36e0829c6d0140e93cfef2ca599b1b07d4a7797",
+      "generatedAt": "2026-08-12T09:53:21-07:00",
+      "tree": [
+        {
+          "path": ".agents",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".agents/plugins",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".agents/plugins/marketplace.json",
+          "type": "blob",
+          "size": 363
+        },
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 514
+        },
+        {
+          "path": ".claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 497
+        },
+        {
+          "path": ".codex-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".codex-plugin/plugin.json",
+          "type": "blob",
+          "size": 1730
+        },
+        {
+          "path": ".cursor-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".cursor-plugin/plugin.json",
+          "type": "blob",
+          "size": 578
+        },
+        {
+          "path": ".devin-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".devin-plugin/plugin.json",
+          "type": "blob",
+          "size": 575
+        },
+        {
+          "path": ".gitattributes",
+          "type": "blob",
+          "size": 373
+        },
+        {
+          "path": ".github",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".github/FUNDING.yml",
+          "type": "blob",
+          "size": 62
+        },
+        {
+          "path": ".github/ISSUE_TEMPLATE",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".github/ISSUE_TEMPLATE/bug_report.md",
+          "type": "blob",
+          "size": 1593
+        },
+        {
+          "path": ".github/ISSUE_TEMPLATE/config.yml",
+          "type": "blob",
+          "size": 241
+        },
+        {
+          "path": ".github/ISSUE_TEMPLATE/feature_request.md",
+          "type": "blob",
+          "size": 1604
+        },
+        {
+          "path": ".github/ISSUE_TEMPLATE/platform_support.md",
+          "type": "blob",
+          "size": 979
+        },
+        {
+          "path": ".github/PULL_REQUEST_TEMPLATE.md",
+          "type": "blob",
+          "size": 5814
+        },
+        {
+          "path": ".gitignore",
+          "type": "blob",
+          "size": 347
+        },
+        {
+          "path": ".hermes-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".hermes-plugin/__init__.py",
+          "type": "blob",
+          "size": 3937
+        },
+        {
+          "path": ".hermes-plugin/plugin.yaml",
+          "type": "blob",
+          "size": 151
+        },
+        {
+          "path": ".kimi-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".kimi-plugin/plugin.json",
+          "type": "blob",
+          "size": 3090
+        },
+        {
+          "path": ".opencode",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".opencode/INSTALL.md",
+          "type": "blob",
+          "size": 3342
+        },
+        {
+          "path": ".opencode/plugins",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".opencode/plugins/superpowers.js",
+          "type": "blob",
+          "size": 5464
+        },
+        {
+          "path": ".pi",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".pi/extensions",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".pi/extensions/superpowers.ts",
+          "type": "blob",
+          "size": 4283
+        },
+        {
+          "path": ".pre-commit-config.yaml",
+          "type": "blob",
+          "size": 579
+        },
+        {
+          "path": ".version-bump.json",
+          "type": "blob",
+          "size": 791
+        },
+        {
+          "path": "AGENTS.md",
+          "type": "blob",
+          "size": 9
+        },
+        {
+          "path": "assets",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "assets/app-icon.png",
+          "type": "blob",
+          "size": 48231
+        },
+        {
+          "path": "assets/superpowers-small.svg",
+          "type": "blob",
+          "size": 1733
+        },
+        {
+          "path": "CLAUDE.md",
+          "type": "blob",
+          "size": 8873
+        },
+        {
+          "path": "CODE_OF_CONDUCT.md",
+          "type": "blob",
+          "size": 5224
+        },
+        {
+          "path": "docs",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "docs/plans",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "docs/plans/2025-11-22-opencode-support-design.md",
+          "type": "blob",
+          "size": 8831
+        },
+        {
+          "path": "docs/plans/2025-11-22-opencode-support-implementation.md",
+          "type": "blob",
+          "size": 27539
+        },
+        {
+          "path": "docs/plans/2025-11-28-skills-improvements-from-user-feedback.md",
+          "type": "blob",
+          "size": 21033
+        },
+        {
+          "path": "docs/plans/2026-01-17-visual-brainstorming.md",
+          "type": "blob",
+          "size": 15107
+        },
+        {
+          "path": "docs/porting-to-a-new-harness.md",
+          "type": "blob",
+          "size": 50682
+        },
+        {
+          "path": "docs/README.kimi.md",
+          "type": "blob",
+          "size": 2691
+        },
+        {
+          "path": "docs/README.opencode.md",
+          "type": "blob",
+          "size": 4580
+        },
+        {
+          "path": "docs/superpowers",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "docs/superpowers/plans",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "docs/superpowers/plans/2026-01-22-document-review-system.md",
+          "type": "blob",
+          "size": 8999
+        },
+        {
+          "path": "docs/superpowers/plans/2026-02-19-visual-brainstorming-refactor.md",
+          "type": "blob",
+          "size": 18804
+        },
+        {
+          "path": "docs/superpowers/plans/2026-03-11-zero-dep-brainstorm-server.md",
+          "type": "blob",
+          "size": 15576
+        },
+        {
+          "path": "docs/superpowers/plans/2026-03-23-codex-app-compatibility.md",
+          "type": "blob",
+          "size": 19177
+        },
+        {
+          "path": "docs/superpowers/plans/2026-04-06-worktree-rototill.md",
+          "type": "blob",
+          "size": 29210
+        },
+        {
+          "path": "docs/superpowers/plans/2026-05-06-lift-drill-into-evals.md",
+          "type": "blob",
+          "size": 48218
+        },
+        {
+          "path": "docs/superpowers/plans/2026-05-07-pi-extension-and-evals.md",
+          "type": "blob",
+          "size": 5748
+        },
+        {
+          "path": "docs/superpowers/plans/2026-06-09-sdd-task-scoped-review-dispatch.md",
+          "type": "blob",
+          "size": 28766
+        },
+        {
+          "path": "docs/superpowers/plans/2026-06-09-visual-companion-issues.md",
+          "type": "blob",
+          "size": 18930
+        },
+        {
+          "path": "docs/superpowers/plans/2026-06-10-visual-companion-auth-hardening.md",
+          "type": "blob",
+          "size": 23632
+        },
+        {
+          "path": "docs/superpowers/plans/2026-06-11-visual-companion-final-hardening-fixup.md",
+          "type": "blob",
+          "size": 36149
+        },
+        {
+          "path": "docs/superpowers/plans/2026-07-06-sdd-plan-scoped-workspace.md",
+          "type": "blob",
+          "size": 48630
+        },
+        {
+          "path": "docs/superpowers/plans/2026-07-15-sdd-fix-loop-redesign.md",
+          "type": "blob",
+          "size": 77641
+        },
+        {
+          "path": "docs/superpowers/plans/2026-07-30-codex-efficiency-fixes.md",
+          "type": "blob",
+          "size": 52609
+        },
+        {
+          "path": "docs/superpowers/plans/2026-08-06-hermes-version-bump-wiring.md",
+          "type": "blob",
+          "size": 9551
+        },
+        {
+          "path": "docs/superpowers/specs",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "docs/superpowers/specs/2026-01-22-document-review-system-design.md",
+          "type": "blob",
+          "size": 4723
+        },
+        {
+          "path": "docs/superpowers/specs/2026-02-19-visual-brainstorming-refactor-design.md",
+          "type": "blob",
+          "size": 9445
+        },
+        {
+          "path": "docs/superpowers/specs/2026-03-11-zero-dep-brainstorm-server-design.md",
+          "type": "blob",
+          "size": 6021
+        },
+        {
+          "path": "docs/superpowers/specs/2026-03-23-codex-app-compatibility-design.md",
+          "type": "blob",
+          "size": 13369
+        },
+        {
+          "path": "docs/superpowers/specs/2026-04-06-worktree-rototill-design.md",
+          "type": "blob",
+          "size": 20120
+        },
+        {
+          "path": "docs/superpowers/specs/2026-05-05-platform-neutral-config-refs-design.md",
+          "type": "blob",
+          "size": 4886
+        },
+        {
+          "path": "docs/superpowers/specs/2026-05-05-platform-neutral-prose-design.md",
+          "type": "blob",
+          "size": 6038
+        },
+        {
+          "path": "docs/superpowers/specs/2026-05-05-platform-neutral-readme-design.md",
+          "type": "blob",
+          "size": 2100
+        },
+        {
+          "path": "docs/superpowers/specs/2026-05-06-lift-drill-into-evals-design.md",
+          "type": "blob",
+          "size": 21059
+        },
+        {
+          "path": "docs/superpowers/specs/2026-06-09-sdd-task-scoped-review-dispatch-design.md",
+          "type": "blob",
+          "size": 17835
+        },
+        {
+          "path": "docs/superpowers/specs/2026-06-10-positive-instruction-redesign-design.md",
+          "type": "blob",
+          "size": 10590
+        },
+        {
+          "path": "docs/superpowers/specs/2026-06-10-strict-cost-sdd-design.md",
+          "type": "blob",
+          "size": 15315
+        },
+        {
+          "path": "docs/superpowers/specs/2026-06-10-visual-companion-auth-hardening-design.md",
+          "type": "blob",
+          "size": 8314
+        },
+        {
+          "path": "docs/superpowers/specs/2026-06-11-visual-companion-final-hardening-fixup-design.md",
+          "type": "blob",
+          "size": 12956
+        },
+        {
+          "path": "docs/superpowers/specs/2026-07-06-sdd-plan-scoped-workspace-eval-results.md",
+          "type": "blob",
+          "size": 24547
+        },
+        {
+          "path": "docs/superpowers/specs/2026-07-06-sdd-plan-scoped-workspace.md",
+          "type": "blob",
+          "size": 10210
+        },
+        {
+          "path": "docs/superpowers/specs/2026-07-15-sdd-fix-loop-redesign-design.md",
+          "type": "blob",
+          "size": 10963
+        },
+        {
+          "path": "docs/superpowers/specs/2026-07-30-codex-efficiency-fixes-design.md",
+          "type": "blob",
+          "size": 12583
+        },
+        {
+          "path": "docs/superpowers/specs/2026-08-05-hermes-version-bump-wiring-design.md",
+          "type": "blob",
+          "size": 2196
+        },
+        {
+          "path": "docs/testing.md",
+          "type": "blob",
+          "size": 2218
+        },
+        {
+          "path": "docs/windows",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "docs/windows/polyglot-hooks.md",
+          "type": "blob",
+          "size": 6579
+        },
+        {
+          "path": "gemini-extension.json",
+          "type": "blob",
+          "size": 187
+        },
+        {
+          "path": "GEMINI.md",
+          "type": "blob",
+          "size": 92
+        },
+        {
+          "path": "hooks",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "hooks/hooks-cursor.json",
+          "type": "blob",
+          "size": 137
+        },
+        {
+          "path": "hooks/hooks.json",
+          "type": "blob",
+          "size": 334
+        },
+        {
+          "path": "hooks/run-hook.cmd",
+          "type": "blob",
+          "size": 1460
+        },
+        {
+          "path": "hooks/session-start",
+          "type": "blob",
+          "size": 2274
+        },
+        {
+          "path": "LICENSE",
+          "type": "blob",
+          "size": 1070
+        },
+        {
+          "path": "package.json",
+          "type": "blob",
+          "size": 433
+        },
+        {
+          "path": "README.md",
+          "type": "blob",
+          "size": 12137
+        },
+        {
+          "path": "RELEASE-NOTES.md",
+          "type": "blob",
+          "size": 94003
+        },
+        {
+          "path": "scripts",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "scripts/bump-version.sh",
+          "type": "blob",
+          "size": 7461
+        },
+        {
+          "path": "scripts/lint-shell.sh",
+          "type": "blob",
+          "size": 4088
+        },
+        {
+          "path": "scripts/package-codex-plugin.sh",
+          "type": "blob",
+          "size": 10338
+        },
+        {
+          "path": "scripts/sync-to-codex-plugin.sh",
+          "type": "blob",
+          "size": 14995
+        },
+        {
+          "path": "skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/brainstorming",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/brainstorming/scripts",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/brainstorming/scripts/frame-template.html",
+          "type": "blob",
+          "size": 8094
+        },
+        {
+          "path": "skills/brainstorming/scripts/helper.js",
+          "type": "blob",
+          "size": 5615
+        },
+        {
+          "path": "skills/brainstorming/scripts/server.cjs",
+          "type": "blob",
+          "size": 25693
+        },
+        {
+          "path": "skills/brainstorming/scripts/start-server.sh",
+          "type": "blob",
+          "size": 6908
+        },
+        {
+          "path": "skills/brainstorming/scripts/stop-server.sh",
+          "type": "blob",
+          "size": 3263
+        },
+        {
+          "path": "skills/brainstorming/SKILL.md",
+          "type": "blob",
+          "size": 15456
+        },
+        {
+          "path": "skills/brainstorming/spec-document-reviewer-prompt.md",
+          "type": "blob",
+          "size": 1747
+        },
+        {
+          "path": "skills/brainstorming/visual-companion.md",
+          "type": "blob",
+          "size": 13383
+        },
+        {
+          "path": "skills/dispatching-parallel-agents",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/dispatching-parallel-agents/SKILL.md",
+          "type": "blob",
+          "size": 6078
+        },
+        {
+          "path": "skills/executing-plans",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/executing-plans/SKILL.md",
+          "type": "blob",
+          "size": 2305
+        },
+        {
+          "path": "skills/finishing-a-development-branch",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/finishing-a-development-branch/SKILL.md",
+          "type": "blob",
+          "size": 7781
+        },
+        {
+          "path": "skills/receiving-code-review",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/receiving-code-review/SKILL.md",
+          "type": "blob",
+          "size": 6203
+        },
+        {
+          "path": "skills/requesting-code-review",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/requesting-code-review/code-reviewer.md",
+          "type": "blob",
+          "size": 5669
+        },
+        {
+          "path": "skills/requesting-code-review/SKILL.md",
+          "type": "blob",
+          "size": 2956
+        },
+        {
+          "path": "skills/subagent-driven-development",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/subagent-driven-development/implementer-prompt.md",
+          "type": "blob",
+          "size": 6335
+        },
+        {
+          "path": "skills/subagent-driven-development/re-review-prompt.md",
+          "type": "blob",
+          "size": 4756
+        },
+        {
+          "path": "skills/subagent-driven-development/scripts",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/subagent-driven-development/scripts/review-package",
+          "type": "blob",
+          "size": 1469
+        },
+        {
+          "path": "skills/subagent-driven-development/scripts/sdd-workspace",
+          "type": "blob",
+          "size": 1586
+        },
+        {
+          "path": "skills/subagent-driven-development/scripts/task-brief",
+          "type": "blob",
+          "size": 1158
+        },
+        {
+          "path": "skills/subagent-driven-development/SKILL.md",
+          "type": "blob",
+          "size": 32339
+        },
+        {
+          "path": "skills/subagent-driven-development/task-reviewer-prompt.md",
+          "type": "blob",
+          "size": 9021
+        },
+        {
+          "path": "skills/systematic-debugging",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/systematic-debugging/condition-based-waiting-example.ts",
+          "type": "blob",
+          "size": 5054
+        },
+        {
+          "path": "skills/systematic-debugging/condition-based-waiting.md",
+          "type": "blob",
+          "size": 3516
+        },
+        {
+          "path": "skills/systematic-debugging/CREATION-LOG.md",
+          "type": "blob",
+          "size": 4257
+        },
+        {
+          "path": "skills/systematic-debugging/defense-in-depth.md",
+          "type": "blob",
+          "size": 3650
+        },
+        {
+          "path": "skills/systematic-debugging/find-polluter.sh",
+          "type": "blob",
+          "size": 1986
+        },
+        {
+          "path": "skills/systematic-debugging/root-cause-tracing.md",
+          "type": "blob",
+          "size": 5316
+        },
+        {
+          "path": "skills/systematic-debugging/SKILL.md",
+          "type": "blob",
+          "size": 9465
+        },
+        {
+          "path": "skills/systematic-debugging/test-academic.md",
+          "type": "blob",
+          "size": 653
+        },
+        {
+          "path": "skills/systematic-debugging/test-pressure-1.md",
+          "type": "blob",
+          "size": 1900
+        },
+        {
+          "path": "skills/systematic-debugging/test-pressure-2.md",
+          "type": "blob",
+          "size": 2283
+        },
+        {
+          "path": "skills/systematic-debugging/test-pressure-3.md",
+          "type": "blob",
+          "size": 2692
+        },
+        {
+          "path": "skills/test-driven-development",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/test-driven-development/SKILL.md",
+          "type": "blob",
+          "size": 9015
+        },
+        {
+          "path": "skills/test-driven-development/writing-good-tests.md",
+          "type": "blob",
+          "size": 8268
+        },
+        {
+          "path": "skills/using-git-worktrees",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/using-git-worktrees/SKILL.md",
+          "type": "blob",
+          "size": 6813
+        },
+        {
+          "path": "skills/using-superpowers",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/using-superpowers/references",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/using-superpowers/references/antigravity-tools.md",
+          "type": "blob",
+          "size": 1495
+        },
+        {
+          "path": "skills/using-superpowers/references/codex-tools.md",
+          "type": "blob",
+          "size": 4762
+        },
+        {
+          "path": "skills/using-superpowers/references/gemini-tools.md",
+          "type": "blob",
+          "size": 4598
+        },
+        {
+          "path": "skills/using-superpowers/references/hermes-tools.md",
+          "type": "blob",
+          "size": 1964
+        },
+        {
+          "path": "skills/using-superpowers/references/pi-tools.md",
+          "type": "blob",
+          "size": 1242
+        },
+        {
+          "path": "skills/using-superpowers/SKILL.md",
+          "type": "blob",
+          "size": 3108
+        },
+        {
+          "path": "skills/verification-before-completion",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/verification-before-completion/SKILL.md",
+          "type": "blob",
+          "size": 3646
+        },
+        {
+          "path": "skills/writing-plans",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/writing-plans/plan-document-reviewer-prompt.md",
+          "type": "blob",
+          "size": 1713
+        },
+        {
+          "path": "skills/writing-plans/SKILL.md",
+          "type": "blob",
+          "size": 7053
+        },
+        {
+          "path": "skills/writing-skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/writing-skills/anthropic-best-practices.md",
+          "type": "blob",
+          "size": 46197
+        },
+        {
+          "path": "skills/writing-skills/examples",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/writing-skills/examples/CLAUDE_MD_TESTING.md",
+          "type": "blob",
+          "size": 5423
+        },
+        {
+          "path": "skills/writing-skills/graphviz-conventions.dot",
+          "type": "blob",
+          "size": 5970
+        },
+        {
+          "path": "skills/writing-skills/persuasion-principles.md",
+          "type": "blob",
+          "size": 5901
+        },
+        {
+          "path": "skills/writing-skills/render-graphs.js",
+          "type": "blob",
+          "size": 4968
+        },
+        {
+          "path": "skills/writing-skills/SKILL.md",
+          "type": "blob",
+          "size": 26360
+        },
+        {
+          "path": "skills/writing-skills/testing-skills-with-subagents.md",
+          "type": "blob",
+          "size": 12558
+        },
+        {
+          "path": "tests",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "tests/antigravity",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "tests/antigravity/run-tests.sh",
+          "type": "blob",
+          "size": 319
+        },
+        {
+          "path": "tests/antigravity/test-antigravity-tools.sh",
+          "type": "blob",
+          "size": 2146
+        },
+        {
+          "path": "tests/brainstorm-server",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "tests/brainstorm-server/auth.test.js",
+          "type": "blob",
+          "size": 12084
+        },
+        {
+          "path": "tests/brainstorm-server/branding.test.js",
+          "type": "blob",
+          "size": 12213
+        },
+        {
+          "path": "tests/brainstorm-server/browser-launcher.test.js",
+          "type": "blob",
+          "size": 1768
+        },
+        {
+          "path": "tests/brainstorm-server/helper.test.js",
+          "type": "blob",
+          "size": 8240
+        },
+        {
+          "path": "tests/brainstorm-server/lifecycle.test.js",
+          "type": "blob",
+          "size": 23092
+        },
+        {
+          "path": "tests/brainstorm-server/package-lock.json",
+          "type": "blob",
+          "size": 861
+        },
+        {
+          "path": "tests/brainstorm-server/package.json",
+          "type": "blob",
+          "size": 374
+        },
+        {
+          "path": "tests/brainstorm-server/server.test.js",
+          "type": "blob",
+          "size": 23860
+        },
+        {
+          "path": "tests/brainstorm-server/start-server.test.sh",
+          "type": "blob",
+          "size": 3099
+        },
+        {
+          "path": "tests/brainstorm-server/stop-server.test.sh",
+          "type": "blob",
+          "size": 6346
+        },
+        {
+          "path": "tests/brainstorm-server/windows-lifecycle.test.sh",
+          "type": "blob",
+          "size": 12043
+        },
+        {
+          "path": "tests/brainstorm-server/ws-protocol.test.js",
+          "type": "blob",
+          "size": 15002
+        },
+        {
+          "path": "tests/claude-code",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "tests/claude-code/analyze-token-usage.py",
+          "type": "blob",
+          "size": 6733
+        },
+        {
+          "path": "tests/claude-code/README.md",
+          "type": "blob",
+          "size": 4724
+        },
+        {
+          "path": "tests/claude-code/run-skill-tests.sh",
+          "type": "blob",
+          "size": 5296
+        },
+        {
+          "path": "tests/claude-code/test-helpers.sh",
+          "type": "blob",
+          "size": 5438
+        },
+        {
+          "path": "tests/claude-code/test-sdd-workspace.sh",
+          "type": "blob",
+          "size": 6781
+        },
+        {
+          "path": "tests/claude-code/test-subagent-driven-development-integration.sh",
+          "type": "blob",
+          "size": 10779
+        },
+        {
+          "path": "tests/claude-code/test-subagent-driven-development.sh",
+          "type": "blob",
+          "size": 5511
+        },
+        {
+          "path": "tests/claude-code/test-worktree-native-preference.sh",
+          "type": "blob",
+          "size": 6680
+        },
+        {
+          "path": "tests/claude-code/test-worktree-path-policy.sh",
+          "type": "blob",
+          "size": 2546
+        },
+        {
+          "path": "tests/codex",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "tests/codex-plugin-sync",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "tests/codex-plugin-sync/test-sync-to-codex-plugin.sh",
+          "type": "blob",
+          "size": 24022
+        },
+        {
+          "path": "tests/codex/test-marketplace-manifest.sh",
+          "type": "blob",
+          "size": 2889
+        },
+        {
+          "path": "tests/codex/test-package-codex-plugin.sh",
+          "type": "blob",
+          "size": 9650
+        },
+        {
+          "path": "tests/devin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "tests/devin/test-devin-plugin.sh",
+          "type": "blob",
+          "size": 2610
+        },
+        {
+          "path": "tests/explicit-skill-requests",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "tests/explicit-skill-requests/prompts",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "tests/explicit-skill-requests/prompts/action-oriented.txt",
+          "type": "blob",
+          "size": 173
+        },
+        {
+          "path": "tests/explicit-skill-requests/prompts/after-planning-flow.txt",
+          "type": "blob",
+          "size": 551
+        },
+        {
+          "path": "tests/explicit-skill-requests/prompts/claude-suggested-it.txt",
+          "type": "blob",
+          "size": 498
+        },
+        {
+          "path": "tests/explicit-skill-requests/prompts/i-know-what-sdd-means.txt",
+          "type": "blob",
+          "size": 366
+        },
+        {
+          "path": "tests/explicit-skill-requests/prompts/mid-conversation-execute-plan.txt",
+          "type": "blob",
+          "size": 119
+        },
+        {
+          "path": "tests/explicit-skill-requests/prompts/please-use-brainstorming.txt",
+          "type": "blob",
+          "size": 73
+        },
+        {
+          "path": "tests/explicit-skill-requests/prompts/skip-formalities.txt",
+          "type": "blob",
+          "size": 171
+        },
+        {
+          "path": "tests/explicit-skill-requests/prompts/subagent-driven-development-please.txt",
+          "type": "blob",
+          "size": 36
+        },
+        {
+          "path": "tests/explicit-skill-requests/prompts/use-systematic-debugging.txt",
+          "type": "blob",
+          "size": 52
+        },
+        {
+          "path": "tests/explicit-skill-requests/run-all.sh",
+          "type": "blob",
+          "size": 1977
+        },
+        {
+          "path": "tests/explicit-skill-requests/run-extended-multiturn-test.sh",
+          "type": "blob",
+          "size": 3407
+        },
+        {
+          "path": "tests/explicit-skill-requests/run-haiku-test.sh",
+          "type": "blob",
+          "size": 4042
+        },
+        {
+          "path": "tests/explicit-skill-requests/run-multiturn-test.sh",
+          "type": "blob",
+          "size": 4564
+        },
+        {
+          "path": "tests/explicit-skill-requests/run-test.sh",
+          "type": "blob",
+          "size": 4327
+        },
+        {
+          "path": "tests/hermes",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "tests/hermes/__init__.py",
+          "type": "blob",
+          "size": 0
+        },
+        {
+          "path": "tests/hermes/conftest.py",
+          "type": "blob",
+          "size": 929
+        },
+        {
+          "path": "tests/hermes/test_bootstrap.py",
+          "type": "blob",
+          "size": 3341
+        },
+        {
+          "path": "tests/hermes/test_plugin.py",
+          "type": "blob",
+          "size": 5286
+        },
+        {
+          "path": "tests/hooks",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "tests/hooks/test-session-start.sh",
+          "type": "blob",
+          "size": 6243
+        },
+        {
+          "path": "tests/kimi",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "tests/kimi/run-tests.sh",
+          "type": "blob",
+          "size": 127
+        },
+        {
+          "path": "tests/kimi/test-plugin-manifest.sh",
+          "type": "blob",
+          "size": 2301
+        },
+        {
+          "path": "tests/opencode",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "tests/opencode/run-tests.sh",
+          "type": "blob",
+          "size": 4323
+        },
+        {
+          "path": "tests/opencode/setup.sh",
+          "type": "blob",
+          "size": 2864
+        },
+        {
+          "path": "tests/opencode/test-bootstrap-caching.mjs",
+          "type": "blob",
+          "size": 5233
+        },
+        {
+          "path": "tests/opencode/test-bootstrap-caching.sh",
+          "type": "blob",
+          "size": 1060
+        },
+        {
+          "path": "tests/opencode/test-plugin-loading.sh",
+          "type": "blob",
+          "size": 2589
+        },
+        {
+          "path": "tests/opencode/test-priority.sh",
+          "type": "blob",
+          "size": 6994
+        },
+        {
+          "path": "tests/opencode/test-tools.sh",
+          "type": "blob",
+          "size": 3383
+        },
+        {
+          "path": "tests/pi",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "tests/pi/test-pi-extension.mjs",
+          "type": "blob",
+          "size": 5828
+        },
+        {
+          "path": "tests/shell-lint",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "tests/shell-lint/test-lint-shell.sh",
+          "type": "blob",
+          "size": 4719
+        },
+        {
+          "path": "tests/systematic-debugging",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "tests/systematic-debugging/test-find-polluter.sh",
+          "type": "blob",
+          "size": 2609
+        },
+        {
+          "path": "tests/version-bump",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "tests/version-bump/test-bump-version.sh",
+          "type": "blob",
+          "size": 2259
+        },
+        {
+          "path": "tests/writing-skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "tests/writing-skills/test-render-graphs.sh",
+          "type": "blob",
+          "size": 2512
+        }
+      ]
+    }
+  }
+}

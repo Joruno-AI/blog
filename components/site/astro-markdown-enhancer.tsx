@@ -1,7 +1,9 @@
 "use client";
 
-import { useRef, type MouseEvent, type ReactNode } from "react";
+import { useEffect, useRef, type MouseEvent, type ReactNode } from "react";
+import { createRoot, type Root } from "react-dom/client";
 
+import { ArchifyRuntimeMermaid } from "@/components/site/archify-runtime-mermaid";
 import { MarkdownImageViewer } from "@/components/site/markdown-image-viewer";
 
 async function copyText(text: string) {
@@ -33,6 +35,48 @@ export function AstroMarkdownEnhancer({
   revisionKey: string;
 }) {
   const rootRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const container = rootRef.current;
+    if (!container) return;
+
+    const mounts: Array<{ block: HTMLElement; host: HTMLElement; root: Root }> = [];
+    const blocks = new Set<HTMLElement>();
+    container.querySelectorAll<HTMLElement>(
+      '.expressive-code pre[data-language="mermaid"], pre[data-language="mermaid"], pre > code.language-mermaid',
+    ).forEach((marker) => {
+      const block = marker.closest<HTMLElement>(".expressive-code")
+        ?? marker.closest<HTMLElement>("pre");
+      if (!block || blocks.has(block) || block.dataset.archifyHydrated === "true") return;
+      const pre = marker.matches("pre") ? marker : marker.closest<HTMLElement>("pre");
+      const encoded = block.querySelector<HTMLButtonElement>(".copy button[data-code]")?.dataset.code;
+      const source = encoded?.replaceAll("\u007f", "\n")
+        ?? pre?.querySelector("code")?.textContent
+        ?? pre?.textContent
+        ?? "";
+      if (!source.trim()) return;
+
+      const title = block.querySelector<HTMLElement>(".header .title")?.textContent?.trim() || "内容关系图";
+      const host = document.createElement("div");
+      host.className = "blog-archify-host";
+      block.before(host);
+      block.hidden = true;
+      block.dataset.archifyHydrated = "true";
+      const root = createRoot(host);
+      root.render(<ArchifyRuntimeMermaid source={source} repository="Joruno-AI/blog" title={title} />);
+      blocks.add(block);
+      mounts.push({ block, host, root });
+    });
+
+    return () => {
+      mounts.forEach(({ block, host, root }) => {
+        root.unmount();
+        host.remove();
+        block.hidden = false;
+        delete block.dataset.archifyHydrated;
+      });
+    };
+  }, [revisionKey]);
 
   const handleClick = async (event: MouseEvent<HTMLDivElement>) => {
     const target = event.target;

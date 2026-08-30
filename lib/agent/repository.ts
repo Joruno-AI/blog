@@ -21,6 +21,8 @@ export type AgentRepositoryTreeItem = {
   size: number | null;
 };
 
+export type AgentRepositoryFileKind = "code" | "config" | "document" | "folder" | "image" | "shell" | "style" | "file";
+
 export type AgentDocumentHeading = {
   depth: number;
   id: string;
@@ -116,6 +118,50 @@ export function githubTreeFromPayload(value: Record<string, unknown>): AgentRepo
   }).slice(0, 5000);
 }
 
+export function agentRepositoryFileKind(path: string): AgentRepositoryFileKind {
+  const normalized = path.toLowerCase();
+  if (!normalized || normalized.endsWith("/")) return "folder";
+  if (/\.(?:md|mdx|markdown|txt|rst)$/i.test(normalized)) return "document";
+  if (/\.(?:bash|fish|sh|zsh)$/i.test(normalized) || /(?:^|\/)(?:dockerfile|makefile)$/i.test(normalized)) return "shell";
+  if (/\.(?:json|jsonc|toml|ya?ml|xml|ini|conf|config)$/i.test(normalized)) return "config";
+  if (/\.(?:css|less|sass|scss|styl)$/i.test(normalized)) return "style";
+  if (/\.(?:avif|gif|jpe?g|png|svg|webp)$/i.test(normalized)) return "image";
+  if (/\.(?:astro|c|cc|cpp|cs|go|graphql|gql|h|hpp|html|java|js|jsx|kt|kts|mjs|php|py|rb|rs|sql|svelte|swift|ts|tsx|vue)$/i.test(normalized)) return "code";
+  return "file";
+}
+
+export function agentRepositoryRefCandidates(requestedRef: string, defaultBranch: string) {
+  const requested = requestedRef.trim();
+  const actual = defaultBranch.trim();
+  const candidates = requested.toUpperCase() === "HEAD"
+    ? [actual.toUpperCase() === "HEAD" ? "" : actual, "HEAD", "main", "master"]
+    : [requested, actual.toUpperCase() === "HEAD" ? "" : actual, "HEAD", "main", "master"];
+  return [...new Set(candidates.filter(Boolean))];
+}
+
+export function agentRepositoryPathCandidates(requestedPath: string, items: AgentRepositoryTreeItem[]) {
+  const requested = requestedPath.replace(/^\/+/, "").replace(/\/{2,}/g, "/");
+  const blobs = items.filter((item) => item.type === "blob");
+  if (blobs.some((item) => item.path === requested)) return [requested];
+  const requestedParts = requested.split("/");
+  const basename = requestedParts.at(-1)?.toLowerCase() ?? "";
+  const score = (path: string) => {
+    const parts = path.split("/");
+    let sharedTail = 0;
+    while (sharedTail < parts.length && sharedTail < requestedParts.length
+      && parts.at(-(sharedTail + 1))?.toLowerCase() === requestedParts.at(-(sharedTail + 1))?.toLowerCase()) sharedTail += 1;
+    return sharedTail;
+  };
+  const matches = blobs
+    .filter((item) => (item.path.split("/").at(-1)?.toLowerCase() ?? "") === basename)
+    .map((item) => ({ path: item.path, score: score(item.path) }));
+  const best = Math.max(0, ...matches.map((item) => item.score));
+  return matches
+    .filter((item) => item.score === best)
+    .sort((left, right) => left.path.length - right.path.length || left.path.localeCompare(right.path))
+    .map((item) => item.path);
+}
+
 export function repositoryEntryFiles(items: AgentRepositoryTreeItem[]) {
   const score = (item: AgentRepositoryTreeItem) => {
     const path = item.path.toLowerCase();
@@ -153,13 +199,14 @@ export function agentPackageManifestPaths(items: AgentRepositoryTreeItem[]) {
     if (a.path === "package.json") return -1;
     if (b.path === "package.json") return 1;
     return a.path.split("/").length - b.path.split("/").length || a.path.localeCompare(b.path);
-  }).slice(0, 8);
+  }).slice(0, 32);
 }
 
 export function parseAgentPackageManifest(path: string, text: string, repositoryName: string) {
   const json = JSON.parse(text) as Record<string, unknown>;
   const dependencyNames = Object.keys({
     ...((json.dependencies as Record<string, string> | undefined) ?? {}),
+    ...((json.devDependencies as Record<string, string> | undefined) ?? {}),
     ...((json.peerDependencies as Record<string, string> | undefined) ?? {}),
     ...((json.optionalDependencies as Record<string, string> | undefined) ?? {}),
   });

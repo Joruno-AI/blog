@@ -568,9 +568,9 @@
   padding-right: 0;
   padding-bottom: 0 !important;
   overflow: hidden;
-  list-style: none;
-  transition: max-height .25s ease;
+  list-style: none !important;
 }
+.blog-parity-catalog .category-posts li::marker { content: ""; }
 .blog-parity-catalog .category-posts.expanded { max-height: 2000px; }
 .blog-parity-catalog .category-posts li { margin: 0; padding: .2rem 0; }
 .blog-parity-catalog .post-link {
@@ -1009,9 +1009,9 @@
 }
 
 .blog-parity-page .blog-article-body a.header-anchor {
-  display: block;
-  float: left;
-  margin: 0 0 0 -0.9em !important;
+  display: none !important;
+  float: none;
+  margin: 0 !important;
   border: 0 !important;
   color: inherit;
   font-size: 1em;
@@ -1021,7 +1021,7 @@
 }
 
 .blog-parity-page .blog-article-body :is(h1, h2, h3, h4, h5, h6):is(:hover, :focus-within) > a.header-anchor {
-  opacity: 0.5;
+  opacity: 0;
 }
 
 .blog-parity-page .markdown-new-tab-icon {
@@ -1230,23 +1230,6 @@
   opacity: 0.72;
 }
 
-.blog-parity-page.blog-reader-layout .blog-parity-catalog .post-link.active {
-  position: relative;
-  padding-inline-start: 0.95rem;
-}
-
-.blog-parity-page.blog-reader-layout .blog-parity-catalog .post-link.active::before {
-  position: absolute;
-  top: 50%;
-  left: 0.32rem;
-  width: 0.28rem;
-  height: 0.28rem;
-  border-radius: 50%;
-  background: var(--article-marker);
-  content: "";
-  transform: translateY(-50%);
-}
-
 .blog-parity-page.blog-reader-layout .article-toc-heading,
 .blog-parity-page.blog-reader-layout .article-toc-nav li > a:is(:hover, :focus-visible, [aria-current="true"]),
 .blog-parity-page.blog-reader-layout .blog-toc-panel li > a:is(:hover, :focus-visible, [aria-current="true"]) {
@@ -1310,13 +1293,8 @@
 }
 
 .blog-parity-page.blog-reader-layout .blog-article-body .reader-content h2::after {
-  display: block;
-  width: 2.25rem;
-  height: 2px;
-  margin-top: 0.45rem;
-  border-radius: 999px;
-  background: var(--article-marker);
-  content: "";
+  display: none;
+  content: none;
 }
 
 .blog-parity-page.blog-reader-layout .blog-article-body .reader-content h3 {
@@ -1366,7 +1344,7 @@
   margin-left: 0 !important;
   padding: 0.5em 1em;
   border: 0;
-  border-left: 0.25rem solid var(--c-border-strong);
+  border-left: 1px solid var(--article-rule);
   border-radius: 0;
   background: transparent;
   color: var(--c-text-soft);
@@ -1412,6 +1390,49 @@
 .blog-parity-page.blog-reader-layout .blog-article-body .reader-content hr {
   width: 3rem;
   border-color: var(--article-rule);
+}
+
+/* Content is always constrained by the reading column. Long URLs, inline
+   code, equations, tables and generated diagrams scroll or wrap in place
+   instead of widening the three-column shell. */
+.astro-post-body,
+.astro-post-body > .astro-markdown,
+.blog-article-body,
+.blog-article-body .reader-content,
+.blog-archify-host {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+.astro-post-body > .astro-markdown > *,
+.blog-article-body .reader-content > * {
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+}
+.astro-post-body .astro-markdown :is(p, li, dd, th, td, a),
+.blog-article-body .reader-content :is(p, li, dd, th, td, a),
+.astro-post-body .astro-markdown :not(pre) > code,
+.blog-article-body .reader-content :not(pre) > code {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+.astro-post-body .astro-markdown :is(pre, .expressive-code, .markdown-table-wrap, .katex-display),
+.blog-article-body .reader-content :is(pre, .expressive-code, .markdown-table-wrap, .katex-display) {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  -webkit-overflow-scrolling: touch;
+}
+.markdown-image-unavailable {
+  display: block;
+  width: 100%;
+  padding: .8rem 0;
+  border-block: 1px solid var(--c-border-soft);
+  color: var(--c-text-muted);
+  font-size: .78rem;
+  text-align: center;
 }
 
 @media (max-width: 768px) {

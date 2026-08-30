@@ -30,6 +30,23 @@ test("authors fresh editorial Archify IR only for Mermaid topology it can suppor
   assert.equal(converted.ir.connections.length, 2);
   assert.equal(normalizeArchifyMermaidSource(`${source}\r\n`), source);
 
+  const routed = mermaidFlowchartToArchify(
+    "flowchart TB\n  A[Root] --> B[API]\n  B --> C[Worker]\n  C --> D[(Store)]\n  A --> D",
+  );
+  assert.equal(routed.supported, true);
+  if ("ir" in routed) {
+    const points = [
+      ...routed.ir.components.flatMap((component) => [
+        component.pos,
+        [component.pos[0] + component.size[0], component.pos[1] + component.size[1]],
+      ]),
+      ...routed.ir.connections.flatMap((connection) => (connection as { via?: number[][] }).via || []),
+    ];
+    assert.ok(points.every(([x, y]) => x >= 0 && y >= 0), "routed geometry must stay inside the viewBox origin");
+    assert.ok(points.every(([x]) => x < routed.ir.meta.viewBox[0]), "viewBox must contain outer relationship corridors");
+    assert.ok(points.every(([, y]) => y < routed.ir.meta.viewBox[1]), "viewBox must contain the bottom row");
+  }
+
   const sequence = mermaidToArchify("sequenceDiagram\n  actor Alice\n  participant Bob as API\n  Alice->>Bob: hello\n  Bob-->>Alice: accepted", { title: "Handshake" });
   assert.equal(sequence.supported, true);
   assert.ok("ir" in sequence);
@@ -47,6 +64,34 @@ test("authors fresh editorial Archify IR only for Mermaid topology it can suppor
   const unsupported = mermaidToArchify("sequenceDiagram\n  Alice->>Bob: hello\n  Note over Alice,Bob: not representable losslessly");
   assert.equal(unsupported.supported, false);
   assert.ok("reason" in unsupported && unsupported.reason === "unsupported-sequence-syntax");
+});
+
+test("preserves every authored n8n ZRead relationship while grouping the six repository layers", () => {
+  const overview = JSON.parse(readFileSync(join(root, "public/agent/zread-cache/n8n-io/n8n/overview.json"), "utf8")) as { markdown: string };
+  const source = overview.markdown.match(/```mermaid\s*([\s\S]*?)```/)?.[1] || "";
+  const converted = mermaidFlowchartToArchify(source, { title: "仓库架构", repository: "n8n-io/n8n" });
+  assert.equal(converted.supported, true);
+  if (!("ir" in converted)) return;
+  assert.deepEqual(
+    converted.ir.connections.map((connection) => `${connection.from}->${connection.to}`).sort(),
+    [
+      "CLI->AGENTS", "CLI->AUTH", "CLI->CORE", "CLI->CTRL", "CLI->DB", "CLI->DI",
+      "CLI->PUSH", "CLI->SCHED", "CLI->TR", "CLI->WEBHOOK", "CORE->NLOADER",
+      "CORE->WF", "EXPR->WF", "FE->CLI", "NLOADER->LC", "NLOADER->NB",
+      "WEX->NCTX", "WEX->WGRAPH", "WGRAPH->WF",
+    ].sort(),
+  );
+  assert.deepEqual(
+    (converted.ir.boundaries ?? []).map((boundary) => boundary.label),
+    [
+      "Frontend Layer",
+      "Backend Layer — CLI Server",
+      "Core Layer — Execution Engine",
+      "Workflow Model Layer",
+      "Node Ecosystem",
+      "Infrastructure — @n8n/*",
+    ],
+  );
 });
 
 test("discovers arbitrary JSON documents below each ZRead pages directory", () => {
@@ -94,6 +139,8 @@ test("ships real self-contained Archify artifacts for the ZRead cache and check 
     assert.match(html, /<meta name="generator" content="archify 2\.16\.0-dev\.0">/);
     assert.match(html, /data-(?:node-id|edge-from)=/);
     assert.match(html, /new URLSearchParams\(window\.location\.search\)\.get\('embed'\)/);
+    assert.match(html, /data-archify-embed-bridge="v1"/);
+    assert.match(html, /archify-embed-v1/);
   }
 
   const tracked = [zreadManifestPath, ...paths.map((path) => join(root, "public", path))];
@@ -106,19 +153,21 @@ test("ships real self-contained Archify artifacts for the ZRead cache and check 
 
 test("routes every visible Markdown diagram through an Archify artifact or official runtime", () => {
   const embed = readFileSync(join(root, "components/site/archify-embed.tsx"), "utf8");
+  const canvas = readFileSync(join(root, "components/site/archify-canvas.tsx"), "utf8");
   const runtimeEmbed = readFileSync(join(root, "components/site/archify-runtime-mermaid.tsx"), "utf8");
   const agentMarkdown = readFileSync(join(root, "components/site/agent-markdown-impl.tsx"), "utf8");
   const blogMarkdown = readFileSync(join(root, "components/site/markdown-content.tsx"), "utf8");
-  const reveal = readFileSync(join(root, "components/site/reveal-controller.tsx"), "utf8");
+  const astroEnhancer = readFileSync(join(root, "components/site/astro-markdown-enhancer.tsx"), "utf8");
   const middleware = readFileSync(join(root, "middleware.ts"), "utf8");
   const packageJson = JSON.parse(readFileSync(join(root, "package.json"), "utf8")) as { scripts: Record<string, string> };
   const cloudflareBuild = readFileSync(join(root, "scripts/build-cloudflare.mjs"), "utf8");
 
   assert.match(embed, /ARCHIFY_ARTIFACT_PATH/);
   assert.match(embed, /\[a-f0-9\]\{64\}/);
-  assert.match(embed, /sandbox="allow-scripts"/);
-  assert.match(embed, /referrerPolicy="no-referrer"/);
-  assert.doesNotMatch(embed, /allow-same-origin/);
+  assert.match(embed, /<ArchifyCanvas/);
+  assert.match(canvas, /sandbox="allow-scripts"/);
+  assert.match(canvas, /referrerPolicy="no-referrer"/);
+  assert.doesNotMatch(canvas, /allow-same-origin/);
 
   assert.match(agentMarkdown, /ARCHIFY_MANIFEST_URL = "\/agent\/zread-cache\/archify-manifest\.json"/);
   assert.match(agentMarkdown, /<ArchifyEmbed/);
@@ -127,12 +176,16 @@ test("routes every visible Markdown diagram through an Archify artifact or offic
   assert.doesNotMatch(agentMarkdown, /MERMAID_CDN|cdn\.jsdelivr\.net\/npm\/mermaid|loadMermaid|sanitizeMermaidSvg|agent-mermaid-canvas|<svg/);
   assert.match(runtimeEmbed, /renderMermaidWithArchify/);
   assert.match(runtimeEmbed, /srcDoc=\{state\.html\}/);
-  assert.match(runtimeEmbed, /sandbox="allow-scripts"/);
+  assert.match(runtimeEmbed, /<ArchifyCanvas/);
   assert.doesNotMatch(runtimeEmbed, /<pre|language-mermaid|allow-same-origin/);
   assert.match(blogMarkdown, /archify-\(architecture\|workflow\|sequence\|dataflow\|lifecycle\)/);
   assert.match(blogMarkdown, /<ArchifyEmbed/);
+  assert.match(blogMarkdown, /language\.toLowerCase\(\) === "mermaid"/);
+  assert.match(blogMarkdown, /<ArchifyRuntimeMermaid/);
   assert.match(blogMarkdown, /BLOG_ARCHIFY_MANIFEST_URL = "\/diagrams\/archify\/manifest\.json"/);
-  assert.match(reveal, /\.archify-embed/);
+  assert.match(astroEnhancer, /pre\[data-language="mermaid"\]/);
+  assert.match(astroEnhancer, /createRoot\(host\)/);
+  assert.match(astroEnhancer, /<ArchifyRuntimeMermaid/);
 
   assert.match(middleware, /_next\/image\|diagrams\(\?:\/\|\$\)/);
   assert.match(middleware, /path === "\/agent\/zread-cache\/archify-manifest\.json"/);

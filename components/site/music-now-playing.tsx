@@ -177,7 +177,7 @@ export function MusicNowPlaying({
     const line = lyricsRef.current.querySelectorAll<HTMLElement>(".lyric-line-shell")[activeLineIndex];
     if (!line) return;
     const top = line.offsetTop - (lyricsRef.current.clientHeight - line.offsetHeight) / 2;
-    lyricsRef.current.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+    lyricsRef.current.scrollTo({ top: Math.max(0, top), behavior: "auto" });
   }, [activeLineIndex]);
 
   useEffect(() => {

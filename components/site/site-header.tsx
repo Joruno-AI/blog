@@ -73,13 +73,6 @@ function applyTheme(isDark: boolean) {
   setThemeMetadata(isDark);
 }
 
-function appearanceTransitionFill(): "both" | "none" {
-  const userAgentData = (navigator as Navigator & {
-    userAgentData?: { brands?: Array<{ brand: string; version: string }> };
-  }).userAgentData;
-  return userAgentData?.brands?.some(({ brand }) => /Chrom(e|ium)/i.test(brand)) ? "both" : "none";
-}
-
 function NavigationIcon({ icon }: { icon: SiteIconName }) {
   return <SiteIcon name={icon} />;
 }
@@ -193,7 +186,7 @@ export function SiteHeader() {
     };
   }, []);
 
-  const toggleTheme = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const toggleTheme = () => {
     const nextIsDark = !document.documentElement.classList.contains("dark");
     const toggle = () => {
       applyTheme(nextIsDark);
@@ -201,25 +194,21 @@ export function SiteHeader() {
       setTheme(nextIsDark ? "dark" : "light");
     };
     const documentWithTransition = document as Document & {
-      startViewTransition?: (callback: () => void) => { ready: Promise<void> };
+      startViewTransition?: (callback: () => void) => { finished: Promise<void> };
     };
     if (!documentWithTransition.startViewTransition || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      document.documentElement.classList.add("theme-transitioning");
       toggle();
+      window.setTimeout(() => document.documentElement.classList.remove("theme-transitioning"), 240);
       return;
     }
-    const rect = event.currentTarget.getBoundingClientRect();
-    const hasPointerCoordinates = event.detail > 0 && (event.clientX !== 0 || event.clientY !== 0);
-    const x = hasPointerCoordinates ? event.clientX : rect.left + rect.width / 2;
-    const y = hasPointerCoordinates ? event.clientY : rect.top + rect.height / 2;
-    const originX = `${(x / innerWidth) * 100}%`;
-    const originY = `${(y / innerHeight) * 100}%`;
+    // A root-wide clip-path animation repaints the entire blog and becomes
+    // visibly janky on long articles. The browser's snapshot cross-fade is
+    // GPU composited and gives light -> dark the same transition as dark ->
+    // light without blocking input.
+    document.documentElement.classList.add("theme-transitioning");
     const transition = documentWithTransition.startViewTransition(toggle);
-    transition.ready.then(() => {
-      document.documentElement.animate(
-        { clipPath: [`circle(0% at ${originX} ${originY})`, `circle(150% at ${originX} ${originY})`] },
-        { duration: 400, easing: "ease-out", fill: appearanceTransitionFill(), pseudoElement: "::view-transition-new(root)" },
-      );
-    });
+    void transition.finished.finally(() => document.documentElement.classList.remove("theme-transitioning"));
   };
 
   const isActive = (href: string) => normalizedPath(pathname) === normalizedPath(href);

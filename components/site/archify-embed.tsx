@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 
+import { ArchifyCanvas } from "@/components/site/archify-canvas";
+
 const ARCHIFY_ARTIFACT_PATH = /^\/diagrams\/archify\/[a-f0-9]{64}\.html$/;
 
 export function normalizeArchifyArtifactSrc(source: string) {
@@ -58,19 +60,11 @@ export function ArchifyEmbed({
         <span>Archify</span>
       </figcaption>
       {status === "ready" && safeSrc ? (
-        <div className="archify-embed-viewport">
-          <iframe
-            className="archify-embed-frame"
-            src={safeSrc}
-            title={title || "Archify diagram"}
-            sandbox="allow-scripts"
-            loading="lazy"
-            referrerPolicy="no-referrer"
-            allow="fullscreen"
-            allowFullScreen
-            onError={() => setStatus("error")}
-          />
-        </div>
+        <ArchifyCanvas
+          src={safeSrc}
+          title={title || "Archify diagram"}
+          onError={() => setStatus("error")}
+        />
       ) : status === "checking" ? (
         <div className="archify-embed-status" role="status">正在载入 Archify 图表…</div>
       ) : (

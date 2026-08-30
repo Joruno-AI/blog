@@ -20,6 +20,10 @@ type RuntimeHastNode =
 
 function expandNode(node: AstroMarkdownNode): RuntimeHastNode {
   if (typeof node === "string") return { type: "text", value: node };
+  const classNames = node[1]?.className;
+  if (node[0] === "a" && Array.isArray(classNames) && classNames.includes("header-anchor")) {
+    return { type: "text", value: "" };
+  }
   return {
     type: "element",
     tagName: node[0],

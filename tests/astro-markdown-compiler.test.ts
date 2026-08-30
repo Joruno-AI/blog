@@ -70,6 +70,7 @@ test("precompiles the reviewed Astro Markdown pipeline before Next runtime", asy
   ].join("\n")));
 
   assert.match(html, /<h1 id="heading-quoted">Heading “quoted”<a class="header-anchor"/);
+  assert.doesNotMatch(html, /class="header-anchor"[^>]*>#<\/a>/);
   assert.match(html, /href="https:\/\/example\.com\/docs"[^>]*target="_blank"/);
   assert.equal((html.match(/class="new-tab-icon"/g) ?? []).length, 1);
   assert.match(html, /<img src="https:\/\/example\.com\/linked\.png" alt="linked image" loading="lazy" decoding="async"/);

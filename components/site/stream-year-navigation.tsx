@@ -28,9 +28,7 @@ function YearLinks({
               onNavigate(year);
               heading.scrollIntoView({
                 block: "start",
-                behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
-                  ? "auto"
-                  : "smooth",
+                behavior: "auto",
               });
               window.history.replaceState(window.history.state, "", `#${encodeURIComponent(year)}`);
             }}

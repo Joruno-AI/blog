@@ -415,7 +415,7 @@ const processor = unified()
         "data-pagefind-ignore": "",
       };
     },
-    content: { type: "text", value: "#" },
+    content: { type: "text", value: "" },
   })
   .use(rehypeWrapAll, { selector: "table", wrapper: "div" })
   // Astro integrations run after configured Markdown rehype plugins.

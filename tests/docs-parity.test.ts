@@ -168,4 +168,6 @@ test("replaces generic Docs placeholders with the Astro course library and reade
   assert.match(catalogRoute, /internal\/docs\/catalog\.json/);
   assert.doesNotMatch(catalogRoute, /parity\/data\/docs-catalog\.json/);
   assert.match(catalogRoute, /max-age=60, stale-while-revalidate=300/);
+  assert.match(catalogRoute, /if \(bucket\?\.get\)/);
+  assert.doesNotMatch(catalogRoute, /if \(cloudflareRuntime\)/);
 });

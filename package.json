@@ -16,6 +16,7 @@
     "diagrams:check": "node scripts/generate-archify-artifacts.mjs --check && node scripts/generate-zread-archify-artifacts.mjs --check",
     "assets:sync:astro": "node scripts/sync-astro-static-assets.mjs",
     "data:generate:agent-selected": "node scripts/generate-agent-selected-summaries.mjs",
+    "data:generate:agent-tree-snapshot": "node scripts/generate-agent-repository-tree-snapshot.mjs",
     "data:check:zread-cache": "node scripts/sync-zread-selected-cache.mjs --check",
     "data:check:zread-cache:strict": "node scripts/sync-zread-selected-cache.mjs --check --strict",
     "data:generate:public-content": "tsx scripts/generate-public-content-snapshot.ts --local && tsx scripts/generate-public-endpoint-assets.ts",

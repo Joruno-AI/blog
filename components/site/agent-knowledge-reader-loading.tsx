@@ -31,7 +31,7 @@ export function AgentKnowledgeLoading({ repo = "", skill }: AgentKnowledgeLoadin
             <Link className="site-link no-underline agent-back" href="/agent/" aria-label="返回 Agent 目录"><AgentSourceIcon name="i-ri-arrow-left-line" /></Link>
             <img src={repository ? `https://github.com/${avatarOwner}.png?size=96` : undefined} alt="" data-repo-avatar hidden={!repository} />
             <div><p><span>{owner}</span><i>/</i></p><h1>{name}</h1></div>
-            <span className="agent-source-state" role="status" aria-live="polite"><i aria-hidden="true" /><span>连接中</span></span>
+            <span className="agent-source-state" role="status" aria-live="polite"><i aria-hidden="true" /><span>连接 ZRead</span></span>
           </div>
           <div className="agent-knowledge-actions">
             <button type="button" className="agent-mobile-nav" aria-label="打开文档目录" aria-controls="agent-wiki-nav" aria-expanded="false"><AgentSourceIcon name="i-ri-menu-2-line" />目录</button>
@@ -49,8 +49,8 @@ export function AgentKnowledgeLoading({ repo = "", skill }: AgentKnowledgeLoadin
           <div className="agent-nav-repo-card"><span>仓库</span><strong>{repository || "读取中…"}</strong><small>{description}</small><div><span><AgentSourceIcon name="i-ri-star-line" /><b>{skill ? formatAgentCount(skill.s) : "—"}</b></span><span>{skill?.language || "—"}</span></div></div>
         </aside>
         <section className="agent-wiki-main" aria-label="知识库正文">
-          <div className="agent-reader-status" role="status"><span className="agent-pulse" />正在生成源码知识库…</div>
-          <article className="agent-wiki-article prose"><div className="agent-article-skeleton" aria-label="正在读取文档"><span /><span /><span /><span /><span /><span /></div></article>
+          <div className="agent-reader-status" role="status"><span className="agent-pulse" />正在读取 ZRead 文档与仓库源码…</div>
+          <article className="agent-wiki-article prose"><div className="agent-article-skeleton" aria-label="正在读取 ZRead 文档"><span /><span /><span /><span /><span /><span /></div></article>
         </section>
         <aside className="agent-page-toc" aria-label="本页目录">
           <div className="agent-page-toc-inner"><nav data-page-toc aria-label="本页章节"><p>正文加载后显示标题</p></nav></div>
@@ -60,7 +60,7 @@ export function AgentKnowledgeLoading({ repo = "", skill }: AgentKnowledgeLoadin
         <button className="agent-atlas-scrim" type="button" tabIndex={-1} aria-hidden="true" aria-label="关闭仓库地图" />
         <div id="agent-atlas" className="agent-atlas" role="dialog" aria-modal="true" aria-label="仓库地图" tabIndex={-1} aria-hidden="true" inert>
           <div className="agent-atlas-resize" role="slider" aria-label="调整仓库地图宽度" aria-orientation="horizontal" aria-valuemin={680} aria-valuemax={1600} aria-valuenow={1120} tabIndex={0}><span aria-hidden="true" /></div>
-          <header className="agent-atlas-head"><div className="agent-atlas-title"><AgentSourceIcon name="i-ri-git-repository-line" /><div><strong>{repository || "仓库"}</strong><small><span>HEAD</span><i>·</i><span>读取中</span></small></div></div><div><a href={repository ? `https://github.com/${repository}` : "https://github.com"} target="_blank" rel="noopener">GitHub<AgentSourceIcon name="i-ri-arrow-right-up-line" /></a><button type="button" aria-label="关闭仓库地图"><AgentSourceIcon name="i-ri-close-line" /></button></div></header>
+          <header className="agent-atlas-head"><div className="agent-atlas-title"><AgentSourceIcon name="i-ri-git-repository-line" /><div><strong>{repository || "仓库"}</strong><small><span>HEAD</span><i>·</i><span>读取中</span></small></div></div><div><a href={repository ? `https://github.com/${repository}` : "https://github.com"} target="_blank" rel="noopener">GitHub<AgentSourceIcon name="i-ri-arrow-right-up-line" /></a><button type="button" data-atlas-close aria-label="关闭仓库地图" title="关闭（Esc）"><AgentSourceIcon name="i-ri-close-line" /></button></div></header>
           <div className="agent-atlas-tabs" role="tablist" aria-label="仓库地图视图"><button type="button" role="tab" className="is-active" aria-selected="true">概览</button><button type="button" role="tab" aria-selected="false">文档</button><button type="button" role="tab" aria-selected="false">文件</button></div>
           <div className="agent-atlas-body">
             <section role="tabpanel" data-atlas-panel="overview"><div className="agent-atlas-intro"><div><h2>先建立边界，再沿入口阅读关键流程</h2><p>正在核对仓库结构与模块边界…</p></div><button type="button">开始阅读</button></div>

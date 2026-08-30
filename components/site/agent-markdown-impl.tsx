@@ -2,7 +2,7 @@
 
 /* eslint-disable @next/next/no-img-element -- repository image URLs are resolved at runtime. */
 
-import { Check, Copy, FileCode2 } from "lucide-react";
+import { BookOpen, Braces, Check, Copy, FileCode2, FileText, Image as ImageIcon, Palette, SquareTerminal } from "lucide-react";
 import {
   isValidElement,
   useEffect,
@@ -32,6 +32,7 @@ import {
   resolveAgentRepositoryPath,
 } from "@/lib/agent/markdown";
 import type { AgentWikiStructureItem } from "@/lib/agent/zread";
+import { agentRepositoryFileKind } from "@/lib/agent/repository";
 
 type HastNode = { tagName?: string; properties?: Record<string, unknown>; children?: HastNode[] };
 const BLOCKED_RAW_TAGS = new Set(["script", "iframe", "object", "embed", "form", "input", "button", "textarea", "select", "option", "base", "meta", "link", "style", "svg", "math"]);
@@ -77,17 +78,21 @@ function nodeText(node: ReactNode): string {
   return "";
 }
 
-function AgentCodeBlock({ children }: { children?: ReactNode }) {
+function AgentFileReferenceIcon({ path }: { path: string }) {
+  const kind = agentRepositoryFileKind(path);
+  const Icon = kind === "document" ? BookOpen
+    : kind === "shell" ? SquareTerminal
+      : kind === "config" ? Braces
+        : kind === "style" ? Palette
+          : kind === "image" ? ImageIcon
+            : kind === "file" ? FileText
+              : FileCode2;
+  return <span className="agent-file-reference-icon" data-file-kind={kind} aria-hidden="true"><Icon /></span>;
+}
+
+export function AgentSourceCode({ value, language, className = "" }: { value: string; language: string; className?: string }) {
   const [html, setHtml] = useState("");
   const [copied, setCopied] = useState(false);
-  const code = Array.isArray(children) ? children.find(isValidElement) : children;
-  const className = isValidElement<{ className?: string }>(code) ? code.props.className || "" : "";
-  const rawValue = nodeText(code).replace(/\n+$/, "");
-  const token = className.match(/language-([^\s,{]+)/)?.[1]?.toLowerCase() || "text";
-  const language = LANGUAGE_ALIASES[token] || token;
-  const value = language === "text" && /[├└│]/.test(rawValue)
-    ? rawValue.split("\n").map((line) => line.replace(/[ \t]{3,}(?=(?:#|←|→|\/\/))/, "  ").replace(/[ \t]+$/, "")).join("\n")
-    : rawValue;
 
   useEffect(() => {
     let active = true;
@@ -116,15 +121,30 @@ function AgentCodeBlock({ children }: { children?: ReactNode }) {
     return () => { active = false; };
   }, [language, value]);
 
-  return <figure className="agent-highlighted-block" data-language={language}>
-    <figcaption><span>{language}</span><button type="button" onClick={() => {
+  return <div className={["agent-highlighted-block", className].filter(Boolean).join(" ")} data-language={language} data-code-ready={html ? "true" : "false"}>
+    <span className="sr-only">{language} 代码</span>
+    <button className="agent-code-copy" type="button" aria-label={copied ? "代码已复制" : "复制代码"} title={copied ? "已复制" : "复制代码"} data-copied={copied ? "true" : "false"} onClick={() => {
       void navigator.clipboard.writeText(value).then(() => {
         setCopied(true);
         window.setTimeout(() => setCopied(false), 1200);
       });
-    }}>{copied ? <Check /> : <Copy />}{copied ? "已复制" : "复制"}</button></figcaption>
-    {html ? <div dangerouslySetInnerHTML={{ __html: html }} /> : <pre className="agent-code-fallback"><code>{value}</code></pre>}
-  </figure>;
+    }}>{copied ? <Check /> : <Copy />}<span>{copied ? "已复制" : "复制"}</span></button>
+    <div className="agent-code-scroll">
+      {html ? <div dangerouslySetInnerHTML={{ __html: html }} /> : <pre className="agent-shiki-fallback"><code>{value}</code></pre>}
+    </div>
+  </div>;
+}
+
+function AgentCodeBlock({ children }: { children?: ReactNode }) {
+  const code = Array.isArray(children) ? children.find(isValidElement) : children;
+  const className = isValidElement<{ className?: string }>(code) ? code.props.className || "" : "";
+  const rawValue = nodeText(code).replace(/\n+$/, "");
+  const token = className.match(/language-([^\s,{]+)/)?.[1]?.toLowerCase() || "text";
+  const language = LANGUAGE_ALIASES[token] || token;
+  const value = language === "text" && /[├└│]/.test(rawValue)
+    ? rawValue.split("\n").map((line) => line.replace(/[ \t]{3,}(?=(?:#|←|→|\/\/))/, "  ").replace(/[ \t]+$/, "")).join("\n")
+    : rawValue;
+  return <AgentSourceCode value={value} language={language} />;
 }
 
 type ZReadArchifyManifest = {
@@ -138,7 +158,10 @@ let archifyManifestLoader: Promise<ZReadArchifyManifest> | null = null;
 
 function loadArchifyManifest() {
   archifyManifestLoader ??= fetch(ARCHIFY_MANIFEST_URL, {
-    cache: "force-cache",
+    // The manifest points at content-addressed HTML artifacts and therefore
+    // changes whenever diagram geometry changes. Revalidate the small index;
+    // the immutable artifacts themselves remain aggressively cacheable.
+    cache: "no-store",
     credentials: "same-origin",
   }).then(async (response) => {
     if (!response.ok) throw new Error(`Archify manifest HTTP ${response.status}`);
@@ -266,7 +289,7 @@ export function AgentMarkdown({ content, repo, refName, sourcePath = "", classNa
     if (explicitWiki && wikiTitle && onOpenWiki) return <a {...props} href={`?doc=${encodeURIComponent(wikiTitle)}`} className={[anchorClassName, "agent-wiki-link"].filter(Boolean).join(" ")} onClick={(event) => { event.preventDefault(); onOpenWiki(wikiTitle); }}>{children}</a>;
     if (!/^[a-z][a-z\d+.-]*:/i.test(href) && !href.startsWith("//")) {
       const path = resolveAgentRepositoryPath(href, sourcePath);
-      if (path && onOpenFile) return <a {...props} href={`/agent/${repo}?file=${encodeURIComponent(path)}&ref=${encodeURIComponent(refName)}`} className={[anchorClassName, "agent-file-reference"].filter(Boolean).join(" ")} title={props.title || path} onClick={(event) => { event.preventDefault(); onOpenFile(path); }}><FileCode2 className="agent-file-reference-icon" aria-hidden="true" /><span className="agent-file-reference-label">{children}</span></a>;
+      if (path && onOpenFile) return <a {...props} href={`/agent/${repo}?file=${encodeURIComponent(path)}&ref=${encodeURIComponent(refName)}`} className={[anchorClassName, "agent-file-reference"].filter(Boolean).join(" ")} title={props.title || path} onClick={(event) => { event.preventDefault(); onOpenFile(path); }}><AgentFileReferenceIcon path={path} /><span className="agent-file-reference-label">{children}</span></a>;
     }
     if (/^https?:\/\//i.test(href)) return <a {...props} href={href} className={[anchorClassName, "agent-external-link"].filter(Boolean).join(" ")} target="_blank" rel="noopener nofollow">{children}<span className="agent-external-link-icon" aria-hidden="true">↗</span></a>;
     if (/^(?:mailto|tel):/i.test(href)) return <a {...props} className={anchorClassName} href={href}>{children}</a>;
@@ -280,7 +303,7 @@ export function AgentMarkdown({ content, repo, refName, sourcePath = "", classNa
     const reference = parseAgentInlineFileReference(value, sourcePath);
     if (!reference || !onOpenFile) return <code {...props}>{children}</code>;
     const hash = reference.line ? `#L${reference.line}${reference.column ? `C${reference.column}` : ""}` : "";
-    return <a href={`/agent/${repo}?file=${encodeURIComponent(reference.path)}&ref=${encodeURIComponent(refName)}${hash}`} className="agent-file-reference" title={reference.path} onClick={(event) => { event.preventDefault(); onOpenFile(reference.path); }}><FileCode2 className="agent-file-reference-icon" aria-hidden="true" /><span className="agent-file-reference-label"><code {...props}>{children}</code></span></a>;
+    return <a href={`/agent/${repo}?file=${encodeURIComponent(reference.path)}&ref=${encodeURIComponent(refName)}${hash}`} className="agent-file-reference" title={reference.path} onClick={(event) => { event.preventDefault(); onOpenFile(reference.path); }}><AgentFileReferenceIcon path={reference.path} /><span className="agent-file-reference-label"><code {...props}>{children}</code></span></a>;
   };
 
   return <div className={className}>
@@ -293,6 +316,7 @@ export function AgentMarkdown({ content, repo, refName, sourcePath = "", classNa
         code: CodeComponent,
         a: LinkComponent,
         img: ({ node, ...props }) => { void node; return <AgentImage {...props} repo={repo} refName={refName} sourcePath={sourcePath} />; },
+        table: ({ children, node, ...props }) => { void node; return <div className="agent-table-wrap" role="region" aria-label="可横向滚动的表格" tabIndex={0}><table {...props}>{children}</table></div>; },
         details: ({ className: detailsClassName, node, ...props }) => { void node; return <details {...props} className={["agent-source-files", detailsClassName].filter(Boolean).join(" ")} />; },
         summary: ({ children, node, ...props }) => { void node; return <summary {...props}>{nodeText(children).trim().toLowerCase() === "relevant source files" ? "相关源文件" : children}</summary>; },
         strong: ({ children, node, ...props }) => { void node; return <strong {...props}>{nodeText(children).trim().toLowerCase() === "sources:" ? "来源：" : children}</strong>; },

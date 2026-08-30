@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import {
   fallbackRepositoryOverview,
   fetchPublicGithubJson,
+  mergeRepositoryTreeSnapshot,
   probeRawRepositoryRoot,
 } from "@/lib/agent/github-public";
 import { cachedAgentResponse } from "@/lib/agent/platform-cache";
@@ -53,7 +54,7 @@ function repositoryTree(payload: Record<string, unknown>, partial = false) {
     const item = entry as Record<string, unknown>;
     if (item.type !== "blob" && item.type !== "tree") return [];
     if (typeof item.path !== "string" || item.path.length > 1_800) return [];
-    return [{ path: item.path, type: item.type, size: typeof item.size === "number" ? item.size : null }];
+    return [{ path: item.path, type: item.type as "blob" | "tree", size: typeof item.size === "number" ? item.size : null }];
   });
   return {
     sha: typeof payload.sha === "string" ? payload.sha : "",
@@ -96,8 +97,14 @@ export async function GET(request: Request, context: Context) {
       try {
         const payload = await fetchPublicGithubJson(treePath, { recursive: "1" });
         if (payload && !Array.isArray(payload)) {
+          const liveTree = repositoryTree(payload);
+          const restoredTree = liveTree.truncated
+            ? mergeRepositoryTreeSnapshot(owner, repo, ref, liveTree.tree)
+            : null;
           return NextResponse.json(
-            { ...repositoryTree(payload), source: "github" },
+            restoredTree
+              ? { ...restoredTree, source: "github+snapshot" }
+              : { ...liveTree, source: "github" },
             { headers: { "Cache-Control": CACHE_CONTROL, "X-Content-Type-Options": "nosniff" } },
           );
         }
@@ -109,8 +116,12 @@ export async function GET(request: Request, context: Context) {
       try {
         const root = await fetchPublicGithubJson(treePath, {}, 1_000_000);
         if (root && !Array.isArray(root)) {
+          const rootTree = repositoryTree(root, true);
+          const restoredTree = mergeRepositoryTreeSnapshot(owner, repo, ref, rootTree.tree);
           return NextResponse.json(
-            { ...repositoryTree(root, true), source: "github-root" },
+            restoredTree
+              ? { ...restoredTree, source: "github-root+snapshot" }
+              : { ...rootTree, source: "github-root" },
             { headers: { "Cache-Control": CACHE_CONTROL, "X-Content-Type-Options": "nosniff" } },
           );
         }
@@ -118,9 +129,19 @@ export async function GET(request: Request, context: Context) {
         // Raw GitHub uses a separate public path and remains available when
         // the REST core quota for a shared Worker egress address is exhausted.
       }
+      const versionedTree = mergeRepositoryTreeSnapshot(owner, repo, ref);
+      if (versionedTree) {
+        return NextResponse.json(
+          { ...versionedTree, source: "snapshot" },
+          { headers: { "Cache-Control": CACHE_CONTROL, "X-Content-Type-Options": "nosniff" } },
+        );
+      }
       const rawTree = await probeRawRepositoryRoot(owner, repo, ref);
+      const restoredRawTree = mergeRepositoryTreeSnapshot(owner, repo, ref, rawTree);
       return NextResponse.json(
-        { sha: "", tree: rawTree, truncated: true, source: "raw-root", partial: true },
+        restoredRawTree
+          ? { ...restoredRawTree, source: "raw-root+snapshot" }
+          : { sha: "", tree: rawTree, truncated: true, source: "raw-root", partial: true },
         { headers: { "Cache-Control": FALLBACK_CACHE_CONTROL, "X-Content-Type-Options": "nosniff" } },
       );
     }

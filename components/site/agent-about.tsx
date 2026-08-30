@@ -13,7 +13,7 @@ const pipeline = [
   ["03", "增强", "为精选项目补充 GitHub 活跃度、主要语言与 skills.sh 安装量。"],
   ["04", "组织", `按 ${scenesData.scenes.length} 个任务场景重新编排，同时提供分类、趋势、作者与对比视图。`],
   ["05", "站内阅读", "详情页统一读取 ZRead 中文文档，GitHub 仅负责源码与仓库元数据。"],
-  ["06", "回退", "当 ZRead 暂未生成文档时，保留仓库现有 README 与文件树导览，页面会明确标注来源。"],
+  ["06", "回退", "当 ZRead 暂未生成文档时，仅保留 GitHub 源码与文件树浏览；详情正文不混用其他文档源。"],
 ];
 
 type Snapshot = { generatedAt: string; count: number; categories: number; safe: number };
@@ -42,6 +42,6 @@ export function AgentAbout() {
     <section className="agent-method-section"><div className="agent-method-head"><div><span className="agent-tool-kicker">CURRENT SNAPSHOT</span><h2>当前索引</h2></div><p>{`最后同步：${generatedAt}`}</p></div><div className="agent-formula">{[["全量项目", snapshot.count.toLocaleString("zh-CN")], ["数据分类", String(snapshot.categories)], ["任务场景", String(scenesData.scenes.length)], ["安全通过", snapshot.safe.toLocaleString("zh-CN")], ["详情文档", "ZRead"], ["源码浏览", "GitHub API"]].map(([label, value]) => <div key={label}><span>{label}</span><strong>{value}</strong></div>)}</div></section>
     <section className="agent-method-section"><div className="agent-method-head"><div><span className="agent-tool-kicker">QUALITY SCORE</span><h2>质量分的 6 个维度</h2></div><p>质量分优先衡量项目能否被 Agent 正确理解和使用，不与 Stars 、更新速度或安全等级混成一个不透明总分。</p></div><div className="agent-formula">{dimensions.map(([label, weight]) => <div key={label}><span>{label}</span><strong>{`${weight}%`}</strong></div>)}</div></section>
     <section className="agent-method-section"><div className="agent-method-head"><div><span className="agent-tool-kicker">DATA PIPELINE</span><h2>从公开索引到站内文档</h2></div><p>自动同步负责数据新鲜度，站内信息架构负责让选择和阅读更完整。</p></div><div className="agent-method-grid">{pipeline.map(([index, title, description]) => <article className="agent-method-card" key={index}><span>{index}</span><h3>{title}</h3><p>{description}</p></article>)}</div></section>
-    <section className="agent-method-section"><div className="agent-method-head"><div><span className="agent-tool-kicker">LIMITATIONS</span><h2>安全与数据局限</h2></div></div><div className="agent-method-grid">{[["01", "安全通过 ≠ 绝对安全", "结构扫描与公开等级只能帮助排序。涉及凭据、网络、文件系统与自动执行时，仍应阅读源码。"], ["02", "Stars 会偏向早期项目", "新项目可能更适合当前任务。趋势页和对比页会同时展示更新时间、增速与文档质量。"], ["03", "ZRead 文档生成需要时间", "暂未生成的仓库会保留现有 README 与文件树导览，页面会明确标注当前来源。"]].map(([index, title, description]) => <article className="agent-method-card" key={index}><span>{index}</span><h3>{title}</h3><p>{description}</p></article>)}</div></section>
+    <section className="agent-method-section"><div className="agent-method-head"><div><span className="agent-tool-kicker">LIMITATIONS</span><h2>安全与数据局限</h2></div></div><div className="agent-method-grid">{[["01", "安全通过 ≠ 绝对安全", "结构扫描与公开等级只能帮助排序。涉及凭据、网络、文件系统与自动执行时，仍应阅读源码。"], ["02", "Stars 会偏向早期项目", "新项目可能更适合当前任务。趋势页和对比页会同时展示更新时间、增速与文档质量。"], ["03", "ZRead 文档生成需要时间", "暂未生成时，详情正文保持空态；GitHub 文件树与源码浏览仍可继续使用。"]].map(([index, title, description]) => <article className="agent-method-card" key={index}><span>{index}</span><h3>{title}</h3><p>{description}</p></article>)}</div></section>
   </div>;
 }

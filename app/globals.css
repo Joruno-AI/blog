@@ -23,14 +23,6 @@
   z-index: 9999;
 }
 
-.dark::view-transition-old(root) {
-  z-index: 9999;
-}
-
-.dark::view-transition-new(root) {
-  z-index: 1;
-}
-
 /* ===== CSS Variables ===== */
 :root {
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -70,22 +62,25 @@ body {
 }
 
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
 }
 
-/* Dark mode transition */
-html,
-html *,
-html *::before,
-html *::after {
-  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.2s ease, box-shadow 0.3s ease;
+/* Keep the document responsive while the root snapshot cross-fades. The old
+   blanket `html:has(::view-transition) * { transition:none }` rule made the
+   light/dark switch appear to jump and also disabled the blog's subtle colour
+   transitions. */
+html.theme-transitioning,
+html.theme-transitioning body {
+  transition: background-color .22s ease, color .22s ease;
 }
 
-/* Disable transitions during theme change for view transition */
-html:has(::view-transition) *,
-html:has(::view-transition) *::before,
-html:has(::view-transition) *::after {
-  transition: none !important;
+@keyframes theme-root-crossfade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+::view-transition-new(root) {
+  animation: theme-root-crossfade .24s ease both;
 }
 
 body {
@@ -1379,9 +1374,11 @@ html:not(:has(.astro-site)) ::-webkit-scrollbar-thumb:hover {
   min-width: 0;
   margin: 2rem 0;
   overflow: hidden;
-  border-block: 1px solid color-mix(in srgb, var(--c-text, #262421) 14%, transparent);
-  background: color-mix(in srgb, var(--c-bg, #fff) 96%, #8a7968 4%);
+  border: 1px solid color-mix(in srgb, var(--c-text, #262421) 12%, transparent);
+  border-radius: .8rem;
+  background: var(--c-surface-soft, var(--c-bg, #fff));
   color: var(--c-text, #262421);
+  box-shadow: 0 1.25rem 3.5rem -3rem var(--c-shadow-key, rgb(0 0 0 / .26));
 }
 .archify-embed-header {
   display: flex;
@@ -1389,7 +1386,7 @@ html:not(:has(.astro-site)) ::-webkit-scrollbar-thumb:hover {
   align-items: baseline;
   justify-content: space-between;
   gap: 1rem;
-  padding: .72rem .2rem .68rem;
+  padding: .72rem .85rem .68rem;
   border-bottom: 1px solid color-mix(in srgb, currentColor 10%, transparent);
 }
 .archify-embed-header strong {
@@ -1410,14 +1407,110 @@ html:not(:has(.astro-site)) ::-webkit-scrollbar-thumb:hover {
   letter-spacing: .08em;
   text-transform: uppercase;
 }
+.archify-canvas {
+  --archify-canvas-ratio: 16 / 9;
+  width: 100%;
+  min-width: 0;
+  background: var(--c-bg, #fff);
+}
+.archify-canvas-controls {
+  display: flex;
+  min-width: 0;
+  min-height: 2.7rem;
+  align-items: center;
+  justify-content: flex-end;
+  gap: .3rem;
+  padding: .34rem .45rem;
+  border-bottom: 1px solid color-mix(in srgb, currentColor 10%, transparent);
+  background: color-mix(in srgb, var(--c-surface-soft, var(--c-bg, #fff)) 88%, var(--c-bg, #fff));
+  color: var(--c-text, #262421);
+}
+.archify-canvas-controls-label {
+  margin-right: auto;
+  padding-left: .28rem;
+  color: color-mix(in srgb, currentColor 54%, transparent);
+  font: 600 .62rem ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  letter-spacing: .08em;
+}
+.archify-canvas-controls button {
+  display: inline-flex;
+  min-width: 2rem;
+  height: 2rem;
+  align-items: center;
+  justify-content: center;
+  gap: .34rem;
+  border: 1px solid transparent;
+  border-radius: .42rem;
+  padding: 0 .42rem;
+  background: transparent;
+  color: color-mix(in srgb, currentColor 78%, transparent);
+  font-family: inherit;
+  font-size: .66rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
+}
+.archify-canvas-controls button > svg { width: .88rem; height: .88rem; stroke-width: 1.8; }
+.archify-canvas-controls button:hover:not(:disabled) {
+  border-color: color-mix(in srgb, currentColor 10%, transparent);
+  background: var(--c-surface-hover, color-mix(in srgb, currentColor 7%, transparent));
+  color: var(--c-text, #262421);
+}
+.archify-canvas-controls button:active:not(:disabled) { transform: translateY(1px); }
+.archify-canvas-controls button:focus-visible,
+.archify-canvas-zoom-field:focus-within {
+  outline: 2px solid color-mix(in srgb, var(--c-accent, currentColor) 54%, transparent);
+  outline-offset: 1px;
+}
+.archify-canvas-controls button:disabled { opacity: .34; cursor: default; }
+.archify-canvas-text-button { padding-inline: .55rem !important; }
+.archify-canvas-control-divider {
+  width: 1px;
+  height: 1rem;
+  margin-inline: .12rem;
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+.archify-canvas-zoom-field {
+  display: inline-flex;
+  height: 2rem;
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+  border-radius: .42rem;
+  background: var(--c-bg, #fff);
+  color: color-mix(in srgb, currentColor 66%, transparent);
+  font: 620 .66rem ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+}
+.archify-canvas-zoom-field input {
+  width: 3.2rem;
+  height: 100%;
+  appearance: textfield;
+  border: 0;
+  outline: 0;
+  padding: 0 .16rem 0 .48rem;
+  background: transparent;
+  color: var(--c-text, #262421);
+  font: inherit;
+  text-align: right;
+}
+.archify-canvas-zoom-field input::-webkit-inner-spin-button,
+.archify-canvas-zoom-field input::-webkit-outer-spin-button { margin: 0; appearance: none; }
+.archify-canvas-zoom-field > span:last-child { padding-right: .46rem; }
+.archify-canvas-esc-hint {
+  padding-inline: .35rem .2rem;
+  color: color-mix(in srgb, currentColor 52%, transparent);
+  font: 500 .6rem ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
 .archify-embed-viewport {
   position: relative;
   width: 100%;
   max-width: 100%;
   min-width: 0;
-  height: clamp(27rem, 54vw, 46rem);
+  height: auto;
+  aspect-ratio: var(--archify-canvas-ratio, 16 / 9);
   overflow: hidden;
-  background: #faf9f7;
+  background: var(--c-bg, #fff);
 }
 .archify-embed-frame {
   display: block;
@@ -1425,7 +1518,25 @@ html:not(:has(.astro-site)) ::-webkit-scrollbar-thumb:hover {
   max-width: 100%;
   height: 100%;
   border: 0;
-  background: #faf9f7;
+  background: var(--c-bg, #fff);
+}
+.archify-canvas:fullscreen,
+.archify-canvas[data-fullscreen="true"] {
+  display: flex;
+  width: 100vw;
+  height: 100dvh;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--c-bg, #fff);
+}
+.archify-canvas:fullscreen .archify-canvas-controls,
+.archify-canvas[data-fullscreen="true"] .archify-canvas-controls { flex: none; }
+.archify-canvas:fullscreen .archify-embed-viewport,
+.archify-canvas[data-fullscreen="true"] .archify-embed-viewport {
+  flex: 1 1 auto;
+  height: auto;
+  min-height: 0;
+  aspect-ratio: auto;
 }
 .archify-embed-status {
   display: grid;
@@ -1447,16 +1558,18 @@ html:not(:has(.astro-site)) ::-webkit-scrollbar-thumb:hover {
 }
 @media (max-width: 767px) {
   .archify-embed { margin-block: 1.5rem; }
-  .archify-embed-header { padding-inline: 0; }
+  .archify-embed-header { padding-inline: .72rem; }
   .archify-embed-header span { display: none; }
-  /* Keep wide architecture diagrams legible without leaving a tall paper
-     field below them on narrow screens. The sandbox remains scrollable for
-     genuinely tall sequence/lifecycle artifacts. */
-  .archify-embed-viewport { height: clamp(18rem, 76vw, 30rem); }
+  .archify-canvas-controls { gap: .18rem; padding-inline: .3rem; }
+  .archify-canvas-controls-label,
+  .archify-canvas-text-button > span,
+  .archify-canvas-esc-hint { display: none; }
+  .archify-canvas-text-button { min-width: 2rem; padding-inline: .42rem !important; }
+  .archify-canvas-zoom-field input { width: 2.85rem; }
 }
 @media (prefers-color-scheme: dark) {
   .archify-embed-viewport,
-  .archify-embed-frame { background: #151515; }
+  .archify-embed-frame { background: var(--c-bg, #151515); }
 }
 
 /* ===== Astro music room parity ===== */
@@ -2949,12 +3062,6 @@ html:not(:has(.astro-site)) ::-webkit-scrollbar-thumb:hover {
     break-inside: avoid;
   }
 }
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation: none;
-  mix-blend-mode: normal;
-}
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

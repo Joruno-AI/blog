@@ -110,6 +110,17 @@ function resolvePage(pages: ZReadPageMeta[], requested: string) {
   return pages.find((page) => normalizedKey(page.topic) === key || normalizedKey(page.slug) === key);
 }
 
+function structureItems(pages: ZReadPageMeta[]) {
+  return pages.map((page, index): AgentWikiStructureItem => ({
+    depth: 0,
+    id: page.slug.match(/^\d+/)?.[0] || String(index + 1),
+    title: page.topic,
+    slug: page.slug,
+    group: page.group || "",
+    section: page.section || "",
+  }));
+}
+
 export function resolveAgentWikiPageTitle(payload: Record<string, unknown>, fallback: string) {
   if (typeof payload.page === "string" && payload.page.trim()) return payload.page.trim();
   if (typeof payload.markdown === "string") {
@@ -126,14 +137,7 @@ export async function fetchZReadStructure(owner: string, repo: string, signal?: 
   return {
     source: "zread" as const,
     sourceUrl,
-    items: pages.map((page, index): AgentWikiStructureItem => ({
-      depth: 0,
-      id: page.slug.match(/^\d+/)?.[0] || String(index + 1),
-      title: page.topic,
-      slug: page.slug,
-      group: page.group || "",
-      section: page.section || "",
-    })),
+    items: structureItems(pages),
   };
 }
 
@@ -152,6 +156,7 @@ export async function fetchZReadPage(owner: string, repo: string, requested = "O
     sourceUrl,
     page: page.topic,
     slug: page.slug,
+    items: structureItems(pages),
     markdown: `# ${page.topic}\n\n${body}`.slice(0, 220_000),
   };
 }

@@ -542,26 +542,6 @@ body { background: var(--c-bg); color: var(--c-text-soft); }
 #nav-panel .mobile-nav-icon-grid a:active { transform: scale(.96); }
 #nav-open-button[aria-expanded="true"] { background: var(--c-surface-active); color: var(--c-text); opacity: 1; }
 
-/* Viewport-led reveal, scoped away from Studio. */
-@media (prefers-reduced-motion: no-preference) {
-  .astro-site[data-reveal-ready]:not([data-no-sliding]) [data-scroll-reveal] {
-    opacity: 0;
-    transform: translate3d(0, var(--enter-distance, 14px), 0);
-    transition: opacity var(--enter-duration, 420ms) var(--ease-out-expo), transform var(--enter-duration, 420ms) var(--ease-out-expo);
-    transition-delay: var(--reveal-delay, 0ms);
-  }
-  .astro-site[data-reveal-ready]:not([data-no-sliding]) [data-scroll-reveal].is-revealed {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-}
-@media (max-width: 767px) and (prefers-reduced-motion: no-preference) {
-  .astro-site[data-reveal-ready]:not([data-no-sliding]) [data-scroll-reveal] {
-    --enter-distance: 12px;
-    --enter-duration: 480ms;
-  }
-}
-
 /* Home editorial rhythm. */
 .astro-site[data-page-kind="home"] .astro-main {
   padding-top: clamp(3.75rem, 8vw, 7rem);

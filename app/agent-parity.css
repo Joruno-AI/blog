@@ -1472,10 +1472,6 @@ select.skills-board-select {
   background: var(--c-surface-soft);
 }
 
-body:not([data-no-sliding]) .skills-hero.slide-enter.is-revealed {
-  transform: none;
-}
-
 .skills-hero-main {
   z-index: 20;
 }
@@ -4887,7 +4883,7 @@ html.agent-atlas-lock,
     min-height: 3.4rem;
     padding: 0.55rem 0.75rem;
     display: grid;
-    grid-template-columns: 2rem 1.5rem minmax(0, 1fr) auto;
+    grid-template-columns: 2rem minmax(0, 1fr) auto;
     align-items: center;
     gap: 0.5rem;
     border: 0;
@@ -4907,9 +4903,10 @@ html.agent-atlas-lock,
     color: var(--agent-muted);
   }
   .agent-start-files button strong {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    white-space: normal;
+    line-height: 1.35;
     font-family: var(--font-sans);
     font-size: 0.74rem;
     font-weight: 550;
@@ -5542,10 +5539,15 @@ html.agent-atlas-lock,
   .agent-atlas-head [data-atlas-close] {
     width: 2.35rem;
     height: 2.35rem;
-    border-radius: 50%;
-    background: transparent;
+    border: 1px solid color-mix(in srgb, var(--c-text) 14%, var(--c-bg));
+    border-radius: .65rem;
+    background: color-mix(in srgb, var(--c-text) 6%, var(--c-bg));
     box-shadow: none;
-    color: var(--agent-muted);
+    color: var(--c-text);
+  }
+  .agent-atlas-head [data-atlas-close] .agent-source-icon {
+    width: 1rem;
+    height: 1rem;
   }
   .agent-atlas-head [data-atlas-close]:hover {
     background: color-mix(in srgb, var(--c-text) 8%, var(--c-bg));
@@ -6736,9 +6738,6 @@ html.agent-atlas-lock,
   .agent-knowledge-brand > .skill-avatar-lazy { width: 1.65rem; height: 1.65rem; }
 }
 
-.agent-highlighted-block > figcaption { display: flex; align-items: center; justify-content: space-between; min-height: 2.2rem; border-bottom: 1px solid var(--c-border-soft); padding: .3rem .7rem; color: var(--c-text-faint); font-size: .62rem; letter-spacing: .08em; text-transform: uppercase; }
-.agent-highlighted-block > figcaption button { display: inline-flex; align-items: center; gap: .3rem; border: 0; background: transparent; color: inherit; font: inherit; cursor: pointer; }
-.agent-highlighted-block > figcaption svg { width: .78rem; height: .78rem; }
 .agent-highlighted-block > div > pre.shiki { margin: 0; border: 0; border-radius: 0; }
 
 
@@ -6780,7 +6779,7 @@ html.agent-atlas-lock,
 .agent-archify-manifest-frame {
   display: block;
   width: 100%;
-  height: clamp(32rem, 70vh, 50rem);
+  height: 100%;
   border: 0;
   background: var(--c-bg);
 }
@@ -6829,7 +6828,6 @@ html.agent-atlas-lock,
   .astro-site:has(.agent-knowledge) .agent-wiki-article { min-width: 0; max-width: 100%; }
   .astro-site:has(.agent-knowledge) .agent-wiki-article { overflow-wrap: anywhere; }
   .astro-site:has(.agent-knowledge) .agent-wiki-article :is(pre,table,figure,iframe) { max-width: 100%; }
-  .agent-archify-manifest-frame { height: 28rem; }
   .agent-archify-manifest-files { grid-template-columns: 1fr; }
   .agent-archify-manifest-files > button:nth-child(odd) { border-right: 0; }
 }
@@ -6971,8 +6969,9 @@ html.agent-atlas-lock,
   min-width: 0;
   margin: 1.6rem 0;
   overflow: hidden;
-  border-block: 1px solid color-mix(in srgb,var(--c-text) 14%,transparent);
-  background: color-mix(in srgb,var(--c-bg) 97%,#8a7968 3%);
+  border: 1px solid color-mix(in srgb,var(--c-text) 12%,transparent);
+  border-radius: .7rem;
+  background: var(--agent-soft);
 }
 .agent-mermaid-source > figcaption {
   display: flex;
@@ -6990,3 +6989,310 @@ html.agent-atlas-lock,
   .agent-wiki-article .archify-embed { margin-block: 1.4rem; }
   .agent-mermaid-source > figcaption span { display: none; }
 }
+
+/* Repository reader containment and online-parity code blocks. The code copy
+   action floats above the original compact block, so it adds interaction
+   without changing the production geometry. */
+.agent-knowledge,
+.agent-knowledge :is(.agent-reader-shell, .agent-wiki-main, .agent-wiki-article, .agent-file-content, .agent-file-markdown),
+.agent-knowledge :is(.agent-wiki-article, .agent-file-markdown) > * {
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+}
+.agent-knowledge :is(.agent-wiki-article, .agent-file-markdown) :is(p, li, dd, th, td, a, code:not(pre code)) {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+.agent-knowledge :is(.agent-wiki-article, .agent-file-markdown) code:not(pre code) {
+  white-space: normal;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+.agent-knowledge :is(.agent-wiki-article, .agent-file-markdown) :is(img, video, iframe, svg) {
+  max-width: 100%;
+}
+.agent-knowledge :is(.agent-wiki-article, .agent-file-markdown) .katex-display {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+.agent-knowledge :is(.agent-wiki-article, .agent-file-markdown) a.agent-file-reference,
+.agent-knowledge :is(.agent-wiki-article, .agent-file-markdown) a.agent-external-link {
+  max-width: 100%;
+  white-space: normal;
+}
+.agent-knowledge .agent-file-reference-label {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+.agent-table-wrap {
+  width: 100%;
+  max-width: 100%;
+  margin: 1.5rem 0;
+  overflow-x: auto;
+  border-block: 1px solid var(--agent-line);
+  overscroll-behavior-inline: contain;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+.agent-table-wrap > table {
+  width: max-content;
+  min-width: 100%;
+  margin: 0;
+}
+.agent-table-wrap:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--c-text) 28%, transparent);
+  outline-offset: 2px;
+}
+.agent-highlighted-block {
+  position: relative;
+  overflow: hidden;
+}
+.agent-highlighted-block .agent-code-scroll {
+  width: 100%;
+  max-width: 100%;
+  overflow: auto;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+.agent-highlighted-block .agent-code-scroll > div > pre.shiki,
+.agent-highlighted-block .agent-shiki-fallback {
+  width: max-content;
+  min-width: 100%;
+  margin: 0;
+  padding: .55rem 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent !important;
+  font-family: var(--font-mono);
+  font-size: .76rem;
+  line-height: 1.15rem;
+}
+.agent-highlighted-block .agent-shiki-fallback > code {
+  display: block;
+  padding: 0 1.25rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  white-space: pre;
+}
+.agent-file-content > .agent-file-source-code {
+  min-height: 100%;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: #181818;
+  color: #d8d8d8;
+}
+.agent-file-source-code .agent-code-scroll {
+  min-height: 100%;
+  background: #181818;
+}
+.agent-file-source-code .shiki,
+.agent-file-source-code .shiki span {
+  color: var(--shiki-dark) !important;
+}
+.agent-file-source-code .line::before { color: #858585; }
+.agent-file-source-code .line:hover { background: #222; }
+.agent-file-source-code .agent-code-copy {
+  background: #262626;
+  color: #c7c7c7;
+  box-shadow: inset 0 0 0 1px #3a3a3a;
+}
+.agent-code-copy {
+  position: absolute;
+  z-index: 3;
+  top: .45rem;
+  right: .45rem;
+  display: inline-flex;
+  min-height: 1.9rem;
+  align-items: center;
+  gap: .3rem;
+  padding: .35rem .48rem;
+  border: 0;
+  border-radius: .38rem;
+  background: color-mix(in srgb, var(--c-bg) 88%, transparent);
+  color: var(--c-text-muted);
+  box-shadow: 0 .55rem 1.5rem -.9rem var(--c-shadow-key);
+  opacity: 0;
+  cursor: pointer;
+  transform: translateY(-.2rem);
+  transition: opacity 160ms ease, color 160ms ease, background-color 160ms ease, transform 200ms cubic-bezier(.22,1,.36,1);
+}
+.agent-code-copy svg { width: .8rem; height: .8rem; }
+.agent-code-copy span { font-size: .64rem; }
+.agent-highlighted-block:hover .agent-code-copy,
+.agent-highlighted-block:focus-within .agent-code-copy,
+.agent-code-copy[data-copied="true"] {
+  opacity: 1;
+  transform: none;
+}
+.agent-code-copy:is(:hover, :focus-visible) {
+  outline: 0;
+  background: var(--c-bg);
+  color: var(--c-text);
+}
+@media (hover: none), (max-width: 760px) {
+  .agent-code-copy { opacity: .82; transform: none; }
+  .agent-code-copy span { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .agent-code-copy { transition: none; }
+}
+
+/* Atlas file semantics. Colour is intentionally confined to file glyphs so
+   the repository tools remain on the blog's neutral editorial palette. */
+.agent-knowledge {
+  --agent-file-code: #3f8edb;
+  --agent-file-config: #d28b2d;
+  --agent-file-document: #39b85f;
+  --agent-file-folder: #c49236;
+  --agent-file-image: #b667ad;
+  --agent-file-shell: #32a874;
+  --agent-file-style: #d65b72;
+  --agent-file-generic: #7e8794;
+}
+.agent-knowledge [data-file-kind="code"] { --agent-file-kind-color: var(--agent-file-code); }
+.agent-knowledge [data-file-kind="config"] { --agent-file-kind-color: var(--agent-file-config); }
+.agent-knowledge [data-file-kind="document"] { --agent-file-kind-color: var(--agent-file-document); }
+.agent-knowledge [data-file-kind="folder"] { --agent-file-kind-color: var(--agent-file-folder); }
+.agent-knowledge [data-file-kind="image"] { --agent-file-kind-color: var(--agent-file-image); }
+.agent-knowledge [data-file-kind="shell"] { --agent-file-kind-color: var(--agent-file-shell); }
+.agent-knowledge [data-file-kind="style"] { --agent-file-kind-color: var(--agent-file-style); }
+.agent-knowledge [data-file-kind="file"] { --agent-file-kind-color: var(--agent-file-generic); }
+.agent-knowledge .agent-material-icon[data-file-kind],
+.agent-knowledge .agent-file-viewer > header svg[data-file-kind] {
+  color: var(--agent-file-kind-color);
+  opacity: 1;
+  filter: none;
+  stroke-width: 1.9;
+}
+
+/* Codex-style file badges: a compact coloured tile keeps the extension
+   legible even in a dense tree while the outline glyph remains available to
+   screen readers through the surrounding button label. */
+.agent-file-kind-badge {
+  width: 1.32rem;
+  height: 1.32rem;
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border-radius: .34rem;
+  background: color-mix(in srgb, var(--agent-file-kind-color) 20%, var(--c-bg));
+  color: var(--agent-file-kind-color);
+  line-height: 1;
+}
+.agent-file-kind-badge > span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.agent-file-kind-badge > .agent-material-icon {
+  width: .88rem;
+  height: .88rem;
+  color: currentColor;
+  stroke-width: 2;
+}
+.agent-file-kind-badge:is([data-file-kind="code"],[data-file-kind="document"],[data-file-kind="shell"],[data-file-kind="style"]) > .agent-material-icon { display: none; }
+.agent-file-kind-badge:is([data-file-kind="code"],[data-file-kind="document"],[data-file-kind="shell"],[data-file-kind="style"]) > span {
+  position: static;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  clip: auto;
+  font: 750 .53rem/1 var(--font-mono);
+  letter-spacing: -.04em;
+}
+.agent-file-viewer-badge { margin-right: .15rem; }
+.agent-file-viewer-badge + strong { min-width: 0; }
+.agent-knowledge .agent-file-reference-icon {
+  position: relative;
+  top: .14em;
+  width: 1.12em;
+  height: 1.12em;
+  display: inline-grid;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: .24em;
+  background: color-mix(in srgb, var(--agent-file-kind-color) 13%, transparent);
+  color: var(--agent-file-kind-color);
+  opacity: 1;
+  filter: none;
+  transform: none;
+}
+.agent-knowledge .agent-file-reference-icon > svg {
+  width: .84em;
+  height: .84em;
+  stroke-width: 2;
+}
+.agent-knowledge .agent-file-reference:is(:hover, :focus-visible) .agent-file-reference-icon {
+  background: color-mix(in srgb, var(--agent-file-kind-color) 20%, transparent);
+  color: var(--agent-file-kind-color);
+  opacity: 1;
+  filter: none;
+  transform: translateY(-1px) scale(1.04);
+}
+.agent-atlas-docs button {
+  grid-template-columns: 2rem 1.4rem minmax(0, 1fr) auto;
+}
+.agent-atlas-docs button > .agent-material-icon {
+  color: var(--agent-file-kind-color);
+  opacity: 1;
+  filter: none;
+}
+.agent-file-viewer > header > div {
+  display: flex;
+  align-items: center;
+}
+.agent-file-version-note {
+  flex: 0 0 auto;
+  padding: .18rem .36rem;
+  border-radius: .28rem;
+  background: color-mix(in srgb, var(--agent-file-shell) 10%, transparent);
+  color: var(--agent-file-shell);
+  font-size: .58rem;
+  font-weight: 650;
+}
+.agent-file-recovery-note {
+  margin: 0;
+  padding: .5rem .85rem;
+  border-bottom: 1px solid var(--agent-line);
+  background: color-mix(in srgb, var(--agent-file-shell) 6%, var(--c-bg));
+  color: var(--c-text-muted);
+  font-size: .65rem;
+  line-height: 1.5;
+}
+.agent-file-alternatives {
+  width: min(32rem, calc(100% - 2rem));
+  margin-top: .9rem;
+  display: grid;
+  gap: .4rem;
+}
+.agent-file-alternatives > button {
+  min-width: 0;
+  min-height: 2.35rem;
+  padding: .45rem .7rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .65rem;
+  border: 1px solid var(--agent-line);
+  border-radius: .45rem;
+  background: var(--c-bg);
+  color: var(--c-text);
+  font-size: .67rem;
+  text-align: left;
+}
+.agent-file-alternatives > button:hover {
+  border-color: var(--agent-file-code);
+  background: color-mix(in srgb, var(--agent-file-code) 6%, var(--c-bg));
+}
+.agent-file-alternatives > button svg { width: .8rem; height: .8rem; flex: 0 0 auto; }

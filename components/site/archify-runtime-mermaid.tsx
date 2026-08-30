@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 
+import { ArchifyCanvas } from "@/components/site/archify-canvas";
+
 type RuntimeState =
   | { status: "loading" }
   | { status: "ready"; html: string }
@@ -55,18 +57,7 @@ export function ArchifyRuntimeMermaid({
       <strong>{title}</strong>
       <span>Archify</span>
     </figcaption>
-    {state.status === "ready" ? <div className="archify-embed-viewport">
-      <iframe
-        className="archify-embed-frame"
-        srcDoc={state.html}
-        title={title}
-        sandbox="allow-scripts"
-        loading="lazy"
-        referrerPolicy="no-referrer"
-        allow="fullscreen"
-        allowFullScreen
-      />
-    </div> : state.status === "loading" ? <div className="archify-embed-status" role="status">
+    {state.status === "ready" ? <ArchifyCanvas srcDoc={state.html} title={title} /> : state.status === "loading" ? <div className="archify-embed-status" role="status">
       正在通过 Archify 构建图表…
     </div> : state.status === "unsupported" ? <div className="archify-embed-status" role="status">
       当前 Mermaid 语法超出 Archify 实时转换范围。

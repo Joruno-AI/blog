@@ -3,10 +3,28 @@
 import { ArrowRight, Network } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
+import { ArchifyCanvas } from "@/components/site/archify-canvas";
 import type { AgentManifestNode } from "@/lib/agent/repository";
 import type { ArchifyArchitectureIR } from "@/lib/archify/runtime";
 
 const MAX_RENDERED_NODES = 32;
+
+function textUnits(value: string) {
+  return Array.from(value).reduce((total, character) => total + (/[^\u0000-\u024f]/u.test(character) ? 2 : 1), 0);
+}
+
+function manifestNodeWidth(node: AgentManifestNode) {
+  const label = node.name.slice(0, 48);
+  const sublabel = (node.path.replace(/\/package\.json$/, "") || "/").slice(0, 72);
+  // Archify validates the main label at 6.6 px per text unit and secondary
+  // copy at its six-pixel legibility floor. Author a real component width
+  // instead of assuming layout.cellW also changes the renderer's 120px box.
+  return Math.ceil(Math.max(
+    176,
+    textUnits(label) * 6.6 + 16,
+    textUnits(sublabel) * 3.6 + 16,
+  ));
+}
 
 export function agentManifestArchitecture(repo: string, manifestNodes: AgentManifestNode[]): ArchifyArchitectureIR {
   const ranked = [...manifestNodes]
@@ -15,8 +33,8 @@ export function agentManifestArchitecture(repo: string, manifestNodes: AgentMani
   const identifiers = new Map(ranked.map((node, index) => [node.id, `package-${index + 1}`]));
   const columns = Math.max(1, Math.min(6, ranked.length, Math.ceil(Math.sqrt(ranked.length * 1.7))));
   const rows = Math.max(1, Math.ceil(ranked.length / columns));
-  const cellW = 164;
-  const cellH = 72;
+  const cellW = Math.max(176, ...ranked.map(manifestNodeWidth));
+  const cellH = 76;
   const gapX = 54;
   const gapY = 66;
   const contentWidth = columns * cellW + Math.max(0, columns - 1) * gapX;
@@ -49,11 +67,12 @@ export function agentManifestArchitecture(repo: string, manifestNodes: AgentMani
     components: ranked.map((node, index) => ({
       id: identifiers.get(node.id)!,
       type: "external",
-      label: node.name.slice(0, 52),
+      label: node.name.slice(0, 48),
       sublabel: (node.path.replace(/\/package\.json$/, "") || "/").slice(0, 72),
       tag: node.workspace ? "WORKSPACE" : "ROOT",
       row: Math.floor(index / columns),
       col: index % columns,
+      size: [cellW, cellH],
       sources: [{ path: node.path }],
     })),
     connections: ranked.flatMap((node) => node.dependencies.flatMap((dependency) => {
@@ -100,12 +119,10 @@ export function AgentManifestArchify({
   }, [diagram]);
 
   return <div className="agent-archify-manifest" data-archify-renderer="official" data-repository={repo}>
-    {html ? <iframe
-      className="agent-archify-manifest-frame"
+    {html ? <ArchifyCanvas
+      className="agent-archify-manifest-canvas"
+      frameClassName="agent-archify-manifest-frame"
       srcDoc={html}
-      sandbox="allow-scripts"
-      loading="lazy"
-      referrerPolicy="no-referrer"
       title={`${repo} 项目依赖总览`}
     /> : <div className="agent-archify-manifest-state" role={error ? "alert" : "status"}>
       <Network aria-hidden="true" />

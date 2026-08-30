@@ -79,7 +79,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="zh-Hans" data-scroll-behavior="smooth" suppressHydrationWarning>
+    <html lang="zh-Hans" suppressHydrationWarning>
       <head>
         <meta name="color-scheme" content="" />
         <meta name="theme-color" content="" />

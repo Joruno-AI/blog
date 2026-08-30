@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element -- Markdown assets can use arbitrary persisted URLs. */
+
 import Link from "next/link";
 import {
   cloneElement,
@@ -25,6 +27,7 @@ import remarkSmartypants from "remark-smartypants";
 import { visit } from "unist-util-visit";
 
 import { ArchifyEmbed } from "@/components/site/archify-embed";
+import { ArchifyRuntimeMermaid } from "@/components/site/archify-runtime-mermaid";
 import { MarkdownImageViewer } from "@/components/site/markdown-image-viewer";
 import { archifyArtifactHashInBrowser } from "@/lib/archify/artifact-address.mjs";
 
@@ -46,7 +49,7 @@ let blogArchifyManifestLoader: Promise<BlogArchifyManifest> | null = null;
 
 function loadBlogArchifyManifest() {
   blogArchifyManifestLoader ??= fetch(BLOG_ARCHIFY_MANIFEST_URL, {
-    cache: "force-cache",
+    cache: "no-store",
     credentials: "same-origin",
   }).then(async (response) => {
     if (!response.ok) throw new Error(`Archify manifest HTTP ${response.status}`);
@@ -216,12 +219,13 @@ function MarkdownLink({ href = "", children, node: _node, ...props }: MarkdownLi
   );
 }
 
-function MarkdownImage({ alt = "", node: _node, ...props }: MarkdownImageProps) {
+function MarkdownImage({ alt = "", src = "", node: _node, ...props }: MarkdownImageProps) {
   void _node;
   // Markdown dimensions and ViewerJS rely on the source element rather than
   // Next Image's wrapper and optimizer markup.
-  // eslint-disable-next-line @next/next/no-img-element
-  return <img {...props} alt={alt} loading="lazy" decoding="async" data-viewer-image="" />;
+  return src
+    ? <img {...props} src={src} alt={alt} loading="lazy" decoding="async" data-viewer-image="" />
+    : <span className="markdown-image-unavailable" role="img" aria-label={alt || "图片暂时无法加载"}>{alt || "图片暂时无法加载"}</span>;
 }
 
 async function copyText(text: string) {
@@ -314,6 +318,9 @@ function CodeFrame({ children }: { children?: ReactNode }) {
   const end = rawCodeText.endsWith("\n") ? rawCodeText.length - 1 : rawCodeText.length;
   const codeChildren = sliceNodeText(rawCodeChildren, start, end);
   const text = rawCodeText.slice(start, end);
+  if (language.toLowerCase() === "mermaid") {
+    return <ArchifyRuntimeMermaid source={text} repository="Joruno-AI/blog" title={frameTitle || "内容关系图"} />;
+  }
   const archifySpec = parseArchifyFence(language, text, frameTitle);
   if (archifySpec) return <ArchifyFence spec={archifySpec} source={text} />;
   return (
@@ -377,7 +384,7 @@ export function MarkdownContent({ content, className = "platform-prose" }: { con
                 "data-pagefind-ignore": "",
               };
             },
-            content: { type: "text", value: "#" },
+            content: { type: "text", value: "" },
           }],
           [rehypeExternalLinks, { target: "_blank", rel: ["noopener", "noreferrer"] }],
           rehypeKatex,

@@ -1,3 +1,4 @@
+import repositoryTreeSnapshots from "@/lib/agent/data/repository-tree-snapshots.json";
 import selectedAgentMetadata from "@/lib/parity/data/agent-selected-metadata.json";
 
 import { getSelectedAgentSummary } from "@/lib/agent/selected-summaries";
@@ -80,6 +81,7 @@ export function fallbackRepositoryOverview(owner: string, repo: string) {
   const storedKey = selectedMetadataKeys.get(repository.toLowerCase());
   const metadata = storedKey ? selectedMetadata[storedKey] : undefined;
   const summary = getSelectedAgentSummary(`/agent/${storedKey ?? repository}`);
+  const treeSnapshot = getRepositoryTreeSnapshot(owner, repo, "HEAD");
   return {
     full_name: storedKey ?? repository,
     name: repo,
@@ -90,9 +92,9 @@ export function fallbackRepositoryOverview(owner: string, repo: string) {
     subscribers_count: 0,
     watchers_count: metadata?.[1] ?? 0,
     language: metadata?.[6] ?? null,
-    // HEAD is understood by both the GitHub Trees API and raw.githubusercontent.
-    // It remains correct for repositories whose default branch is not `main`.
-    default_branch: "HEAD",
+    // A checked-in tree records the real default branch. Repositories without
+    // that snapshot retain HEAD, which both Trees API and raw GitHub resolve.
+    default_branch: treeSnapshot?.ref ?? "HEAD",
     updated_at: metadata?.[7] ?? null,
     pushed_at: metadata?.[7] ?? null,
     license: null,
@@ -107,6 +109,99 @@ export type RawRootTreeItem = {
   type: "blob";
   size: number | null;
 };
+
+export type PublicRepositoryTreeItem = {
+  path: string;
+  type: "blob" | "tree";
+  size: number | null;
+};
+
+type StoredRepositoryTreeSnapshot = {
+  repository: string;
+  ref: string;
+  commit: string;
+  generatedAt: string;
+  tree: Array<{ path: string; type: string; size: number | null }>;
+};
+
+export type RepositoryTreeSnapshot = {
+  repository: string;
+  ref: string;
+  commit: string;
+  generatedAt: string;
+  tree: PublicRepositoryTreeItem[];
+};
+
+const storedRepositoryTreeSnapshots = repositoryTreeSnapshots.repositories as Record<string, StoredRepositoryTreeSnapshot>;
+
+function normalizedSnapshotRef(value: string) {
+  return value.trim().replace(/^refs\/heads\//i, "").toLowerCase();
+}
+
+/**
+ * Resolve a checked-in tree captured from git itself. HEAD intentionally maps
+ * to the snapshot's recorded default branch, while named refs only use a
+ * snapshot created for that exact branch/commit.
+ */
+export function getRepositoryTreeSnapshot(owner: string, repo: string, ref: string): RepositoryTreeSnapshot | null {
+  const repository = `${owner}/${repo}`.toLowerCase();
+  const stored = storedRepositoryTreeSnapshots[repository];
+  if (!stored || stored.repository.toLowerCase() !== repository) return null;
+  if (!stored.ref || !/^[a-f0-9]{40}$/i.test(stored.commit)) return null;
+  const requestedRef = normalizedSnapshotRef(ref || "HEAD");
+  const snapshotRef = normalizedSnapshotRef(stored.ref);
+  const snapshotCommit = stored.commit.toLowerCase();
+  const matchesRef = requestedRef === "head"
+    || requestedRef === snapshotRef
+    || requestedRef === snapshotCommit
+    || (requestedRef.length >= 7 && snapshotCommit.startsWith(requestedRef));
+  if (!matchesRef) return null;
+  const tree = stored.tree.flatMap<PublicRepositoryTreeItem>((entry) => {
+    if (!entry || (entry.type !== "blob" && entry.type !== "tree")) return [];
+    if (typeof entry.path !== "string" || !entry.path || entry.path.length > 1_800) return [];
+    return [{
+      path: entry.path,
+      type: entry.type,
+      size: typeof entry.size === "number" && Number.isSafeInteger(entry.size) && entry.size >= 0 ? entry.size : null,
+    }];
+  });
+  if (!tree.length || tree.length !== stored.tree.length || tree.length > 5_000) return null;
+  return {
+    repository: stored.repository,
+    ref: stored.ref,
+    commit: stored.commit,
+    generatedAt: stored.generatedAt,
+    tree,
+  };
+}
+
+/** Merge any fresh bounded/root entries over a complete versioned snapshot. */
+export function mergeRepositoryTreeSnapshot(
+  owner: string,
+  repo: string,
+  ref: string,
+  partialTree: PublicRepositoryTreeItem[] = [],
+) {
+  const snapshot = getRepositoryTreeSnapshot(owner, repo, ref);
+  if (!snapshot) return null;
+  const merged = new Map(snapshot.tree.map((entry) => [entry.path, entry]));
+  for (const entry of partialTree) {
+    if (!entry.path || (entry.type !== "blob" && entry.type !== "tree")) continue;
+    if (!merged.has(entry.path) && merged.size >= 5_000) continue;
+    merged.set(entry.path, entry);
+  }
+  return {
+    sha: snapshot.commit,
+    tree: [...merged.values()].sort((left, right) => left.path.localeCompare(right.path)),
+    truncated: false,
+    partial: false,
+    snapshot: {
+      ref: snapshot.ref,
+      commit: snapshot.commit,
+      generatedAt: snapshot.generatedAt,
+    },
+  };
+}
 
 /**
  * Last-resort, token-free repository root discovery. Raw GitHub does not use

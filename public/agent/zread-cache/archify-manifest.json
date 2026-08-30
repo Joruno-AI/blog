@@ -7,28 +7,31 @@
   },
   "artifacts": {
     "anthropics/claude-plugins-official": {
-      "b0efeaa7c72d8a11f53be00526f583769258ae7e38179f3c31a798398e8e9d28": "/diagrams/archify/1ed6b86c49a099906024f99e1242ee9f1cf12161d133a7739a37561515bfd845.html"
+      "b0efeaa7c72d8a11f53be00526f583769258ae7e38179f3c31a798398e8e9d28": "/diagrams/archify/6e938b9f95f2cba4c7d99b3cabe5446424cebc386244e640573780c87892ee71.html"
     },
     "anthropics/skills": {
-      "e91fde357233e478456aa4ad9cf9db2a87010e52218d764038e6795ca1e4b656": "/diagrams/archify/9c7e9b28700cf5e8432c61f87e2824c19562d61ad47ce399b03510ebff358389.html"
+      "e91fde357233e478456aa4ad9cf9db2a87010e52218d764038e6795ca1e4b656": "/diagrams/archify/59150f0968d670dc7499096bed27aa6d455f0f283ccb32256047bdc1ac68ea41.html"
     },
     "jarrodwatts/claude-hud": {
-      "3928e1722278bcc448396e61d245ea4c9d8363ba4e4c1a3447f9b2924168e69b": "/diagrams/archify/9ce01e53ba180c1eaae750d67f487b3920d2846162dd66c80b3e8ea954d842b4.html",
-      "afc0e08ca128055a2a229022afc02557d6c7bd2af0b1e8f1d27d752b6605e734": "/diagrams/archify/92cde08339cffc62e97478638a74008ce44b7baf170ae6eecddb0370962fc696.html"
+      "3928e1722278bcc448396e61d245ea4c9d8363ba4e4c1a3447f9b2924168e69b": "/diagrams/archify/9028963cc6dfefd8fd9b14801bc1950f6c2927853eaa066d8dafcb7bcc139ef9.html",
+      "afc0e08ca128055a2a229022afc02557d6c7bd2af0b1e8f1d27d752b6605e734": "/diagrams/archify/f48c6dbfce54c651d5c114db19f0b059d34322423a9e0f46f70bec25eb137221.html"
     },
     "K-Dense-AI/scientific-agent-skills": {
-      "d5e40424304c0a249c6ebea5c180eeaaa8a99a95f00c4ab782a257523ec39087": "/diagrams/archify/cad18dc7aeb194b9ecbe08d5246b35ed92161f0627326879fa72cc2858437b83.html"
+      "d5e40424304c0a249c6ebea5c180eeaaa8a99a95f00c4ab782a257523ec39087": "/diagrams/archify/2f354dfc06dc8148bd652b3963c3da0166302d11700f6db8b13902f487c5c3ed.html"
+    },
+    "n8n-io/n8n": {
+      "67a4dd47cae783a7670f50ed6df33292cc75472609a6498ed5311a092906ba1f": "/diagrams/archify/f3481438f9a99c36c3c6a5ce29e8ebb904586b096b7be8fc99c4cba5fc2a344f.html"
     },
     "qwibitai/nanoclaw": {
-      "7184d8694cca30a15e5143334c5ed30e386ffcee1e4d968c9e51771ecbf2cd9e": "/diagrams/archify/c887e97d8adecc7f693c757b39940273f31b136f13e1a48f2cce19ff687cb9ee.html",
-      "ae5b9c69d597eda4acb77242ae614230608bc2e8428028a1e11a8975519eefd7": "/diagrams/archify/bed491dd17d78e5b53cec1075b1336644f59ed0e16565a2ccad10698451cfa80.html"
+      "7184d8694cca30a15e5143334c5ed30e386ffcee1e4d968c9e51771ecbf2cd9e": "/diagrams/archify/16686d8b87df46b0636a3e81dd5d4260a3ae9b1db01a09b2bb3dfca297d648b1.html",
+      "ae5b9c69d597eda4acb77242ae614230608bc2e8428028a1e11a8975519eefd7": "/diagrams/archify/03b55001ffc5aadf59cc8763fe923f28dfcdd7189465e48c44da3ec898ec591f.html"
     },
     "thedotmack/claude-mem": {
-      "936df1ee9bdfc4b482cb59a8549b4241174e87fbd99d5d8e235bfb242eb24114": "/diagrams/archify/598b067fab188936871df418888d8f011dba9391c285f14915412d8f48db635c.html",
-      "dd23e3b05fc6935298645e190f7717364f2a2aeb9980f7cab248b5ffc1c8c7b3": "/diagrams/archify/a8204724c58243c9d3b155d9e1d1d206302955a3b6900f5322293b5ca0f962e0.html"
+      "936df1ee9bdfc4b482cb59a8549b4241174e87fbd99d5d8e235bfb242eb24114": "/diagrams/archify/24c4ef84c1f5517dbc8a665d9ac11b42956e50c6918a5205bd9ff1e9cb0ebc79.html",
+      "dd23e3b05fc6935298645e190f7717364f2a2aeb9980f7cab248b5ffc1c8c7b3": "/diagrams/archify/ea245c5c63eb6dac8388ac3060ad78b04117cbf72e71df5927f22b456183d3c4.html"
     },
     "VoltAgent/awesome-agent-skills": {
-      "9ad20c1ff05595cac39e6c5df3662c0cf4c6d951a908a2bdec3c0f96a07305ae": "/diagrams/archify/cbba47953715f916da53f0c8647e3be9a29a8fe5476cf5418332111d48de735d.html"
+      "9ad20c1ff05595cac39e6c5df3662c0cf4c6d951a908a2bdec3c0f96a07305ae": "/diagrams/archify/c5aae61181bbafd32f94edf26cd49e22ad2e57a6022a3692791d7b7e08b3cd2a.html"
     }
   },
   "metadata": {
@@ -36,7 +39,7 @@
       "b0efeaa7c72d8a11f53be00526f583769258ae7e38179f3c31a798398e8e9d28": {
         "type": "architecture",
         "title": "仓库架构一览",
-        "artifactSha256": "1ed6b86c49a099906024f99e1242ee9f1cf12161d133a7739a37561515bfd845",
+        "artifactSha256": "6e938b9f95f2cba4c7d99b3cabe5446424cebc386244e640573780c87892ee71",
         "sources": [
           "anthropics/claude-plugins-official/overview.json:$.markdown"
         ]
@@ -46,7 +49,7 @@
       "e91fde357233e478456aa4ad9cf9db2a87010e52218d764038e6795ca1e4b656": {
         "type": "architecture",
         "title": "代码库架构",
-        "artifactSha256": "9c7e9b28700cf5e8432c61f87e2824c19562d61ad47ce399b03510ebff358389",
+        "artifactSha256": "59150f0968d670dc7499096bed27aa6d455f0f283ccb32256047bdc1ac68ea41",
         "sources": [
           "anthropics/skills/overview.json:$.markdown",
           "anthropics/skills/pages/1-overview.json:$.markdown"
@@ -57,7 +60,7 @@
       "3928e1722278bcc448396e61d245ea4c9d8363ba4e4c1a3447f9b2924168e69b": {
         "type": "architecture",
         "title": "工作原理",
-        "artifactSha256": "9ce01e53ba180c1eaae750d67f487b3920d2846162dd66c80b3e8ea954d842b4",
+        "artifactSha256": "9028963cc6dfefd8fd9b14801bc1950f6c2927853eaa066d8dafcb7bcc139ef9",
         "sources": [
           "jarrodwatts/claude-hud/overview.json:$.markdown"
         ]
@@ -65,7 +68,7 @@
       "afc0e08ca128055a2a229022afc02557d6c7bd2af0b1e8f1d27d752b6605e734": {
         "type": "architecture",
         "title": "架构概览",
-        "artifactSha256": "92cde08339cffc62e97478638a74008ce44b7baf170ae6eecddb0370962fc696",
+        "artifactSha256": "f48c6dbfce54c651d5c114db19f0b059d34322423a9e0f46f70bec25eb137221",
         "sources": [
           "jarrodwatts/claude-hud/overview.json:$.markdown"
         ]
@@ -75,9 +78,20 @@
       "d5e40424304c0a249c6ebea5c180eeaaa8a99a95f00c4ab782a257523ec39087": {
         "type": "architecture",
         "title": "工作原理 — 架构",
-        "artifactSha256": "cad18dc7aeb194b9ecbe08d5246b35ed92161f0627326879fa72cc2858437b83",
+        "artifactSha256": "2f354dfc06dc8148bd652b3963c3da0166302d11700f6db8b13902f487c5c3ed",
         "sources": [
           "K-Dense-AI/scientific-agent-skills/overview.json:$.markdown"
+        ]
+      }
+    },
+    "n8n-io/n8n": {
+      "67a4dd47cae783a7670f50ed6df33292cc75472609a6498ed5311a092906ba1f": {
+        "type": "architecture",
+        "title": "仓库架构",
+        "artifactSha256": "f3481438f9a99c36c3c6a5ce29e8ebb904586b096b7be8fc99c4cba5fc2a344f",
+        "sources": [
+          "n8n-io/n8n/overview.json:$.markdown",
+          "n8n-io/n8n/pages/1-overview.json:$.markdown"
         ]
       }
     },
@@ -85,7 +99,7 @@
       "7184d8694cca30a15e5143334c5ed30e386ffcee1e4d968c9e51771ecbf2cd9e": {
         "type": "architecture",
         "title": "架构一览",
-        "artifactSha256": "c887e97d8adecc7f693c757b39940273f31b136f13e1a48f2cce19ff687cb9ee",
+        "artifactSha256": "16686d8b87df46b0636a3e81dd5d4260a3ae9b1db01a09b2bb3dfca297d648b1",
         "sources": [
           "qwibitai/nanoclaw/overview.json:$.markdown"
         ]
@@ -93,7 +107,7 @@
       "ae5b9c69d597eda4acb77242ae614230608bc2e8428028a1e11a8975519eefd7": {
         "type": "architecture",
         "title": "实体模型",
-        "artifactSha256": "bed491dd17d78e5b53cec1075b1336644f59ed0e16565a2ccad10698451cfa80",
+        "artifactSha256": "03b55001ffc5aadf59cc8763fe923f28dfcdd7189465e48c44da3ec898ec591f",
         "sources": [
           "qwibitai/nanoclaw/overview.json:$.markdown"
         ]
@@ -103,7 +117,7 @@
       "936df1ee9bdfc4b482cb59a8549b4241174e87fbd99d5d8e235bfb242eb24114": {
         "type": "architecture",
         "title": "数据流——从工具使用到记忆",
-        "artifactSha256": "598b067fab188936871df418888d8f011dba9391c285f14915412d8f48db635c",
+        "artifactSha256": "24c4ef84c1f5517dbc8a665d9ac11b42956e50c6918a5205bd9ff1e9cb0ebc79",
         "sources": [
           "thedotmack/claude-mem/overview.json:$.markdown"
         ]
@@ -111,7 +125,7 @@
       "dd23e3b05fc6935298645e190f7717364f2a2aeb9980f7cab248b5ffc1c8c7b3": {
         "type": "architecture",
         "title": "工作原理——宏观架构",
-        "artifactSha256": "a8204724c58243c9d3b155d9e1d1d206302955a3b6900f5322293b5ca0f962e0",
+        "artifactSha256": "ea245c5c63eb6dac8388ac3060ad78b04117cbf72e71df5927f22b456183d3c4",
         "sources": [
           "thedotmack/claude-mem/overview.json:$.markdown"
         ]
@@ -121,7 +135,7 @@
       "9ad20c1ff05595cac39e6c5df3662c0cf4c6d951a908a2bdec3c0f96a07305ae": {
         "type": "architecture",
         "title": "架构：生态系统的协作方式",
-        "artifactSha256": "cbba47953715f916da53f0c8647e3be9a29a8fe5476cf5418332111d48de735d",
+        "artifactSha256": "c5aae61181bbafd32f94edf26cd49e22ad2e57a6022a3692791d7b7e08b3cd2a",
         "sources": [
           "VoltAgent/awesome-agent-skills/overview.json:$.markdown",
           "VoltAgent/awesome-agent-skills/pages/1-overview.json:$.markdown"
@@ -131,10 +145,10 @@
   },
   "unsupported": {},
   "stats": {
-    "repositories": 7,
-    "discovered": 12,
-    "unique": 10,
-    "generated": 10,
+    "repositories": 8,
+    "discovered": 14,
+    "unique": 11,
+    "generated": 11,
     "unsupported": 0
   }
 }

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="generator" content="archify 2.16.0-dev.0">
-  <title>架构一览</title>
+  <title>架构：生态系统的协作方式</title>
   <script>
     // Resolve the theme before first paint so light-preference users don't
     // see a dark flash. The toolbar script below re-applies with UI state.
@@ -4955,9 +4955,9 @@
            data-preset-badge-blueprint="蓝图 / 修订 01"
            data-preset-badge-editorial="编辑风格 / 现场笔记">
         <div class="pulse-dot"></div>
-        <h1>架构一览</h1>
+        <h1>架构：生态系统的协作方式</h1>
       </div>
-      <p class="subtitle">ZRead · qwibitai/nanoclaw</p>
+      <p class="subtitle">ZRead · VoltAgent/awesome-agent-skills</p>
     </div>
 
     <script id="archify-guided-views-data" type="application/json">[]</script>
@@ -5005,9 +5005,9 @@
     <!-- Main Diagram -->
     <div class="diagram-container" data-detail-level="read"
          data-preset-badge-editorial-plate="ARCHIFY / 图版 04">
-      <svg viewBox="0 0 1018 908" role="img" lang="zh-CN" aria-labelledby="archify-diagram-title archify-diagram-description" data-preset="editorial" data-quality-profile="standard" data-quality-gates="advisory">
-        <title id="archify-diagram-title">架构一览</title>
-        <desc id="archify-diagram-description">ZRead · qwibitai/nanoclaw</desc>
+      <svg viewBox="0 0 660 640" role="img" lang="zh-CN" aria-labelledby="archify-diagram-title archify-diagram-description" data-preset="editorial" data-quality-profile="standard" data-quality-gates="advisory">
+        <title id="archify-diagram-title">架构：生态系统的协作方式</title>
+        <desc id="archify-diagram-description">ZRead · VoltAgent/awesome-agent-skills</desc>
         <!-- Definitions -->
         <defs>
           <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
@@ -5031,253 +5031,149 @@
         <rect width="100%" height="100%" fill="url(#grid)" />
 
         <!-- Boundaries (behind everything) -->
-        <rect data-graph-role="structural-frame" data-composition-frame-kind="region" data-composition-frame-id="0" data-composition-frame-label="Messaging Channels" x="66" y="76" width="224" height="764" rx="12" class="c-region" stroke-width="1"/>
+        <rect data-graph-role="structural-frame" data-composition-frame-kind="region" data-composition-frame-id="0" data-composition-frame-label="Awesome Agent Skills 仓库" x="66" y="76" width="536" height="120" rx="12" class="c-region" stroke-width="1"/>
 
-        <rect data-graph-role="structural-frame" data-composition-frame-kind="region" data-composition-frame-id="1" data-composition-frame-label="Host Process — Node.js" x="410" y="158" width="224" height="612" rx="12" class="c-region" stroke-width="1"/>
+        <rect data-graph-role="structural-frame" data-composition-frame-kind="region" data-composition-frame-id="1" data-composition-frame-label="技能来源" x="66" y="260" width="536" height="120" rx="12" class="c-region" stroke-width="1"/>
 
-        <rect data-graph-role="structural-frame" data-composition-frame-kind="region" data-composition-frame-id="2" data-composition-frame-label="Per-Session Isolation" x="754" y="240" width="224" height="448" rx="12" class="c-region" stroke-width="1"/>
+        <rect data-graph-role="structural-frame" data-composition-frame-kind="region" data-composition-frame-id="2" data-composition-frame-label="你的工作流" x="66" y="444" width="536" height="120" rx="12" class="c-region" stroke-width="1"/>
 
         <!-- Connection paths (before components for correct z-order) -->
-        <path data-edge-from="WA" data-edge-to="Router" data-edge-label="inbound" data-edge-key="0" data-edge-id="edge-1" data-composition-points="266,132;350,132;350,220;434,220" d="M 266 132 L 342 132 Q 350 132 350 140 L 350 212 Q 350 220 358 220 L 434 220" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="TG" data-edge-to="Router" data-edge-label="inbound" data-edge-key="1" data-edge-id="edge-2" data-composition-points="266,296;350,296;350,220;434,220" d="M 266 296 L 342 296 Q 350 296 350 288 L 350 228 Q 350 220 358 220 L 434 220" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="DC" data-edge-to="Router" data-edge-label="inbound" data-edge-key="2" data-edge-id="edge-3" data-composition-points="266,460;350,460;350,220;434,220" d="M 266 460 L 342 460 Q 350 460 350 452 L 350 228 Q 350 220 358 220 L 434 220" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="SL" data-edge-to="Router" data-edge-label="inbound" data-edge-key="3" data-edge-id="edge-4" data-composition-points="266,624;350,624;350,220;434,220" d="M 266 624 L 342 624 Q 350 624 350 616 L 350 228 Q 350 220 358 220 L 434 220" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="MORE" data-edge-to="Router" data-edge-label="inbound" data-edge-key="4" data-edge-id="edge-5" data-composition-points="266,788;350,788;350,220;434,220" d="M 266 788 L 342 788 Q 350 788 350 780 L 350 228 Q 350 220 358 220 L 434 220" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="Router" data-edge-to="CentralDB" data-edge-key="5" data-edge-id="edge-6" data-composition-points="522,258;522,346" d="M 522 258 L 522 346" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="Router" data-edge-to="InDB" data-edge-label="write message" data-edge-key="6" data-edge-id="edge-7" data-composition-points="610,220;694,220;694,302;778,302" d="M 610 220 L 686 220 Q 694 220 694 228 L 694 294 Q 694 302 702 302 L 778 302" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="InDB" data-edge-to="Container" data-edge-label="poll" data-edge-key="7" data-edge-id="edge-8" data-composition-points="866,340;866,370;1106,370;1106,562;866,562;866,592" d="M 866 340 L 866 362 Q 866 370 874 370 L 1098 370 Q 1106 370 1106 378 L 1106 554 Q 1106 562 1098 562 L 874 562 Q 866 562 866 570 L 866 592" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="Container" data-edge-to="OutDB" data-edge-label="write response" data-edge-key="8" data-edge-id="edge-9" data-composition-points="866,592;866,504" d="M 866 592 L 866 504" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="OutDB" data-edge-to="Delivery" data-edge-label="poll" data-edge-key="9" data-edge-id="edge-10" data-composition-points="778,466;694,466;694,548;610,548" d="M 778 466 L 702 466 Q 694 466 694 474 L 694 540 Q 694 548 686 548 L 610 548" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="Delivery" data-edge-to="WA" data-edge-label="outbound" data-edge-key="10" data-edge-id="edge-11" data-composition-points="434,548;350,548;350,132;266,132" d="M 434 548 L 358 548 Q 350 548 350 540 L 350 140 Q 350 132 342 132 L 266 132" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="Delivery" data-edge-to="TG" data-edge-label="outbound" data-edge-key="11" data-edge-id="edge-12" data-composition-points="434,548;350,548;350,296;266,296" d="M 434 548 L 358 548 Q 350 548 350 540 L 350 304 Q 350 296 342 296 L 266 296" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="Delivery" data-edge-to="DC" data-edge-label="outbound" data-edge-key="12" data-edge-id="edge-13" data-composition-points="434,548;350,548;350,460;266,460" d="M 434 548 L 358 548 Q 350 548 350 540 L 350 468 Q 350 460 342 460 L 266 460" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="Delivery" data-edge-to="SL" data-edge-label="outbound" data-edge-key="13" data-edge-id="edge-14" data-composition-points="434,548;350,548;350,624;266,624" d="M 434 548 L 358 548 Q 350 548 350 556 L 350 616 Q 350 624 342 624 L 266 624" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="Delivery" data-edge-to="MORE" data-edge-label="outbound" data-edge-key="14" data-edge-id="edge-15" data-composition-points="434,548;350,548;350,788;266,788" d="M 434 548 L 358 548 Q 350 548 350 556 L 350 780 Q 350 788 342 788 L 266 788" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="Sweep" data-edge-to="InDB" data-edge-label="stale detection
-recurrence" data-edge-key="15" data-edge-id="edge-16" data-composition-points="610,712;694,712;694,302;778,302" d="M 610 712 L 686 712 Q 694 712 694 704 L 694 310 Q 694 302 702 302 L 778 302" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="A" data-edge-to="B1" data-edge-label="链接至" data-edge-key="0" data-edge-id="edge-1" data-composition-points="178,176;178,230;224,230;224,284" d="M 178 176 L 178 222 Q 178 230 186 230 L 216 230 Q 224 230 224 238 L 224 284" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="A" data-edge-to="B2" data-edge-label="链接至" data-edge-key="1" data-edge-id="edge-2" data-composition-points="178,176;178,230;490,230;490,284" d="M 178 176 L 178 222 Q 178 230 186 230 L 482 230 Q 490 230 490 238 L 490 284" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="B1" data-edge-to="D" data-edge-label="SKILL.md / MCP Server" data-edge-key="2" data-edge-id="edge-3" data-composition-points="224,360;224,468" d="M 224 360 L 224 468" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="B2" data-edge-to="D" data-edge-label="SKILL.md / MCP Server" data-edge-key="3" data-edge-id="edge-4" data-composition-points="490,360;490,414;224,414;224,468" d="M 490 360 L 490 406 Q 490 414 482 414 L 232 414 Q 224 414 224 422 L 224 468" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="D" data-edge-to="E" data-edge-label="技能引导的输出" data-edge-key="4" data-edge-id="edge-5" data-composition-points="358,506;402,506" d="M 358 506 L 402 506" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="C" data-edge-to="A" data-edge-label="PR 审查" data-edge-key="5" data-edge-id="edge-6" data-composition-points="402,138;266,138" d="M 402 138 L 266 138" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="B1" data-edge-to="A" data-edge-label="通过 PR 提交" data-edge-key="6" data-edge-id="edge-7" data-composition-points="224,284;224,230;178,230;178,176" d="M 224 284 L 224 238 Q 224 230 216 230 L 186 230 Q 178 230 178 222 L 178 176" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="B2" data-edge-to="A" data-edge-label="通过 PR 提交" data-edge-key="7" data-edge-id="edge-8" data-composition-points="490,284;490,230;178,230;178,176" d="M 490 284 L 490 238 Q 490 230 482 230 L 186 230 Q 178 230 178 222 L 178 176" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
 
         <!-- Components -->
-        <g id="node-WA" data-node-id="WA" data-node-label="WhatsApp" tabindex="0" role="button" aria-label="聚焦WhatsApp，Messaging Channels" aria-pressed="false" data-node-kind="backend" data-node-context="Messaging Channels">
-          <title>WhatsApp · Messaging Channels</title>
-          <rect x="90" y="100" width="176" height="64" rx="6" class="c-mask"/>
-          <rect x="90" y="100" width="176" height="64" rx="6" class="c-backend" stroke-width="1.5"/>
+        <g id="node-A" data-node-id="A" data-node-label="README.md" tabindex="0" role="button" aria-label="聚焦README.md，精选链接目录, Awesome Agent Skills 仓库" aria-pressed="false" data-node-kind="backend" data-node-sublabel="精选链接目录" data-node-context="Awesome Agent Skills 仓库">
+          <title>README.md · 精选链接目录 · Awesome Agent Skills 仓库</title>
+          <rect x="90" y="100" width="176" height="76" rx="6" class="c-mask"/>
+          <rect x="90" y="100" width="176" height="76" rx="6" class="c-backend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(96 106) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-node-label="" x="178" y="136" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">WhatsApp</text>
+          <text data-node-label="" data-detail-anchor="" x="178" y="136" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">README.md</text>
+        <text data-detail="context" x="178" y="152" class="t-muted" font-size="9" text-anchor="middle">精选链接目录</text>
         </g>
 
-        <g id="node-TG" data-node-id="TG" data-node-label="Telegram" tabindex="0" role="button" aria-label="聚焦Telegram，Messaging Channels" aria-pressed="false" data-node-kind="backend" data-node-context="Messaging Channels">
-          <title>Telegram · Messaging Channels</title>
-          <rect x="90" y="264" width="176" height="64" rx="6" class="c-mask"/>
-          <rect x="90" y="264" width="176" height="64" rx="6" class="c-backend" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(96 270) scale(0.6875)">
+        <g id="node-C" data-node-id="C" data-node-label="CONTRIBUTING.md" tabindex="0" role="button" aria-label="聚焦CONTRIBUTING.md，提交指南, Awesome Agent Skills 仓库" aria-pressed="false" data-node-kind="backend" data-node-sublabel="提交指南" data-node-context="Awesome Agent Skills 仓库">
+          <title>CONTRIBUTING.md · 提交指南 · Awesome Agent Skills 仓库</title>
+          <rect x="402" y="100" width="176" height="76" rx="6" class="c-mask"/>
+          <rect x="402" y="100" width="176" height="76" rx="6" class="c-backend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(408 106) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-node-label="" x="178" y="300" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Telegram</text>
+          <text data-node-label="" data-detail-anchor="" x="490" y="136" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">CONTRIBUTING.md</text>
+        <text data-detail="context" x="490" y="152" class="t-muted" font-size="9" text-anchor="middle">提交指南</text>
         </g>
 
-        <g id="node-DC" data-node-id="DC" data-node-label="Discord" tabindex="0" role="button" aria-label="聚焦Discord，Messaging Channels" aria-pressed="false" data-node-kind="backend" data-node-context="Messaging Channels">
-          <title>Discord · Messaging Channels</title>
-          <rect x="90" y="428" width="176" height="64" rx="6" class="c-mask"/>
-          <rect x="90" y="428" width="176" height="64" rx="6" class="c-backend" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(96 434) scale(0.6875)">
+        <g id="node-B1" data-node-id="B1" data-node-label="官方团队" tabindex="0" role="button" aria-label="聚焦官方团队，Anthropic · Vercel · Google · Cloudflare · Stripe · Microsoft, 技能来源" aria-pressed="false" data-node-kind="cloud" data-node-sublabel="Anthropic · Vercel · Google · Cloudflare · Stripe · Microsoft" data-node-context="技能来源">
+          <title>官方团队 · Anthropic · Vercel · Google · Cloudflare · Stripe · Microsoft · 技能来源</title>
+          <rect x="90" y="284" width="268" height="76" rx="6" class="c-mask"/>
+          <rect x="90" y="284" width="268" height="76" rx="6" class="c-cloud" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="cloud" class="semantic-sigil s-cloud" transform="translate(96 290) scale(0.6875)">
+            <path d="M4.3 12.5h7.3a2.4 2.4 0 0 0 .2-4.8 4 4 0 0 0-7.5-1.3A3.1 3.1 0 0 0 4.3 12.5Z"/>
+          </g>
+          <text data-node-label="" data-detail-anchor="" x="224" y="320" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">官方团队</text>
+        <text data-detail="context" x="224" y="336" class="t-muted" font-size="7.1" text-anchor="middle">Anthropic · Vercel · Google · Cloudflare · Stripe · Microsoft</text>
+        </g>
+
+        <g id="node-B2" data-node-id="B2" data-node-label="社区贡献者" tabindex="0" role="button" aria-label="聚焦社区贡献者，独立开发者 · 开源维护者, 技能来源" aria-pressed="false" data-node-kind="backend" data-node-sublabel="独立开发者 · 开源维护者" data-node-context="技能来源">
+          <title>社区贡献者 · 独立开发者 · 开源维护者 · 技能来源</title>
+          <rect x="402" y="284" width="176" height="76" rx="6" class="c-mask"/>
+          <rect x="402" y="284" width="176" height="76" rx="6" class="c-backend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(408 290) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-node-label="" x="178" y="464" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Discord</text>
+          <text data-node-label="" data-detail-anchor="" x="490" y="320" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">社区贡献者</text>
+        <text data-detail="context" x="490" y="336" class="t-muted" font-size="9" text-anchor="middle">独立开发者 · 开源维护者</text>
         </g>
 
-        <g id="node-SL" data-node-id="SL" data-node-label="Slack" tabindex="0" role="button" aria-label="聚焦Slack，Messaging Channels" aria-pressed="false" data-node-kind="backend" data-node-context="Messaging Channels">
-          <title>Slack · Messaging Channels</title>
-          <rect x="90" y="592" width="176" height="64" rx="6" class="c-mask"/>
-          <rect x="90" y="592" width="176" height="64" rx="6" class="c-backend" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(96 598) scale(0.6875)">
+        <g id="node-D" data-node-id="D" data-node-label="AI 编程助手" tabindex="0" role="button" aria-label="聚焦AI 编程助手，Claude Code · Codex · Cursor · Gemini CLI · Copilot, 你的工作流" aria-pressed="false" data-node-kind="backend" data-node-sublabel="Claude Code · Codex · Cursor · Gemini CLI · Copilot" data-node-context="你的工作流">
+          <title>AI 编程助手 · Claude Code · Codex · Cursor · Gemini CLI · Copilot · 你的工作流</title>
+          <rect x="90" y="468" width="268" height="76" rx="6" class="c-mask"/>
+          <rect x="90" y="468" width="268" height="76" rx="6" class="c-backend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(96 474) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-node-label="" x="178" y="628" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Slack</text>
+          <text data-node-label="" data-detail-anchor="" x="224" y="504" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">AI 编程助手</text>
+        <text data-detail="context" x="224" y="520" class="t-muted" font-size="8.4" text-anchor="middle">Claude Code · Codex · Cursor · Gemini CLI · Copilot</text>
         </g>
 
-        <g id="node-MORE" data-node-id="MORE" data-node-label="..." tabindex="0" role="button" aria-label="聚焦...，Messaging Channels" aria-pressed="false" data-node-kind="backend" data-node-context="Messaging Channels">
-          <title>... · Messaging Channels</title>
-          <rect x="90" y="756" width="176" height="64" rx="6" class="c-mask"/>
-          <rect x="90" y="756" width="176" height="64" rx="6" class="c-backend" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(96 762) scale(0.6875)">
+        <g id="node-E" data-node-id="E" data-node-label="你的项目" tabindex="0" role="button" aria-label="聚焦你的项目，代码库与上下文, 你的工作流" aria-pressed="false" data-node-kind="backend" data-node-sublabel="代码库与上下文" data-node-context="你的工作流">
+          <title>你的项目 · 代码库与上下文 · 你的工作流</title>
+          <rect x="402" y="468" width="176" height="76" rx="6" class="c-mask"/>
+          <rect x="402" y="468" width="176" height="76" rx="6" class="c-backend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(408 474) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-node-label="" x="178" y="792" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">...</text>
-        </g>
-
-        <g id="node-Router" data-node-id="Router" data-node-label="Router" tabindex="0" role="button" aria-label="聚焦Router，entity resolution, Host Process — Node.js" aria-pressed="false" data-node-kind="backend" data-node-sublabel="entity resolution" data-node-context="Host Process — Node.js">
-          <title>Router · entity resolution · Host Process — Node.js</title>
-          <rect x="434" y="182" width="176" height="76" rx="6" class="c-mask"/>
-          <rect x="434" y="182" width="176" height="76" rx="6" class="c-backend" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(440 188) scale(0.6875)">
-            <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
-          </g>
-          <text data-node-label="" data-detail-anchor="" x="522" y="218" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Router</text>
-        <text data-detail="context" x="522" y="234" class="t-muted" font-size="9" text-anchor="middle">entity resolution</text>
-        </g>
-
-        <g id="node-CentralDB" data-node-id="CentralDB" data-node-label="Central DB" tabindex="0" role="button" aria-label="聚焦Central DB，v2.db, Host Process — Node.js" aria-pressed="false" data-node-kind="database" data-node-sublabel="v2.db" data-node-context="Host Process — Node.js">
-          <title>Central DB · v2.db · Host Process — Node.js</title>
-          <rect x="434" y="346" width="176" height="76" rx="6" class="c-mask"/>
-          <rect x="434" y="346" width="176" height="76" rx="6" class="c-database" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(440 352) scale(0.6875)">
-            <ellipse cx="8" cy="4" rx="5" ry="2"/>
-            <path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
-          </g>
-          <text data-node-label="" data-detail-anchor="" x="522" y="382" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Central DB</text>
-        <text data-detail="context" x="522" y="398" class="t-muted" font-size="9" text-anchor="middle">v2.db</text>
-        </g>
-
-        <g id="node-Delivery" data-node-id="Delivery" data-node-label="Delivery" tabindex="0" role="button" aria-label="聚焦Delivery，outbound poll, Host Process — Node.js" aria-pressed="false" data-node-kind="backend" data-node-sublabel="outbound poll" data-node-context="Host Process — Node.js">
-          <title>Delivery · outbound poll · Host Process — Node.js</title>
-          <rect x="434" y="510" width="176" height="76" rx="6" class="c-mask"/>
-          <rect x="434" y="510" width="176" height="76" rx="6" class="c-backend" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(440 516) scale(0.6875)">
-            <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
-          </g>
-          <text data-node-label="" data-detail-anchor="" x="522" y="546" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Delivery</text>
-        <text data-detail="context" x="522" y="562" class="t-muted" font-size="9" text-anchor="middle">outbound poll</text>
-        </g>
-
-        <g id="node-Sweep" data-node-id="Sweep" data-node-label="Host Sweep" tabindex="0" role="button" aria-label="聚焦Host Sweep，60s maintenance, Host Process — Node.js" aria-pressed="false" data-node-kind="backend" data-node-sublabel="60s maintenance" data-node-context="Host Process — Node.js">
-          <title>Host Sweep · 60s maintenance · Host Process — Node.js</title>
-          <rect x="434" y="674" width="176" height="76" rx="6" class="c-mask"/>
-          <rect x="434" y="674" width="176" height="76" rx="6" class="c-backend" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(440 680) scale(0.6875)">
-            <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
-          </g>
-          <text data-node-label="" data-detail-anchor="" x="522" y="710" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Host Sweep</text>
-        <text data-detail="context" x="522" y="726" class="t-muted" font-size="9" text-anchor="middle">60s maintenance</text>
-        </g>
-
-        <g id="node-InDB" data-node-id="InDB" data-node-label="inbound.db" tabindex="0" role="button" aria-label="聚焦inbound.db，host writes, Per-Session Isolation" aria-pressed="false" data-node-kind="database" data-node-sublabel="host writes" data-node-context="Per-Session Isolation">
-          <title>inbound.db · host writes · Per-Session Isolation</title>
-          <rect x="778" y="264" width="176" height="76" rx="6" class="c-mask"/>
-          <rect x="778" y="264" width="176" height="76" rx="6" class="c-database" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(784 270) scale(0.6875)">
-            <ellipse cx="8" cy="4" rx="5" ry="2"/>
-            <path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
-          </g>
-          <text data-node-label="" data-detail-anchor="" x="866" y="300" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">inbound.db</text>
-        <text data-detail="context" x="866" y="316" class="t-muted" font-size="9" text-anchor="middle">host writes</text>
-        </g>
-
-        <g id="node-OutDB" data-node-id="OutDB" data-node-label="outbound.db" tabindex="0" role="button" aria-label="聚焦outbound.db，container writes, Per-Session Isolation" aria-pressed="false" data-node-kind="database" data-node-sublabel="container writes" data-node-context="Per-Session Isolation">
-          <title>outbound.db · container writes · Per-Session Isolation</title>
-          <rect x="778" y="428" width="176" height="76" rx="6" class="c-mask"/>
-          <rect x="778" y="428" width="176" height="76" rx="6" class="c-database" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(784 434) scale(0.6875)">
-            <ellipse cx="8" cy="4" rx="5" ry="2"/>
-            <path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
-          </g>
-          <text data-node-label="" data-detail-anchor="" x="866" y="464" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">outbound.db</text>
-        <text data-detail="context" x="866" y="480" class="t-muted" font-size="9" text-anchor="middle">container writes</text>
-        </g>
-
-        <g id="node-Container" data-node-id="Container" data-node-label="Agent Container" tabindex="0" role="button" aria-label="聚焦Agent Container，Bun + Claude SDK, Per-Session Isolation" aria-pressed="false" data-node-kind="backend" data-node-sublabel="Bun + Claude SDK" data-node-context="Per-Session Isolation">
-          <title>Agent Container · Bun + Claude SDK · Per-Session Isolation</title>
-          <rect x="778" y="592" width="176" height="76" rx="6" class="c-mask"/>
-          <rect x="778" y="592" width="176" height="76" rx="6" class="c-backend" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(784 598) scale(0.6875)">
-            <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
-          </g>
-          <text data-node-label="" data-detail-anchor="" x="866" y="628" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Agent Container</text>
-        <text data-detail="context" x="866" y="644" class="t-muted" font-size="9" text-anchor="middle">Bun + Claude SDK</text>
+          <text data-node-label="" data-detail-anchor="" x="490" y="504" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">你的项目</text>
+        <text data-detail="context" x="490" y="520" class="t-muted" font-size="9" text-anchor="middle">代码库与上下文</text>
         </g>
 
         <!-- Connection labels -->
-        <g data-detail="context" data-edge-from="WA" data-edge-to="Router" data-edge-label="inbound" data-edge-key="0" data-edge-id="edge-1">
-          <rect x="328.2" y="66" width="43.6" height="14" rx="3" class="c-mask"/>
-          <text x="350" y="76" class="t-muted" font-size="8" text-anchor="middle">inbound</text>
+        <g data-detail="context" data-edge-from="A" data-edge-to="B1" data-edge-label="链接至" data-edge-key="0" data-edge-id="edge-1">
+          <rect x="159.6" y="220" width="38.8" height="14" rx="3" class="c-mask"/>
+          <text x="179" y="230" class="t-muted" font-size="8" text-anchor="middle">链接至</text>
         </g>
-        <g data-detail="context" data-edge-from="TG" data-edge-to="Router" data-edge-label="inbound" data-edge-key="1" data-edge-id="edge-2">
-          <rect x="328.2" y="342" width="43.6" height="14" rx="3" class="c-mask"/>
-          <text x="350" y="352" class="t-muted" font-size="8" text-anchor="middle">inbound</text>
+        <g data-detail="context" data-edge-from="A" data-edge-to="B2" data-edge-label="链接至" data-edge-key="1" data-edge-id="edge-2">
+          <rect x="336.6" y="220" width="38.8" height="14" rx="3" class="c-mask"/>
+          <text x="356" y="230" class="t-muted" font-size="8" text-anchor="middle">链接至</text>
         </g>
-        <g data-detail="context" data-edge-from="DC" data-edge-to="Router" data-edge-label="inbound" data-edge-key="2" data-edge-id="edge-3">
-          <rect x="328.2" y="148" width="43.6" height="14" rx="3" class="c-mask"/>
-          <text x="350" y="158" class="t-muted" font-size="8" text-anchor="middle">inbound</text>
+        <g data-detail="context" data-edge-from="B1" data-edge-to="D" data-edge-label="SKILL.md / MCP Server" data-edge-key="2" data-edge-id="edge-3">
+          <rect x="146.6" y="404" width="110.8" height="14" rx="3" class="c-mask"/>
+          <text x="202" y="414" class="t-muted" font-size="8" text-anchor="middle">SKILL.md / MCP Server</text>
         </g>
-        <g data-detail="context" data-edge-from="SL" data-edge-to="Router" data-edge-label="inbound" data-edge-key="3" data-edge-id="edge-4">
-          <rect x="328.2" y="670" width="43.6" height="14" rx="3" class="c-mask"/>
-          <text x="350" y="680" class="t-muted" font-size="8" text-anchor="middle">inbound</text>
+        <g data-detail="context" data-edge-from="B2" data-edge-to="D" data-edge-label="SKILL.md / MCP Server" data-edge-key="3" data-edge-id="edge-4">
+          <rect x="323.6" y="404" width="110.8" height="14" rx="3" class="c-mask"/>
+          <text x="379" y="414" class="t-muted" font-size="8" text-anchor="middle">SKILL.md / MCP Server</text>
         </g>
-        <g data-detail="context" data-edge-from="MORE" data-edge-to="Router" data-edge-label="inbound" data-edge-key="4" data-edge-id="edge-5">
-          <rect x="328.2" y="148" width="43.6" height="14" rx="3" class="c-mask"/>
-          <text x="350" y="158" class="t-muted" font-size="8" text-anchor="middle">inbound</text>
+        <g data-detail="context" data-edge-from="D" data-edge-to="E" data-edge-label="技能引导的输出" data-edge-key="4" data-edge-id="edge-5">
+          <rect x="318.4" y="434" width="77.2" height="14" rx="3" class="c-mask"/>
+          <text x="357" y="444" class="t-muted" font-size="8" text-anchor="middle">技能引导的输出</text>
         </g>
-
-        <g data-detail="context" data-edge-from="Router" data-edge-to="InDB" data-edge-label="write message" data-edge-key="6" data-edge-id="edge-7">
-          <rect x="657.8" y="148" width="72.4" height="14" rx="3" class="c-mask"/>
-          <text x="694" y="158" class="t-muted" font-size="8" text-anchor="middle">write message</text>
+        <g data-detail="context" data-edge-from="C" data-edge-to="A" data-edge-label="PR 审查" data-edge-key="5" data-edge-id="edge-6">
+          <rect x="312.2" y="190" width="43.6" height="14" rx="3" class="c-mask"/>
+          <text x="334" y="200" class="t-muted" font-size="8" text-anchor="middle">PR 审查</text>
         </g>
-        <g data-detail="context" data-edge-from="InDB" data-edge-to="Container" data-edge-label="poll" data-edge-key="7" data-edge-id="edge-8">
-          <rect x="1109" y="456" width="30" height="14" rx="3" class="c-mask"/>
-          <text x="1124" y="466" class="t-muted" font-size="8" text-anchor="middle">poll</text>
+        <g data-detail="context" data-edge-from="B1" data-edge-to="A" data-edge-label="通过 PR 提交" data-edge-key="6" data-edge-id="edge-7">
+          <rect x="145.2" y="220" width="67.6" height="14" rx="3" class="c-mask"/>
+          <text x="179" y="230" class="t-muted" font-size="8" text-anchor="middle">通过 PR 提交</text>
         </g>
-        <g data-detail="context" data-edge-from="Container" data-edge-to="OutDB" data-edge-label="write response" data-edge-key="8" data-edge-id="edge-9">
-          <rect x="805.4" y="538" width="77.2" height="14" rx="3" class="c-mask"/>
-          <text x="844" y="548" class="t-muted" font-size="8" text-anchor="middle">write response</text>
-        </g>
-        <g data-detail="context" data-edge-from="OutDB" data-edge-to="Delivery" data-edge-label="poll" data-edge-key="9" data-edge-id="edge-10">
-          <rect x="679" y="600" width="30" height="14" rx="3" class="c-mask"/>
-          <text x="694" y="610" class="t-muted" font-size="8" text-anchor="middle">poll</text>
-        </g>
-        <g data-detail="context" data-edge-from="Delivery" data-edge-to="WA" data-edge-label="outbound" data-edge-key="10" data-edge-id="edge-11">
-          <rect x="325.8" y="66" width="48.4" height="14" rx="3" class="c-mask"/>
-          <text x="350" y="76" class="t-muted" font-size="8" text-anchor="middle">outbound</text>
-        </g>
-        <g data-detail="context" data-edge-from="Delivery" data-edge-to="TG" data-edge-label="outbound" data-edge-key="11" data-edge-id="edge-12">
-          <rect x="325.8" y="600" width="48.4" height="14" rx="3" class="c-mask"/>
-          <text x="350" y="610" class="t-muted" font-size="8" text-anchor="middle">outbound</text>
-        </g>
-        <g data-detail="context" data-edge-from="Delivery" data-edge-to="DC" data-edge-label="outbound" data-edge-key="12" data-edge-id="edge-13">
-          <rect x="325.8" y="394" width="48.4" height="14" rx="3" class="c-mask"/>
-          <text x="350" y="404" class="t-muted" font-size="8" text-anchor="middle">outbound</text>
-        </g>
-        <g data-detail="context" data-edge-from="Delivery" data-edge-to="SL" data-edge-label="outbound" data-edge-key="13" data-edge-id="edge-14">
-          <rect x="325.8" y="670" width="48.4" height="14" rx="3" class="c-mask"/>
-          <text x="350" y="680" class="t-muted" font-size="8" text-anchor="middle">outbound</text>
-        </g>
-        <g data-detail="context" data-edge-from="Delivery" data-edge-to="MORE" data-edge-label="outbound" data-edge-key="14" data-edge-id="edge-15">
-          <rect x="325.8" y="476" width="48.4" height="14" rx="3" class="c-mask"/>
-          <text x="350" y="486" class="t-muted" font-size="8" text-anchor="middle">outbound</text>
-        </g>
-        <g data-detail="context" data-edge-from="Sweep" data-edge-to="InDB" data-edge-label="stale detection
-recurrence" data-edge-key="15" data-edge-id="edge-16">
-          <rect x="626.6" y="764" width="134.8" height="14" rx="3" class="c-mask"/>
-          <text x="694" y="774" class="t-muted" font-size="8" text-anchor="middle">stale detection
-recurrence</text>
+        <g data-detail="context" data-edge-from="B2" data-edge-to="A" data-edge-label="通过 PR 提交" data-edge-key="7" data-edge-id="edge-8">
+          <rect x="322.2" y="220" width="67.6" height="14" rx="3" class="c-mask"/>
+          <text x="356" y="230" class="t-muted" font-size="8" text-anchor="middle">通过 PR 提交</text>
         </g>
 
         <!-- Boundary labels (foreground masks keep routes out of titles) -->
-        <g data-graph-role="structural-frame-label" data-composition-frame-id="0" data-composition-frame-kind="region" data-composition-frame-label="Messaging Channels">
-          <rect data-graph-role="structural-frame-label-mask" x="70" y="80" width="107.2" height="16" rx="3" class="c-mask"/>
-          <text data-boundary-label="" x="74" y="93" class="t-cloud" font-size="9" font-weight="600">Messaging Channels</text>
+        <g data-graph-role="structural-frame-label" data-composition-frame-id="0" data-composition-frame-kind="region" data-composition-frame-label="Awesome Agent Skills 仓库">
+          <rect data-graph-role="structural-frame-label-mask" x="70" y="80" width="145" height="16" rx="3" class="c-mask"/>
+          <text data-boundary-label="" x="74" y="93" class="t-cloud" font-size="9" font-weight="600">Awesome Agent Skills 仓库</text>
         </g>
 
-        <g data-graph-role="structural-frame-label" data-composition-frame-id="1" data-composition-frame-kind="region" data-composition-frame-label="Host Process — Node.js">
-          <rect data-graph-role="structural-frame-label-mask" x="414" y="162" width="128.8" height="16" rx="3" class="c-mask"/>
-          <text data-boundary-label="" x="418" y="175" class="t-cloud" font-size="9" font-weight="600">Host Process — Node.js</text>
+        <g data-graph-role="structural-frame-label" data-composition-frame-id="1" data-composition-frame-kind="region" data-composition-frame-label="技能来源">
+          <rect data-graph-role="structural-frame-label-mask" x="70" y="264" width="53.199999999999996" height="16" rx="3" class="c-mask"/>
+          <text data-boundary-label="" x="74" y="277" class="t-cloud" font-size="9" font-weight="600">技能来源</text>
         </g>
 
-        <g data-graph-role="structural-frame-label" data-composition-frame-id="2" data-composition-frame-kind="region" data-composition-frame-label="Per-Session Isolation">
-          <rect data-graph-role="structural-frame-label-mask" x="758" y="244" width="123.39999999999999" height="16" rx="3" class="c-mask"/>
-          <text data-boundary-label="" x="762" y="257" class="t-cloud" font-size="9" font-weight="600">Per-Session Isolation</text>
+        <g data-graph-role="structural-frame-label" data-composition-frame-id="2" data-composition-frame-kind="region" data-composition-frame-label="你的工作流">
+          <rect data-graph-role="structural-frame-label-mask" x="70" y="448" width="64" height="16" rx="3" class="c-mask"/>
+          <text data-boundary-label="" x="74" y="461" class="t-cloud" font-size="9" font-weight="600">你的工作流</text>
         </g>
 
         <!-- Legend -->
         <g data-legend="" data-legend-bridge="">
-          <text x="40" y="872" class="t-primary" font-size="12" font-weight="650">图例</text>
-          <g data-legend-semantic-kind="backend" data-legend-kind="backend" data-legend-label="后端" data-legend-x="40" data-legend-baseline="892" data-legend-width="63">
-            <rect x="40" y="883" width="16" height="10" rx="2.5" class="c-backend" stroke-width="1"/>
-            <text x="62" y="892" class="t-muted" font-size="10" font-weight="500">后端</text>
+          <text x="40" y="604" class="t-primary" font-size="12" font-weight="650">图例</text>
+          <g data-legend-semantic-kind="backend" data-legend-kind="backend" data-legend-label="后端" data-legend-x="40" data-legend-baseline="624" data-legend-width="63">
+            <rect x="40" y="615" width="16" height="10" rx="2.5" class="c-backend" stroke-width="1"/>
+            <text x="62" y="624" class="t-muted" font-size="10" font-weight="500">后端</text>
           </g>
-          <g data-legend-semantic-kind="database" data-legend-kind="database" data-legend-label="数据库" data-legend-x="125" data-legend-baseline="892" data-legend-width="73">
-            <rect x="125" y="883" width="16" height="10" rx="2.5" class="c-database" stroke-width="1"/>
-            <text x="147" y="892" class="t-muted" font-size="10" font-weight="500">数据库</text>
+          <g data-legend-semantic-kind="cloud" data-legend-kind="cloud" data-legend-label="云服务" data-legend-x="125" data-legend-baseline="624" data-legend-width="73">
+            <rect x="125" y="615" width="16" height="10" rx="2.5" class="c-cloud" stroke-width="1"/>
+            <text x="147" y="624" class="t-muted" font-size="10" font-weight="500">云服务</text>
           </g>
         </g>
       </svg>
@@ -8774,7 +8670,7 @@ recurrence</text>
           var id = node.getAttribute('data-node-id');
           set(id);
           if (activeIds.indexOf(id) !== -1 && Archify.view && typeof Archify.view.reveal === 'function') {
-            Archify.view.reveal([id], { includeNeighbors: true, reason: 'focus' });
+            if (document.documentElement.getAttribute('data-embed') !== 'true') Archify.view.reveal([id], { includeNeighbors: true, reason: 'focus' });
           }
         }
         else if (activeIds.length) clear();
@@ -8786,7 +8682,7 @@ recurrence</text>
         var id = node.getAttribute('data-node-id');
         set(id);
         if (activeIds.indexOf(id) !== -1 && Archify.view && typeof Archify.view.reveal === 'function') {
-          Archify.view.reveal([id], { includeNeighbors: true, reason: 'focus' });
+          if (document.documentElement.getAttribute('data-embed') !== 'true') Archify.view.reveal([id], { includeNeighbors: true, reason: 'focus' });
         }
       });
       clearBtn.addEventListener('click', function () { clear({ restoreFocus: true }); });
@@ -11529,7 +11425,7 @@ recurrence</text>
         svg.style.transform = 'translate(' + state.x + 'px,' + state.y + 'px) scale(' + state.scale + ')';
         syncViewportClip();
         renderControls();
-        outBtn.disabled = state.scale <= 1;
+        outBtn.disabled = state.scale <= 0.25;
         inBtn.disabled = state.scale >= 3;
         container.classList.toggle('is-pannable', state.scale > 1);
         svg.setAttribute('data-view-scale', String(state.scale));
@@ -11632,7 +11528,7 @@ recurrence</text>
         options = options || {};
         if (options.manual !== false) interruptCamera();
         var previous = state.scale;
-        next = Math.max(1, Math.min(3, Math.round(next * 4) / 4));
+        next = Math.max(0.25, Math.min(3, Math.round(next * 4) / 4));
         if (next === previous) return;
         var centerX = (svg.clientWidth || 1) / 2;
         var centerY = (svg.clientHeight || 1) / 2;
@@ -11670,7 +11566,7 @@ recurrence</text>
           catch (_) { container.scrollLeft = mobileTarget; }
           return true;
         }
-        var minimumScale = Math.max(1, Math.min(3, Number(options.minimumScale) || 1));
+        var minimumScale = Math.max(0.25, Math.min(3, Number(options.minimumScale) || 0.25));
         var requestedScale = Number(options.scale);
         state.scale = Math.max(minimumScale, Math.min(3, Number.isFinite(requestedScale) ? requestedScale : state.scale));
         var contentX = metrics.offsetX + (logicalX - viewBox.x) * metrics.scale;
@@ -14873,5 +14769,201 @@ recurrence</text>
       }
     });
   </script>
+<script data-archify-embed-bridge="v1">
+(function () {
+  'use strict';
+  var CHANNEL = 'archify-embed-v1';
+  // Match the host viewer's 25% minimum so a wide diagram can be fitted
+  // inside a small article column without clipping.
+  var MIN_SCALE = 0.25;
+  var MAX_SCALE = 3;
+
+  function enableEmbeddedCamera() {
+    if (document.documentElement.getAttribute('data-embed') !== 'true') return;
+    var container = document.querySelector('.diagram-container');
+    if (!container) return;
+
+    // The standalone viewer sizes SVGs from their width. In a fullscreen
+    // iframe the viewport can be wider than the diagram's authored ratio,
+    // which used to crop the bottom of the graph. Let SVG preserveAspectRatio
+    // perform a true contain fit against both available dimensions.
+    document.documentElement.style.height = '100%';
+    document.documentElement.style.width = '100%';
+    if (document.body && document.body.style) {
+      document.body.style.height = '100%';
+      document.body.style.width = '100%';
+    }
+    var shell = typeof container.closest === 'function' ? container.closest('.container') : null;
+    if (shell && shell.style) {
+      shell.style.width = '100%';
+      shell.style.height = '100%';
+      shell.style.overflow = 'hidden';
+    }
+    container.style.width = '100%';
+    container.style.height = '100%';
+    container.style.boxSizing = 'border-box';
+    container.style.padding = '0';
+    var svg = container.querySelector(':scope > svg, svg');
+    if (svg && svg.style) {
+      svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+      svg.style.setProperty('display', 'block', 'important');
+      svg.style.setProperty('width', '100%', 'important');
+      svg.style.setProperty('height', '100%', 'important');
+      svg.style.setProperty('max-height', '100%', 'important');
+    }
+
+    // Embedded node selection keeps the complete map stationary and exposes
+    // its real one-hop neighbourhood. The upstream focus attributes remain
+    // authoritative; this override only replaces the standalone reader's
+    // aggressive fade/reframe treatment, which looked like unrelated nodes
+    // were being arbitrarily hidden inside an article canvas.
+    if (!document.getElementById('archify-embed-focus-style')) {
+      var focusStyle = document.createElement('style');
+      focusStyle.id = 'archify-embed-focus-style';
+      focusStyle.textContent =
+        'html[data-embed="true"] svg[data-focus-active] [data-node-id]{opacity:.52!important}' +
+        'html[data-embed="true"] svg[data-focus-active] [data-edge-from]{opacity:.34!important}' +
+        'html[data-embed="true"] svg[data-focus-active] [data-focus-match]{opacity:1!important}';
+      (document.head || document.documentElement).appendChild(focusStyle);
+    }
+
+    if (!container.hasAttribute('data-wide-diagram')) return;
+
+    // Archify's narrow standalone-reader mode turns a wide diagram into a
+    // horizontal scroller and intentionally pins its camera to scale 1. The
+    // host embed already owns viewport sizing and navigation, so preserve the
+    // shape as metadata while opting this camera into Archify's normal
+    // pan/zoom path. This keeps centerAt() functional inside <=720px iframes.
+    container.setAttribute('data-archify-embed-wide-diagram', 'true');
+    container.removeAttribute('data-wide-diagram');
+  }
+
+  function camera() {
+    enableEmbeddedCamera();
+    return window.Archify && window.Archify.view ? window.Archify.view : null;
+  }
+
+  function applyTheme(value) {
+    var theme = value === 'light' || value === 'dark' ? value : null;
+    if (!theme) return false;
+    var html = document.documentElement;
+    // Embedded frames can be off-screen while the host initializes them;
+    // Chromium pauses their CSS transitions at frame zero. Disable only the
+    // document background transition so the requested palette is observable
+    // immediately instead of remaining visually stuck on the old theme.
+    if (document.body && document.body.style) {
+      document.body.style.setProperty('transition', 'none', 'important');
+    }
+    var current = html.getAttribute('data-theme');
+    var officialTheme = window.Archify && window.Archify.theme;
+    if ((current === 'light' || current === 'dark') && current !== theme &&
+        officialTheme && typeof officialTheme.toggle === 'function') {
+      officialTheme.toggle();
+    }
+    // Keep the embed deterministic even if the official toolbar is absent or
+    // a future runtime declines the toggle. Archify's complete palette is
+    // keyed from this official data-theme contract.
+    if (html.getAttribute('data-theme') !== theme) html.setAttribute('data-theme', theme);
+    var button = document.getElementById('btn-theme');
+    if (button) button.setAttribute('aria-pressed', theme === 'light' ? 'true' : 'false');
+    return true;
+  }
+
+  function metrics() {
+    var view = camera();
+    var state = view && typeof view.state === 'function' ? view.state() : { scale: 1 };
+    var svg = document.querySelector('.diagram-container > svg, .diagram-container svg');
+    var box = svg && svg.viewBox ? svg.viewBox.baseVal : null;
+    var width = box && Number(box.width) > 0 ? Number(box.width) : 16;
+    var height = box && Number(box.height) > 0 ? Number(box.height) : 9;
+    return {
+      scale: Math.round((Number(state.scale) || 1) * 1000) / 1000,
+      percent: Math.round((Number(state.scale) || 1) * 100),
+      x: Math.round((Number(state.x) || 0) * 1000) / 1000,
+      y: Math.round((Number(state.y) || 0) * 1000) / 1000,
+      width: width,
+      height: height,
+      aspectRatio: width / height,
+      theme: document.documentElement.getAttribute('data-theme') || null
+    };
+  }
+
+  function report(type) {
+    try {
+      parent.postMessage({ channel: CHANNEL, type: type || 'state', payload: metrics() }, '*');
+    } catch (_) {}
+  }
+
+  function clampScale(value) {
+    value = Number(value);
+    if (!Number.isFinite(value)) return null;
+    return Math.max(MIN_SCALE, Math.min(MAX_SCALE, value));
+  }
+
+  function setScale(nextScale) {
+    var view = camera();
+    var next = clampScale(nextScale);
+    if (!view || next === null) return false;
+    if (next <= MIN_SCALE + 0.0001) {
+      view.reset({ automatic: true });
+      return true;
+    }
+    var viewport = typeof view.logicalViewport === 'function' ? view.logicalViewport() : null;
+    if (!viewport || typeof view.centerAt !== 'function') return false;
+    return view.centerAt(
+      viewport.x + viewport.width / 2,
+      viewport.y + viewport.height / 2,
+      { scale: next, minimumScale: MIN_SCALE, instant: true }
+    ) !== false;
+  }
+
+  function execute(command, value) {
+    var view = camera();
+    if (!view) return false;
+    var state = typeof view.state === 'function' ? view.state() : { scale: 1 };
+    if (command === 'zoom-in') return setScale((Number(state.scale) || 1) + 0.25);
+    if (command === 'zoom-out') return setScale((Number(state.scale) || 1) - 0.25);
+    if (command === 'set-zoom') return setScale(Number(value) / 100);
+    if (command === 'set-theme') return applyTheme(value);
+    if (command === 'fit' || command === 'reset') {
+      // "Fit" is also the deterministic way back from a node-focused view:
+      // clear Archify's semantic focus first, then restore the complete graph.
+      var focus = window.Archify && window.Archify.focus;
+      if (focus && typeof focus.active === 'function' && focus.active() && typeof focus.clear === 'function') {
+        focus.clear({ preserveView: true, restoreFocus: false });
+      }
+      view.reset({ automatic: true });
+      return true;
+    }
+    return command === 'get-state';
+  }
+
+  window.addEventListener('message', function (event) {
+    if (event.source !== parent) return;
+    var message = event.data;
+    if (!message || message.channel !== CHANNEL || message.type !== 'command') return;
+    if (!execute(message.command, message.value)) return;
+    // Opaque iframes below the fold can have requestAnimationFrame paused.
+    // Report once synchronously so host controls/theme handshakes never wait
+    // for visibility, then sample again on the next rendered frame.
+    report('state');
+    requestAnimationFrame(function () { report('state'); });
+  });
+
+  document.addEventListener('keydown', function (event) {
+    if (event.key !== 'Escape') return;
+    event.preventDefault();
+    event.stopPropagation();
+    try { parent.postMessage({ channel: CHANNEL, type: 'escape' }, '*'); } catch (_) {}
+  }, true);
+
+  document.addEventListener('pointerup', function () { report('state'); }, { passive: true });
+  window.addEventListener('resize', function () { report('state'); }, { passive: true });
+  enableEmbeddedCamera();
+  requestAnimationFrame(function () {
+    requestAnimationFrame(function () { report('ready'); });
+  });
+})();
+</script>
 </body>
 </html>

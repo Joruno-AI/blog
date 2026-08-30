@@ -31,24 +31,14 @@ function catalogResponse(body: BodyInit, source?: CatalogObject) {
 }
 
 export async function GET() {
-  let cloudflareRuntime = false;
   try {
-    const bucket = getCloudflareContext().env.R2_BUCKET as unknown as CatalogBucket;
-    cloudflareRuntime = true;
-    const object = await bucket.get(R2_KEY);
-    if (object) return catalogResponse(object.body, object);
-    return Response.json({ error: "Docs catalog is unavailable." }, {
-      status: 503,
-      headers: { "cache-control": "no-store" },
-    });
-  } catch {
-    if (cloudflareRuntime) {
-      return Response.json({ error: "Docs catalog is unavailable." }, {
-        status: 503,
-        headers: { "cache-control": "no-store" },
-      });
+    const bucket = getCloudflareContext().env.R2_BUCKET as unknown as CatalogBucket | undefined;
+    if (bucket?.get) {
+      const object = await bucket.get(R2_KEY);
+      if (object) return catalogResponse(object.body, object);
     }
-    // Local Next.js has no binding and reads the same immutable R2 object.
+  } catch {
+    // A missing/local binding falls through to the same immutable public R2 object.
   }
 
   const upstream = await fetchWithTimeout(`${PUBLIC_R2_ORIGIN}/${R2_KEY}`, {

@@ -3,7 +3,6 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { LightRays } from "@/components/site/light-rays";
-import { RevealController } from "@/components/site/reveal-controller";
 import { SiteIcon } from "@/components/site/site-icon";
 
 function pageKind(pathname: string) {
@@ -38,11 +37,7 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
   }, []);
   const kind = pageKind(pathname);
   return (
-    <div
-      className="astro-site"
-      data-page-kind={kind}
-      style={{ "--enter-step": "46ms", "--enter-duration": "560ms", "--enter-distance": "18px" } as React.CSSProperties}
-    >
+    <div className="astro-site" data-page-kind={kind}>
       {kind !== "music" ? <LightRays /> : null}
       {children}
       <button
@@ -52,14 +47,10 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
         aria-label="回到页面顶部"
         title="回到页面顶部"
         data-visible={showTop || undefined}
-        onClick={() => {
-          const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-          window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
-        }}
+        onClick={() => window.scrollTo({ top: 0, behavior: "auto" })}
       >
         <SiteIcon name="arrow-up-line" />
       </button>
-      <RevealController routeKey={pathname} disabled={kind === "music"} />
     </div>
   );
 }

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="generator" content="archify 2.16.0-dev.0">
-  <title>架构概览</title>
+  <title>数据流——从工具使用到记忆</title>
   <script>
     // Resolve the theme before first paint so light-preference users don't
     // see a dark flash. The toolbar script below re-applies with UI state.
@@ -4955,9 +4955,9 @@
            data-preset-badge-blueprint="蓝图 / 修订 01"
            data-preset-badge-editorial="编辑风格 / 现场笔记">
         <div class="pulse-dot"></div>
-        <h1>架构概览</h1>
+        <h1>数据流——从工具使用到记忆</h1>
       </div>
-      <p class="subtitle">ZRead · jarrodwatts/claude-hud</p>
+      <p class="subtitle">ZRead · thedotmack/claude-mem</p>
     </div>
 
     <script id="archify-guided-views-data" type="application/json">[]</script>
@@ -5005,9 +5005,9 @@
     <!-- Main Diagram -->
     <div class="diagram-container" data-detail-level="read"
          data-preset-badge-editorial-plate="ARCHIFY / 图版 04">
-      <svg viewBox="0 0 1902 1084" role="img" lang="zh-CN" aria-labelledby="archify-diagram-title archify-diagram-description" data-preset="editorial" data-quality-profile="standard" data-quality-gates="advisory">
-        <title id="archify-diagram-title">架构概览</title>
-        <desc id="archify-diagram-description">ZRead · jarrodwatts/claude-hud</desc>
+      <svg viewBox="0 0 2200 600" role="img" lang="zh-CN" aria-labelledby="archify-diagram-title archify-diagram-description" data-preset="editorial" data-quality-profile="standard" data-quality-gates="advisory">
+        <title id="archify-diagram-title">数据流——从工具使用到记忆</title>
+        <desc id="archify-diagram-description">ZRead · thedotmack/claude-mem</desc>
         <!-- Definitions -->
         <defs>
           <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
@@ -5031,240 +5031,204 @@
         <rect width="100%" height="100%" fill="url(#grid)" />
 
         <!-- Boundaries (behind everything) -->
-        <rect data-graph-role="structural-frame" data-composition-frame-kind="region" data-composition-frame-id="0" data-composition-frame-label="Data Sources" x="66" y="76" width="1796" height="284" rx="12" class="c-region" stroke-width="1"/>
 
-        <rect data-graph-role="structural-frame" data-composition-frame-kind="region" data-composition-frame-id="1" data-composition-frame-label="Entry Point" x="846" y="404" width="224" height="120" rx="12" class="c-region" stroke-width="1"/>
-
-        <rect data-graph-role="structural-frame" data-composition-frame-kind="region" data-composition-frame-id="2" data-composition-frame-label="Render Layer" x="222" y="568" width="1526" height="448" rx="12" class="c-region" stroke-width="1"/>
 
         <!-- Connection paths (before components for correct z-order) -->
-        <path data-edge-from="Stdin" data-edge-to="Index" data-edge-key="0" data-edge-id="edge-1" data-composition-points="187,176;187,206;16,206;16,398;958,398;958,428" d="M 187 176 L 187 198 Q 187 206 179 206 L 24 206 Q 16 206 16 214 L 16 390 Q 16 398 24 398 L 950 398 Q 958 398 958 406 L 958 428" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="Transcript" data-edge-to="Index" data-edge-key="1" data-edge-id="edge-2" data-composition-points="508,176;508,206;-10,206;-10,398;958,398;958,428" d="M 508 176 L 508 198 Q 508 206 500 206 L -2 206 Q -10 206 -10 214 L -10 390 Q -10 398 -2 398 L 950 398 Q 958 398 958 406 L 958 428" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="ConfigReader" data-edge-to="Index" data-edge-key="2" data-edge-id="edge-3" data-composition-points="835,176;835,206;-36,206;-36,398;958,398;958,428" d="M 835 176 L 835 198 Q 835 206 827 206 L -28 206 Q -36 206 -36 214 L -36 390 Q -36 398 -28 398 L 950 398 Q 958 398 958 406 L 958 428" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="Git" data-edge-to="Index" data-edge-key="3" data-edge-id="edge-4" data-composition-points="1123,176;1123,206;1990,206;1990,398;958,398;958,428" d="M 1123 176 L 1123 198 Q 1123 206 1131 206 L 1982 206 Q 1990 206 1990 214 L 1990 390 Q 1990 398 1982 398 L 966 398 Q 958 398 958 406 L 958 428" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="Config" data-edge-to="Index" data-edge-key="4" data-edge-id="edge-5" data-composition-points="1472,176;1472,206;1912,206;1912,398;958,398;958,428" d="M 1472 176 L 1472 198 Q 1472 206 1480 206 L 1904 206 Q 1912 206 1912 214 L 1912 390 Q 1912 398 1904 398 L 966 398 Q 958 398 958 406 L 958 428" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="ExternalUsage" data-edge-to="Index" data-edge-key="5" data-edge-id="edge-6" data-composition-points="1744,176;1744,206;1938,206;1938,398;958,398;958,428" d="M 1744 176 L 1744 198 Q 1744 206 1752 206 L 1930 206 Q 1938 206 1938 214 L 1938 390 Q 1938 398 1930 398 L 966 398 Q 958 398 958 406 L 958 428" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="ContextCache" data-edge-to="Index" data-edge-key="6" data-edge-id="edge-7" data-composition-points="802,340;802,384;958,384;958,428" d="M 802 340 L 802 376 Q 802 384 810 384 L 950 384 Q 958 384 958 392 L 958 428" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="Memory" data-edge-to="Index" data-edge-key="7" data-edge-id="edge-8" data-composition-points="1114,340;1114,384;958,384;958,428" d="M 1114 340 L 1114 376 Q 1114 384 1106 384 L 966 384 Q 958 384 958 392 L 958 428" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="Index" data-edge-to="Render" data-edge-key="8" data-edge-id="edge-9" data-composition-points="958,504;958,548;967,548;967,592" d="M 958 504 L 958 543.5 Q 958 548 962.5 548 L 962.5 548 Q 967 548 967 552.5 L 967 592" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="Render" data-edge-to="SessionLine" data-edge-key="9" data-edge-id="edge-10" data-composition-points="967,668;967,709;339,709;339,756" d="M 967 668 L 967 701 Q 967 709 959 709 L 347 709 Q 339 709 339 717 L 339 756" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="Render" data-edge-to="ToolsLine" data-edge-key="10" data-edge-id="edge-11" data-composition-points="967,668;967,709;646,709;646,756" d="M 967 668 L 967 701 Q 967 709 959 709 L 654 709 Q 646 709 646 717 L 646 756" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="Render" data-edge-to="AgentsLine" data-edge-key="11" data-edge-id="edge-12" data-composition-points="967,668;967,709;959.5,709;959.5,756" d="M 967 668 L 967 705.25 Q 967 709 963.25 709 L 963.25 709 Q 959.5 709 959.5 712.75 L 959.5 756" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="Render" data-edge-to="TodosLine" data-edge-key="12" data-edge-id="edge-13" data-composition-points="967,668;967,709;1270,709;1270,756" d="M 967 668 L 967 701 Q 967 709 975 709 L 1262 709 Q 1270 709 1270 717 L 1270 756" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="Render" data-edge-to="Lines" data-edge-key="13" data-edge-id="edge-14" data-composition-points="967,668;967,712;1609,712;1609,756" d="M 967 668 L 967 704 Q 967 712 975 712 L 1601 712 Q 1609 712 1609 720 L 1609 756" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="SessionLine" data-edge-to="Colors" data-edge-key="14" data-edge-id="edge-15" data-composition-points="339,820;339,873;802,873;802,920" d="M 339 820 L 339 865 Q 339 873 347 873 L 794 873 Q 802 873 802 881 L 802 920" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="ToolsLine" data-edge-to="Width" data-edge-key="15" data-edge-id="edge-16" data-composition-points="646,820;646,873;1114,873;1114,920" d="M 646 820 L 646 865 Q 646 873 654 873 L 1106 873 Q 1114 873 1114 881 L 1114 920" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="A" data-edge-to="B" data-edge-key="0" data-edge-id="edge-1" data-composition-points="266,132;400,132" d="M 266 132 L 400 132" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="B" data-edge-to="C" data-edge-key="1" data-edge-id="edge-2" data-composition-points="576,132;643,132;643,138;710,138" d="M 576 132 L 640 132 Q 643 132 643 135 L 643 135 Q 643 138 646 138 L 710 138" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="D" data-edge-to="E" data-edge-key="2" data-edge-id="edge-3" data-composition-points="266,296;400,296" d="M 266 296 L 400 296" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="E" data-edge-to="F" data-edge-key="3" data-edge-id="edge-4" data-composition-points="576,296;710,296" d="M 576 296 L 710 296" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="F" data-edge-to="G" data-edge-key="4" data-edge-id="edge-5" data-composition-points="924,296;962.5,296;962.5,220;1020,220" d="M 924 296 L 954.5 296 Q 962.5 296 962.5 288 L 962.5 228 Q 962.5 220 970.5 220 L 1020 220" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="G" data-edge-to="H" data-edge-key="5" data-edge-id="edge-6" data-composition-points="1196,220;1330,220" d="M 1196 220 L 1330 220" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="H" data-edge-to="I" data-edge-key="6" data-edge-id="edge-7" data-composition-points="1506,220;1573,220;1573,302;1640,302" d="M 1506 220 L 1565 220 Q 1573 220 1573 228 L 1573 294 Q 1573 302 1581 302 L 1640 302" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="I" data-edge-to="J" data-edge-key="7" data-edge-id="edge-8" data-composition-points="1816,302;1883,302;1883,138;1950,138" d="M 1816 302 L 1875 302 Q 1883 302 1883 294 L 1883 146 Q 1883 138 1891 138 L 1950 138" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="I" data-edge-to="K" data-edge-key="8" data-edge-id="edge-9" data-composition-points="1816,302;1950,302" d="M 1816 302 L 1950 302" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="I" data-edge-to="L" data-edge-key="9" data-edge-id="edge-10" data-composition-points="1816,302;1885.5,302;1885.5,466;1950,466" d="M 1816 302 L 1877.5 302 Q 1885.5 302 1885.5 310 L 1885.5 458 Q 1885.5 466 1893.5 466 L 1950 466" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="M" data-edge-to="N" data-edge-key="10" data-edge-id="edge-11" data-composition-points="266,460;400,460" d="M 266 460 L 400 460" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="N" data-edge-to="O" data-edge-key="11" data-edge-id="edge-12" data-composition-points="576,460;710,460" d="M 576 460 L 710 460" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="O" data-edge-to="P" data-edge-key="12" data-edge-id="edge-13" data-composition-points="903,460;957.25,460;957.25,378;1020,378" d="M 903 460 L 949.25 460 Q 957.25 460 957.25 452 L 957.25 386 Q 957.25 378 965.25 378 L 1020 378" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="P" data-edge-to="Q" data-edge-key="13" data-edge-id="edge-14" data-composition-points="1196,378;1265.5,378;1265.5,384;1330,384" d="M 1196 378 L 1262.5 378 Q 1265.5 378 1265.5 381 L 1265.5 381 Q 1265.5 384 1268.5 384 L 1330 384" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
 
         <!-- Components -->
-        <g id="node-Stdin" data-node-id="Stdin" data-node-label="stdin.ts" tabindex="0" role="button" aria-label="聚焦stdin.ts，Parse JSON from Claude Code, Data Sources" aria-pressed="false" data-node-kind="backend" data-node-sublabel="Parse JSON from Claude Code" data-node-context="Data Sources">
-          <title>stdin.ts · Parse JSON from Claude Code · Data Sources</title>
-          <rect x="90" y="100" width="194" height="76" rx="6" class="c-mask"/>
-          <rect x="90" y="100" width="194" height="76" rx="6" class="c-backend" stroke-width="1.5"/>
+        <g id="node-A" data-node-id="A" data-node-label="用户提示词" tabindex="0" role="button" aria-label="聚焦用户提示词，架构组件" aria-pressed="false" data-node-kind="backend" data-node-context="架构组件">
+          <title>用户提示词 · 架构组件</title>
+          <rect x="90" y="100" width="176" height="64" rx="6" class="c-mask"/>
+          <rect x="90" y="100" width="176" height="64" rx="6" class="c-backend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(96 106) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-node-label="" data-detail-anchor="" x="187" y="136" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">stdin.ts</text>
-        <text data-detail="context" x="187" y="152" class="t-muted" font-size="9" text-anchor="middle">Parse JSON from Claude Code</text>
+          <text data-node-label="" x="178" y="136" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">用户提示词</text>
         </g>
 
-        <g id="node-Transcript" data-node-id="Transcript" data-node-label="transcript.ts" tabindex="0" role="button" aria-label="聚焦transcript.ts，Parse JSONL session transcript, Data Sources" aria-pressed="false" data-node-kind="backend" data-node-sublabel="Parse JSONL session transcript" data-node-context="Data Sources">
-          <title>transcript.ts · Parse JSONL session transcript · Data Sources</title>
-          <rect x="402" y="100" width="212" height="76" rx="6" class="c-mask"/>
-          <rect x="402" y="100" width="212" height="76" rx="6" class="c-backend" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(408 106) scale(0.6875)">
+        <g id="node-B" data-node-id="B" data-node-label="session-init" tabindex="0" role="button" aria-label="聚焦session-init，架构组件" aria-pressed="false" data-node-kind="backend" data-node-context="架构组件">
+          <title>session-init · 架构组件</title>
+          <rect x="400" y="100" width="176" height="64" rx="6" class="c-mask"/>
+          <rect x="400" y="100" width="176" height="64" rx="6" class="c-backend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(406 106) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-node-label="" data-detail-anchor="" x="508" y="136" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">transcript.ts</text>
-        <text data-detail="context" x="508" y="152" class="t-muted" font-size="9" text-anchor="middle">Parse JSONL session transcript</text>
+          <text data-node-label="" x="488" y="136" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">session-init</text>
         </g>
 
-        <g id="node-ConfigReader" data-node-id="ConfigReader" data-node-label="config-reader.ts" tabindex="0" role="button" aria-label="聚焦config-reader.ts，Count CLAUDE.md, rules, MCPs, hooks, Data Sources" aria-pressed="false" data-node-kind="messagebus" data-node-sublabel="Count CLAUDE.md, rules, MCPs, hooks" data-node-context="Data Sources">
-          <title>config-reader.ts · Count CLAUDE.md, rules, MCPs, hooks · Data Sources</title>
-          <rect x="714" y="100" width="242" height="76" rx="6" class="c-mask"/>
-          <rect x="714" y="100" width="242" height="76" rx="6" class="c-messagebus" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="messagebus" class="semantic-sigil s-messagebus" transform="translate(720 106) scale(0.6875)">
-            <path d="M2.5 4.5h11M2.5 8h11M2.5 11.5h11"/>
-            <circle cx="5" cy="4.5" r="1" class="sigil-fill"/>
-            <circle cx="10.5" cy="8" r="1" class="sigil-fill"/>
-            <circle cx="7" cy="11.5" r="1" class="sigil-fill"/>
-          </g>
-          <text data-node-label="" data-detail-anchor="" x="835" y="136" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">config-reader.ts</text>
-        <text data-detail="context" x="835" y="152" class="t-muted" font-size="9" text-anchor="middle">Count CLAUDE.md, rules, MCPs, hooks</text>
-        </g>
-
-        <g id="node-Git" data-node-id="Git" data-node-label="git.ts" tabindex="0" role="button" aria-label="聚焦git.ts，Branch, dirty, ahead/behind, Data Sources" aria-pressed="false" data-node-kind="backend" data-node-sublabel="Branch, dirty, ahead/behind" data-node-context="Data Sources">
-          <title>git.ts · Branch, dirty, ahead/behind · Data Sources</title>
-          <rect x="1026" y="100" width="194" height="76" rx="6" class="c-mask"/>
-          <rect x="1026" y="100" width="194" height="76" rx="6" class="c-backend" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(1032 106) scale(0.6875)">
+        <g id="node-C" data-node-id="C" data-node-label="/api/sessions/init" tabindex="0" role="button" aria-label="聚焦/api/sessions/init，+ /api/context/semantic, 架构组件" aria-pressed="false" data-node-kind="backend" data-node-sublabel="+ /api/context/semantic" data-node-context="架构组件">
+          <title>/api/sessions/init · + /api/context/semantic · 架构组件</title>
+          <rect x="710" y="100" width="176" height="76" rx="6" class="c-mask"/>
+          <rect x="710" y="100" width="176" height="76" rx="6" class="c-backend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(716 106) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-node-label="" data-detail-anchor="" x="1123" y="136" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">git.ts</text>
-        <text data-detail="context" x="1123" y="152" class="t-muted" font-size="9" text-anchor="middle">Branch, dirty, ahead/behind</text>
+          <text data-node-label="" data-detail-anchor="" x="798" y="136" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">/api/sessions/init</text>
+        <text data-detail="context" x="798" y="152" class="t-muted" font-size="9" text-anchor="middle">+ /api/context/semantic</text>
         </g>
 
-        <g id="node-Config" data-node-id="Config" data-node-label="config.ts" tabindex="0" role="button" aria-label="聚焦config.ts，Load ~/.claude/plugins/claude-hud/config.json, Data Sources" aria-pressed="false" data-node-kind="backend" data-node-sublabel="Load ~/.claude/plugins/claude-hud/config.json" data-node-context="Data Sources">
-          <title>config.ts · Load ~/.claude/plugins/claude-hud/config.json · Data Sources</title>
-          <rect x="1338" y="100" width="268" height="76" rx="6" class="c-mask"/>
-          <rect x="1338" y="100" width="268" height="76" rx="6" class="c-backend" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(1344 106) scale(0.6875)">
+        <g id="node-D" data-node-id="D" data-node-label="工具使用" tabindex="0" role="button" aria-label="聚焦工具使用，架构组件" aria-pressed="false" data-node-kind="backend" data-node-context="架构组件">
+          <title>工具使用 · 架构组件</title>
+          <rect x="90" y="264" width="176" height="64" rx="6" class="c-mask"/>
+          <rect x="90" y="264" width="176" height="64" rx="6" class="c-backend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(96 270) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-node-label="" data-detail-anchor="" x="1472" y="136" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">config.ts</text>
-        <text data-detail="context" x="1472" y="152" class="t-muted" font-size="9" text-anchor="middle">Load ~/.claude/plugins/claude-hud/config.json</text>
+          <text data-node-label="" x="178" y="300" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">工具使用</text>
         </g>
 
-        <g id="node-ExternalUsage" data-node-id="ExternalUsage" data-node-label="external-usage.ts" tabindex="0" role="button" aria-label="聚焦external-usage.ts，Optional snapshot fallback, Data Sources" aria-pressed="false" data-node-kind="backend" data-node-sublabel="Optional snapshot fallback" data-node-context="Data Sources">
-          <title>external-usage.ts · Optional snapshot fallback · Data Sources</title>
-          <rect x="1650" y="100" width="188" height="76" rx="6" class="c-mask"/>
-          <rect x="1650" y="100" width="188" height="76" rx="6" class="c-backend" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(1656 106) scale(0.6875)">
+        <g id="node-E" data-node-id="E" data-node-label="observation 处理器" tabindex="0" role="button" aria-label="聚焦observation 处理器，架构组件" aria-pressed="false" data-node-kind="backend" data-node-context="架构组件">
+          <title>observation 处理器 · 架构组件</title>
+          <rect x="400" y="264" width="176" height="64" rx="6" class="c-mask"/>
+          <rect x="400" y="264" width="176" height="64" rx="6" class="c-backend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(406 270) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-node-label="" data-detail-anchor="" x="1744" y="136" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">external-usage.ts</text>
-        <text data-detail="context" x="1744" y="152" class="t-muted" font-size="9" text-anchor="middle">Optional snapshot fallback</text>
+          <text data-node-label="" x="488" y="300" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">observation 处理器</text>
         </g>
 
-        <g id="node-ContextCache" data-node-id="ContextCache" data-node-label="context-cache.ts" tabindex="0" role="button" aria-label="聚焦context-cache.ts，Post-compact fallback, Data Sources" aria-pressed="false" data-node-kind="database" data-node-sublabel="Post-compact fallback" data-node-context="Data Sources">
-          <title>context-cache.ts · Post-compact fallback · Data Sources</title>
-          <rect x="714" y="264" width="176" height="76" rx="6" class="c-mask"/>
-          <rect x="714" y="264" width="176" height="76" rx="6" class="c-database" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(720 270) scale(0.6875)">
+        <g id="node-F" data-node-id="F" data-node-label="/api/sessions/observations" tabindex="0" role="button" aria-label="聚焦/api/sessions/observations，架构组件" aria-pressed="false" data-node-kind="backend" data-node-context="架构组件">
+          <title>/api/sessions/observations · 架构组件</title>
+          <rect x="710" y="264" width="214" height="64" rx="6" class="c-mask"/>
+          <rect x="710" y="264" width="214" height="64" rx="6" class="c-backend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(716 270) scale(0.6875)">
+            <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
+          </g>
+          <text data-node-label="" x="817" y="300" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">/api/sessions/observations</text>
+        </g>
+
+        <g id="node-G" data-node-id="G" data-node-label="PendingMessageStore" tabindex="0" role="button" aria-label="聚焦PendingMessageStore，enqueue(), 架构组件" aria-pressed="false" data-node-kind="database" data-node-sublabel="enqueue()" data-node-context="架构组件">
+          <title>PendingMessageStore · enqueue() · 架构组件</title>
+          <rect x="1020" y="182" width="176" height="76" rx="6" class="c-mask"/>
+          <rect x="1020" y="182" width="176" height="76" rx="6" class="c-database" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(1026 188) scale(0.6875)">
             <ellipse cx="8" cy="4" rx="5" ry="2"/>
             <path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
           </g>
-          <text data-node-label="" data-detail-anchor="" x="802" y="300" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">context-cache.ts</text>
-        <text data-detail="context" x="802" y="316" class="t-muted" font-size="9" text-anchor="middle">Post-compact fallback</text>
+          <text data-node-label="" data-detail-anchor="" x="1108" y="218" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">PendingMessageStore</text>
+        <text data-detail="context" x="1108" y="234" class="t-muted" font-size="9" text-anchor="middle">enqueue()</text>
         </g>
 
-        <g id="node-Memory" data-node-id="Memory" data-node-label="memory.ts" tabindex="0" role="button" aria-label="聚焦memory.ts，System RAM info, Data Sources" aria-pressed="false" data-node-kind="backend" data-node-sublabel="System RAM info" data-node-context="Data Sources">
-          <title>memory.ts · System RAM info · Data Sources</title>
-          <rect x="1026" y="264" width="176" height="76" rx="6" class="c-mask"/>
-          <rect x="1026" y="264" width="176" height="76" rx="6" class="c-backend" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(1032 270) scale(0.6875)">
+        <g id="node-H" data-node-id="H" data-node-label="SDK Agent" tabindex="0" role="button" aria-label="聚焦SDK Agent，Claude Agent SDK, 架构组件" aria-pressed="false" data-node-kind="backend" data-node-sublabel="Claude Agent SDK" data-node-context="架构组件">
+          <title>SDK Agent · Claude Agent SDK · 架构组件</title>
+          <rect x="1330" y="182" width="176" height="76" rx="6" class="c-mask"/>
+          <rect x="1330" y="182" width="176" height="76" rx="6" class="c-backend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(1336 188) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-node-label="" data-detail-anchor="" x="1114" y="300" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">memory.ts</text>
-        <text data-detail="context" x="1114" y="316" class="t-muted" font-size="9" text-anchor="middle">System RAM info</text>
+          <text data-node-label="" data-detail-anchor="" x="1418" y="218" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">SDK Agent</text>
+        <text data-detail="context" x="1418" y="234" class="t-muted" font-size="9" text-anchor="middle">Claude Agent SDK</text>
         </g>
 
-        <g id="node-Index" data-node-id="Index" data-node-label="index.ts" tabindex="0" role="button" aria-label="聚焦index.ts，main() orchestrator, Entry Point" aria-pressed="false" data-node-kind="backend" data-node-sublabel="main() orchestrator" data-node-context="Entry Point">
-          <title>index.ts · main() orchestrator · Entry Point</title>
-          <rect x="870" y="428" width="176" height="76" rx="6" class="c-mask"/>
-          <rect x="870" y="428" width="176" height="76" rx="6" class="c-backend" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(876 434) scale(0.6875)">
+        <g id="node-I" data-node-id="I" data-node-label="ResponseProcessor" tabindex="0" role="button" aria-label="聚焦ResponseProcessor，解析 + 提取, 架构组件" aria-pressed="false" data-node-kind="backend" data-node-sublabel="解析 + 提取" data-node-context="架构组件">
+          <title>ResponseProcessor · 解析 + 提取 · 架构组件</title>
+          <rect x="1640" y="264" width="176" height="76" rx="6" class="c-mask"/>
+          <rect x="1640" y="264" width="176" height="76" rx="6" class="c-backend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(1646 270) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-node-label="" data-detail-anchor="" x="958" y="464" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">index.ts</text>
-        <text data-detail="context" x="958" y="480" class="t-muted" font-size="9" text-anchor="middle">main() orchestrator</text>
+          <text data-node-label="" data-detail-anchor="" x="1728" y="300" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">ResponseProcessor</text>
+        <text data-detail="context" x="1728" y="316" class="t-muted" font-size="9" text-anchor="middle">解析 + 提取</text>
         </g>
 
-        <g id="node-Render" data-node-id="Render" data-node-label="render/index.ts" tabindex="0" role="button" aria-label="聚焦render/index.ts，Coordinator + layout engine, Render Layer" aria-pressed="false" data-node-kind="frontend" data-node-sublabel="Coordinator + layout engine" data-node-context="Render Layer">
-          <title>render/index.ts · Coordinator + layout engine · Render Layer</title>
-          <rect x="870" y="592" width="194" height="76" rx="6" class="c-mask"/>
-          <rect x="870" y="592" width="194" height="76" rx="6" class="c-frontend" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="frontend" class="semantic-sigil s-frontend" transform="translate(876 598) scale(0.6875)">
-            <rect x="2" y="3" width="12" height="10" rx="2"/>
-            <path d="M2 6.5h12"/>
-            <circle cx="4.1" cy="4.8" r=".7" class="sigil-fill"/>
-            <circle cx="6.3" cy="4.8" r=".7" class="sigil-fill"/>
+        <g id="node-J" data-node-id="J" data-node-label="storeObservations()" tabindex="0" role="button" aria-label="聚焦storeObservations()，→ SQLite, 架构组件" aria-pressed="false" data-node-kind="database" data-node-sublabel="→ SQLite" data-node-context="架构组件">
+          <title>storeObservations() · → SQLite · 架构组件</title>
+          <rect x="1950" y="100" width="176" height="76" rx="6" class="c-mask"/>
+          <rect x="1950" y="100" width="176" height="76" rx="6" class="c-database" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(1956 106) scale(0.6875)">
+            <ellipse cx="8" cy="4" rx="5" ry="2"/>
+            <path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
           </g>
-          <text data-node-label="" data-detail-anchor="" x="967" y="628" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">render/index.ts</text>
-        <text data-detail="context" x="967" y="644" class="t-muted" font-size="9" text-anchor="middle">Coordinator + layout engine</text>
+          <text data-node-label="" data-detail-anchor="" x="2038" y="136" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">storeObservations()</text>
+        <text data-detail="context" x="2038" y="152" class="t-muted" font-size="9" text-anchor="middle">→ SQLite</text>
         </g>
 
-        <g id="node-SessionLine" data-node-id="SessionLine" data-node-label="render/session-line.ts" tabindex="0" role="button" aria-label="聚焦render/session-line.ts，Render Layer" aria-pressed="false" data-node-kind="frontend" data-node-context="Render Layer">
-          <title>render/session-line.ts · Render Layer</title>
-          <rect x="246" y="756" width="186" height="64" rx="6" class="c-mask"/>
-          <rect x="246" y="756" width="186" height="64" rx="6" class="c-frontend" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="frontend" class="semantic-sigil s-frontend" transform="translate(252 762) scale(0.6875)">
-            <rect x="2" y="3" width="12" height="10" rx="2"/>
-            <path d="M2 6.5h12"/>
-            <circle cx="4.1" cy="4.8" r=".7" class="sigil-fill"/>
-            <circle cx="6.3" cy="4.8" r=".7" class="sigil-fill"/>
+        <g id="node-K" data-node-id="K" data-node-label="chromaSync.sync()" tabindex="0" role="button" aria-label="聚焦chromaSync.sync()，→ ChromaDB, 架构组件" aria-pressed="false" data-node-kind="database" data-node-sublabel="→ ChromaDB" data-node-context="架构组件">
+          <title>chromaSync.sync() · → ChromaDB · 架构组件</title>
+          <rect x="1950" y="264" width="176" height="76" rx="6" class="c-mask"/>
+          <rect x="1950" y="264" width="176" height="76" rx="6" class="c-database" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(1956 270) scale(0.6875)">
+            <ellipse cx="8" cy="4" rx="5" ry="2"/>
+            <path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
           </g>
-          <text data-node-label="" x="339" y="792" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">render/session-line.ts</text>
+          <text data-node-label="" data-detail-anchor="" x="2038" y="300" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">chromaSync.sync()</text>
+        <text data-detail="context" x="2038" y="316" class="t-muted" font-size="9" text-anchor="middle">→ ChromaDB</text>
         </g>
 
-        <g id="node-ToolsLine" data-node-id="ToolsLine" data-node-label="render/tools-line.ts" tabindex="0" role="button" aria-label="聚焦render/tools-line.ts，Render Layer" aria-pressed="false" data-node-kind="frontend" data-node-context="Render Layer">
-          <title>render/tools-line.ts · Render Layer</title>
-          <rect x="558" y="756" width="176" height="64" rx="6" class="c-mask"/>
-          <rect x="558" y="756" width="176" height="64" rx="6" class="c-frontend" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="frontend" class="semantic-sigil s-frontend" transform="translate(564 762) scale(0.6875)">
-            <rect x="2" y="3" width="12" height="10" rx="2"/>
-            <path d="M2 6.5h12"/>
-            <circle cx="4.1" cy="4.8" r=".7" class="sigil-fill"/>
-            <circle cx="6.3" cy="4.8" r=".7" class="sigil-fill"/>
+        <g id="node-L" data-node-id="L" data-node-label="broadcastObservation()" tabindex="0" role="button" aria-label="聚焦broadcastObservation()，→ SSE / Web 查看器, 架构组件" aria-pressed="false" data-node-kind="backend" data-node-sublabel="→ SSE / Web 查看器" data-node-context="架构组件">
+          <title>broadcastObservation() · → SSE / Web 查看器 · 架构组件</title>
+          <rect x="1950" y="428" width="186" height="76" rx="6" class="c-mask"/>
+          <rect x="1950" y="428" width="186" height="76" rx="6" class="c-backend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(1956 434) scale(0.6875)">
+            <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-node-label="" x="646" y="792" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">render/tools-line.ts</text>
+          <text data-node-label="" data-detail-anchor="" x="2043" y="464" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">broadcastObservation()</text>
+        <text data-detail="context" x="2043" y="480" class="t-muted" font-size="9" text-anchor="middle">→ SSE / Web 查看器</text>
         </g>
 
-        <g id="node-AgentsLine" data-node-id="AgentsLine" data-node-label="render/agents-line.ts" tabindex="0" role="button" aria-label="聚焦render/agents-line.ts，Render Layer" aria-pressed="false" data-node-kind="frontend" data-node-context="Render Layer">
-          <title>render/agents-line.ts · Render Layer</title>
-          <rect x="870" y="756" width="179" height="64" rx="6" class="c-mask"/>
-          <rect x="870" y="756" width="179" height="64" rx="6" class="c-frontend" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="frontend" class="semantic-sigil s-frontend" transform="translate(876 762) scale(0.6875)">
-            <rect x="2" y="3" width="12" height="10" rx="2"/>
-            <path d="M2 6.5h12"/>
-            <circle cx="4.1" cy="4.8" r=".7" class="sigil-fill"/>
-            <circle cx="6.3" cy="4.8" r=".7" class="sigil-fill"/>
+        <g id="node-M" data-node-id="M" data-node-label="会话停止" tabindex="0" role="button" aria-label="聚焦会话停止，架构组件" aria-pressed="false" data-node-kind="backend" data-node-context="架构组件">
+          <title>会话停止 · 架构组件</title>
+          <rect x="90" y="428" width="176" height="64" rx="6" class="c-mask"/>
+          <rect x="90" y="428" width="176" height="64" rx="6" class="c-backend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(96 434) scale(0.6875)">
+            <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-node-label="" x="959.5" y="792" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">render/agents-line.ts</text>
+          <text data-node-label="" x="178" y="464" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">会话停止</text>
         </g>
 
-        <g id="node-TodosLine" data-node-id="TodosLine" data-node-label="render/todos-line.ts" tabindex="0" role="button" aria-label="聚焦render/todos-line.ts，Render Layer" aria-pressed="false" data-node-kind="frontend" data-node-context="Render Layer">
-          <title>render/todos-line.ts · Render Layer</title>
-          <rect x="1182" y="756" width="176" height="64" rx="6" class="c-mask"/>
-          <rect x="1182" y="756" width="176" height="64" rx="6" class="c-frontend" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="frontend" class="semantic-sigil s-frontend" transform="translate(1188 762) scale(0.6875)">
-            <rect x="2" y="3" width="12" height="10" rx="2"/>
-            <path d="M2 6.5h12"/>
-            <circle cx="4.1" cy="4.8" r=".7" class="sigil-fill"/>
-            <circle cx="6.3" cy="4.8" r=".7" class="sigil-fill"/>
+        <g id="node-N" data-node-id="N" data-node-label="summarize" tabindex="0" role="button" aria-label="聚焦summarize，架构组件" aria-pressed="false" data-node-kind="backend" data-node-context="架构组件">
+          <title>summarize · 架构组件</title>
+          <rect x="400" y="428" width="176" height="64" rx="6" class="c-mask"/>
+          <rect x="400" y="428" width="176" height="64" rx="6" class="c-backend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(406 434) scale(0.6875)">
+            <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-node-label="" x="1270" y="792" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">render/todos-line.ts</text>
+          <text data-node-label="" x="488" y="464" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">summarize</text>
         </g>
 
-        <g id="node-Lines" data-node-id="Lines" data-node-label="render/lines/" tabindex="0" role="button" aria-label="聚焦render/lines/，(usage, memory, environment, ...), Render Layer" aria-pressed="false" data-node-kind="frontend" data-node-sublabel="(usage, memory, environment, ...)" data-node-context="Render Layer">
-          <title>render/lines/ · (usage, memory, environment, ...) · Render Layer</title>
-          <rect x="1494" y="756" width="230" height="76" rx="6" class="c-mask"/>
-          <rect x="1494" y="756" width="230" height="76" rx="6" class="c-frontend" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="frontend" class="semantic-sigil s-frontend" transform="translate(1500 762) scale(0.6875)">
-            <rect x="2" y="3" width="12" height="10" rx="2"/>
-            <path d="M2 6.5h12"/>
-            <circle cx="4.1" cy="4.8" r=".7" class="sigil-fill"/>
-            <circle cx="6.3" cy="4.8" r=".7" class="sigil-fill"/>
+        <g id="node-O" data-node-id="O" data-node-label="/api/sessions/summarize" tabindex="0" role="button" aria-label="聚焦/api/sessions/summarize，架构组件" aria-pressed="false" data-node-kind="backend" data-node-context="架构组件">
+          <title>/api/sessions/summarize · 架构组件</title>
+          <rect x="710" y="428" width="193" height="64" rx="6" class="c-mask"/>
+          <rect x="710" y="428" width="193" height="64" rx="6" class="c-backend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(716 434) scale(0.6875)">
+            <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-node-label="" data-detail-anchor="" x="1609" y="792" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">render/lines/</text>
-        <text data-detail="context" x="1609" y="808" class="t-muted" font-size="9" text-anchor="middle">(usage, memory, environment, ...)</text>
+          <text data-node-label="" x="806.5" y="464" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">/api/sessions/summarize</text>
         </g>
 
-        <g id="node-Colors" data-node-id="Colors" data-node-label="render/colors.ts" tabindex="0" role="button" aria-label="聚焦render/colors.ts，ANSI color helpers, Render Layer" aria-pressed="false" data-node-kind="frontend" data-node-sublabel="ANSI color helpers" data-node-context="Render Layer">
-          <title>render/colors.ts · ANSI color helpers · Render Layer</title>
-          <rect x="714" y="920" width="176" height="76" rx="6" class="c-mask"/>
-          <rect x="714" y="920" width="176" height="76" rx="6" class="c-frontend" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="frontend" class="semantic-sigil s-frontend" transform="translate(720 926) scale(0.6875)">
-            <rect x="2" y="3" width="12" height="10" rx="2"/>
-            <path d="M2 6.5h12"/>
-            <circle cx="4.1" cy="4.8" r=".7" class="sigil-fill"/>
-            <circle cx="6.3" cy="4.8" r=".7" class="sigil-fill"/>
+        <g id="node-P" data-node-id="P" data-node-label="session-complete" tabindex="0" role="button" aria-label="聚焦session-complete，架构组件" aria-pressed="false" data-node-kind="backend" data-node-context="架构组件">
+          <title>session-complete · 架构组件</title>
+          <rect x="1020" y="346" width="176" height="64" rx="6" class="c-mask"/>
+          <rect x="1020" y="346" width="176" height="64" rx="6" class="c-backend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(1026 352) scale(0.6875)">
+            <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-node-label="" data-detail-anchor="" x="802" y="956" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">render/colors.ts</text>
-        <text data-detail="context" x="802" y="972" class="t-muted" font-size="9" text-anchor="middle">ANSI color helpers</text>
+          <text data-node-label="" x="1108" y="382" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">session-complete</text>
         </g>
 
-        <g id="node-Width" data-node-id="Width" data-node-label="render/width.ts" tabindex="0" role="button" aria-label="聚焦render/width.ts，CJK-aware truncation, Render Layer" aria-pressed="false" data-node-kind="frontend" data-node-sublabel="CJK-aware truncation" data-node-context="Render Layer">
-          <title>render/width.ts · CJK-aware truncation · Render Layer</title>
-          <rect x="1026" y="920" width="176" height="76" rx="6" class="c-mask"/>
-          <rect x="1026" y="920" width="176" height="76" rx="6" class="c-frontend" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="frontend" class="semantic-sigil s-frontend" transform="translate(1032 926) scale(0.6875)">
-            <rect x="2" y="3" width="12" height="10" rx="2"/>
-            <path d="M2 6.5h12"/>
-            <circle cx="4.1" cy="4.8" r=".7" class="sigil-fill"/>
-            <circle cx="6.3" cy="4.8" r=".7" class="sigil-fill"/>
+        <g id="node-Q" data-node-id="Q" data-node-label="/api/sessions/complete" tabindex="0" role="button" aria-label="聚焦/api/sessions/complete，+ 排空待处理项, 架构组件" aria-pressed="false" data-node-kind="backend" data-node-sublabel="+ 排空待处理项" data-node-context="架构组件">
+          <title>/api/sessions/complete · + 排空待处理项 · 架构组件</title>
+          <rect x="1330" y="346" width="186" height="76" rx="6" class="c-mask"/>
+          <rect x="1330" y="346" width="186" height="76" rx="6" class="c-backend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(1336 352) scale(0.6875)">
+            <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-node-label="" data-detail-anchor="" x="1114" y="956" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">render/width.ts</text>
-        <text data-detail="context" x="1114" y="972" class="t-muted" font-size="9" text-anchor="middle">CJK-aware truncation</text>
+          <text data-node-label="" data-detail-anchor="" x="1423" y="382" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">/api/sessions/complete</text>
+        <text data-detail="context" x="1423" y="398" class="t-muted" font-size="9" text-anchor="middle">+ 排空待处理项</text>
         </g>
 
         <!-- Connection labels -->
@@ -5283,42 +5247,19 @@
 
 
 
-
-
         <!-- Boundary labels (foreground masks keep routes out of titles) -->
-        <g data-graph-role="structural-frame-label" data-composition-frame-id="0" data-composition-frame-kind="region" data-composition-frame-label="Data Sources">
-          <rect data-graph-role="structural-frame-label-mask" x="70" y="80" width="74.8" height="16" rx="3" class="c-mask"/>
-          <text data-boundary-label="" x="74" y="93" class="t-cloud" font-size="9" font-weight="600">Data Sources</text>
-        </g>
 
-        <g data-graph-role="structural-frame-label" data-composition-frame-id="1" data-composition-frame-kind="region" data-composition-frame-label="Entry Point">
-          <rect data-graph-role="structural-frame-label-mask" x="850" y="408" width="69.4" height="16" rx="3" class="c-mask"/>
-          <text data-boundary-label="" x="854" y="421" class="t-cloud" font-size="9" font-weight="600">Entry Point</text>
-        </g>
-
-        <g data-graph-role="structural-frame-label" data-composition-frame-id="2" data-composition-frame-kind="region" data-composition-frame-label="Render Layer">
-          <rect data-graph-role="structural-frame-label-mask" x="226" y="572" width="74.8" height="16" rx="3" class="c-mask"/>
-          <text data-boundary-label="" x="230" y="585" class="t-cloud" font-size="9" font-weight="600">Render Layer</text>
-        </g>
 
         <!-- Legend -->
         <g data-legend="" data-legend-bridge="">
-          <text x="40" y="1048" class="t-primary" font-size="12" font-weight="650">图例</text>
-          <g data-legend-semantic-kind="frontend" data-legend-kind="frontend" data-legend-label="前端" data-legend-x="40" data-legend-baseline="1068" data-legend-width="63">
-            <rect x="40" y="1059" width="16" height="10" rx="2.5" class="c-frontend" stroke-width="1"/>
-            <text x="62" y="1068" class="t-muted" font-size="10" font-weight="500">前端</text>
+          <text x="40" y="564" class="t-primary" font-size="12" font-weight="650">图例</text>
+          <g data-legend-semantic-kind="backend" data-legend-kind="backend" data-legend-label="后端" data-legend-x="40" data-legend-baseline="584" data-legend-width="63">
+            <rect x="40" y="575" width="16" height="10" rx="2.5" class="c-backend" stroke-width="1"/>
+            <text x="62" y="584" class="t-muted" font-size="10" font-weight="500">后端</text>
           </g>
-          <g data-legend-semantic-kind="backend" data-legend-kind="backend" data-legend-label="后端" data-legend-x="125" data-legend-baseline="1068" data-legend-width="63">
-            <rect x="125" y="1059" width="16" height="10" rx="2.5" class="c-backend" stroke-width="1"/>
-            <text x="147" y="1068" class="t-muted" font-size="10" font-weight="500">后端</text>
-          </g>
-          <g data-legend-semantic-kind="database" data-legend-kind="database" data-legend-label="数据库" data-legend-x="210" data-legend-baseline="1068" data-legend-width="73">
-            <rect x="210" y="1059" width="16" height="10" rx="2.5" class="c-database" stroke-width="1"/>
-            <text x="232" y="1068" class="t-muted" font-size="10" font-weight="500">数据库</text>
-          </g>
-          <g data-legend-semantic-kind="messagebus" data-legend-kind="messagebus" data-legend-label="消息总线" data-legend-x="305" data-legend-baseline="1068" data-legend-width="83">
-            <rect x="305" y="1059" width="16" height="10" rx="2.5" class="c-messagebus" stroke-width="1"/>
-            <text x="327" y="1068" class="t-muted" font-size="10" font-weight="500">消息总线</text>
+          <g data-legend-semantic-kind="database" data-legend-kind="database" data-legend-label="数据库" data-legend-x="125" data-legend-baseline="584" data-legend-width="73">
+            <rect x="125" y="575" width="16" height="10" rx="2.5" class="c-database" stroke-width="1"/>
+            <text x="147" y="584" class="t-muted" font-size="10" font-weight="500">数据库</text>
           </g>
         </g>
       </svg>
@@ -8815,7 +8756,7 @@
           var id = node.getAttribute('data-node-id');
           set(id);
           if (activeIds.indexOf(id) !== -1 && Archify.view && typeof Archify.view.reveal === 'function') {
-            Archify.view.reveal([id], { includeNeighbors: true, reason: 'focus' });
+            if (document.documentElement.getAttribute('data-embed') !== 'true') Archify.view.reveal([id], { includeNeighbors: true, reason: 'focus' });
           }
         }
         else if (activeIds.length) clear();
@@ -8827,7 +8768,7 @@
         var id = node.getAttribute('data-node-id');
         set(id);
         if (activeIds.indexOf(id) !== -1 && Archify.view && typeof Archify.view.reveal === 'function') {
-          Archify.view.reveal([id], { includeNeighbors: true, reason: 'focus' });
+          if (document.documentElement.getAttribute('data-embed') !== 'true') Archify.view.reveal([id], { includeNeighbors: true, reason: 'focus' });
         }
       });
       clearBtn.addEventListener('click', function () { clear({ restoreFocus: true }); });
@@ -11570,7 +11511,7 @@
         svg.style.transform = 'translate(' + state.x + 'px,' + state.y + 'px) scale(' + state.scale + ')';
         syncViewportClip();
         renderControls();
-        outBtn.disabled = state.scale <= 1;
+        outBtn.disabled = state.scale <= 0.25;
         inBtn.disabled = state.scale >= 3;
         container.classList.toggle('is-pannable', state.scale > 1);
         svg.setAttribute('data-view-scale', String(state.scale));
@@ -11673,7 +11614,7 @@
         options = options || {};
         if (options.manual !== false) interruptCamera();
         var previous = state.scale;
-        next = Math.max(1, Math.min(3, Math.round(next * 4) / 4));
+        next = Math.max(0.25, Math.min(3, Math.round(next * 4) / 4));
         if (next === previous) return;
         var centerX = (svg.clientWidth || 1) / 2;
         var centerY = (svg.clientHeight || 1) / 2;
@@ -11711,7 +11652,7 @@
           catch (_) { container.scrollLeft = mobileTarget; }
           return true;
         }
-        var minimumScale = Math.max(1, Math.min(3, Number(options.minimumScale) || 1));
+        var minimumScale = Math.max(0.25, Math.min(3, Number(options.minimumScale) || 0.25));
         var requestedScale = Number(options.scale);
         state.scale = Math.max(minimumScale, Math.min(3, Number.isFinite(requestedScale) ? requestedScale : state.scale));
         var contentX = metrics.offsetX + (logicalX - viewBox.x) * metrics.scale;
@@ -14914,5 +14855,201 @@
       }
     });
   </script>
+<script data-archify-embed-bridge="v1">
+(function () {
+  'use strict';
+  var CHANNEL = 'archify-embed-v1';
+  // Match the host viewer's 25% minimum so a wide diagram can be fitted
+  // inside a small article column without clipping.
+  var MIN_SCALE = 0.25;
+  var MAX_SCALE = 3;
+
+  function enableEmbeddedCamera() {
+    if (document.documentElement.getAttribute('data-embed') !== 'true') return;
+    var container = document.querySelector('.diagram-container');
+    if (!container) return;
+
+    // The standalone viewer sizes SVGs from their width. In a fullscreen
+    // iframe the viewport can be wider than the diagram's authored ratio,
+    // which used to crop the bottom of the graph. Let SVG preserveAspectRatio
+    // perform a true contain fit against both available dimensions.
+    document.documentElement.style.height = '100%';
+    document.documentElement.style.width = '100%';
+    if (document.body && document.body.style) {
+      document.body.style.height = '100%';
+      document.body.style.width = '100%';
+    }
+    var shell = typeof container.closest === 'function' ? container.closest('.container') : null;
+    if (shell && shell.style) {
+      shell.style.width = '100%';
+      shell.style.height = '100%';
+      shell.style.overflow = 'hidden';
+    }
+    container.style.width = '100%';
+    container.style.height = '100%';
+    container.style.boxSizing = 'border-box';
+    container.style.padding = '0';
+    var svg = container.querySelector(':scope > svg, svg');
+    if (svg && svg.style) {
+      svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+      svg.style.setProperty('display', 'block', 'important');
+      svg.style.setProperty('width', '100%', 'important');
+      svg.style.setProperty('height', '100%', 'important');
+      svg.style.setProperty('max-height', '100%', 'important');
+    }
+
+    // Embedded node selection keeps the complete map stationary and exposes
+    // its real one-hop neighbourhood. The upstream focus attributes remain
+    // authoritative; this override only replaces the standalone reader's
+    // aggressive fade/reframe treatment, which looked like unrelated nodes
+    // were being arbitrarily hidden inside an article canvas.
+    if (!document.getElementById('archify-embed-focus-style')) {
+      var focusStyle = document.createElement('style');
+      focusStyle.id = 'archify-embed-focus-style';
+      focusStyle.textContent =
+        'html[data-embed="true"] svg[data-focus-active] [data-node-id]{opacity:.52!important}' +
+        'html[data-embed="true"] svg[data-focus-active] [data-edge-from]{opacity:.34!important}' +
+        'html[data-embed="true"] svg[data-focus-active] [data-focus-match]{opacity:1!important}';
+      (document.head || document.documentElement).appendChild(focusStyle);
+    }
+
+    if (!container.hasAttribute('data-wide-diagram')) return;
+
+    // Archify's narrow standalone-reader mode turns a wide diagram into a
+    // horizontal scroller and intentionally pins its camera to scale 1. The
+    // host embed already owns viewport sizing and navigation, so preserve the
+    // shape as metadata while opting this camera into Archify's normal
+    // pan/zoom path. This keeps centerAt() functional inside <=720px iframes.
+    container.setAttribute('data-archify-embed-wide-diagram', 'true');
+    container.removeAttribute('data-wide-diagram');
+  }
+
+  function camera() {
+    enableEmbeddedCamera();
+    return window.Archify && window.Archify.view ? window.Archify.view : null;
+  }
+
+  function applyTheme(value) {
+    var theme = value === 'light' || value === 'dark' ? value : null;
+    if (!theme) return false;
+    var html = document.documentElement;
+    // Embedded frames can be off-screen while the host initializes them;
+    // Chromium pauses their CSS transitions at frame zero. Disable only the
+    // document background transition so the requested palette is observable
+    // immediately instead of remaining visually stuck on the old theme.
+    if (document.body && document.body.style) {
+      document.body.style.setProperty('transition', 'none', 'important');
+    }
+    var current = html.getAttribute('data-theme');
+    var officialTheme = window.Archify && window.Archify.theme;
+    if ((current === 'light' || current === 'dark') && current !== theme &&
+        officialTheme && typeof officialTheme.toggle === 'function') {
+      officialTheme.toggle();
+    }
+    // Keep the embed deterministic even if the official toolbar is absent or
+    // a future runtime declines the toggle. Archify's complete palette is
+    // keyed from this official data-theme contract.
+    if (html.getAttribute('data-theme') !== theme) html.setAttribute('data-theme', theme);
+    var button = document.getElementById('btn-theme');
+    if (button) button.setAttribute('aria-pressed', theme === 'light' ? 'true' : 'false');
+    return true;
+  }
+
+  function metrics() {
+    var view = camera();
+    var state = view && typeof view.state === 'function' ? view.state() : { scale: 1 };
+    var svg = document.querySelector('.diagram-container > svg, .diagram-container svg');
+    var box = svg && svg.viewBox ? svg.viewBox.baseVal : null;
+    var width = box && Number(box.width) > 0 ? Number(box.width) : 16;
+    var height = box && Number(box.height) > 0 ? Number(box.height) : 9;
+    return {
+      scale: Math.round((Number(state.scale) || 1) * 1000) / 1000,
+      percent: Math.round((Number(state.scale) || 1) * 100),
+      x: Math.round((Number(state.x) || 0) * 1000) / 1000,
+      y: Math.round((Number(state.y) || 0) * 1000) / 1000,
+      width: width,
+      height: height,
+      aspectRatio: width / height,
+      theme: document.documentElement.getAttribute('data-theme') || null
+    };
+  }
+
+  function report(type) {
+    try {
+      parent.postMessage({ channel: CHANNEL, type: type || 'state', payload: metrics() }, '*');
+    } catch (_) {}
+  }
+
+  function clampScale(value) {
+    value = Number(value);
+    if (!Number.isFinite(value)) return null;
+    return Math.max(MIN_SCALE, Math.min(MAX_SCALE, value));
+  }
+
+  function setScale(nextScale) {
+    var view = camera();
+    var next = clampScale(nextScale);
+    if (!view || next === null) return false;
+    if (next <= MIN_SCALE + 0.0001) {
+      view.reset({ automatic: true });
+      return true;
+    }
+    var viewport = typeof view.logicalViewport === 'function' ? view.logicalViewport() : null;
+    if (!viewport || typeof view.centerAt !== 'function') return false;
+    return view.centerAt(
+      viewport.x + viewport.width / 2,
+      viewport.y + viewport.height / 2,
+      { scale: next, minimumScale: MIN_SCALE, instant: true }
+    ) !== false;
+  }
+
+  function execute(command, value) {
+    var view = camera();
+    if (!view) return false;
+    var state = typeof view.state === 'function' ? view.state() : { scale: 1 };
+    if (command === 'zoom-in') return setScale((Number(state.scale) || 1) + 0.25);
+    if (command === 'zoom-out') return setScale((Number(state.scale) || 1) - 0.25);
+    if (command === 'set-zoom') return setScale(Number(value) / 100);
+    if (command === 'set-theme') return applyTheme(value);
+    if (command === 'fit' || command === 'reset') {
+      // "Fit" is also the deterministic way back from a node-focused view:
+      // clear Archify's semantic focus first, then restore the complete graph.
+      var focus = window.Archify && window.Archify.focus;
+      if (focus && typeof focus.active === 'function' && focus.active() && typeof focus.clear === 'function') {
+        focus.clear({ preserveView: true, restoreFocus: false });
+      }
+      view.reset({ automatic: true });
+      return true;
+    }
+    return command === 'get-state';
+  }
+
+  window.addEventListener('message', function (event) {
+    if (event.source !== parent) return;
+    var message = event.data;
+    if (!message || message.channel !== CHANNEL || message.type !== 'command') return;
+    if (!execute(message.command, message.value)) return;
+    // Opaque iframes below the fold can have requestAnimationFrame paused.
+    // Report once synchronously so host controls/theme handshakes never wait
+    // for visibility, then sample again on the next rendered frame.
+    report('state');
+    requestAnimationFrame(function () { report('state'); });
+  });
+
+  document.addEventListener('keydown', function (event) {
+    if (event.key !== 'Escape') return;
+    event.preventDefault();
+    event.stopPropagation();
+    try { parent.postMessage({ channel: CHANNEL, type: 'escape' }, '*'); } catch (_) {}
+  }, true);
+
+  document.addEventListener('pointerup', function () { report('state'); }, { passive: true });
+  window.addEventListener('resize', function () { report('state'); }, { passive: true });
+  enableEmbeddedCamera();
+  requestAnimationFrame(function () {
+    requestAnimationFrame(function () { report('ready'); });
+  });
+})();
+</script>
 </body>
 </html>

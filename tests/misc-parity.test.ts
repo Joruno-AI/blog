@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import test from "node:test";
 
@@ -173,6 +173,9 @@ test("keeps Blog, Streams and Changelog public navigation and desktop projection
   const article = readFileSync(join(root, "app/(site)/blog/[...slug]/page.tsx"), "utf8");
   const blogCss = readFileSync(join(root, "app/blog-parity.css"), "utf8");
   const reveal = readFileSync(join(root, "components/site/reveal-controller.tsx"), "utf8");
+  const homeReveal = readFileSync(join(root, "components/site/home-reveal-controller.tsx"), "utf8");
+  const articleToc = readFileSync(join(root, "components/site/blog-article-toc.tsx"), "utf8");
+  const markdownContent = readFileSync(join(root, "components/site/astro-markdown-content.tsx"), "utf8");
   const streamsCss = readFileSync(join(root, "app/projects-streams-parity.css"), "utf8");
   const changelogPage = readFileSync(join(root, "app/(site)/changelog/page.tsx"), "utf8");
   const changelogDirectory = readFileSync(join(root, "components/site/changelog-directory.tsx"), "utf8");
@@ -192,12 +195,20 @@ test("keeps Blog, Streams and Changelog public navigation and desktop projection
   assert.match(blogCss, /\.blog-parity-page \.article-toc-desktop\s*\{[^}]*top:\s*5\.5rem;[^}]*height:\s*calc\(100dvh - 7rem\);/);
   assert.match(blogCss, /--article-ink:\s*var\(--c-text\);/);
   assert.doesNotMatch(blogCss, /#(?:087653|066849|5fc69f|82d6b8)/i);
-  assert.match(blogCss, /\.reader-content h2::after\s*\{[^}]*background:\s*var\(--article-marker\);/);
+  assert.match(blogCss, /\.reader-content h2::after\s*\{[^}]*display:\s*none;[^}]*content:\s*none;/);
+  assert.match(blogCss, /\.blog-article-body a\.header-anchor\s*\{[^}]*display:\s*none !important;/);
+  assert.match(markdownContent, /classNames\.includes\("header-anchor"\)[\s\S]*value: ""/);
   assert.match(blogCss, /\.reader-content > \*\s*\{[^}]*max-width:\s*100%;/);
-  assert.match(blogCss, /\.reader-content blockquote\s*\{[^}]*margin-left:\s*0 !important;[^}]*border:\s*0;[^}]*border-left:\s*0\.25rem solid var\(--c-border-strong\);[^}]*background:\s*transparent;/);
-  assert.match(blogCss, /\.blog-parity-catalog \.post-link\.active\s*\{[^}]*position:\s*relative;[^}]*padding-inline-start:\s*0\.95rem;/);
+  assert.match(blogCss, /\.reader-content blockquote\s*\{[^}]*margin-left:\s*0 !important;[^}]*border:\s*0;[^}]*border-left:\s*1px solid var\(--article-rule\);[^}]*background:\s*transparent;/);
+  assert.doesNotMatch(blogCss, /\.blog-parity-catalog \.post-link\.active::before/);
+  assert.match(blogCss, /\.category-posts li::marker\s*\{\s*content:\s*"";/);
   assert.match(blogCss, /\.reader-content code:not\(\.expressive-code code\)\s*\{[^}]*color:\s*var\(--article-ink\);/);
-  assert.match(reveal, /\.reader-content > :is\([^)]*\.expressive-code[^)]*\.markdown-table-wrap\)/);
+  assert.doesNotMatch(reveal, /IntersectionObserver|MutationObserver|\.animate\(/);
+  assert.doesNotMatch(homeReveal, /IntersectionObserver|\.style\.opacity|\.style\.transform/);
+  assert.match(articleToc, /window\.addEventListener\("scroll", scheduleUpdate, \{ passive: true \}\)/);
+  assert.match(articleToc, /setActiveId\(\(current\) => current === active\.id \? current : active\.id\)/);
+  assert.match(articleToc, /aria-current=\{activeId === heading\.id \? "true" : undefined\}/);
+  assert.match(articleToc, /scrollIntoView\(\{ block: "start", behavior: "auto" \}\)/);
 
   assert.match(streamsCss, /\.streams-parity-content \.stream-item \{[\s\S]*?color:\s*var\(--c-text\) !important;/);
   assert.match(streamsCss, /\.streams-toc-desktop \{[\s\S]*?left:\s*2rem;/);
@@ -209,6 +220,24 @@ test("keeps Blog, Streams and Changelog public navigation and desktop projection
   assert.match(changelogCss, /\.changelog-groups \{ padding-bottom:\s*0;/);
   assert.match(changelogCss, /\.article-toc-skip \{[\s\S]*?clip:\s*rect\(0, 0, 0, 0\)/);
   assert.match(changelogCss, /\.changelog-tag-options \{[^}]*opacity:\s*0;/);
+});
+
+test("disables viewport reveal and animated page scrolling across runtime sources", () => {
+  const root = process.cwd();
+  const files: string[] = [];
+  const collect = (directory: string) => {
+    for (const entry of readdirSync(directory)) {
+      const path = join(directory, entry);
+      const relative = path.slice(root.length + 1);
+      if (relative.includes("/generated/") || relative.includes("/data/")) continue;
+      if (statSync(path).isDirectory()) collect(path);
+      else if (/\.(?:css|[cm]?[jt]sx?|mjs)$/.test(entry)) files.push(path);
+    }
+  };
+  ["app", "components", "lib"].forEach((directory) => collect(join(root, directory)));
+  const runtimeSource = files.map((path) => readFileSync(path, "utf8")).join("\n");
+  assert.doesNotMatch(runtimeSource, /scroll-behavior\s*:\s*smooth/i);
+  assert.doesNotMatch(runtimeSource, /behavior\s*:\s*["']smooth["']/i);
 });
 
 test("keeps the Agent overview shell, links and accumulated desktop geometry aligned with Astro", () => {

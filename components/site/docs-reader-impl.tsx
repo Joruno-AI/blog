@@ -955,7 +955,7 @@ export function DocsReader({ sourceId, path, courseId }: { sourceId?: string; pa
       const top = heading.getBoundingClientRect().top + window.scrollY - 88;
       window.scrollTo({
         top: Math.max(0, top),
-        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+        behavior: "auto",
       });
       const url = new URL(window.location.href);
       url.hash = encodeURIComponent(headingId);

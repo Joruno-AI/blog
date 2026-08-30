@@ -75,7 +75,7 @@ test("renders selected repository identity, metadata and skeleton before hydrati
   assert.match(html, /170\.9k/);
   assert.match(html, /Python/);
   assert.match(html, /搜索章节/);
-  assert.match(html, /正在生成源码知识库/);
+  assert.match(html, /正在读取 ZRead 文档与仓库源码/);
   assert.match(html, /正文加载后显示标题/);
   assert.match(html, /项目依赖总览/);
   assert.match(html, /代码库文档/);

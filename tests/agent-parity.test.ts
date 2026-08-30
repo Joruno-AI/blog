@@ -4,6 +4,9 @@ import test from "node:test";
 
 import {
   agentPackageManifestPaths,
+  agentRepositoryFileKind,
+  agentRepositoryPathCandidates,
+  agentRepositoryRefCandidates,
   agentDocumentHeadings,
   buildAgentManifestGraph,
   githubTreeFromPayload,
@@ -20,6 +23,8 @@ import {
   resolveAgentRepositoryPath,
 } from "../lib/agent/markdown";
 import { decodeZReadFlightPayloads, normalizeZReadCallouts, resolveAgentWikiPageTitle } from "../lib/agent/zread";
+import { agentManifestArchitecture } from "../components/site/agent-manifest-archify";
+import { renderArchitecture } from "../lib/archify/runtime";
 
 const readJson = (path: string) => JSON.parse(readFileSync(path, "utf8")) as Record<string, unknown>;
 
@@ -180,17 +185,29 @@ test("matches the live repository-reader grid, source labels and stepped page TO
     "agent-toc-list",
     "agent-toc-track-base",
     "agent-toc-track-active",
-    "IntersectionObserver",
+    'window.addEventListener("scroll", scheduleUpdate, { passive: true })',
     "ResizeObserver",
-    'rootMargin: "-16% 0px -68% 0px"',
+    "updateActiveHeading",
+    'scrollIntoView({ block: "start", behavior: "auto" })',
     'aria-current={active ? "location" : undefined}',
     "<AgentPageToc headings={headings} />",
-    "<small>已连接仓库源码与文档</small>",
-    'setDocumentSource("文档已就绪")',
-    "setCurrentWikiPage(items[0].title)",
+    "<small>ZRead 文档 · GitHub 源码</small>",
+    'setDocumentSource("ZRead 已就绪")',
+    "setCurrentWikiPage(resolveAgentWikiPageTitle(payload, title))",
   ]) assert.ok(reader.includes(contract), `missing reader parity contract: ${contract}`);
   assert.match(reader, /heading\.depth === 2 \|\| heading\.depth === 3/);
   assert.ok(reader.includes('<span>{`${item.id.replace(/\\.+$/, "") || String(index + 1).padStart(2, "0")}.`}</span>'));
+});
+
+test("waits for dynamically mounted Agent Markdown before activating the page scrollspy", () => {
+  const reader = readFileSync("components/site/agent-knowledge-reader-impl.tsx", "utf8");
+  assert.match(reader, /document\.querySelector<HTMLElement>\("\.agent-wiki-main \.agent-wiki-article"\)/);
+  assert.match(reader, /const bindArticleSections = \(\) => \{/);
+  assert.match(reader, /readinessObserver = new MutationObserver\(\(\) => \{/);
+  assert.match(reader, /readinessObserver\.observe\(articleHost, \{ childList: true, subtree: true \}\)/);
+  assert.match(reader, /if \(!sections\.length\) return;[\s\S]*window\.addEventListener\("scroll", scheduleUpdate, \{ passive: true \}\)/);
+  assert.equal(reader.match(/window\.addEventListener\("scroll", scheduleUpdate, \{ passive: true \}\)/g)?.length, 1);
+  assert.doesNotMatch(reader, /const sections = tocHeadings[\s\S]{0,300}if \(!sections\.length\) return;/);
 });
 
 test("restores all eight scene groups and the original top-30 scene detail contract", () => {
@@ -232,12 +249,17 @@ test("uses ZRead as the only generated repository-document source", () => {
   assert.match(middleware, /zread-cache[\s\S]*?pages\\\/\[\^\/\]\+\\\.json/);
   const reader = readFileSync("components/site/agent-knowledge-reader-impl.tsx", "utf8");
   assert.match(reader, /const source = "zread" as const/);
-  assert.match(reader, /setDocumentSource\("文档已就绪"\)/);
-  assert.match(reader, /reason\.name === "AbortError"\) break/);
+  assert.match(reader, /setDocumentSource\("ZRead 已就绪"\)/);
+  assert.match(reader, />ZRead 概览<\/strong>/);
+  assert.match(reader, /reason\.name === "AbortError"\) \{/);
+  assert.match(reader, /action === "page" \? 65_000 : 40_000/);
+  assert.match(reader, /ZRead 响应时间较长，请重新读取/);
   assert.match(reader, /window\.sessionStorage/);
   assert.match(reader, /\/agent\/zread-cache\/\$\{staticPath\}\/\$\{action\}\.json/);
   assert.match(reader, /\/agent\/zread-cache\/\$\{staticPath\}\/pages\/\$\{encodeURIComponent\(key\)\}\.json/);
-  assert.match(reader, /page\?\.slug \|\| ""/);
+  assert.match(reader, /const embeddedItems = Array\.isArray\(payload\.items\)/);
+  assert.match(reader, /void loadWikiPage\(requested, controller\.signal, false\)/);
+  assert.match(reader, /setDocumentText\(payload\.markdown\)[\s\S]*if \(!embeddedItems\.length\)[\s\S]*readWikiJson\(repo, "structure", "", controller\.signal\)/);
   assert.match(reader, /const staticFallback = await readStaticFallback\(\)/);
   assert.match(reader, /if \(staticFallback\) return staticFallback;\s*return readLive\(\)/);
   assert.doesNotMatch(reader, /Promise\.race\(\[/);
@@ -260,6 +282,7 @@ test("uses ZRead as the only generated repository-document source", () => {
   const zread = readFileSync("lib/agent/zread.ts", "utf8");
   assert.match(zread, /export type AgentWikiSource = "zread"/);
   assert.match(zread, /\}, 30_000\)/);
+  assert.match(zread, /items: structureItems\(pages\)/);
   for (const source of [
     middleware,
     reader,
@@ -279,7 +302,7 @@ test("reconstructs package workspace dependency edges from package manifests", (
   ] });
   assert.deepEqual(agentPackageManifestPaths(items).map((item) => item.path), ["package.json", "packages/a/package.json", "packages/b/package.json"]);
   const parsed = [
-    parseAgentPackageManifest("package.json", JSON.stringify({ name: "root", dependencies: { "@repo/a": "workspace:*" } }), "repo"),
+    parseAgentPackageManifest("package.json", JSON.stringify({ name: "root", devDependencies: { "@repo/a": "workspace:*" } }), "repo"),
     parseAgentPackageManifest("packages/a/package.json", JSON.stringify({ name: "@repo/a", dependencies: { "@repo/b": "workspace:*" } }), "repo"),
     parseAgentPackageManifest("packages/b/package.json", JSON.stringify({ name: "@repo/b" }), "repo"),
   ];
@@ -291,8 +314,11 @@ test("reconstructs package workspace dependency edges from package manifests", (
   for (const contract of ["rehypeAgentDOMPurify", "codeToHtml", "AgentMermaid", "ArchifyEmbed", "ArchifyRuntimeMermaid", "ARCHIFY_MANIFEST_URL", "agentRepositoryImageCandidates", "resolveAgentRepositoryPath"]) assert.match(renderer, new RegExp(contract));
   assert.doesNotMatch(renderer, /MERMAID_CDN|cdn\.jsdelivr\.net\/npm\/mermaid|agent-mermaid-canvas|<svg/);
   const manifestRenderer = readFileSync("components/site/agent-manifest-archify.tsx", "utf8");
-  for (const contract of ["agentManifestArchitecture", 'visual_preset: "editorial"', 'animation: "none"', 'type: "external"', 'import("@/lib/archify/runtime")', "renderArchitectureHtml", 'sandbox="allow-scripts"', 'data-archify-renderer="official"']) assert.ok(manifestRenderer.includes(contract), `missing manifest Archify contract: ${contract}`);
+  for (const contract of ["agentManifestArchitecture", 'visual_preset: "editorial"', 'animation: "none"', 'type: "external"', 'import("@/lib/archify/runtime")', "renderArchitectureHtml", "ArchifyCanvas", 'data-archify-renderer="official"']) assert.ok(manifestRenderer.includes(contract), `missing manifest Archify contract: ${contract}`);
   assert.doesNotMatch(manifestRenderer, /<svg|allow-same-origin|agent-parity-graph/);
+  const canvasRenderer = readFileSync("components/site/archify-canvas.tsx", "utf8");
+  assert.match(canvasRenderer, /sandbox="allow-scripts"/);
+  assert.doesNotMatch(canvasRenderer, /allow-same-origin/);
   const css = readFileSync("app/agent-parity.css", "utf8");
   assert.doesNotMatch(css, /agent-parity-graph|diagram-node-green|agent-mermaid(?!-source)/);
   const rendererBoundary = readFileSync("components/site/agent-markdown.tsx", "utf8");
@@ -300,6 +326,45 @@ test("reconstructs package workspace dependency edges from package manifests", (
   assert.match(rendererBoundary, /ssr:\s*false/);
   assert.match(rendererBoundary, /agent-markdown-impl/);
   assert.doesNotMatch(rendererBoundary, /shiki\/bundle\/full/);
+});
+
+test("keeps Atlas file recovery, coloured glyphs, document width and long manifest labels usable", () => {
+  assert.deepEqual(agentRepositoryRefCandidates("HEAD", "main"), ["main", "HEAD", "master"]);
+  assert.deepEqual(agentRepositoryRefCandidates("release/v2", "main").slice(0, 3), ["release/v2", "main", "HEAD"]);
+  const currentTree = githubTreeFromPayload({ tree: [
+    { path: "tests/explicit-skill-requests/run-test.sh", type: "blob" },
+    { path: "docs/guide.md", type: "blob" },
+  ] });
+  assert.deepEqual(
+    agentRepositoryPathCandidates("docs/superpowers/specs/tests/skill-triggering/run-test.sh", currentTree),
+    ["tests/explicit-skill-requests/run-test.sh"],
+  );
+  assert.equal(agentRepositoryFileKind("scripts/release.sh"), "shell");
+  assert.equal(agentRepositoryFileKind("docs/architecture.md"), "document");
+  assert.equal(agentRepositoryFileKind("src/theme.css"), "style");
+
+  const reader = readFileSync("components/site/agent-knowledge-reader-impl.tsx", "utf8");
+  assert.match(reader, /agentRepositoryRefCandidates\(requestedRef, resolvedMeta\.defaultBranch\)/);
+  assert.match(reader, /if \(requested\) void openFile\(requested\)/);
+  assert.match(reader, /原引用路径已失效，已定位到当前文件/);
+  assert.match(reader, /<FileKindBadge path=\{file\.path\}/);
+  assert.match(reader, /function fileKindLabel/);
+  const markdown = readFileSync("components/site/agent-markdown-impl.tsx", "utf8");
+  assert.match(markdown, /function AgentFileReferenceIcon/);
+  assert.match(markdown, /data-file-kind=\{kind\}/);
+  const css = readFileSync("app/agent-parity.css", "utf8");
+  assert.match(css, /\.agent-atlas-docs button \{\s*grid-template-columns: 2rem 1\.4rem minmax\(0, 1fr\) auto;/);
+  assert.match(css, /\.agent-knowledge \.agent-file-reference-icon \{[\s\S]*?display: inline-grid;[\s\S]*?color: var\(--agent-file-kind-color\);/);
+  for (const kind of ["code", "config", "document", "folder", "image", "shell", "style"]) assert.match(css, new RegExp(`data-file-kind="${kind}"`));
+
+  const diagram = agentManifestArchitecture("obra/superpowers", [
+    { id: "package.json", name: "superpowers", path: "package.json", dependencyNames: [], dependencies: [], incoming: [], workspace: false },
+    { id: "tests/brainstorm-server/package.json", name: "brainstorm-server-tests", path: "tests/brainstorm-server/package.json", dependencyNames: [], dependencies: [], incoming: [], workspace: true },
+    { id: "packages/long/package.json", name: "workspace-with-a-deliberately-long-package-name-01", path: "packages/platform/workspace-with-a-long-readable-name/package.json", dependencyNames: [], dependencies: [], incoming: [], workspace: true },
+  ]);
+  const rendered = renderArchitecture(diagram, { embed: true });
+  assert.equal(rendered.layout.ok, true);
+  assert.ok(diagram.components.every((component) => Array.isArray(component.size) && component.size[0] > 120));
 });
 
 test("keeps generated Markdown, Archify routing and repository asset rewrite contracts", () => {
@@ -320,7 +385,7 @@ test("keeps generated Markdown, Archify routing and repository asset rewrite con
   assert.match(renderer, /noopener nofollow/);
   assert.match(renderer, /agent-image-unavailable/);
   const embed = readFileSync("components/site/archify-embed.tsx", "utf8");
-  assert.match(embed, /sandbox="allow-scripts"/);
+  assert.match(embed, /<ArchifyCanvas/);
   assert.doesNotMatch(embed, /allow-same-origin/);
   const runtimeEmbed = readFileSync("components/site/archify-runtime-mermaid.tsx", "utf8");
   assert.match(runtimeEmbed, /renderMermaidWithArchify/);
