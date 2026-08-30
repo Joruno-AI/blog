@@ -4303,6 +4303,12 @@ html.agent-atlas-lock,
   .agent-wiki-error p {
     color: var(--agent-muted);
   }
+  .agent-wiki-error-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.55rem;
+  }
   .agent-wiki-error button,
   .agent-wiki-error a {
     padding: 0.6rem 0.9rem;
@@ -5429,183 +5435,6 @@ html.agent-atlas-lock,
     width: 64%;
   }
 
-  .agent-mermaid {
-    margin: 2rem 0;
-    border: 1px solid var(--diagram-rule);
-    border-radius: var(--diagram-radius-frame);
-    overflow: hidden;
-    background: var(--diagram-paper);
-  }
-  .agent-mermaid-toolbar {
-    min-height: 3.75rem;
-    padding: 0.5rem 0.5rem 0.5rem 0.75rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid var(--diagram-rule);
-  }
-  .agent-mermaid-toolbar > span {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--diagram-muted);
-  }
-  .agent-mermaid-toolbar > span b,
-  .agent-mermaid-toolbar > span em {
-    font-family: var(--font-sans);
-    font-size: 0.68rem;
-    font-style: normal;
-    letter-spacing: 0.12em;
-  }
-  .agent-mermaid-toolbar > span b {
-    color: var(--diagram-ink);
-    font-weight: 600;
-  }
-  .agent-mermaid-toolbar > span em {
-    color: var(--diagram-soft);
-    letter-spacing: 0.04em;
-  }
-  .agent-mermaid-toolbar > div {
-    display: flex;
-    gap: 0.25rem;
-  }
-  .agent-mermaid-toolbar button {
-    min-width: 2.75rem;
-    height: 2.75rem;
-    padding: 0 0.5rem;
-    border: 1px solid var(--diagram-rule);
-    border-radius: var(--diagram-radius-node);
-    background: var(--diagram-paper);
-    color: var(--diagram-muted);
-    font-family: var(--diagram-font-mono);
-    font-size: 0.6rem;
-  }
-  .agent-mermaid-toolbar button:hover {
-    border-color: var(--diagram-rule-solid);
-    background: var(--diagram-paper-2);
-    color: var(--diagram-ink);
-  }
-  .agent-mermaid-viewport {
-    min-height: 22rem;
-    padding: 1.5rem;
-    overflow: auto;
-    display: grid;
-    place-items: center;
-    overscroll-behavior: contain;
-    background-image: radial-gradient(
-      circle,
-      color-mix(in srgb, var(--diagram-muted) 26%, transparent) 0.75px,
-      transparent 0.85px
-    );
-    background-size: 17px 17px;
-  }
-  .agent-mermaid-canvas {
-    width: var(--diagram-width, 100%);
-    min-width: var(--diagram-width, 100%);
-    display: grid;
-    place-items: center;
-    transition: width var(--diagram-motion-fast) ease;
-  }
-  .agent-mermaid-canvas > svg {
-    max-width: none !important;
-    width: 100%;
-    min-width: 0;
-    height: auto;
-  }
-  .agent-mermaid.is-fullscreen {
-    position: fixed;
-    z-index: 110;
-    inset: 4.75rem 1rem 1rem;
-    min-height: 0;
-    margin: 0;
-    display: grid;
-    grid-template-rows: auto minmax(0, 1fr);
-    background: var(--diagram-paper);
-  }
-  .agent-mermaid.is-fullscreen .agent-mermaid-viewport {
-    min-height: 0;
-    height: 100%;
-  }
-  @media (max-width: 767px) {
-    .agent-mermaid.is-fullscreen {
-      inset: 4.25rem 0.5rem 0.5rem;
-    }
-  }
-  .agent-mermaid :is(svg text, svg .nodeLabel, svg .label) {
-    fill: var(--diagram-ink) !important;
-    color: var(--diagram-ink) !important;
-    font-family:
-      'Comic Sans MS', 'Bradley Hand', 'Kaiti SC', var(--diagram-font-node) !important;
-    font-size: 12px !important;
-  }
-  .agent-mermaid svg :is(.node rect, .node polygon, .node path, .actor) {
-    fill: var(--diagram-paper) !important;
-    stroke: var(--diagram-rule-solid) !important;
-    stroke-width: 1.75px !important;
-    filter: none !important;
-  }
-  .agent-mermaid svg .node rect {
-    rx: var(--diagram-radius-node) !important;
-    ry: var(--diagram-radius-node) !important;
-  }
-  .agent-mermaid svg g.node:first-of-type > :is(rect, polygon, path) {
-    fill: var(--diagram-accent-tint) !important;
-    stroke: var(--diagram-accent) !important;
-  }
-  .agent-mermaid svg .cluster rect {
-    fill: var(--diagram-paper-2) !important;
-    stroke: var(--diagram-rule) !important;
-    rx: var(--diagram-radius-frame) !important;
-    ry: var(--diagram-radius-frame) !important;
-  }
-  .agent-mermaid
-    svg
-    :is(.flowchart-link, .edgePath path, .messageLine0, .messageLine1) {
-    stroke: color-mix(
-      in srgb,
-      var(--diagram-ink) 88%,
-      var(--diagram-muted)
-    ) !important;
-    stroke-width: 2.15px !important;
-    stroke-linecap: round !important;
-    stroke-linejoin: round !important;
-  }
-  .agent-mermaid
-    svg.agent-excalidraw-svg
-    :is(.node rect, .node polygon, .node path, .actor, .cluster rect) {
-    filter: var(--agent-hand-drawn-filter) !important;
-    stroke-linecap: round !important;
-    stroke-linejoin: round !important;
-  }
-  .agent-mermaid
-    svg.agent-excalidraw-svg
-    :is(.flowchart-link, .edgePath path, .messageLine0, .messageLine1) {
-    filter: none !important;
-    opacity: 1 !important;
-  }
-  .agent-mermaid svg marker path {
-    fill: var(--diagram-ink) !important;
-    stroke: var(--diagram-ink) !important;
-  }
-  .agent-mermaid svg .edgeLabel {
-    color: var(--diagram-muted) !important;
-    background: var(--diagram-paper) !important;
-    font-family: var(--diagram-font-mono) !important;
-    font-size: 8px !important;
-  }
-  .agent-mermaid svg .edgeLabel rect {
-    fill: var(--diagram-paper) !important;
-    opacity: 1 !important;
-  }
-  .agent-mermaid figcaption {
-    padding: 0.55rem 0.75rem;
-    border-top: 1px solid var(--diagram-rule);
-    color: var(--diagram-soft);
-    font-family: var(--diagram-font-mono);
-    font-size: 0.5rem;
-    letter-spacing: 0.1em;
-    text-align: right;
-  }
 
   /* Repository reader polish: surfaces are separated by tone, spacing and
      depth instead of persistent outlines. Motion borrows Sylva's soft lift
@@ -6329,8 +6158,7 @@ html.agent-atlas-lock,
     background: color-mix(in srgb, var(--c-accent) 3.3%, var(--c-bg));
   }
 
-  .agent-atlas-title > span,
-  .agent-mermaid-toolbar > span > i {
+  .agent-atlas-title > span {
     color: var(--c-accent);
   }
 
@@ -6408,13 +6236,6 @@ html.agent-atlas-lock,
     background: color-mix(in srgb, var(--c-accent) 3.5%, var(--c-bg));
   }
 
-  .agent-mermaid {
-    border-color: color-mix(in srgb, var(--c-accent) 16%, var(--diagram-rule));
-  }
-
-  .agent-mermaid-viewport {
-    background-color: color-mix(in srgb, var(--c-accent) 1.8%, var(--c-bg));
-  }
 
   /* Repository reader refinement. Side columns stay on the page canvas instead of
      becoming two grey panels; hierarchy is carried by rules and typography. */
@@ -6654,281 +6475,6 @@ html.agent-atlas-lock,
     border-left: 1px solid var(--agent-line);
   }
 
-  .agent-knowledge {
-    --diagram-node-blue: #eaf2ff;
-    --diagram-node-blue-border: #4f6fdb;
-    --diagram-node-green: #e8f7ef;
-    --diagram-node-green-border: #2b8a62;
-    --diagram-node-amber: #fff3db;
-    --diagram-node-amber-border: #c77b18;
-    --diagram-node-violet: #f3ebff;
-    --diagram-node-violet-border: #8056c7;
-  }
-
-  html.dark .agent-knowledge {
-    --diagram-node-blue: #15203b;
-    --diagram-node-blue-border: #86a2ff;
-    --diagram-node-green: #102d24;
-    --diagram-node-green-border: #65c99d;
-    --diagram-node-amber: #332511;
-    --diagram-node-amber-border: #e6aa54;
-    --diagram-node-violet: #291b3d;
-    --diagram-node-violet-border: #b394ed;
-  }
-
-  .agent-mermaid svg g.node[data-palette='0'] > :is(rect, polygon, path) {
-    fill: var(--diagram-node-blue) !important;
-    stroke: var(--diagram-node-blue-border) !important;
-  }
-
-  .agent-mermaid svg g.node[data-palette='1'] > :is(rect, polygon, path) {
-    fill: var(--diagram-node-green) !important;
-    stroke: var(--diagram-node-green-border) !important;
-  }
-
-  .agent-mermaid svg g.node[data-palette='2'] > :is(rect, polygon, path) {
-    fill: var(--diagram-node-amber) !important;
-    stroke: var(--diagram-node-amber-border) !important;
-  }
-
-  .agent-mermaid svg g.node[data-palette='3'] > :is(rect, polygon, path) {
-    fill: var(--diagram-node-violet) !important;
-    stroke: var(--diagram-node-violet-border) !important;
-  }
-
-  .agent-mermaid svg g.cluster[data-palette='0'] > rect {
-    fill: color-mix(
-      in srgb,
-      var(--diagram-node-blue) 62%,
-      var(--diagram-paper)
-    ) !important;
-  }
-
-  .agent-mermaid svg g.cluster[data-palette='1'] > rect {
-    fill: color-mix(
-      in srgb,
-      var(--diagram-node-green) 62%,
-      var(--diagram-paper)
-    ) !important;
-  }
-
-  .agent-mermaid svg g.cluster[data-palette='2'] > rect {
-    fill: color-mix(
-      in srgb,
-      var(--diagram-node-amber) 62%,
-      var(--diagram-paper)
-    ) !important;
-  }
-
-  .agent-mermaid svg g.cluster[data-palette='3'] > rect {
-    fill: color-mix(
-      in srgb,
-      var(--diagram-node-violet) 62%,
-      var(--diagram-paper)
-    ) !important;
-  }
-
-  .agent-mermaid svg g.edgePath[data-palette='0'] path {
-    stroke: var(--diagram-node-blue-border) !important;
-  }
-
-  .agent-mermaid svg g.edgePath[data-palette='1'] path {
-    stroke: var(--diagram-node-green-border) !important;
-  }
-
-  .agent-mermaid svg g.edgePath[data-palette='2'] path {
-    stroke: var(--diagram-node-amber-border) !important;
-  }
-
-  .agent-mermaid svg g.edgePath[data-palette='3'] path {
-    stroke: var(--diagram-node-violet-border) !important;
-  }
-
-  .agent-mermaid-scale {
-    min-width: 4.4rem;
-    height: 2.75rem;
-    padding: 0 0.55rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.1rem;
-    border: 1px solid var(--diagram-rule);
-    border-radius: var(--diagram-radius-node);
-    background: var(--diagram-paper);
-    color: var(--diagram-muted);
-    font-family: var(--diagram-font-mono);
-    transition:
-      border-color 160ms ease,
-      background-color 160ms ease,
-      color 160ms ease;
-  }
-
-  .agent-mermaid-scale:focus-within {
-    border-color: var(--diagram-node-blue-border);
-    background: var(--diagram-paper-2);
-    color: var(--diagram-ink);
-    box-shadow: 0 0 0 2px
-      color-mix(in srgb, var(--diagram-node-blue-border) 18%, transparent);
-  }
-
-  .agent-mermaid-scale input {
-    width: 2.35rem;
-    padding: 0;
-    border: 0;
-    outline: 0;
-    background: transparent;
-    color: currentColor;
-    font: inherit;
-    text-align: right;
-    appearance: textfield;
-  }
-
-  .agent-mermaid-scale input::-webkit-inner-spin-button,
-  .agent-mermaid-scale input::-webkit-outer-spin-button {
-    margin: 0;
-    appearance: none;
-  }
-
-  .agent-mermaid.is-fullscreen {
-    z-index: 130;
-    inset: 0.75rem;
-  }
-
-  .agent-mermaid:fullscreen {
-    width: 100vw;
-    height: 100vh;
-    min-height: 0;
-    margin: 0;
-    display: grid;
-    grid-template-rows: auto minmax(0, 1fr);
-    border: 0;
-    border-radius: 0;
-    background: var(--diagram-paper);
-  }
-
-  .agent-mermaid:fullscreen .agent-mermaid-viewport {
-    min-height: 0;
-    height: 100%;
-  }
-
-  .agent-diagram-loading {
-    position: relative;
-    width: min(22rem, 80%);
-    min-height: 10rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1.25rem;
-    color: var(--diagram-soft);
-  }
-
-  .agent-diagram-loading::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 22%;
-    right: 22%;
-    height: 1px;
-    background: linear-gradient(
-      90deg,
-      var(--diagram-node-blue-border),
-      var(--diagram-node-green-border),
-      var(--diagram-node-violet-border)
-    );
-    opacity: 0.42;
-  }
-
-  .agent-diagram-loading > span {
-    position: relative;
-    z-index: 1;
-    width: 3.1rem;
-    height: 1.8rem;
-    border: 1px solid var(--diagram-node-blue-border);
-    border-radius: var(--diagram-radius-node);
-    background: var(--diagram-node-blue);
-    animation: agent-diagram-node 1.35s ease-in-out infinite;
-  }
-
-  .agent-diagram-loading > span:nth-child(2) {
-    border-color: var(--diagram-node-green-border);
-    background: var(--diagram-node-green);
-    animation-delay: 150ms;
-  }
-
-  .agent-diagram-loading > span:nth-child(3) {
-    border-color: var(--diagram-node-violet-border);
-    background: var(--diagram-node-violet);
-    animation-delay: 300ms;
-  }
-
-  .agent-diagram-loading > em {
-    position: absolute;
-    top: calc(50% + 2.4rem);
-    font-size: 0.68rem;
-    font-style: normal;
-    letter-spacing: 0.06em;
-  }
-
-  @keyframes agent-diagram-node {
-    0%,
-    100% {
-      opacity: 0.5;
-      transform: translateY(0) scale(0.96);
-    }
-    50% {
-      opacity: 1;
-      transform: translateY(-0.22rem) scale(1);
-    }
-  }
-
-  .agent-diagram-error {
-    min-height: 18rem;
-    display: grid;
-    place-items: center;
-    align-content: center;
-    gap: 0.65rem;
-    color: var(--diagram-muted);
-    text-align: center;
-  }
-
-  .agent-diagram-error > span {
-    color: var(--diagram-node-amber-border);
-    font-size: 1.35rem;
-  }
-
-  .agent-diagram-error > button {
-    min-height: 2.25rem;
-    padding: 0 0.8rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    border: 1px solid var(--diagram-rule);
-    border-radius: var(--diagram-radius-node);
-    background: var(--diagram-paper-2);
-    color: var(--diagram-ink);
-  }
-
-  .agent-diagram-error details {
-    max-width: min(36rem, 90%);
-    font-size: 0.7rem;
-  }
-
-  .agent-article-skeleton span,
-  .agent-list-skeleton span {
-    background: linear-gradient(
-      100deg,
-      color-mix(in srgb, var(--diagram-node-blue) 38%, var(--agent-soft)),
-      color-mix(in srgb, var(--diagram-node-green) 44%, var(--c-bg)),
-      color-mix(in srgb, var(--diagram-node-violet) 36%, var(--agent-soft))
-    );
-    background-size: 240% 100%;
-    animation-duration: 1.45s;
-  }
-
-  .agent-article-skeleton span:nth-child(2n),
-  .agent-list-skeleton span:nth-child(2n) {
-    animation-delay: 90ms;
-  }
 
   @container agent-atlas (max-width: 54rem) {
     .agent-files-shell {
@@ -7120,9 +6666,6 @@ html.agent-atlas-lock,
     .agent-file-markdown {
       padding-inline: 1rem;
     }
-    .agent-mermaid-viewport {
-      min-height: 16rem;
-    }
   }
   @media (prefers-reduced-motion: reduce) {
     .agent-atlas,
@@ -7178,19 +6721,6 @@ html.agent-atlas-lock,
 .agent-tree-entry > button .agent-material-icon { color: var(--agent-muted); fill: none; }
 .agent-tree-entry > button .agent-tree-chevron svg { width: .8rem; height: .8rem; }
 .agent-file-viewer > header svg { width: 1rem; height: 1rem; color: var(--agent-muted); }
-.agent-parity-graph { width: 1000px; height: 620px; transform-origin: center; transition: transform 120ms ease-out; }
-.agent-parity-graph > svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-.agent-parity-graph > svg line { stroke: var(--diagram-rule-solid, var(--agent-line-strong)); stroke-width: 1; stroke-dasharray: 5 7; }
-.agent-parity-graph-node { position: absolute; z-index: 2; width: 9rem; min-height: 4.5rem; padding: .65rem .75rem; border: 1px solid var(--diagram-rule-solid, var(--agent-line-strong)); border-radius: var(--diagram-radius-node, .45rem); background: var(--diagram-paper, var(--c-bg)); color: var(--diagram-ink, var(--c-text)); text-align: left; transform: translate(-50%, -50%); box-shadow: 0 9px 28px color-mix(in srgb, var(--c-text) 8%, transparent); cursor: pointer; }
-.agent-parity-graph-node strong,.agent-parity-graph-node span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.agent-parity-graph-node strong { font: 650 .72rem/1.25 var(--font-mono); }
-.agent-parity-graph-node span { margin-top: .35rem; color: var(--diagram-muted, var(--agent-muted)); font: .56rem/1.2 var(--font-mono); }
-.agent-parity-graph-node.is-root { width: 11rem; min-height: 5.25rem; border-color: var(--diagram-ink, var(--c-text)); background: var(--diagram-ink, var(--c-text)); color: var(--diagram-paper, var(--c-bg)); }
-.agent-parity-graph-node.is-active { outline: 2px solid color-mix(in srgb, var(--c-accent, var(--c-text)) 45%, transparent); outline-offset: 3px; }
-.agent-parity-module { display: grid; grid-template-columns: auto auto 1fr; gap: .7rem; align-items: center; margin-top: .65rem; padding: .75rem .85rem; border: 1px solid var(--agent-line); }
-.agent-parity-module > span { color: var(--agent-muted); font: .56rem var(--font-mono); letter-spacing: .1em; }
-.agent-parity-module > strong { font-size: .72rem; }
-.agent-parity-module > p { margin: 0; color: var(--agent-muted); font-size: .68rem; }
 .agent-code-fallback { height: 100%; overflow: auto; background: color-mix(in srgb, var(--c-text) 3%, var(--c-bg)); }
 .agent-code-fallback > div { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; min-height: 2.8rem; padding: 0 .85rem; border-bottom: 1px solid var(--agent-line); background: var(--c-bg); color: var(--agent-muted); font: .66rem var(--font-mono); }
 .agent-code-fallback > div button { display: inline-flex; align-items: center; gap: .3rem; border: 0; background: transparent; color: inherit; }
@@ -7204,45 +6734,105 @@ html.agent-atlas-lock,
 .agent-wiki-error > svg { width: 2rem; height: 2rem; color: var(--agent-muted); }
 @media (max-width: 760px) {
   .agent-knowledge-brand > .skill-avatar-lazy { width: 1.65rem; height: 1.65rem; }
-  .agent-parity-graph { transform-origin: top left; }
-  .agent-parity-module { grid-template-columns: auto 1fr; }
-  .agent-parity-module > p { grid-column: 1 / -1; }
 }
 
-/* Package-manifest graph plus generated-document rendering. */
-.agent-parity-graph-controls { position: absolute; z-index: 4; top: .72rem; right: 3.1rem; display: inline-flex; overflow: hidden; border: 1px solid var(--c-border-soft); border-radius: .55rem; background: var(--c-surface-overlay); box-shadow: 0 .35rem 1.2rem rgb(0 0 0 / .07); }
-.agent-parity-graph-controls button { display: grid; width: 2rem; height: 2rem; place-items: center; border: 0; border-right: 1px solid var(--c-border-soft); background: transparent; color: var(--c-text-muted); cursor: pointer; }
-.agent-parity-graph-controls button:last-child { border-right: 0; }
-.agent-parity-graph-controls button:hover { background: var(--c-surface-active); color: var(--c-text); }
-.agent-parity-graph-controls svg { width: .86rem; height: .86rem; }
-.agent-parity-graph-node > span,.agent-parity-graph-node > small { display: block; overflow: hidden; color: var(--c-text-faint); font: .52rem/1.2 var(--font-mono); letter-spacing: .09em; text-overflow: ellipsis; white-space: nowrap; }
-.agent-parity-graph-node > strong { display: block; max-width: 8.5rem; margin: .15rem 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.agent-parity-graph > svg marker path { fill: var(--c-text-faint); }
-.agent-parity-module { grid-template-columns: repeat(3,minmax(0,1fr)) auto; align-items: stretch; }
-.agent-parity-module > div { min-width: 0; }
-.agent-parity-module > div > p { display: flex; flex-wrap: wrap; gap: .25rem; }
-.agent-parity-module > div > p button { border: 1px solid var(--agent-line); border-radius: .25rem; padding: .12rem .3rem; background: transparent; color: inherit; font: inherit; cursor: pointer; }
-
-.agent-mermaid-fallback { display: block; width: min(100%,52rem); min-width: 36rem; height: auto; margin: auto; }
-.agent-mermaid-fallback line { stroke: var(--diagram-rule-solid,var(--c-border-strong)); stroke-width: 1.4; }
-.agent-mermaid-fallback marker path { fill: var(--diagram-ink,var(--c-text)); }
-.agent-mermaid-fallback rect { fill: var(--diagram-paper,var(--c-bg)); stroke: var(--diagram-rule-solid,var(--c-border-strong)); }
-.agent-mermaid-fallback text { fill: var(--diagram-ink,var(--c-text)); font: 600 13px var(--font-sans); }
 .agent-highlighted-block > figcaption { display: flex; align-items: center; justify-content: space-between; min-height: 2.2rem; border-bottom: 1px solid var(--c-border-soft); padding: .3rem .7rem; color: var(--c-text-faint); font-size: .62rem; letter-spacing: .08em; text-transform: uppercase; }
 .agent-highlighted-block > figcaption button { display: inline-flex; align-items: center; gap: .3rem; border: 0; background: transparent; color: inherit; font: inherit; cursor: pointer; }
 .agent-highlighted-block > figcaption svg { width: .78rem; height: .78rem; }
 .agent-highlighted-block > div > pre.shiki { margin: 0; border: 0; border-radius: 0; }
 
-@media (max-width: 760px) {
-  .agent-parity-graph-controls { top: .7rem; right: .7rem; }
-  .agent-parity-module { grid-template-columns: 1fr; }
-  .agent-mermaid-fallback { min-width: 31rem; }
-}
 
-/* BaseLayout's reader owns its own 4rem navbar offset; avoid counting the
-   unified Next shell offset a second time on this route family. */
-.astro-site:has(.agent-knowledge) { padding-top: 0; }
+/* Reserve the fixed navbar on #main rather than on the scroll container: a
+   padded sticky container would add its 4rem inset to sticky descendants. */
+.astro-site:has(.agent-knowledge) {
+  padding-top: 0;
+  overflow-x: clip;
+  overflow-y: visible;
+}
+#main:has(.agent-knowledge) { padding-top: 4rem; }
+.astro-site:has(.agent-knowledge) .agent-reader-shell {
+  gap: 0;
+  padding-top: 0;
+}
+.astro-site:has(.agent-knowledge) .agent-wiki-article {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  color: var(--c-text);
+}
+.astro-site:has(.agent-knowledge) .agent-wiki-article h2 {
+  margin-top: 3rem;
+}
+.astro-site:has(.agent-knowledge) .agent-wiki-article h3 {
+  margin-top: 2rem;
+}
 .astro-site:has(.agent-knowledge) .site-footer { display: none; }
+
+/* Repository dependencies are rendered by Archify's official architecture
+   runtime inside an opaque sandbox. This surrounding UI stays deliberately
+   monochrome so the generated diagram is the only visual focal point. */
+.agent-archify-manifest {
+  overflow: hidden;
+  border: 1px solid var(--agent-line);
+  border-radius: .7rem;
+  background: var(--c-bg);
+}
+.agent-archify-manifest-frame {
+  display: block;
+  width: 100%;
+  height: clamp(32rem, 70vh, 50rem);
+  border: 0;
+  background: var(--c-bg);
+}
+.agent-archify-manifest-state {
+  min-height: 22rem;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: .55rem;
+  padding: 2rem;
+  color: var(--agent-muted);
+  text-align: center;
+}
+.agent-archify-manifest-state > svg { width: 1.4rem; height: 1.4rem; }
+.agent-archify-manifest-state > strong { color: var(--c-text); font-size: .78rem; }
+.agent-archify-manifest-state > p { max-width: 36rem; margin: 0; font-size: .68rem; line-height: 1.6; }
+.agent-archify-manifest-files {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  border-top: 1px solid var(--agent-line);
+}
+.agent-archify-manifest-files > button {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: auto minmax(0,1fr) auto;
+  gap: .16rem .55rem;
+  align-items: center;
+  padding: .65rem .8rem;
+  border: 0;
+  border-bottom: 1px solid var(--agent-line);
+  background: transparent;
+  color: var(--agent-muted);
+  text-align: left;
+  cursor: pointer;
+}
+.agent-archify-manifest-files > button:nth-child(odd) { border-right: 1px solid var(--agent-line); }
+.agent-archify-manifest-files > button:hover { background: var(--agent-soft); color: var(--c-text); }
+.agent-archify-manifest-files > button > span { grid-row: 1 / 3; font: .58rem var(--font-mono); }
+.agent-archify-manifest-files > button > strong,
+.agent-archify-manifest-files > button > small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.agent-archify-manifest-files > button > strong { color: var(--c-text); font-size: .69rem; }
+.agent-archify-manifest-files > button > small { font: .56rem var(--font-mono); }
+.agent-archify-manifest-files > button > svg { grid-row: 1 / 3; width: .8rem; height: .8rem; }
+@media (max-width: 760px) {
+  .astro-site:has(.agent-knowledge) .agent-wiki-main,
+  .astro-site:has(.agent-knowledge) .agent-wiki-article { min-width: 0; max-width: 100%; }
+  .astro-site:has(.agent-knowledge) .agent-wiki-article { overflow-wrap: anywhere; }
+  .astro-site:has(.agent-knowledge) .agent-wiki-article :is(pre,table,figure,iframe) { max-width: 100%; }
+  .agent-archify-manifest-frame { height: 28rem; }
+  .agent-archify-manifest-files { grid-template-columns: 1fr; }
+  .agent-archify-manifest-files > button:nth-child(odd) { border-right: 0; }
+}
 
 /* Scene directory/detail parity with d1ec7b0 and the live Astro build. */
 .agent-page-shell .scene-group { margin-top: 3rem; }
@@ -7363,3 +6953,40 @@ html.agent-atlas-lock,
 .skill-select-option > .agent-source-icon { flex: none; opacity: 0; }
 .skill-select-option[aria-selected="true"] > .agent-source-icon { opacity: 1; }
 @media (prefers-reduced-motion: reduce) { .skill-select-trigger > .agent-source-icon,.skill-select-menu { transition: none; } }
+
+/* Archify is the only visual diagram surface inside repository Markdown.
+   Keep the host frame neutral; semantic colors belong to Archify's official
+   renderer rather than the Agent shell. */
+.agent-wiki-article > .archify-embed,
+.agent-wiki-article .archify-embed {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 2rem 0;
+}
+.agent-wiki-article .archify-embed iframe { display: block; width: 100%; max-width: 100%; }
+.agent-mermaid-source {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 1.6rem 0;
+  overflow: hidden;
+  border-block: 1px solid color-mix(in srgb,var(--c-text) 14%,transparent);
+  background: color-mix(in srgb,var(--c-bg) 97%,#8a7968 3%);
+}
+.agent-mermaid-source > figcaption {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .68rem .15rem;
+  color: var(--c-text-muted);
+  font-size: .72rem;
+}
+.agent-mermaid-source > figcaption strong { color: var(--c-text); font-size: .78rem; font-weight: 620; }
+.agent-mermaid-source > figcaption span { opacity: .62; font-family: ui-monospace,SFMono-Regular,Menlo,monospace; font-size: .62rem; }
+.agent-mermaid-source > pre { max-width: 100%; margin: 0; overflow-x: auto; border: 0; border-radius: 0; }
+@media (max-width:767px) {
+  .agent-wiki-article .archify-embed { margin-block: 1.4rem; }
+  .agent-mermaid-source > figcaption span { display: none; }
+}

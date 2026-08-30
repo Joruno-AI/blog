@@ -4,6 +4,7 @@ import Link from "next/link";
 import {
   cloneElement,
   isValidElement,
+  useEffect,
   useRef,
   useState,
   type ComponentPropsWithoutRef,
@@ -23,7 +24,41 @@ import remarkMath from "remark-math";
 import remarkSmartypants from "remark-smartypants";
 import { visit } from "unist-util-visit";
 
+import { ArchifyEmbed } from "@/components/site/archify-embed";
 import { MarkdownImageViewer } from "@/components/site/markdown-image-viewer";
+import { archifyArtifactHashInBrowser } from "@/lib/archify/artifact-address.mjs";
+
+const ARCHIFY_FENCE_TYPES = new Set(["architecture", "workflow", "sequence", "dataflow", "lifecycle"]);
+
+type ArchifyFenceSpec = {
+  type: string;
+  title: string;
+  src?: string;
+  ir?: Record<string, unknown>;
+};
+
+type BlogArchifyManifest = {
+  artifacts: Array<{ type: string; sha256: string; publicPath: string }>;
+};
+
+const BLOG_ARCHIFY_MANIFEST_URL = "/diagrams/archify/manifest.json";
+let blogArchifyManifestLoader: Promise<BlogArchifyManifest> | null = null;
+
+function loadBlogArchifyManifest() {
+  blogArchifyManifestLoader ??= fetch(BLOG_ARCHIFY_MANIFEST_URL, {
+    cache: "force-cache",
+    credentials: "same-origin",
+  }).then(async (response) => {
+    if (!response.ok) throw new Error(`Archify manifest HTTP ${response.status}`);
+    const value = await response.json() as Partial<BlogArchifyManifest>;
+    if (!Array.isArray(value.artifacts)) throw new Error("Invalid Archify manifest");
+    return value as BlogArchifyManifest;
+  }).catch((error) => {
+    blogArchifyManifestLoader = null;
+    throw error;
+  });
+  return blogArchifyManifestLoader;
+}
 
 type MarkdownTreeNode = {
   type: string;
@@ -204,6 +239,58 @@ async function copyText(text: string) {
   await navigator.clipboard.writeText(text);
 }
 
+function parseArchifyFence(language: string, raw: string, title: string): ArchifyFenceSpec | null {
+  const type = language.match(/^archify-(architecture|workflow|sequence|dataflow|lifecycle)$/i)?.[1]?.toLowerCase();
+  if (!type || !ARCHIFY_FENCE_TYPES.has(type)) return null;
+  const value = raw.trim();
+  if (/^\/diagrams\/archify\/[a-f0-9]{64}\.html(?:\?embed=1)?$/i.test(value)) {
+    return { type, title: title || "Archify diagram", src: value };
+  }
+  try {
+    const parsed = JSON.parse(value) as Record<string, unknown>;
+    const artifact = typeof parsed.artifact === "string" ? parsed.artifact
+      : typeof parsed.src === "string" ? parsed.src
+        : "";
+    const parsedTitle = typeof parsed.title === "string" ? parsed.title : title;
+    if (artifact) return { type, title: parsedTitle || "Archify diagram", src: artifact };
+    if (parsed.diagram_type === type) return { type, title: parsedTitle || String(parsed.meta && typeof parsed.meta === "object" && "title" in parsed.meta ? (parsed.meta as { title?: unknown }).title || "" : "") || "Archify diagram", ir: parsed };
+  } catch {
+    // Invalid Archify JSON remains a normal source code frame.
+  }
+  return null;
+}
+
+function ArchifyFence({ spec, source }: { spec: ArchifyFenceSpec; source: string }) {
+  const [src, setSrc] = useState(spec.src || "");
+  const [failed, setFailed] = useState(false);
+  useEffect(() => {
+    if (spec.src || !spec.ir) {
+      setSrc(spec.src || "");
+      setFailed(false);
+      return;
+    }
+    let active = true;
+    setSrc("");
+    setFailed(false);
+    void Promise.all([
+      archifyArtifactHashInBrowser(spec.type, spec.ir),
+      loadBlogArchifyManifest(),
+    ]).then(([hash, manifest]) => {
+      const artifact = manifest.artifacts.find((item) => item.type === spec.type && item.sha256 === hash);
+      if (!artifact) throw new Error("Archify artifact is absent from the public manifest");
+      if (active) setSrc(artifact.publicPath);
+    }).catch(() => {
+      if (active) setFailed(true);
+    });
+    return () => { active = false; };
+  }, [spec]);
+
+  if (!src) {
+    return <figure className="archify-embed archify-embed-pending"><figcaption>{spec.title}</figcaption><pre><code>{failed ? source : "Archify 产物匹配中…"}</code></pre></figure>;
+  }
+  return <ArchifyEmbed src={src} title={spec.title} fallback={<pre><code>{source}</code></pre>} />;
+}
+
 function CodeFrame({ children }: { children?: ReactNode }) {
   const [copied, setCopied] = useState(false);
   const code = isValidElement<{
@@ -227,6 +314,8 @@ function CodeFrame({ children }: { children?: ReactNode }) {
   const end = rawCodeText.endsWith("\n") ? rawCodeText.length - 1 : rawCodeText.length;
   const codeChildren = sliceNodeText(rawCodeChildren, start, end);
   const text = rawCodeText.slice(start, end);
+  const archifySpec = parseArchifyFence(language, text, frameTitle);
+  if (archifySpec) return <ArchifyFence spec={archifySpec} source={text} />;
   return (
     <div className="expressive-code">
       <figure className={`frame${terminal ? " is-terminal" : ""}${frameTitle ? " has-title" : ""}`}>

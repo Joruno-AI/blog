@@ -16,11 +16,7 @@ import {
   FileCode2,
   Folder,
   FolderOpen,
-  Maximize2,
-  Minus,
   Network,
-  Plus,
-  RotateCcw,
   Search,
   Star,
   X,
@@ -28,6 +24,7 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { AgentKnowledgeLoading } from "@/components/site/agent-knowledge-reader-loading";
+import { AgentManifestArchify } from "@/components/site/agent-manifest-archify";
 import { AgentMarkdown } from "@/components/site/agent-markdown";
 import { AgentSourceIcon } from "@/components/site/agent-source-icon";
 import {
@@ -46,7 +43,11 @@ import {
   type AgentRepositoryTreeItem,
   type AgentManifestNode,
 } from "@/lib/agent/repository";
-import type { AgentWikiSource, AgentWikiStructureItem } from "@/lib/agent/zread";
+import {
+  resolveAgentWikiPageTitle,
+  type AgentWikiSource,
+  type AgentWikiStructureItem,
+} from "@/lib/agent/zread";
 import {
   INSTALLABLE_AGENT_CATEGORIES,
   agentInstallCommand,
@@ -58,7 +59,10 @@ import {
 
 type AtlasTab = "overview" | "docs" | "files";
 type FileState = { path: string; ref: string; text: string; loading: boolean; error: string };
-type PositionedManifestNode = AgentManifestNode & { x: number; y: number };
+type AgentDocumentHeading = ReturnType<typeof agentDocumentHeadings>[number];
+type TocTrackGeometry = { width: number; height: number; path: string; activeBottom: number };
+
+const EMPTY_TOC_TRACK: TocTrackGeometry = { width: 1, height: 1, path: "", activeBottom: 0 };
 
 const GITHUB_HEADERS = {
   Accept: "application/vnd.github+json",
@@ -142,41 +146,105 @@ async function readJson(url: string, signal: AbortSignal) {
   return payload;
 }
 
-async function readWikiJson(repo: string, action: "structure" | "overview" | "page", title: string, signal: AbortSignal) {
+function wikiPageCacheKey(value: string) {
+  return value
+    .trim()
+    .normalize("NFKC")
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}._-]+/gu, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 160) || "overview";
+}
+
+async function readWikiJson(repo: string, action: "structure" | "overview" | "page", title: string, signal: AbortSignal, pageSlug = "") {
+  const source = "zread" as const;
   let lastError: unknown;
-  for (const source of ["zread", "deepwiki"] as const) {
-    const url = new URL(`/api/${source}/${repo}/${action}`, window.location.origin);
-    if (action === "page" && title) url.searchParams.set("title", title);
-    const cache = readWikiCache(url.toString());
-    if (cache && Date.now() - cache.savedAt < 5 * 60_000) return Object.assign(cache.payload, { source: (typeof cache.payload.source === "string" ? cache.payload.source : source) as AgentWikiSource });
-    const maximumAttempts = source === "zread" ? 1 : 3;
+  const staticPath = repo.split("/").map(encodeURIComponent).join("/");
+  const staticKeys = action === "page"
+    ? [...new Set([pageSlug, title].map(wikiPageCacheKey).filter(Boolean))]
+    : [];
+  const staticUrls = action === "page"
+    ? staticKeys.map((key) => new URL(`/agent/zread-cache/${staticPath}/pages/${encodeURIComponent(key)}.json`, window.location.origin))
+    : [new URL(`/agent/zread-cache/${staticPath}/${action}.json`, window.location.origin)];
+  const readStaticFallback = async () => {
+    for (const staticUrl of staticUrls) {
+      const staticCache = readWikiCache(staticUrl.toString());
+      if (staticCache && staticCache.payload.source === source) {
+        return Object.assign(staticCache.payload, { source: source as AgentWikiSource });
+      }
+      try {
+        const response = await fetch(staticUrl, { headers: { Accept: "application/json" }, signal });
+        const payload = await response.json().catch(() => null) as Record<string, unknown> | null;
+        if (response.ok && payload?.source === source) {
+          writeWikiCache(staticUrl.toString(), payload);
+          return Object.assign(payload, { source: source as AgentWikiSource });
+        }
+      } catch (reason) {
+        if (signal.aborted) throw reason;
+      }
+    }
+    return null;
+  };
+  const url = new URL(`/api/${source}/${repo}/${action}`, window.location.origin);
+  if (action === "page" && title) url.searchParams.set("title", title);
+  const cache = readWikiCache(url.toString());
+  if (cache && Date.now() - cache.savedAt < 5 * 60_000) {
+    return Object.assign(cache.payload, { source: source as AgentWikiSource });
+  }
+  const activeLive = { controller: null as AbortController | null };
+  const readLive = async () => {
+    const maximumAttempts = 1;
     for (let attempt = 0; attempt < maximumAttempts; attempt += 1) {
       const controller = new AbortController();
+      activeLive.controller = controller;
       const abort = () => controller.abort();
       signal.addEventListener("abort", abort, { once: true });
-      const timeout = window.setTimeout(() => controller.abort(), 9_000);
+      const timeout = window.setTimeout(() => controller.abort(), 12_000);
       try {
         const response = await fetch(url, { headers: { Accept: "application/json" }, signal: controller.signal });
         const payload = await response.json().catch(() => null) as Record<string, unknown> | null;
-        if (response.ok && payload) {
+        if (response.ok && payload?.source === source) {
           writeWikiCache(url.toString(), payload);
-          return Object.assign(payload, { source: (typeof payload.source === "string" ? payload.source : source) as AgentWikiSource });
+          return Object.assign(payload, { source: source as AgentWikiSource });
         }
         const transient = !payload || new Set([429, 500, 502, 503, 504]).has(response.status);
-        if (!transient) throw new Error(typeof payload?.error === "string" ? payload.error : "请求暂时未能完成。");
-        throw new Error(typeof payload?.error === "string" ? payload.error : "数据源暂时没有响应，请稍后重试。");
+        if (!transient) throw new Error(typeof payload?.error === "string" ? payload.error : "ZRead 请求暂时未能完成。");
+        throw new Error(typeof payload?.error === "string" ? payload.error : "ZRead 暂时没有响应，请稍后重试。");
       } catch (reason) {
         if (signal.aborted) throw reason;
         lastError = reason;
-        if (attempt + 1 < maximumAttempts) await new Promise((resolve) => window.setTimeout(resolve, attempt === 0 ? 260 : 720));
+        if (reason instanceof Error && reason.name === "AbortError") break;
       } finally {
         window.clearTimeout(timeout);
         signal.removeEventListener("abort", abort);
+        if (activeLive.controller === controller) activeLive.controller = null;
       }
     }
-    if (cache && Date.now() - cache.savedAt < 24 * 60 * 60_000) return Object.assign(cache.payload, { source: (typeof cache.payload.source === "string" ? cache.payload.source : source) as AgentWikiSource });
+    if (cache && Date.now() - cache.savedAt < 24 * 60 * 60_000) {
+      return Object.assign(cache.payload, { source: source as AgentWikiSource });
+    }
+    throw lastError instanceof Error ? lastError : new Error("ZRead 中文文档暂时不可用。");
+  };
+
+  // Start live ZRead first. A validated static ZRead snapshot joins after a
+  // short grace period so a slow/504 upstream never leaves the reader blank.
+  const livePromise = readLive();
+  const first = await Promise.race([
+    livePromise.then((payload) => ({ kind: "payload" as const, payload })).catch((error: unknown) => ({ kind: "error" as const, error })),
+    new Promise<void>((resolve) => window.setTimeout(resolve, 650))
+      .then(readStaticFallback)
+      .then((payload) => payload
+        ? { kind: "payload" as const, payload }
+        : { kind: "miss" as const, payload: null }),
+  ]);
+  if (first.kind === "payload" && first.payload) {
+    activeLive.controller?.abort();
+    return first.payload;
   }
-  throw lastError instanceof Error ? lastError : new Error("中文文档源暂时不可用。");
+  if (first.kind === "miss") return livePromise;
+  const staticFallback = await readStaticFallback();
+  if (staticFallback) return staticFallback;
+  throw first.error instanceof Error ? first.error : new Error("ZRead 中文文档暂时不可用。");
 }
 
 function encodePath(path: string) {
@@ -214,54 +282,91 @@ function visibleRepositoryTree(items: AgentRepositoryTreeItem[], collapsed: Set<
   }).slice(0, 1000);
 }
 
-function GraphMap({ repo, nodes: manifestNodes, onOpen }: { repo: string; nodes: AgentManifestNode[]; onOpen: (path: string) => void }) {
-  const [scale, setScale] = useState(1);
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
-  const [active, setActive] = useState<string>(manifestNodes[0]?.id || "");
-  const drag = useRef<{ x: number; y: number; ox: number; oy: number } | null>(null);
-  const nodes = useMemo<PositionedManifestNode[]>(() => {
-    const cx = 500;
-    const cy = 310;
-    const focal = manifestNodes.reduce((best, node) => node.incoming.length > best.incoming.length ? node : best, manifestNodes[0]);
-    const ordered = focal ? [focal, ...manifestNodes.filter((node) => node.id !== focal.id)] : [];
-    return ordered.map((node, index) => {
-      if (index === 0) return { ...node, x: cx, y: cy };
-      const angle = (Math.PI * 2 * (index - 1)) / Math.max(1, ordered.length - 1) - Math.PI / 2;
-      return { ...node, x: cx + Math.cos(angle) * 285, y: cy + Math.sin(angle) * 215 };
-    });
-  }, [manifestNodes]);
-  useEffect(() => { if (!nodes.some((node) => node.id === active)) setActive(nodes[0]?.id || ""); }, [active, nodes]);
-  const activeNode = nodes.find((node) => node.id === active) ?? nodes[0];
-  const byId = useMemo(() => new Map(nodes.map((node) => [node.id, node])), [nodes]);
-  const wheel = (event: React.WheelEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    setScale((value) => Math.min(1.8, Math.max(.55, value + (event.deltaY > 0 ? -.08 : .08))));
-  };
-  return <>
-    <div className="agent-repo-map diagram-design" data-repository={repo}>
-      <div className="agent-graph-hint">拖动画布 · 滚轮缩放 · 真实 workspace 依赖</div>
-      <div className="agent-parity-graph-controls"><button type="button" onClick={() => setScale((value) => Math.min(1.8, value + .1))} aria-label="放大依赖图"><Plus /></button><button type="button" onClick={() => { setScale(1); setOffset({ x: 0, y: 0 }); }} aria-label="重置依赖图"><RotateCcw /></button><button type="button" onClick={() => setScale((value) => Math.max(.55, value - .1))} aria-label="缩小依赖图"><Minus /></button></div>
-      <button className="agent-graph-fullscreen" type="button" onClick={(event) => {
-        const frame = event.currentTarget.closest(".agent-repo-map") as HTMLElement | null;
-        if (!frame) return;
-        if (document.fullscreenElement) void document.exitFullscreen(); else void frame.requestFullscreen?.();
-      }} aria-label="全屏查看依赖图"><Maximize2 /></button>
-      <div
-        className="agent-graph-viewport"
-        onWheel={wheel}
-        onPointerDown={(event) => { drag.current = { x: event.clientX, y: event.clientY, ox: offset.x, oy: offset.y }; event.currentTarget.setPointerCapture(event.pointerId); }}
-        onPointerMove={(event) => { if (drag.current) setOffset({ x: drag.current.ox + event.clientX - drag.current.x, y: drag.current.oy + event.clientY - drag.current.y }); }}
-        onPointerUp={() => { drag.current = null; }}
-        onPointerCancel={() => { drag.current = null; }}
-      >
-        <div className="agent-graph-canvas agent-parity-graph" style={{ transform: `translate(${offset.x}px, ${offset.y}px) scale(${scale})` }}>
-          <svg viewBox="0 0 1000 620" aria-hidden="true"><defs><marker id="agent-package-arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0L9 4.5L0 9Z" /></marker></defs>{nodes.flatMap((node) => node.dependencies.map((dependency) => { const target = byId.get(dependency); return target ? <line key={`${node.id}->${dependency}`} x1={node.x} y1={node.y} x2={target.x} y2={target.y} markerEnd="url(#agent-package-arrow)" /> : []; }))}</svg>
-          {nodes.map((node, index) => <button className={`agent-parity-graph-node ${index === 0 ? "is-root" : ""} ${active === node.id ? "is-active" : ""}`} style={{ left: `${node.x / 10}%`, top: `${node.y / 6.2}%` }} type="button" onClick={(event) => { event.stopPropagation(); setActive(node.id); }} key={node.id}><span>{node.workspace ? "WORKSPACE" : "ROOT"}</span><strong>{node.name}</strong><small>{node.incoming.length} IN</small></button>)}
-        </div>
-      </div>
-    </div>
-    {activeNode ? <div className="agent-module-detail agent-parity-module"><div><h3>{activeNode.name}</h3><span>{activeNode.path.replace(/\/package\.json$/, "") || "/"}</span></div><div><span>它依赖</span><p>{activeNode.dependencies.length ? activeNode.dependencies.map((id) => <button type="button" onClick={() => setActive(id)} key={id}>{byId.get(id)?.name || id}</button>) : "—"}</p></div><div><span>依赖它</span><p>{activeNode.incoming.length ? activeNode.incoming.map((id) => <button type="button" onClick={() => setActive(id)} key={id}>{byId.get(id)?.name || id}</button>) : "—"}</p></div><button type="button" onClick={() => onOpen(activeNode.path)}>打开 package.json<ArrowRight /></button></div> : null}
-  </>;
+
+function AgentPageToc({ headings }: { headings: AgentDocumentHeading[] }) {
+  const tocHeadings = useMemo(() => headings.filter((heading) => heading.depth === 2 || heading.depth === 3).slice(0, 24), [headings]);
+  const [activeId, setActiveId] = useState(tocHeadings[0]?.id || "");
+  const [track, setTrack] = useState<TocTrackGeometry>(EMPTY_TOC_TRACK);
+  const listRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setActiveId(tocHeadings[0]?.id || "");
+  }, [tocHeadings]);
+
+  useEffect(() => {
+    const sections = tocHeadings
+      .map((heading) => document.getElementById(heading.id))
+      .filter((section): section is HTMLElement => Boolean(section));
+    if (!sections.length || !("IntersectionObserver" in window)) return;
+    const observer = new IntersectionObserver((entries) => {
+      const section = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((left, right) => Math.abs(left.boundingClientRect.top) - Math.abs(right.boundingClientRect.top))[0]
+        ?.target;
+      if (section instanceof HTMLElement) setActiveId(section.id);
+    }, { rootMargin: "-16% 0px -68% 0px", threshold: [0, 1] });
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, [tocHeadings]);
+
+  useEffect(() => {
+    const list = listRef.current;
+    if (!list || !tocHeadings.length) {
+      setTrack(EMPTY_TOC_TRACK);
+      return;
+    }
+
+    let frame = 0;
+    const links = [...list.querySelectorAll<HTMLAnchorElement>("[data-toc-target]")];
+    const depth = (link: HTMLAnchorElement) => Math.max(0, Number(link.dataset.level || 2) - 2);
+    const x = (link: HTMLAnchorElement) => 8.5 + depth(link) * 12;
+    const measure = () => {
+      if (!links.length) return;
+      const width = 16.5 + Math.max(...links.map(depth)) * 12;
+      const last = links.at(-1)!;
+      const height = Math.max(1, last.offsetTop + last.offsetHeight);
+      let path = `M ${x(links[0])} 0`;
+      links.forEach((link, index) => {
+        const linkX = x(link);
+        const bottom = link.offsetTop + link.offsetHeight;
+        const shoulder = Math.max(link.offsetTop, bottom - 12);
+        path += ` L ${linkX} ${shoulder}`;
+        const next = links[index + 1];
+        path += next ? ` L ${x(next)} ${bottom}` : ` L ${linkX} ${bottom}`;
+      });
+      const active = links.find((link) => link.dataset.tocTarget === activeId);
+      const activeBottom = active ? active.offsetTop + Math.max(8, active.offsetHeight - 12) : 0;
+      setTrack((current) => current.width === width && current.height === height && current.path === path && current.activeBottom === activeBottom
+        ? current
+        : { width, height, path, activeBottom });
+    };
+    const schedule = () => {
+      window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(measure);
+    };
+
+    schedule();
+    const resizeObserver = "ResizeObserver" in window ? new ResizeObserver(schedule) : null;
+    resizeObserver?.observe(list);
+    links.forEach((link) => resizeObserver?.observe(link));
+    window.addEventListener("resize", schedule);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      resizeObserver?.disconnect();
+      window.removeEventListener("resize", schedule);
+    };
+  }, [activeId, tocHeadings]);
+
+  if (!tocHeadings.length) return <p>当前页面没有二级标题</p>;
+
+  return <div className="agent-toc-list" data-toc-list ref={listRef}>
+    <svg xmlns="http://www.w3.org/2000/svg" className="agent-toc-track agent-toc-track-base" data-toc-track-base aria-hidden="true" focusable="false" viewBox={`0 0 ${track.width} ${track.height}`} width={track.width} height={track.height}><path d={track.path} fill="none" vectorEffect="non-scaling-stroke" /></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" className="agent-toc-track agent-toc-track-active" data-toc-track-active aria-hidden="true" focusable="false" viewBox={`0 0 ${track.width} ${track.height}`} width={track.width} height={track.height} style={{ "--toc-track-bottom": `${track.activeBottom}px` } as React.CSSProperties}><path d={track.path} fill="none" vectorEffect="non-scaling-stroke" /></svg>
+    {tocHeadings.map((heading) => {
+      const active = activeId === heading.id;
+      return <a href={`#${heading.id}`} className={active ? "is-active" : undefined} data-toc-target={heading.id} data-level={heading.depth} data-active={String(active)} aria-current={active ? "location" : undefined} onClick={() => setActiveId(heading.id)} key={heading.id}><span>{heading.title}</span></a>;
+    })}
+  </div>;
 }
 
 function RepositoryFileTree({
@@ -353,13 +458,14 @@ function AgentKnowledgeReaderContent({ skill, repo: suppliedRepo = "" }: { skill
   const [tree, setTree] = useState<AgentRepositoryTreeItem[]>([]);
   const [manifestNodes, setManifestNodes] = useState<AgentManifestNode[]>([]);
   const [manifestStatus, setManifestStatus] = useState("正在分析 package.json…");
-  const [documentText, setDocumentText] = useState(skill?.content ?? "");
-  const [documentSource, setDocumentSource] = useState(skill?.content ? "D1 README" : "连接中");
+  const [documentText, setDocumentText] = useState("");
+  const [documentSource, setDocumentSource] = useState("连接中");
   const [wikiItems, setWikiItems] = useState<AgentWikiStructureItem[]>([]);
   const [currentWikiPage, setCurrentWikiPage] = useState("Overview");
   const [wikiLoading, setWikiLoading] = useState(false);
   const [status, setStatus] = useState(repo ? "正在连接仓库源码与文档…" : "未指定仓库");
-  const [error, setError] = useState("");
+  const [repositoryError, setRepositoryError] = useState("");
+  const [wikiError, setWikiError] = useState("");
   const [docQuery, setDocQuery] = useState("");
   const [atlasOpen, setAtlasOpen] = useState(false);
   const [atlasTab, setAtlasTab] = useState<AtlasTab>("overview");
@@ -372,12 +478,9 @@ function AgentKnowledgeReaderContent({ skill, repo: suppliedRepo = "" }: { skill
   const searchRef = useRef<HTMLInputElement>(null);
   const atlasRef = useRef<HTMLDivElement>(null);
   const resizeRef = useRef<{ x: number; width: number } | null>(null);
-  const documentTextRef = useRef(documentText);
   const wikiRequestRef = useRef<AbortController | null>(null);
   const wikiLoadSequenceRef = useRef(0);
   const resolvedMeta = meta ?? (skill ? repositoryMetaFromSkill(skill) : indexItem ? repositoryMetaFromIndex(indexItem) : null);
-
-  useEffect(() => { documentTextRef.current = documentText; }, [documentText]);
 
   useEffect(() => {
     if (repo) return;
@@ -402,7 +505,7 @@ function AgentKnowledgeReaderContent({ skill, repo: suppliedRepo = "" }: { skill
   const loadRepository = useCallback(async (signal: AbortSignal) => {
     if (!repo) return;
     setStatus("正在连接仓库源码与文档…");
-    setError("");
+    setRepositoryError("");
     try {
       const overview = await readJson(`/api/agent/github/${repo}/overview`, signal);
       const repositoryPayload = overview.repo && typeof overview.repo === "object" ? overview.repo as Record<string, unknown> : overview;
@@ -412,26 +515,14 @@ function AgentKnowledgeReaderContent({ skill, repo: suppliedRepo = "" }: { skill
       const treePayload = await readJson(`/api/agent/github/${repo}/tree?ref=${encodeURIComponent(repository.defaultBranch)}`, signal);
       const nextTree = githubTreeFromPayload(treePayload);
       setTree(nextTree);
-      if (!skill?.content) {
-        const readme = nextTree.find((item) => item.type === "blob" && /^readme(?:\.|$)/i.test(item.path));
-        if (readme) {
-          const response = await fetch(`https://raw.githubusercontent.com/${repo}/${encodeURIComponent(repository.defaultBranch)}/${encodePath(readme.path)}`, { signal });
-          if (response.ok) {
-            const readmeText = await response.text();
-            setDocumentText((current) => current || readmeText);
-            setDocumentSource((current) => current === "连接中" ? "GitHub README" : current);
-          }
-        }
-      }
       setStatus("");
     } catch (reason) {
       if (signal.aborted) return;
       const message = reason instanceof Error ? reason.message : "仓库数据加载失败，请稍后重试。";
-      setError(message);
+      setRepositoryError(message);
       setStatus("");
-      if (skill?.content) setDocumentSource("D1 README");
     }
-  }, [repo, skill?.content]);
+  }, [repo]);
 
   useEffect(() => {
     if (!repo) return;
@@ -440,7 +531,7 @@ function AgentKnowledgeReaderContent({ skill, repo: suppliedRepo = "" }: { skill
     return () => controller.abort();
   }, [loadRepository, repo]);
 
-  const loadWikiPage = useCallback(async (title: string, signal?: AbortSignal, updateUrl = true) => {
+  const loadWikiPage = useCallback(async (title: string, signal?: AbortSignal, updateUrl = true, pageSlug = "") => {
     if (!repo) return;
     wikiRequestRef.current?.abort();
     const controller = new AbortController();
@@ -449,15 +540,19 @@ function AgentKnowledgeReaderContent({ skill, repo: suppliedRepo = "" }: { skill
     const abort = () => controller.abort();
     signal?.addEventListener("abort", abort, { once: true });
     setCurrentWikiPage(title);
+    setDocumentText("");
+    setDocumentSource("正在读取文档");
+    setWikiError("");
     setWikiLoading(true);
     try {
       const action = /^(overview|概述)$/i.test(title) ? "overview" : "page";
-      const payload = await readWikiJson(repo, action, title, controller.signal);
+      const payload = await readWikiJson(repo, action, title, controller.signal, pageSlug);
       if (typeof payload.markdown !== "string" || !payload.markdown.trim()) throw new Error("文档源未返回正文。");
       if (sequence !== wikiLoadSequenceRef.current) return;
+      setCurrentWikiPage(resolveAgentWikiPageTitle(payload, title));
       setDocumentText(payload.markdown);
-      setDocumentSource(payload.source === "zread" ? "ZRead 中文文档" : "DeepWiki 文档");
-      setError("");
+      setDocumentSource("文档已就绪");
+      setWikiError("");
       if (updateUrl) {
         const url = new URL(window.location.href);
         if (/^(overview|概述)$/i.test(title)) url.searchParams.delete("doc"); else url.searchParams.set("doc", title);
@@ -466,7 +561,10 @@ function AgentKnowledgeReaderContent({ skill, repo: suppliedRepo = "" }: { skill
       setMobileNavOpen(false);
       window.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
     } catch (reason) {
-      if (sequence === wikiLoadSequenceRef.current && !controller.signal.aborted && !documentTextRef.current) setError(reason instanceof Error ? reason.message : "中文文档加载失败。");
+      if (sequence === wikiLoadSequenceRef.current && !controller.signal.aborted) {
+        setDocumentSource("文档读取失败");
+        setWikiError(reason instanceof Error ? reason.message : "ZRead 中文文档加载失败。");
+      }
     } finally {
       if (sequence === wikiLoadSequenceRef.current) {
         if (!controller.signal.aborted) setWikiLoading(false);
@@ -480,11 +578,21 @@ function AgentKnowledgeReaderContent({ skill, repo: suppliedRepo = "" }: { skill
     if (!repo) return;
     const controller = new AbortController();
     const requested = new URLSearchParams(window.location.search).get("doc") || "Overview";
-    void readWikiJson(repo, "structure", "", controller.signal).then((payload) => {
-      const items = Array.isArray(payload.items) ? payload.items.filter((item): item is AgentWikiStructureItem => Boolean(item) && typeof item === "object" && typeof (item as AgentWikiStructureItem).title === "string") : [];
-      setWikiItems(items);
-    }).catch(() => setWikiItems([]));
-    void loadWikiPage(requested, controller.signal, false);
+    void (async () => {
+      let items: AgentWikiStructureItem[] = [];
+      try {
+        const payload = await readWikiJson(repo, "structure", "", controller.signal);
+        items = Array.isArray(payload.items) ? payload.items.filter((item): item is AgentWikiStructureItem => Boolean(item) && typeof item === "object" && typeof (item as AgentWikiStructureItem).title === "string") : [];
+        setWikiItems(items);
+        if (/^(overview|概述)$/i.test(requested) && items[0]?.title) setCurrentWikiPage(items[0].title);
+      } catch {
+        if (!controller.signal.aborted) setWikiItems([]);
+      }
+      if (controller.signal.aborted) return;
+      const page = items.find((item) => item.title === requested || item.slug === requested)
+        ?? (/^(overview|概述)$/i.test(requested) ? items[0] : undefined);
+      await loadWikiPage(page?.title || requested, controller.signal, false, page?.slug || "");
+    })();
     return () => controller.abort();
   }, [loadWikiPage, repo]);
 
@@ -569,6 +677,7 @@ function AgentKnowledgeReaderContent({ skill, repo: suppliedRepo = "" }: { skill
   const headings = useMemo(() => agentDocumentHeadings(documentText), [documentText]);
   const filteredHeadings = headings.filter((heading) => !docQuery.trim() || heading.title.toLowerCase().includes(docQuery.trim().toLowerCase()));
   const filteredWikiItems = wikiItems.filter((item) => !docQuery.trim() || `${item.id} ${item.title} ${item.group || ""} ${item.section || ""}`.toLowerCase().includes(docQuery.trim().toLowerCase()));
+  const wikiPageSlug = (title: string) => wikiItems.find((item) => item.title === title || item.slug === title)?.slug || "";
   const docs = useMemo(() => repositoryDocumentFiles(tree), [tree]);
   const entryFiles = useMemo(() => repositoryEntryFiles(tree), [tree]);
   const fileCount = tree.filter((item) => item.type === "blob").length;
@@ -673,22 +782,22 @@ function AgentKnowledgeReaderContent({ skill, repo: suppliedRepo = "" }: { skill
         <div className="agent-wiki-nav-head"><button type="button" onClick={() => setMobileNavOpen(false)} aria-label="关闭文档目录"><AgentSourceIcon name="i-ri-close-line" /></button></div>
         <label className="agent-nav-search"><Search /><input ref={searchRef} type="search" value={docQuery} onChange={(event) => setDocQuery(event.target.value)} placeholder="搜索章节" autoComplete="off" aria-label="搜索仓库文档章节" />{docQuery ? <button type="button" onClick={() => setDocQuery("")} aria-label="清空章节搜索"><X /></button> : <kbd>/</kbd>}</label>
         <nav className="agent-wiki-pages" aria-label="文档章节">
-          {wikiItems.length ? filteredWikiItems.slice(0, 80).map((item, index) => <button type="button" className={currentWikiPage === item.title ? "is-active" : ""} aria-current={currentWikiPage === item.title ? "page" : undefined} onClick={() => void loadWikiPage(item.title)} style={{ "--depth": Math.min(item.depth, 3) } as React.CSSProperties} key={`${item.id}-${item.title}-${index}`}><span>{item.id.replace(/\.+$/, "") || String(index + 1).padStart(2, "0")}</span><strong>{item.title}</strong></button>) : <>
-            {documentText ? <button type="button" className="is-active" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} style={{ "--depth": 0 } as React.CSSProperties}><span>01</span><strong>README</strong></button> : null}
-            {filteredHeadings.slice(0, 40).map((heading, index) => <button type="button" onClick={() => openHeading(heading.id)} style={{ "--depth": Math.max(0, heading.depth - 1) } as React.CSSProperties} key={`${heading.id}-${index}`}><span>{String(index + 2).padStart(2, "0")}</span><strong>{heading.title}</strong></button>)}
+          {wikiItems.length ? filteredWikiItems.slice(0, 80).map((item, index) => <button type="button" className={currentWikiPage === item.title ? "is-active" : ""} aria-current={currentWikiPage === item.title ? "page" : undefined} aria-label={`${item.id.replace(/\.+$/, "") || String(index + 1).padStart(2, "0")}. ${item.title}`} data-wiki-page={item.title} onClick={() => void loadWikiPage(item.title, undefined, true, item.slug || "")} style={{ "--depth": Math.min(item.depth, 3) } as React.CSSProperties} key={`${item.id}-${item.title}-${index}`}><span>{`${item.id.replace(/\.+$/, "") || String(index + 1).padStart(2, "0")}.`}</span><strong>{item.title}</strong></button>) : <>
+            {documentText ? <button type="button" className="is-active" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} style={{ "--depth": 0 } as React.CSSProperties}><span>01.</span><strong>README</strong></button> : null}
+            {filteredHeadings.slice(0, 40).map((heading, index) => <button type="button" onClick={() => openHeading(heading.id)} style={{ "--depth": Math.max(0, heading.depth - 1) } as React.CSSProperties} key={`${heading.id}-${index}`}><span>{`${String(index + 2).padStart(2, "0")}.`}</span><strong>{heading.title}</strong></button>)}
           </>}
           {docQuery && !(wikiItems.length ? filteredWikiItems.length : filteredHeadings.length) ? <p className="agent-nav-search-empty">没有匹配的章节</p> : null}
         </nav>
-        <div className="agent-nav-repo-card"><span>仓库</span><strong>{repo}</strong><small>{resolvedMeta?.description || "正在读取仓库信息"}</small><div><span><Star /> <b>{resolvedMeta ? formatAgentCount(resolvedMeta.stars) : "—"}</b></span><span>{resolvedMeta?.language || "—"}</span></div></div>
+        <div className="agent-nav-repo-card"><span>仓库</span><strong>{repo}</strong><small>已连接仓库源码与文档</small><div><span><Star /> <b>{resolvedMeta ? formatAgentCount(resolvedMeta.stars) : "—"}</b></span><span>{resolvedMeta?.language || "—"}</span></div></div>
       </aside>
 
       <section className="agent-wiki-main" aria-label="知识库正文">
         {status || wikiLoading ? <div className="agent-reader-status" role="status"><span className="agent-pulse" />{status || `正在读取“${currentWikiPage}”…`}</div> : null}
-        {error ? <div className="agent-reader-status" data-kind="error" role="status"><Network />{error}</div> : null}
-        {documentText ? <AgentMarkdown className="agent-wiki-article prose astro-markdown" content={documentText} repo={repo} refName={resolvedMeta?.defaultBranch || "HEAD"} wikiItems={wikiItems} onOpenWiki={(title) => void loadWikiPage(title)} onOpenFile={(path) => void openFile(path)} /> : status || wikiLoading ? <article className="agent-wiki-article prose"><div className="agent-article-skeleton" aria-label="正在读取文档"><span /><span /><span /><span /><span /><span /></div></article> : <div className="agent-wiki-error"><BookOpen /><h2>仓库文档暂未读取</h2><p>仍可在仓库地图中浏览文件树与源码。</p><button type="button" onClick={() => setAtlasOpen(true)}>打开仓库地图</button></div>}
+        {repositoryError ? <div className="agent-reader-status" data-kind="error" role="status"><Network />{repositoryError}</div> : null}
+        {documentText ? <AgentMarkdown className="agent-wiki-article prose astro-markdown" content={documentText} repo={repo} refName={resolvedMeta?.defaultBranch || "HEAD"} wikiItems={wikiItems} onOpenWiki={(title) => void loadWikiPage(title, undefined, true, wikiPageSlug(title))} onOpenFile={(path) => void openFile(path)} /> : wikiLoading ? <article className="agent-wiki-article prose"><div className="agent-article-skeleton" aria-label="正在读取文档"><span /><span /><span /><span /><span /><span /></div></article> : wikiError ? <div className="agent-wiki-error" role="alert"><BookOpen /><h2>ZRead 文档暂时不可用</h2><p>{wikiError}</p><div className="agent-wiki-error-actions"><button type="button" onClick={() => void loadWikiPage(currentWikiPage, undefined, true, wikiPageSlug(currentWikiPage))}>重新读取</button><button type="button" onClick={() => setAtlasOpen(true)}>浏览仓库源码</button></div></div> : status ? <article className="agent-wiki-article prose"><div className="agent-article-skeleton" aria-label="正在读取文档"><span /><span /><span /><span /><span /><span /></div></article> : <div className="agent-wiki-error"><BookOpen /><h2>ZRead 文档暂未读取</h2><p>正文仅使用 ZRead，仓库文件树与源码仍可正常浏览。</p><div className="agent-wiki-error-actions"><button type="button" onClick={() => void loadWikiPage(currentWikiPage, undefined, true, wikiPageSlug(currentWikiPage))}>重新读取</button><button type="button" onClick={() => setAtlasOpen(true)}>浏览仓库源码</button></div></div>}
       </section>
 
-      <aside className="agent-page-toc" aria-label="本页目录"><div className="agent-page-toc-inner"><nav data-page-toc aria-label="本页章节">{headings.slice(0, 24).map((heading, index) => <a href={`#${heading.id}`} data-level={heading.depth} key={`${heading.id}-${index}`}>{heading.title}</a>)}{!headings.length ? <p>正文加载后显示标题</p> : null}</nav></div></aside>
+      <aside className="agent-page-toc" aria-label="本页目录"><div className="agent-page-toc-inner"><nav data-page-toc aria-label="本页章节"><AgentPageToc headings={headings} /></nav></div></aside>
     </div>
 
     <button className="agent-atlas-scrim" onClick={() => setAtlasOpen(false)} type="button" tabIndex={-1} aria-hidden={!atlasOpen} aria-label="关闭仓库地图" />
@@ -701,13 +810,13 @@ function AgentKnowledgeReaderContent({ skill, repo: suppliedRepo = "" }: { skill
           <div className="agent-atlas-intro"><div><h2>先建立边界，再沿入口阅读关键流程</h2><p>{tree.length ? `当前索引覆盖 ${fileCount.toLocaleString("zh-CN")} 个文件、${directoryCount.toLocaleString("zh-CN")} 个目录与 ${topBoundaries} 个顶层边界。` : "正在核对仓库结构与模块边界…"}</p></div>{entryFiles[0] ? <button type="button" onClick={() => void openFile(entryFiles[0].path)}>开始阅读<ArrowRight /></button> : null}</div>
           <div className="agent-overview-facts">{[["星标", resolvedMeta ? formatAgentCount(resolvedMeta.stars) : "—"], ["派生", resolvedMeta ? formatAgentCount(resolvedMeta.forks) : "—"], ["关注", resolvedMeta ? formatAgentCount(resolvedMeta.watchers) : "—"], ["主要语言", resolvedMeta?.language || "未标注"], ["许可证", resolvedMeta?.license || "未声明"], ["默认分支", resolvedMeta?.defaultBranch || "—"], ["最近更新", resolvedMeta ? formatRepositoryDate(resolvedMeta.updatedAt) : "—"], ["仓库状态", resolvedMeta?.archived ? "已归档" : "活跃维护"]].map(([label, value]) => <div key={label}><span>{label}</span><strong>{value}</strong></div>)}</div>
           <div className="agent-overview-topics">{resolvedMeta?.topics.map((topic) => <a href={`https://github.com/topics/${encodeURIComponent(topic)}`} target="_blank" rel="noreferrer" key={topic}>{topic}</a>)}</div>
-          <section className="agent-map-section"><header><div><span className="agent-diagram-eyebrow">依赖关系</span><h3>项目依赖总览</h3><p>从 workspace 与 package.json 重建模块之间的真实依赖关系</p></div><small>{manifestStatus}</small></header>{manifestNodes.length ? <GraphMap repo={repo} nodes={manifestNodes} onOpen={(path) => void openFile(path)} /> : <div className="agent-repo-map"><div className="agent-graph-empty"><Network /><strong>{tree.length && manifestStatus.startsWith("没有") ? "没有检测到 package.json" : "正在分析 package.json"}</strong><p>{tree.length && manifestStatus.startsWith("没有") ? "当前仓库可能使用其他包管理格式，文件浏览器仍可正常使用。" : "清单就绪后会在这里生成完整依赖图。"}</p></div></div>}</section>
+          <section className="agent-map-section"><header><div><span className="agent-diagram-eyebrow">依赖关系</span><h3>项目依赖总览</h3><p>从 workspace 与 package.json 重建模块之间的真实依赖关系</p></div><small>{manifestStatus}</small></header>{manifestNodes.length ? atlasOpen && atlasTab === "overview" ? <AgentManifestArchify repo={repo} nodes={manifestNodes} onOpen={(path) => void openFile(path)} /> : null : <div className="agent-repo-map"><div className="agent-graph-empty"><Network /><strong>{tree.length && manifestStatus.startsWith("没有") ? "没有检测到 package.json" : "正在分析 package.json"}</strong><p>{tree.length && manifestStatus.startsWith("没有") ? "当前仓库可能使用其他包管理格式，文件浏览器仍可正常使用。" : "清单就绪后会在这里生成完整依赖图。"}</p></div></div>}</section>
           <section className="agent-map-section"><header><div><span>阅读路径</span><h3>建议从这里开始读</h3></div><small>按结构重要度排序</small></header><div className="agent-start-files">{entryFiles.map((file, index) => <button type="button" onClick={() => void openFile(file.path)} key={file.path}><span>{String(index + 1).padStart(2, "0")}</span><strong>{file.path}</strong><ArrowRight /></button>)}</div></section>
         </section>
 
         <section role="tabpanel" data-atlas-panel="docs" hidden={atlasTab !== "docs"}><div className="agent-atlas-section-head"><h2>代码库文档</h2><p>这里展示仓库中的 README、贡献指南与架构文档。选择后会切换到文件视图并直接回显内容。</p><small>{docs.length ? `${docs.length} 份文档` : "正在整理文档…"}</small></div><div className="agent-atlas-docs">{docs.slice(0, 100).map((file, index) => <button type="button" onClick={() => void openFile(file.path)} key={file.path}><span>{String(index + 1).padStart(2, "0")}</span><div><strong>{file.path.split("/").pop()}</strong><small>{file.path}</small></div><ArrowRight /></button>)}</div></section>
 
-        <section role="tabpanel" data-atlas-panel="files" hidden={atlasTab !== "files"}><div className="agent-files-shell"><aside className="agent-file-browser"><div className="agent-file-browser-head"><div><strong>文件浏览器</strong><small>{fileCount ? `${fileCount} 个文件` : "读取中"}</small></div></div><label className="agent-file-search"><Search /><input type="search" value={fileQuery} onChange={(event) => setFileQuery(event.target.value)} placeholder="搜索文件路径" aria-label="搜索文件路径" /><kbd>/</kbd></label><RepositoryFileTree items={tree} query={fileQuery} activePath={fileState.path} onOpen={(path) => void openFile(path)} /></aside><article className="agent-file-viewer"><header><div>{fileState.path ? (() => { const Icon = fileGlyph(fileState.path); return <Icon />; })() : <Code2 />}<strong>{fileState.path || "选择一个文件"}</strong></div>{fileState.path && resolvedMeta ? <a href={`https://github.com/${repo}/blob/${encodeURIComponent(fileState.ref || resolvedMeta.defaultBranch)}/${encodePath(fileState.path)}`} target="_blank" rel="noreferrer">查看源文件<ArrowUpRight /></a> : null}</header><div className="agent-file-content">{fileState.loading ? <div className="agent-file-empty"><span className="agent-pulse" /><h3>正在读取文件</h3><p>{fileState.path}</p></div> : fileState.error ? <div className="agent-file-empty"><FileCode2 /><h3>暂时无法读取文件</h3><p>{fileState.error}</p></div> : fileState.path && isImage(fileState.path) ? <div className="agent-file-image"><img src={fileState.text} alt={fileState.path} /></div> : fileState.path && isMarkdown(fileState.path) ? <AgentMarkdown className="agent-file-markdown prose astro-markdown" content={fileState.text} repo={repo} refName={fileState.ref || resolvedMeta?.defaultBranch || "HEAD"} sourcePath={fileState.path} wikiItems={wikiItems} onOpenWiki={(title) => void loadWikiPage(title)} onOpenFile={(path) => void openFile(path)} /> : fileState.path ? <div className="agent-code-fallback"><div><span>{repositoryLanguage(fileState.path)}</span><button type="button" onClick={() => void navigator.clipboard.writeText(fileState.text)}><Copy />复制</button></div><pre><code>{fileState.text}</code></pre></div> : <div className="agent-file-empty"><FileCode2 /><h3>选择文件开始阅读</h3><p>源码、Markdown 和图片都会留在博客内打开。</p></div>}</div></article></div></section>
+        <section role="tabpanel" data-atlas-panel="files" hidden={atlasTab !== "files"}><div className="agent-files-shell"><aside className="agent-file-browser"><div className="agent-file-browser-head"><div><strong>文件浏览器</strong><small>{fileCount ? `${fileCount} 个文件` : "读取中"}</small></div></div><label className="agent-file-search"><Search /><input type="search" value={fileQuery} onChange={(event) => setFileQuery(event.target.value)} placeholder="搜索文件路径" aria-label="搜索文件路径" /><kbd>/</kbd></label><RepositoryFileTree items={tree} query={fileQuery} activePath={fileState.path} onOpen={(path) => void openFile(path)} /></aside><article className="agent-file-viewer"><header><div>{fileState.path ? (() => { const Icon = fileGlyph(fileState.path); return <Icon />; })() : <Code2 />}<strong>{fileState.path || "选择一个文件"}</strong></div>{fileState.path && resolvedMeta ? <a href={`https://github.com/${repo}/blob/${encodeURIComponent(fileState.ref || resolvedMeta.defaultBranch)}/${encodePath(fileState.path)}`} target="_blank" rel="noreferrer">查看源文件<ArrowUpRight /></a> : null}</header><div className="agent-file-content">{fileState.loading ? <div className="agent-file-empty"><span className="agent-pulse" /><h3>正在读取文件</h3><p>{fileState.path}</p></div> : fileState.error ? <div className="agent-file-empty"><FileCode2 /><h3>暂时无法读取文件</h3><p>{fileState.error}</p></div> : fileState.path && isImage(fileState.path) ? <div className="agent-file-image"><img src={fileState.text} alt={fileState.path} /></div> : fileState.path && isMarkdown(fileState.path) ? <AgentMarkdown className="agent-file-markdown prose astro-markdown" content={fileState.text} repo={repo} refName={fileState.ref || resolvedMeta?.defaultBranch || "HEAD"} sourcePath={fileState.path} wikiItems={wikiItems} onOpenWiki={(title) => void loadWikiPage(title, undefined, true, wikiPageSlug(title))} onOpenFile={(path) => void openFile(path)} /> : fileState.path ? <div className="agent-code-fallback"><div><span>{repositoryLanguage(fileState.path)}</span><button type="button" onClick={() => void navigator.clipboard.writeText(fileState.text)}><Copy />复制</button></div><pre><code>{fileState.text}</code></pre></div> : <div className="agent-file-empty"><FileCode2 /><h3>选择文件开始阅读</h3><p>源码、Markdown 和图片都会留在博客内打开。</p></div>}</div></article></div></section>
       </div>
     </div>
     <button className="agent-mobile-scrim" onClick={() => setMobileNavOpen(false)} type="button" tabIndex={-1} aria-hidden={!mobileNavOpen} aria-label="关闭目录" />

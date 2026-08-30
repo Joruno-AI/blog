@@ -2,16 +2,13 @@
 
 /* eslint-disable @next/next/no-img-element -- repository image URLs are resolved at runtime. */
 
-import { Check, Copy, FileCode2, Maximize2, Minus, Plus, RotateCcw } from "lucide-react";
+import { Check, Copy, FileCode2 } from "lucide-react";
 import {
   isValidElement,
   useEffect,
-  useId,
   useMemo,
-  useRef,
   useState,
   type ComponentPropsWithoutRef,
-  type CSSProperties,
   type ReactNode,
 } from "react";
 import ReactMarkdown, { defaultUrlTransform } from "react-markdown";
@@ -23,6 +20,10 @@ import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import type { BundledLanguage } from "shiki/bundle/full";
 
+import { ArchifyEmbed } from "@/components/site/archify-embed";
+import { ArchifyRuntimeMermaid } from "@/components/site/archify-runtime-mermaid";
+import { sha256Hex } from "@/lib/archify/artifact-address.mjs";
+
 import {
   agentRepositoryImageCandidates,
   normalizeAgentMarkdown,
@@ -33,14 +34,7 @@ import {
 import type { AgentWikiStructureItem } from "@/lib/agent/zread";
 
 type HastNode = { tagName?: string; properties?: Record<string, unknown>; children?: HastNode[] };
-type MermaidApi = {
-  initialize(options: Record<string, unknown>): void;
-  render(id: string, source: string): Promise<{ svg: string; bindFunctions?: (element: Element) => void }>;
-};
-
 const BLOCKED_RAW_TAGS = new Set(["script", "iframe", "object", "embed", "form", "input", "button", "textarea", "select", "option", "base", "meta", "link", "style", "svg", "math"]);
-const BLOCKED_SVG_TAGS = new Set(["script", "foreignobject", "iframe", "object", "embed", "audio", "video"]);
-const MERMAID_CDN = "https://cdn.jsdelivr.net/npm/mermaid@11.17.2/dist/mermaid.esm.min.mjs";
 const LANGUAGE_ALIASES: Record<string, string> = {
   bash: "shellscript", sh: "shellscript", shell: "shellscript", zsh: "shellscript",
   js: "javascript", mjs: "javascript", cjs: "javascript", jsx: "jsx",
@@ -49,9 +43,6 @@ const LANGUAGE_ALIASES: Record<string, string> = {
   docker: "dockerfile", text: "text", plaintext: "text",
 };
 
-let mermaidLoader: Promise<MermaidApi> | null = null;
-let mermaidRenderQueue: Promise<void> = Promise.resolve();
-let mermaidSequence = 0;
 
 // DOMPurify-equivalent boundary used before raw Markdown enters React. The
 // original reader accepted basic HTML but removed active nodes, event handlers,
@@ -136,209 +127,105 @@ function AgentCodeBlock({ children }: { children?: ReactNode }) {
   </figure>;
 }
 
-function fallbackMermaid(source: string) {
-  const labels = new Map<string, string>();
-  const edges: Array<[string, string]> = [];
-  const nodePattern = /([A-Za-z0-9_.:-]+)(?:\[([^\]]+)\]|\(([^)]+)\)|\{([^}]+)\})?/g;
-  for (const line of source.split(/\r?\n/)) {
-    if (/^\s*(?:graph|flowchart|sequenceDiagram|classDiagram|stateDiagram)/i.test(line)) continue;
-    const arrow = line.match(/(.+?)\s*(?:-->|---|-.->|==>)\s*(?:\|[^|]*\|\s*)?(.+)/);
-    if (!arrow) continue;
-    const read = (raw: string) => {
-      const match = [...raw.matchAll(nodePattern)].at(-1);
-      const id = match?.[1] || raw.trim();
-      labels.set(id, (match?.[2] || match?.[3] || match?.[4] || id).replace(/^['"]|['"]$/g, ""));
-      return id;
-    };
-    edges.push([read(arrow[1]), read(arrow[2])]);
-  }
-  const ids = [...new Set([...labels.keys(), ...edges.flat()])].slice(0, 24);
-  return { ids, labels, edges: edges.filter(([from, to]) => ids.includes(from) && ids.includes(to)) };
-}
+type ZReadArchifyManifest = {
+  artifacts: Record<string, Record<string, string>>;
+  metadata: Record<string, Record<string, { title?: string }>>;
+  unsupported: Record<string, Record<string, { reason: string; detail?: string }>>;
+};
 
-function MermaidFallback({ source }: { source: string }) {
-  const graph = useMemo(() => fallbackMermaid(source), [source]);
-  if (!graph.ids.length) return <pre className="agent-code-fallback"><code>{source}</code></pre>;
-  const cols = Math.min(4, Math.max(1, Math.ceil(Math.sqrt(graph.ids.length))));
-  const positions = new Map(graph.ids.map((id, index) => [id, { x: 110 + index % cols * 200, y: 70 + Math.floor(index / cols) * 120 }]));
-  return <svg className="agent-mermaid-fallback" viewBox={`0 0 820 ${Math.max(220, Math.ceil(graph.ids.length / cols) * 120 + 40)}`} role="img" aria-label="Mermaid 关系图">
-    <defs><marker id="agent-mermaid-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" /></marker></defs>
-    {graph.edges.map(([from, to], index) => { const a = positions.get(from)!; const b = positions.get(to)!; return <line x1={a.x} y1={a.y + 26} x2={b.x} y2={b.y - 26} markerEnd="url(#agent-mermaid-arrow)" key={`${from}-${to}-${index}`} />; })}
-    {graph.ids.map((id) => { const point = positions.get(id)!; return <g transform={`translate(${point.x - 76} ${point.y - 26})`} key={id}><rect width="152" height="52" rx="8" /><text x="76" y="31" textAnchor="middle">{graph.labels.get(id) || id}</text></g>; })}
-  </svg>;
-}
+const ARCHIFY_MANIFEST_URL = "/agent/zread-cache/archify-manifest.json";
+let archifyManifestLoader: Promise<ZReadArchifyManifest> | null = null;
 
-function loadMermaid() {
-  mermaidLoader ??= (new Function("url", "return import(url)") as (url: string) => Promise<{ default: MermaidApi }>)(MERMAID_CDN)
-    .then((module) => module.default)
-    .catch((reason) => { mermaidLoader = null; throw reason; });
-  return mermaidLoader;
-}
-
-function mermaidConfig(element: HTMLElement | null) {
-  const styles = element ? window.getComputedStyle(element) : null;
-  const read = (name: string, fallback: string) => styles?.getPropertyValue(name).trim() || fallback;
-  const paper = read("--diagram-paper", "#fff");
-  const ink = read("--diagram-ink", "#202020");
-  const muted = read("--diagram-muted", "#707070");
-  const rule = read("--diagram-rule", "#d6d6d6");
-  const solid = read("--diagram-rule-solid", "#8e8e8e");
-  return {
-    startOnLoad: false,
-    securityLevel: "strict",
-    suppressErrorRendering: true,
-    theme: "base",
-    htmlLabels: false,
-    fontFamily: read("--diagram-font-node", "Inter, ui-sans-serif, system-ui, sans-serif"),
-    flowchart: { htmlLabels: false, useMaxWidth: true, curve: "linear", nodeSpacing: 26, rankSpacing: 30, padding: 8 },
-    themeVariables: {
-      background: paper, primaryColor: paper, primaryBorderColor: solid, primaryTextColor: ink,
-      secondaryColor: read("--diagram-paper-2", paper), secondaryBorderColor: solid, secondaryTextColor: ink,
-      tertiaryColor: paper, tertiaryBorderColor: rule, tertiaryTextColor: ink, mainBkg: paper,
-      nodeBorder: solid, textColor: ink, lineColor: muted, clusterBkg: read("--diagram-paper-2", paper),
-      clusterBorder: rule, edgeLabelBackground: paper, labelTextColor: muted, fontSize: "12px",
-    },
-  };
-}
-
-function sanitizeMermaidSvg(markup: string, diagramId: string) {
-  const parsed = new DOMParser().parseFromString(markup, "image/svg+xml");
-  if (parsed.querySelector("parsererror")) throw new Error("Mermaid output was not valid SVG");
-  const svg = parsed.documentElement as unknown as SVGSVGElement;
-  if (svg.tagName.toLowerCase() !== "svg") throw new Error("Mermaid output did not contain an SVG");
-  [...svg.querySelectorAll("*")].forEach((element) => {
-    if (BLOCKED_SVG_TAGS.has(element.tagName.toLowerCase())) { element.remove(); return; }
-    if (element.tagName.toLowerCase() === "style" && /@import|url\s*\(\s*['"]?(?!#)/i.test(element.textContent || "")) { element.remove(); return; }
-    [...element.attributes].forEach((attribute) => {
-      const name = attribute.name.toLowerCase();
-      const value = attribute.value.trim();
-      if (/^on/.test(name) || name === "srcdoc" || ((name === "href" || name === "xlink:href") && value && !value.startsWith("#")) || (name === "style" && /url\s*\(\s*['"]?(?!#)/i.test(value))) element.removeAttribute(attribute.name);
-    });
+function loadArchifyManifest() {
+  archifyManifestLoader ??= fetch(ARCHIFY_MANIFEST_URL, {
+    cache: "force-cache",
+    credentials: "same-origin",
+  }).then(async (response) => {
+    if (!response.ok) throw new Error(`Archify manifest HTTP ${response.status}`);
+    const value = await response.json() as Partial<ZReadArchifyManifest>;
+    if (!value.artifacts || !value.metadata || !value.unsupported) throw new Error("Invalid Archify manifest");
+    return value as ZReadArchifyManifest;
+  }).catch((error) => {
+    archifyManifestLoader = null;
+    throw error;
   });
-  const namespace = "http://www.w3.org/2000/svg";
-  const defs = svg.querySelector<SVGDefsElement>(":scope > defs") || parsed.createElementNS(namespace, "defs");
-  if (!defs.parentNode) svg.prepend(defs);
-  const filter = parsed.createElementNS(namespace, "filter");
-  filter.id = `${diagramId}-hand-drawn`;
-  filter.setAttribute("x", "-8%");
-  filter.setAttribute("y", "-8%");
-  filter.setAttribute("width", "116%");
-  filter.setAttribute("height", "116%");
-  const noise = parsed.createElementNS(namespace, "feTurbulence");
-  noise.setAttribute("type", "fractalNoise");
-  noise.setAttribute("baseFrequency", "0.018");
-  noise.setAttribute("numOctaves", "2");
-  noise.setAttribute("seed", "3");
-  noise.setAttribute("result", "roughNoise");
-  const displacement = parsed.createElementNS(namespace, "feDisplacementMap");
-  displacement.setAttribute("in", "SourceGraphic");
-  displacement.setAttribute("in2", "roughNoise");
-  displacement.setAttribute("scale", "0.8");
-  displacement.setAttribute("xChannelSelector", "R");
-  displacement.setAttribute("yChannelSelector", "G");
-  filter.append(noise, displacement);
-  defs.append(filter);
-  const title = parsed.createElementNS(namespace, "title");
-  const description = parsed.createElementNS(namespace, "desc");
-  title.id = `${diagramId}-title`;
-  title.textContent = "仓库文档关系图";
-  description.id = `${diagramId}-desc`;
-  description.textContent = "根据仓库文档中的 Mermaid 源码生成，可使用工具栏缩放查看。";
-  svg.prepend(description);
-  svg.prepend(title);
-  svg.setAttribute("role", "img");
-  svg.setAttribute("aria-labelledby", `${title.id} ${description.id}`);
-  svg.setAttribute("focusable", "false");
-  svg.classList.add("agent-excalidraw-svg");
-  svg.style.setProperty("--agent-hand-drawn-filter", `url(#${filter.id})`);
-  svg.querySelectorAll<SVGGElement>("g.node").forEach((node, index) => { node.dataset.palette = String(index % 4); });
-  svg.querySelectorAll<SVGGElement>("g.cluster").forEach((node, index) => { node.dataset.palette = String(index % 4); });
-  svg.querySelectorAll<SVGGElement>("g.edgePath").forEach((node, index) => { node.dataset.palette = String(index % 4); });
-  return new XMLSerializer().serializeToString(svg);
+  return archifyManifestLoader;
 }
 
-async function renderMermaid(source: string, reactId: string, element: HTMLElement | null) {
-  let rendered = "";
-  const run = async () => {
-    const mermaid = await loadMermaid();
-    mermaid.initialize(mermaidConfig(element));
-    const sources = [...new Set([normalizeAgentMermaidSource(source), source])].filter(Boolean);
-    let lastError: unknown;
-    for (const candidate of sources) {
-      for (let attempt = 0; attempt < 3; attempt += 1) {
-        const diagramId = `agent-mermaid-${reactId}-${mermaidSequence++}`;
-        try {
-          const result = await mermaid.render(diagramId, candidate);
-          rendered = sanitizeMermaidSvg(result.svg, diagramId);
-          return;
-        } catch (reason) {
-          lastError = reason;
-          document.getElementById(diagramId)?.remove();
-          document.getElementById(`d${diagramId}`)?.remove();
-          if (attempt < 2) await new Promise((resolve) => window.setTimeout(resolve, 50 + attempt * 70));
-        }
-      }
-    }
-    throw lastError instanceof Error ? lastError : new Error("Mermaid render failed");
-  };
-  const task = mermaidRenderQueue.then(run);
-  mermaidRenderQueue = task.catch(() => undefined);
-  await task;
-  return rendered;
+function repositoryManifestRecords<T>(records: Record<string, T>, repository: string) {
+  return records[repository]
+    ?? Object.entries(records).find(([key]) => key.toLowerCase() === repository.toLowerCase())?.[1];
 }
 
-function AgentMermaid({ source }: { source: string }) {
-  const reactId = useId().replace(/:/g, "");
-  const figureRef = useRef<HTMLElement>(null);
-  const [svg, setSvg] = useState("");
-  const [failed, setFailed] = useState(false);
-  const [scale, setScale] = useState(1);
-  const [attempt, setAttempt] = useState(0);
+function AgentMermaid({ source, repo }: { source: string; repo: string }) {
+  const normalized = useMemo(() => normalizeAgentMermaidSource(source), [source]);
+  const [sourceHash, setSourceHash] = useState("");
+  const [hashFailed, setHashFailed] = useState(false);
+  const [manifest, setManifest] = useState<ZReadArchifyManifest | null>(null);
+  const [manifestStatus, setManifestStatus] = useState<"loading" | "ready" | "error">("loading");
+
   useEffect(() => {
     let active = true;
-    setFailed(false);
-    setSvg("");
-    void renderMermaid(source, `${reactId}-${attempt}`, figureRef.current).then((next) => { if (active) setSvg(next); }).catch(() => { if (active) setFailed(true); });
-    return () => { active = false; };
-  }, [attempt, reactId, source]);
-  useEffect(() => {
-    if (!svg) return;
-    const frame = window.requestAnimationFrame(() => {
-      const viewport = figureRef.current?.querySelector<HTMLElement>(".agent-mermaid-viewport");
-      const diagram = figureRef.current?.querySelector<SVGSVGElement>(".agent-mermaid-canvas > svg");
-      const viewBox = diagram?.viewBox.baseVal;
-      if (!viewport || !viewBox?.width || !viewBox.height) return;
-      const availableWidth = Math.max(1, viewport.clientWidth - 48);
-      const naturalHeight = availableWidth * viewBox.height / viewBox.width;
-      const comfortableHeight = Math.min(640, Math.max(360, window.innerHeight * .55));
-      setScale(Math.max(.35, naturalHeight > comfortableHeight ? comfortableHeight / naturalHeight : 1));
+    setSourceHash("");
+    setHashFailed(false);
+    void sha256Hex(normalized).then((hash) => {
+      if (active) setSourceHash(hash);
+    }).catch(() => {
+      if (active) setHashFailed(true);
     });
-    return () => window.cancelAnimationFrame(frame);
-  }, [svg]);
-  const change = (value: number) => setScale(Math.max(.35, Math.round(value * 100) / 100));
-  const canvasStyle = { "--diagram-width": `${scale * 100}%` } as CSSProperties;
-  return <figure ref={figureRef} className="agent-mermaid diagram-design" data-mermaid-original={source} data-mermaid-source={normalizeAgentMermaidSource(source)} data-diagram-scale={scale}>
-    <div className="agent-mermaid-toolbar"><span><b>手绘关系图</b><em>{failed ? "本地兼容渲染" : svg ? "滚动查看 · 可缩放" : "正在绘制"}</em></span><div>
-      <button type="button" aria-label="缩小" onClick={() => change(scale - .1)}><Minus /></button>
-      <label className="agent-mermaid-scale"><input type="number" step="10" value={Math.round(scale * 100)} inputMode="numeric" aria-label="图表缩放百分比" onChange={(event) => change(Number(event.target.value) / 100)} /><span>%</span></label>
-      <button type="button" aria-label="放大" onClick={() => change(scale + .1)}><Plus /></button>
-      <button type="button" aria-label="重置图表" onClick={() => change(1)}><RotateCcw /></button>
-      <button type="button" aria-label="全屏查看图表" onClick={() => { const frame = figureRef.current; if (!frame) return; if (document.fullscreenElement === frame) void document.exitFullscreen(); else void frame.requestFullscreen?.(); }}><Maximize2 /></button>
-    </div></div>
-    <div className="agent-mermaid-viewport">
-      {svg ? <div className="agent-mermaid-canvas" style={canvasStyle} dangerouslySetInnerHTML={{ __html: svg }} />
-        : failed ? <div className="agent-mermaid-canvas" style={canvasStyle}><MermaidFallback source={source} /></div>
-          : <div className="agent-mermaid-canvas" style={canvasStyle}><div className="agent-diagram-loading" role="status" aria-label="正在绘制关系图"><span /><span /><span /><em>正在绘制关系图</em></div></div>}
-    </div>
-    {failed ? <figcaption><button type="button" onClick={() => setAttempt((value) => value + 1)}>重新渲染</button></figcaption> : null}
-  </figure>;
+    return () => { active = false; };
+  }, [normalized]);
+
+  useEffect(() => {
+    let active = true;
+    setManifestStatus("loading");
+    void loadArchifyManifest().then((value) => {
+      if (active) {
+        setManifest(value);
+        setManifestStatus("ready");
+      }
+    }).catch(() => {
+      if (active) {
+        setManifest(null);
+        setManifestStatus("error");
+      }
+    });
+    return () => { active = false; };
+  }, []);
+
+  const artifacts = manifest ? repositoryManifestRecords(manifest.artifacts, repo) : undefined;
+  const metadata = manifest ? repositoryManifestRecords(manifest.metadata, repo) : undefined;
+  const artifact = sourceHash ? artifacts?.[sourceHash] : undefined;
+  const title = sourceHash ? metadata?.[sourceHash]?.title : undefined;
+  if (artifact) {
+    return <ArchifyEmbed src={artifact} title={title || `${repo} architecture`} />;
+  }
+
+  if (manifestStatus === "loading" || (!sourceHash && !hashFailed)) {
+    return <figure className="archify-embed archify-runtime-embed" data-archify-status="loading">
+      <figcaption className="archify-embed-header">
+        <strong>{`${repo} architecture`}</strong>
+        <span>Archify</span>
+      </figcaption>
+      <div className="archify-embed-status" role="status">正在匹配 Archify 图表…</div>
+    </figure>;
+  }
+
+  return <ArchifyRuntimeMermaid
+    key={sourceHash || normalized}
+    source={normalized}
+    repository={repo}
+    title={title || `${repo} architecture`}
+  />;
 }
 
-function AgentPre({ children }: { children?: ReactNode }) {
+function AgentPre({ children, repo }: { children?: ReactNode; repo: string }) {
   const code = Array.isArray(children) ? children.find(isValidElement) : children;
   const className = isValidElement<{ className?: string }>(code) ? code.props.className || "" : "";
   const source = nodeText(code).replace(/\n+$/, "");
-  return /(?:^|\s)language-mermaid(?:\s|$)/.test(className) ? <AgentMermaid source={source} /> : <AgentCodeBlock>{children}</AgentCodeBlock>;
+  return /(?:^|\s)language-mermaid(?:\s|$)/.test(className)
+    ? <AgentMermaid source={source} repo={repo} />
+    : <AgentCodeBlock>{children}</AgentCodeBlock>;
 }
 
 function AgentImage({ src = "", alt = "", repo, refName, sourcePath, ...props }: ComponentPropsWithoutRef<"img"> & { repo: string; refName: string; sourcePath: string }) {
@@ -375,7 +262,7 @@ export function AgentMarkdown({ content, repo, refName, sourcePath = "", classNa
       return <a {...props} className={anchorClassName} href={href}>{children}</a>;
     }
     const wikiTitle = wikiTitleFor(href, nodeText(children), wikiItems);
-    const explicitWiki = href.startsWith("/wiki/") || /(?:deepwiki\.com|zread\.ai)\/[^/]+\/[^/]+\/(?:wiki\/)?/i.test(href) || wikiItems.some((item) => item.slug === href.replace(/^\.\//, ""));
+    const explicitWiki = href.startsWith("/wiki/") || /zread\.ai\/[^/]+\/[^/]+\/(?:wiki\/)?/i.test(href) || wikiItems.some((item) => item.slug === href.replace(/^\.\//, ""));
     if (explicitWiki && wikiTitle && onOpenWiki) return <a {...props} href={`?doc=${encodeURIComponent(wikiTitle)}`} className={[anchorClassName, "agent-wiki-link"].filter(Boolean).join(" ")} onClick={(event) => { event.preventDefault(); onOpenWiki(wikiTitle); }}>{children}</a>;
     if (!/^[a-z][a-z\d+.-]*:/i.test(href) && !href.startsWith("//")) {
       const path = resolveAgentRepositoryPath(href, sourcePath);
@@ -402,7 +289,7 @@ export function AgentMarkdown({ content, repo, refName, sourcePath = "", classNa
       rehypePlugins={[rehypeRaw, rehypeAgentDOMPurify, rehypeSlug, rehypeKatex]}
       urlTransform={(url, key) => key === "src" && /^data:image\/(?:avif|gif|jpe?g|png|svg\+xml|webp);/i.test(url) ? url : defaultUrlTransform(url)}
       components={{
-        pre: AgentPre,
+        pre: ({ children }) => <AgentPre repo={repo}>{children}</AgentPre>,
         code: CodeComponent,
         a: LinkComponent,
         img: ({ node, ...props }) => { void node; return <AgentImage {...props} repo={repo} refName={refName} sourcePath={sourcePath} />; },

@@ -1,3 +1,5 @@
+import { normalizeArchifyMermaidSource } from "@/lib/archify/mermaid-source.mjs";
+
 export type AgentRepositoryFileReference = {
   path: string;
   line: number;
@@ -119,29 +121,4 @@ export function normalizeAgentMarkdown(markdown: string) {
     .join("\n");
 }
 
-export function normalizeAgentMermaidSource(source: string) {
-  let normalized = source
-    .replace(/\r\n?/g, "\n")
-    .replace(/^(\s*)\[([A-Za-z_][\w.-]*)\]\s*--\s*"([^"\n]+)"\s*$/gm, "$1$2[\"$3\"]")
-    .replace(/(^|[ \t])\[([A-Za-z_][\w.-]*)\](?=[ \t]*(?:--|-.->|==>|~~~))/gm, "$1$2")
-    .replace(/((?:-->|---|-.->|==>|~~~)(?:\|[^|\n]*\|)?[ \t]*)\[([A-Za-z_][\w.-]*)\]/g, "$1$2");
-
-  const identifiers = new Map<string, string>();
-  let sequence = 0;
-  const resolveIdentifier = (label: string) => {
-    const existing = identifiers.get(label);
-    if (existing) return existing;
-    const identifier = `node_${sequence++}`;
-    identifiers.set(label, identifier);
-    return identifier;
-  };
-  normalized = normalized.replace(/(^|[ \t>])\[\s*"([^"\n]+)"\s*\]/gm, (_, prefix: string, label: string) => `${prefix}${resolveIdentifier(label)}[\"${label}\"]`);
-  normalized = normalized.replace(/"([^"\n]+)"(?=[ \t]*(?:\[|\(|\{))/g, (_, label: string) => resolveIdentifier(label));
-  for (const [label, identifier] of identifiers) {
-    const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    normalized = normalized
-      .replace(new RegExp(`"${escaped}"(?=[ \\t]*(?:-->|---|-.->|==>|~~~))`, "g"), identifier)
-      .replace(new RegExp(`((?:-->|---|-.->|==>|~~~)(?:\\|[^|]*\\|)?[ \\t]*)"${escaped}"`, "g"), `$1${identifier}`);
-  }
-  return normalized;
-}
+export const normalizeAgentMermaidSource = normalizeArchifyMermaidSource;

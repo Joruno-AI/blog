@@ -172,6 +172,7 @@ test("keeps Blog, Streams and Changelog public navigation and desktop projection
   const filter = readFileSync(join(root, "components/site/blog-filter-view.tsx"), "utf8");
   const article = readFileSync(join(root, "app/(site)/blog/[...slug]/page.tsx"), "utf8");
   const blogCss = readFileSync(join(root, "app/blog-parity.css"), "utf8");
+  const reveal = readFileSync(join(root, "components/site/reveal-controller.tsx"), "utf8");
   const streamsCss = readFileSync(join(root, "app/projects-streams-parity.css"), "utf8");
   const changelogPage = readFileSync(join(root, "app/(site)/changelog/page.tsx"), "utf8");
   const changelogDirectory = readFileSync(join(root, "components/site/changelog-directory.tsx"), "utf8");
@@ -189,10 +190,14 @@ test("keeps Blog, Streams and Changelog public navigation and desktop projection
   assert.doesNotMatch(blogCss, /\.blog-parity-page \.article-toc-desktop\s*\{[^}]*top:\s*1\.5rem;/);
   assert.match(blogCss, /\.blog-parity-page \.reader-catalog-desktop\s*\{[^}]*top:\s*5\.5rem;[^}]*height:\s*calc\(100dvh - 7rem\);/);
   assert.match(blogCss, /\.blog-parity-page \.article-toc-desktop\s*\{[^}]*top:\s*5\.5rem;[^}]*height:\s*calc\(100dvh - 7rem\);/);
-  assert.match(blogCss, /--article-accent:\s*#087653;/);
-  assert.match(blogCss, /\.reader-content h2::after\s*\{[^}]*background:\s*var\(--article-accent\);/);
-  assert.match(blogCss, /\.reader-content blockquote\s*\{[^}]*background:\s*var\(--article-accent-surface\);/);
-  assert.match(blogCss, /\.reader-content code:not\(\.expressive-code code\)\s*\{[^}]*color:\s*var\(--article-accent-emphasis\);/);
+  assert.match(blogCss, /--article-ink:\s*var\(--c-text\);/);
+  assert.doesNotMatch(blogCss, /#(?:087653|066849|5fc69f|82d6b8)/i);
+  assert.match(blogCss, /\.reader-content h2::after\s*\{[^}]*background:\s*var\(--article-marker\);/);
+  assert.match(blogCss, /\.reader-content > \*\s*\{[^}]*max-width:\s*100%;/);
+  assert.match(blogCss, /\.reader-content blockquote\s*\{[^}]*margin-left:\s*0 !important;[^}]*border:\s*0;[^}]*border-left:\s*0\.25rem solid var\(--c-border-strong\);[^}]*background:\s*transparent;/);
+  assert.match(blogCss, /\.blog-parity-catalog \.post-link\.active\s*\{[^}]*position:\s*relative;[^}]*padding-inline-start:\s*0\.95rem;/);
+  assert.match(blogCss, /\.reader-content code:not\(\.expressive-code code\)\s*\{[^}]*color:\s*var\(--article-ink\);/);
+  assert.match(reveal, /\.reader-content > :is\([^)]*\.expressive-code[^)]*\.markdown-table-wrap\)/);
 
   assert.match(streamsCss, /\.streams-parity-content \.stream-item \{[\s\S]*?color:\s*var\(--c-text\) !important;/);
   assert.match(streamsCss, /\.streams-toc-desktop \{[\s\S]*?left:\s*2rem;/);

@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import test from "node:test";
 
 import { parseAgentRepositoryAllowlist } from "../lib/agent/repository-access";
-import { readLimitedText, UpstreamResponseTooLargeError } from "../lib/agent/upstream";
+import { fetchWithTimeout, readLimitedText, UpstreamResponseTooLargeError } from "../lib/agent/upstream";
 import { agentRateLimitResponse } from "../lib/platform/agent-rate-limit";
 
 test("the upstream allowlist is derived from every exact Astro Agent repository", () => {
@@ -30,9 +30,11 @@ test("anonymous Agent proxies never attach the CMS GitHub token or expose conten
   assert.match(publicGithub, /readLimitedText\(response, maximumBytes\)/);
   assert.match(github, /slice\(0, 5_000\)/);
 
-  for (const route of ["app/api/deepwiki/[...path]/route.ts", "app/api/zread/[...path]/route.ts"]) {
-    assert.match(readFileSync(route, "utf8"), /isAgentRepositoryAllowed/);
-  }
+  const zreadRoute = readFileSync("app/api/zread/[...path]/route.ts", "utf8");
+  assert.match(zreadRoute, /isAgentRepositoryAllowed/);
+  assert.match(zreadRoute, /fetchZReadStructure\(owner, repo, request\.signal\)/);
+  assert.match(zreadRoute, /fetchZReadPage\(owner, repo, requested, request\.signal\)/);
+  assert.equal(existsSync("app/api/deepwiki/[...path]/route.ts"), false);
 });
 
 test("limited response reads stop before retaining an oversized upstream body", async () => {
@@ -46,6 +48,29 @@ test("limited response reads stop before retaining an oversized upstream body", 
   await assert.rejects(() => readLimitedText(response, 12), UpstreamResponseTooLargeError);
 });
 
+test("caller cancellation reaches an in-flight timed upstream request", async () => {
+  const originalFetch = globalThis.fetch;
+  let upstreamWasAborted = false;
+  globalThis.fetch = ((_: RequestInfo | URL, init?: RequestInit) => new Promise<Response>((_, reject) => {
+    const upstreamSignal = init?.signal;
+    const rejectAbort = () => {
+      upstreamWasAborted = Boolean(upstreamSignal?.aborted);
+      reject(new DOMException("aborted", "AbortError"));
+    };
+    if (upstreamSignal?.aborted) rejectAbort();
+    else upstreamSignal?.addEventListener("abort", rejectAbort, { once: true });
+  })) as typeof fetch;
+  try {
+    const controller = new AbortController();
+    const pending = fetchWithTimeout("https://example.test/upstream", { signal: controller.signal }, 60_000);
+    controller.abort();
+    await assert.rejects(pending, (reason: unknown) => reason instanceof Error && reason.name === "AbortError");
+    assert.equal(upstreamWasAborted, true);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
 test("the Worker limiter rejects exhausted Agent API budgets only", async () => {
   let key = "";
   const exhausted = {
@@ -56,12 +81,12 @@ test("the Worker limiter rejects exhausted Agent API budgets only", async () => 
       },
     },
   };
-  const limited = await agentRateLimitResponse(new Request("https://example.test/api/deepwiki/openclaw/openclaw/overview", {
+  const limited = await agentRateLimitResponse(new Request("https://example.test/api/zread/openclaw/openclaw/overview", {
     headers: { "cf-connecting-ip": "192.0.2.4" },
   }), exhausted);
   assert.equal(limited?.status, 429);
   assert.equal(limited?.headers.get("retry-after"), "60");
-  assert.equal(key, "192.0.2.4:deepwiki");
+  assert.equal(key, "192.0.2.4:zread");
 
   assert.equal(await agentRateLimitResponse(new Request("https://example.test/blog/"), exhausted), null);
 });

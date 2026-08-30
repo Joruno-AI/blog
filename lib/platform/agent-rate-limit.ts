@@ -8,7 +8,6 @@ type AgentRateLimitEnvironment = {
 
 function agentApiGroup(pathname: string) {
   if (pathname.startsWith("/api/agent/github/")) return "github";
-  if (pathname.startsWith("/api/deepwiki/")) return "deepwiki";
   if (pathname.startsWith("/api/zread/")) return "zread";
   return "";
 }

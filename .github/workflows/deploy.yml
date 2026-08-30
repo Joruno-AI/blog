@@ -64,6 +64,13 @@ jobs:
           pnpm exec tsc --noEmit
           pnpm test
 
+      # Validate every cache payload that is present and require all snapshots
+      # declared complete by the migration manifest. The separate strict script
+      # is reserved for the point when all selected upstream repositories have
+      # been synchronized, so temporary upstream gaps do not block deployment.
+      - name: Verify declared ZRead cache snapshots
+        run: pnpm data:check:zread-cache
+
       - name: Apply D1 migrations
         run: pnpm exec wrangler d1 migrations apply blog-cms-db --remote
         env:

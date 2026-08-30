@@ -6,8 +6,8 @@ const revealSelector = [
   ".slide-enter",
   ".slide-enter-content > *:not(#desktop-aside):not(#mobile-control)",
   ".home-shell > *",
-  ".reader-content > :is(h2, h3, h4, p, ul, ol, blockquote, pre, figure, table)",
-  ".agent-wiki-article > :is(h2, h3, h4, p, ul, ol, blockquote, pre, figure, table)",
+  ".reader-content > :is(h2, h3, h4, p, ul, ol, blockquote, pre, figure, table, details, .callout, .expressive-code, .archify-embed, .markdown-table-wrap)",
+  ".agent-wiki-article > :is(h2, h3, h4, p, ul, ol, blockquote, pre, figure, .archify-embed, table)",
 ].join(",");
 
 /**

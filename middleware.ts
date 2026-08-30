@@ -26,7 +26,6 @@ const publicRoutes = [
   "/projects",
   "/login",
   "/api/zread",
-  "/api/deepwiki",
   "/api/agent/github",
   "/api/jobs/run",
   "/api/jobs/public-content-rebuild/ack",
@@ -154,6 +153,9 @@ function isKnownPlatformPath(pathname: string) {
   ].includes(path)) return true;
 
   if (/^\/agent\/scenes\/[^/]+$/i.test(path)) return true;
+  if (path === "/agent/zread-cache/archify-manifest.json") return true;
+  if (/^\/agent\/zread-cache\/[^/]+\/[^/]+\/(?:structure|overview)\.json$/i.test(path)) return true;
+  if (/^\/agent\/zread-cache\/[^/]+\/[^/]+\/pages\/[^/]+\.json$/i.test(path)) return true;
   const agentRepository = path.match(/^\/agent\/([^/]+)\/([^/]+)$/i);
   if (agentRepository && !new Set([
     "about", "all", "analyzer", "compare", "masters", "repository", "scenes", "trending",
@@ -188,7 +190,7 @@ function isKnownPlatformPath(pathname: string) {
     "/sitemap-index.xml",
   ].includes(path)) return true;
 
-  return ["/_next/", "/api/", "/docs-assets/", "/fonts/", "/icons/", "/img/", "/login/", "/studio/"].some(
+  return ["/_next/", "/api/", "/diagrams/", "/docs-assets/", "/fonts/", "/icons/", "/img/", "/login/", "/studio/"].some(
     (prefix) => path.startsWith(prefix),
   ) || path === "/login" || path === "/studio";
 }
@@ -204,7 +206,7 @@ function isLegacyEndpointOrAssetPath(pathname: string) {
     || path.endsWith(".xsl")
     || path.endsWith(".txt")
     || path.endsWith(".webmanifest")
-    || ["/_next/", "/api/", "/docs-assets/", "/fonts/", "/icons/", "/img/"].some((prefix) => path.startsWith(prefix));
+    || ["/_next/", "/api/", "/diagrams/", "/docs-assets/", "/fonts/", "/icons/", "/img/"].some((prefix) => path.startsWith(prefix));
 }
 
 function isLegacyDocumentPath(pathname: string) {
@@ -344,7 +346,6 @@ export async function middleware(request: NextRequest) {
       pathname.startsWith("/api/") &&
       !pathname.startsWith("/api/public") &&
       !pathname.startsWith("/api/zread") &&
-      !pathname.startsWith("/api/deepwiki") &&
       !pathname.startsWith("/api/agent/github") &&
       pathname !== "/api/jobs/run" &&
       pathname !== "/api/jobs/public-content-rebuild/ack" &&
@@ -395,6 +396,6 @@ export const config = {
     "/api/:path*",
     // Exclude only known static directories and root files. A broad extension
     // exclusion would also skip private dynamic API routes with dotted IDs.
-    "/((?!_next/static|_next/image|fonts(?:/|$)|icons(?:/|$)|og-backgrounds(?:/|$)|favicon\\.ico$|favicon\\.svg$|apple-touch-icon\\.png$|icon-192\\.png$|icon-512\\.png$|icon-mask\\.png$|joruno\\.ico$|joruno\\.png$|joruno\\.svg$).*)",
+    "/((?!_next/static|_next/image|diagrams(?:/|$)|fonts(?:/|$)|icons(?:/|$)|og-backgrounds(?:/|$)|favicon\\.ico$|favicon\\.svg$|apple-touch-icon\\.png$|icon-192\\.png$|icon-512\\.png$|icon-mask\\.png$|joruno\\.ico$|joruno\\.png$|joruno\\.svg$).*)",
   ],
 };

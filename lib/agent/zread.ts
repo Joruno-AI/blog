@@ -1,6 +1,6 @@
 import { fetchWithTimeout, readLimitedText } from "@/lib/agent/upstream";
 
-export type AgentWikiSource = "zread" | "deepwiki";
+export type AgentWikiSource = "zread";
 
 export interface ZReadPageMeta {
   page_id: string;
@@ -28,7 +28,7 @@ function repositoryUrl(owner: string, repo: string, slug = "") {
   return `${ZREAD_ORIGIN}/${pathname}`;
 }
 
-async function fetchZReadHtml(url: string) {
+async function fetchZReadHtml(url: string, signal?: AbortSignal) {
   const response = await fetchWithTimeout(url, {
       headers: {
         Accept: "text/html,application/xhtml+xml",
@@ -36,7 +36,8 @@ async function fetchZReadHtml(url: string) {
         "User-Agent": "Joruno-Repository-Reader/1.0",
       },
       redirect: "follow",
-    }, 12_000);
+      signal,
+    }, 30_000);
     if (!response.ok) throw new Error(`ZRead 返回 ${response.status}`);
     const html = await readLimitedText(response, RESPONSE_LIMIT);
     if (!html) throw new Error("ZRead 返回的文档体积异常");
@@ -109,9 +110,18 @@ function resolvePage(pages: ZReadPageMeta[], requested: string) {
   return pages.find((page) => normalizedKey(page.topic) === key || normalizedKey(page.slug) === key);
 }
 
-export async function fetchZReadStructure(owner: string, repo: string) {
+export function resolveAgentWikiPageTitle(payload: Record<string, unknown>, fallback: string) {
+  if (typeof payload.page === "string" && payload.page.trim()) return payload.page.trim();
+  if (typeof payload.markdown === "string") {
+    const heading = payload.markdown.match(/^\s*#\s+(.+?)\s*#*\s*$/m)?.[1]?.trim();
+    if (heading) return heading;
+  }
+  return fallback;
+}
+
+export async function fetchZReadStructure(owner: string, repo: string, signal?: AbortSignal) {
   const sourceUrl = repositoryUrl(owner, repo);
-  const html = await fetchZReadHtml(sourceUrl);
+  const html = await fetchZReadHtml(sourceUrl, signal);
   const pages = extractZReadPages(decodeZReadFlightPayloads(html)).sort((left, right) => left.order - right.order);
   return {
     source: "zread" as const,
@@ -127,15 +137,15 @@ export async function fetchZReadStructure(owner: string, repo: string) {
   };
 }
 
-export async function fetchZReadPage(owner: string, repo: string, requested = "Overview") {
+export async function fetchZReadPage(owner: string, repo: string, requested = "Overview", signal?: AbortSignal) {
   const repositorySourceUrl = repositoryUrl(owner, repo);
-  const repositoryHtml = await fetchZReadHtml(repositorySourceUrl);
+  const repositoryHtml = await fetchZReadHtml(repositorySourceUrl, signal);
   const repositoryPayloads = decodeZReadFlightPayloads(repositoryHtml);
   const pages = extractZReadPages(repositoryPayloads).sort((left, right) => left.order - right.order);
   const page = resolvePage(pages, requested);
   if (!page) throw new Error(`ZRead 没有找到“${requested.slice(0, 120)}”`);
   const sourceUrl = repositoryUrl(owner, repo, page.slug);
-  const payloads = page === pages[0] ? repositoryPayloads : decodeZReadFlightPayloads(await fetchZReadHtml(sourceUrl));
+  const payloads = page === pages[0] ? repositoryPayloads : decodeZReadFlightPayloads(await fetchZReadHtml(sourceUrl, signal));
   const body = normalizeZReadCallouts(extractMarkdown(payloads, page.slug));
   return {
     source: "zread" as const,

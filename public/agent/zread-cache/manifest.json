@@ -1,0 +1,5143 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-30T10:07:10.244Z",
+  "sourceOrigin": "https://www.wangshengliang.cn",
+  "source": "zread",
+  "pageCoverage": "overview",
+  "repositories": [
+    "anthropics/skills",
+    "VoltAgent/awesome-agent-skills"
+  ],
+  "failures": [
+    {
+      "repository": "anthropics/claude-code",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "JuliusBrussee/caveman",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "thedotmack/claude-mem",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "Egonex-AI/Understand-Anything",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "HTTP 502"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "code-yeongyu/oh-my-openagent",
+      "failures": [
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "colbymchenry/codegraph",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "gsd-build/get-shit-done",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "tw93/Pake",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "Lum1104/Understand-Anything",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "coreyhaines31/marketingskills",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "Imbad0202/academic-research-skills",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "luongnv89/claude-howto",
+      "failures": [
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "Yeachan-Heo/oh-my-claudecode",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "K-Dense-AI/scientific-agent-skills",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "anthropics/claude-plugins-official",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "nanocoai/nanoclaw",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "davila7/claude-code-templates",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "qwibitai/nanoclaw",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "zarazhangrui/frontend-slides",
+      "failures": [
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "jarrodwatts/claude-hud",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "cathrynlavery/diagram-design",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "OthmanAdi/planning-with-files",
+      "failures": [
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "virgiliojr94/book-to-skill",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "JimLiu/baoyu-skills",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "alirezarezvani/claude-skills",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "EveryInc/compound-engineering-plugin",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "titanwings/distilly",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "HTTP 502"
+        },
+        {
+          "action": "overview",
+          "error": "HTTP 502"
+        }
+      ]
+    },
+    {
+      "repository": "alchaincyf/huashu-design",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "Nutlope/hallmark",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "winfunc/opcode",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "teng-lin/notebooklm-py",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "ayghri/i-have-adhd",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "K-Dense-AI/claude-scientific-skills",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "tt-a1i/archify",
+      "failures": [
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "op7418/Humanizer-zh",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "AgriciDaniel/claude-seo",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "kyegomez/OpenMythos",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "travisvn/awesome-claude-skills",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "sirmalloc/ccstatusline",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "Piebald-AI/claude-code-system-prompts",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "nidhinjs/prompt-master",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "Orchestra-Research/AI-Research-SKILLs",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "Jeffallan/claude-skills",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "BehiSecc/awesome-claude-skills",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "slavingia/skills",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "xonsh/xonsh",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "frankbria/ralph-claude-code",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "zubair-trabzada/geo-seo-claude",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "open-gsd/gsd-core",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "anthropics/claude-code-action",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "revfactory/harness",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "Maciek-roboblog/Claude-Code-Usage-Monitor",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "nexu-io/html-anything",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "AgriciDaniel/claude-ads",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "Agents365-ai/drawio-skill",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "oso95/scroll-world",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "PleasePrompto/notebooklm-skill",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "tw93/Waza",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "trailofbits/skills",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "SimoneAvogadro/android-reverse-engineering-skill",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "op7418/guizang-social-card-skill",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "SawyerHood/dev-browser",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "deanpeters/Product-Manager-Skills",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "e2b-dev/fragments",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "Vincentwei1021/video-shotcraft",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "ikaijua/Awesome-AITools",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "czlonkowski/n8n-skills",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "zenstory-ai/oh-story-claudecode",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "HTTP 502"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "anthropics/claude-code-security-review",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "UfoMiao/zcf",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "worldwonderer/oh-story-claudecode",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "uditgoenka/autoresearch",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "anbeime/skill",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "alchaincyf/darwin-skill",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "gosom/google-maps-scraper",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "zarazhangrui/codebase-to-course",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "browser-act/skills",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "su-kaka/gcli2api",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "HTTP 502"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "PeonPing/peon-ping",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "SaladDay/cc-switch-cli",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "epoko77-ai/im-not-ai",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "twostraws/SwiftUI-Agent-Skill",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "composio-community/open-claude-cowork",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "eugeniughelbur/obsidian-second-brain",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "internet-court/internet-court-skill",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "ComposioHQ/open-claude-cowork",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "matt1398/claude-devtools",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "elementalsouls/Claude-BugHunter",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "glitternetwork/pinme",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "liustack/modlens",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "gotalab/cc-sdd",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "raullenchai/Rapid-MLX",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "agenticnotetaking/arscontexta",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "VoltAgent/awesome-claude-design",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "ericosiu/ai-marketing-skills",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "oboard/claude-code-rev",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "hamed-elfayome/Claude-Usage-Tracker",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "nicedreamzapp/claude-code-local",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "openclaw/openclaw",
+      "failures": [
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "NousResearch/hermes-agent",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "nexu-io/open-design",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "addyosmani/agent-skills",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "Leonxlnx/taste-skill",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "safishamsi/graphify",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "santifer/career-ops",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "asgeirtj/system_prompts_leaks",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "mvanhorn/last30days-skill",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "stablyai/orca",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "VoltAgent/awesome-openclaw-skills",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "CherryHQ/cherry-studio",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "Alishahryar1/free-claude-code",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "router-for-me/CLIProxyAPI",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "moeru-ai/airi",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "kepano/obsidian-skills",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "Wei-Shaw/sub2api",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "HKUDS/DeepTutor",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "Yuan1z0825/nature-skills",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "1Panel-dev/1Panel",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "blader/humanizer",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "zeroclaw-labs/zeroclaw",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "openai/codex-plugin-cc",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "herdrdev/herdr",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "iOfficeAI/AionUi",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "hesamsheikh/awesome-openclaw-usecases",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "iOfficeAI/OfficeCLI",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "garrytan/gbrain",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "BloopAI/vibe-kanban",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "rohitg00/agentmemory",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "manaflow-ai/cmux",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "decolua/9router",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "op7418/guizang-ppt-skill",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "openai/skills",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "TencentCloud/TencentDB-Agent-Memory",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "titanwings/colleague-skill",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "slopus/happy",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "ogulcancelik/herdr",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "NVIDIA/NemoClaw",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "steipete/CodexBar",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "jnMetaCode/agency-agents-zh",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "KKKKhazix/khazix-skills",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "AsyncFuncAI/deepwiki-open",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "langbot-app/LangBot",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "openimsdk/open-im-server",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "jlcodes99/cockpit-tools",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "cft0808/edict",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "MemoriLabs/Memori",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "composio-community/awesome-codex-skills",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "chenhg5/cc-connect",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "eigent-ai/eigent",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "getpaseo/paseo",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "YishenTu/claudian",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "mindfold-ai/Trellis",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "aiming-lab/AutoResearchClaw",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "citrolabs/ego-lite",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "siteboon/claudecodeui",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "superset-sh/superset",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "nearai/ironclaw",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "Wei-Shaw/claude-relay-service",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "lidge-jun/opencodex",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "getumbrel/umbrel",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "humanlayer/humanlayer",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "Kuberwastaken/claurst",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "openai/codex-security",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "cloudflare/moltworker",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "Untrivial-ai/agent-orchestrator",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "ComposioHQ/awesome-codex-skills",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "getagentseal/codeburn",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "openclaw/clawhub",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "omnigent-ai/omnigent",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "activeloopai/deeplake",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "helloianneo/ian-xiaohei-illustrations",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "Imbad0202/academic-research-skills-codex",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "MervinPraison/PraisonAI",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "Narcooo/inkos",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "freecodexyz/free-code",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "AgentWrapper/agent-orchestrator",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "HKUDS/ClawWork",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "smtg-ai/claude-squad",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "openclaw/gogcli",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "backnotprop/plannotator",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "OpenCoworkAI/open-codesign",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "ValueCell-ai/ClawX",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "refly-ai/refly",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "mnfst/manifest",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "ringhyacinth/Star-Office-UI",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "ComposioHQ/agent-orchestrator",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "mnfst/awesome-free-llm-apis",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "max-sixty/worktrunk",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "BlockRunAI/ClawRouter",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "outsourc-e/hermes-workspace",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "rullerzhou-afk/clawd-on-desk",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "VoltAgent/awesome-codex-subagents",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "wnlen/clash-for-linux",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "Master-cai/Research-Paper-Writing-Skills",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "LiamGvchi/gc-minimal-zine-poster",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "fengshao1227/ccg-workflow",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "openai-php/client",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "affaan-m/ECC",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "n8n-io/n8n",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "affaan-m/everything-claude-code",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "langgenius/dify",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "open-webui/open-webui",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "farion1231/cc-switch",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "Graphify-Labs/graphify",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "google-gemini/gemini-cli",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "punkpeye/awesome-mcp-servers",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "modelcontextprotocol/servers",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "infiniflow/ragflow",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "koala73/worldmonitor",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "lobehub/lobehub",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "D4Vinci/Scrapling",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "Panniantong/Agent-Reach",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "ComposioHQ/awesome-claude-skills",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "ruvnet/ruflo",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "headroomlabs-ai/headroom",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "sansan0/TrendRadar",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "upstash/context7",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "MemPalace/mempalace",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "zylon-ai/private-gpt",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "BerriAI/litellm",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "diegosouzapw/OmniRoute",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "ChromeDevTools/chrome-devtools-mcp",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "mudler/LocalAI",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "rohitg00/ai-engineering-from-scratch",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "jeecgboot/JeecgBoot",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "HKUDS/nanobot",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "zhayujie/CowAgent",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "siyuan-note/siyuan",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "sickn33/agentic-awesome-skills",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "chopratejas/headroom",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "zhayujie/chatgpt-on-wechat",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "heygen-com/hyperframes",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "sickn33/antigravity-awesome-skills",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "danny-avila/LibreChat",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "bojieli/ai-agent-book",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "amruthpillai/reactive-resume",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "milla-jovovich/mempalace",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "DeusData/codebase-memory-mcp",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "mindsdb/mindshub",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "AstrBotDevs/AstrBot",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "mindsdb/minds-platform",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "HTTP 502"
+        }
+      ]
+    },
+    {
+      "repository": "PostHog/posthog",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "mindsdb/mindsdb",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "wshobson/agents",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "bytedance/UI-TARS-desktop",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "PDFMathTranslate/PDFMathTranslate",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "microsoft/playwright-mcp",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "agentscope-ai/QwenPaw",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "github/github-mcp-server",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "SigNoz/signoz",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "HKUDS/Vibe-Trading",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "mukul975/Anthropic-Cybersecurity-Skills",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "tirth8205/code-review-graph",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "ComposioHQ/composio",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "agentscope-ai/agentscope",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "labring/FastGPT",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "assafelovic/gpt-researcher",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "alibaba/page-agent",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "oraios/serena",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "yamadashy/repomix",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "can1357/oh-my-pi",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "mastra-ai/mastra",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "QwenLM/qwen-code",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "PrefectHQ/fastmcp",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "deepset-ai/haystack",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "ahujasid/blender-mcp",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "MCPBlender/blender-mcp",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "HTTP 502"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "modelcontextprotocol/python-sdk",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "activepieces/activepieces",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "czlonkowski/n8n-mcp",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "1Panel-dev/MaxKB",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "pascalorg/editor",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "screenpipe/screenpipe",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "mksglu/context-mode",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "modelscope/FunASR",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "liyupi/ai-guide",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "nukeop/nuclear",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "RightNow-AI/openfang",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "Canner/WrenAI",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "microsoft/mcp-for-beginners",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "t8y2/dbx",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "udecode/plate",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "googleapis/mcp-toolbox",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "triggerdotdev/trigger.dev",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "MODSetter/SurfSense",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "xbtlin/ai-berkshire",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "GLips/Figma-Context-MCP",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "xpzouying/xiaohongshu-mcp",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "wanshuiyin/Auto-claude-code-research-in-sleep",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "NVIDIA/SkillSpector",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "open-metadata/OpenMetadata",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "yusufkaraaslan/Skill_Seekers",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "NevaMind-AI/memU",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "casdoor/casdoor",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "NanmiCoder/cc-haha",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "palmier-io/palmier-pro",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "Arindam200/awesome-ai-apps",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "obra/superpowers",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "mattpocock/skills",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "Significant-Gravitas/AutoGPT",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "ollama/ollama",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "langflow-ai/langflow",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "langchain-ai/langchain",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "Shubhamsaboo/awesome-llm-apps",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "garrytan/gstack",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "browser-use/browser-use",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "DietrichGebert/ponytail",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "earendil-works/pi",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "karpathy/autoresearch",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "bytedance/deer-flow",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "rtk-ai/rtk",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "shareAI-lab/learn-claude-code",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "unslothai/unsloth",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "cline/cline",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "shanraisshan/claude-code-best-practice",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "mem0ai/mem0",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "pbakaus/impeccable",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "microsoft/autogen",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "crewAIInc/crewAI",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "hesreallyhim/awesome-claude-code",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "huginn/huginn",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "hugohe3/ppt-master",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "calesthio/OpenMontage",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "HKUDS/CLI-Anything",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "Aider-AI/aider",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "multica-ai/multica",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "oobabooga/textgen",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "oobabooga/text-generation-webui",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "chatboxai/chatbox",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "vercel-labs/agent-browser",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "ToolJet/ToolJet",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "langchain-ai/langgraph",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "2noise/ChatTTS",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "HKUDS/LightRAG",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "github/awesome-copilot",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "stanfordnlp/dspy",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "CopilotKit/CopilotKit",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "musistudio/claude-code-router",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "ItzCrazyKns/Vane",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "esengine/DeepSeek-Reasonix",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "gitroomhq/postiz-app",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "MadsLorentzen/ai-job-search",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "volcengine/OpenViking",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "linshenkx/prompt-optimizer",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "JCodesMore/ai-website-cloner-template",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "Gitlawb/openclaude",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "googleworkspace/cli",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "getzep/graphiti",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "vercel-labs/agent-skills",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "topoteretes/cognee",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "simstudioai/sim",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "vercel-labs/skills",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "openai/openai-agents-python",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "jackwener/OpenCLI",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "zhaoxuya520/reverse-skill",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "eyaltoledano/claude-task-master",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "langchain-ai/deepagents",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "gastownhall/beads",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "vercel/ai",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "microsoft/OmniParser",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "phuryn/pm-skills",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "enescingoz/awesome-n8n-templates",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "VoltAgent/awesome-claude-code-subagents",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "letta-ai/letta",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "agentskills/agentskills",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "nocobase/nocobase",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "SuperClaude-Org/SuperClaude_Framework",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "vanna-ai/vanna",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "Donchitos/Claude-Code-Game-Studios",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "h4ckf0r0day/obscura",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "coze-dev/coze-studio",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "alibaba/open-code-review",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "dyad-sh/dyad",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "camel-ai/owl",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "steveyegge/beads",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "tanweai/pua",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "pydantic/pydantic-ai",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "google/skills",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "PrimeIntellect-ai/prime-agent",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "guillaumemeyer/watermarks-remover",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "muratcankoylan/Agent-Skills-for-Context-Engineering",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "rowboatlabs/rowboat",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "kubesphere/kubesphere",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "larksuite/cli",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "stackblitz/bolt.new",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "memvid/memvid",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "HKUDS/DeepCode",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "microsoft/SkillOpt",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "raga-ai-hub/RagaAI-Catalyst",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "apache/doris",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "langchain-ai/openwiki",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "WEIFENG2333/VideoCaptioner",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "plandex-ai/plandex",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "alibaba/zvec",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "wasp-lang/open-saas",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "ConardLi/easy-dataset",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    },
+    {
+      "repository": "opensandbox-group/OpenSandbox",
+      "failures": [
+        {
+          "action": "structure",
+          "error": "This operation was aborted"
+        },
+        {
+          "action": "overview",
+          "error": "This operation was aborted"
+        }
+      ]
+    }
+  ]
+}

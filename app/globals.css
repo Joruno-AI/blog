@@ -1371,6 +1371,94 @@ html:not(:has(.astro-site)) ::-webkit-scrollbar-thumb:hover {
   }
 }
 
+/* Shared Archify document frame. The shell deliberately stays neutral while
+   the vendored renderer owns semantic color inside the sandboxed iframe. */
+.archify-embed {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 2rem 0;
+  overflow: hidden;
+  border-block: 1px solid color-mix(in srgb, var(--c-text, #262421) 14%, transparent);
+  background: color-mix(in srgb, var(--c-bg, #fff) 96%, #8a7968 4%);
+  color: var(--c-text, #262421);
+}
+.archify-embed-header {
+  display: flex;
+  min-width: 0;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .72rem .2rem .68rem;
+  border-bottom: 1px solid color-mix(in srgb, currentColor 10%, transparent);
+}
+.archify-embed-header strong {
+  min-width: 0;
+  overflow: hidden;
+  font-family: inherit;
+  font-size: .82rem;
+  font-weight: 620;
+  letter-spacing: .01em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.archify-embed-header span {
+  flex: none;
+  color: color-mix(in srgb, currentColor 52%, transparent);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: .65rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.archify-embed-viewport {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  height: clamp(27rem, 54vw, 46rem);
+  overflow: hidden;
+  background: #faf9f7;
+}
+.archify-embed-frame {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  border: 0;
+  background: #faf9f7;
+}
+.archify-embed-status {
+  display: grid;
+  min-height: 12rem;
+  place-items: center;
+  padding: 2rem;
+  color: color-mix(in srgb, currentColor 60%, transparent);
+  font-size: .78rem;
+  line-height: 1.7;
+  text-align: center;
+}
+.archify-embed-status code {
+  display: block;
+  max-width: 100%;
+  margin-top: .55rem;
+  overflow-wrap: anywhere;
+  color: inherit;
+  font-size: .68rem;
+}
+@media (max-width: 767px) {
+  .archify-embed { margin-block: 1.5rem; }
+  .archify-embed-header { padding-inline: 0; }
+  .archify-embed-header span { display: none; }
+  /* Keep wide architecture diagrams legible without leaving a tall paper
+     field below them on narrow screens. The sandbox remains scrollable for
+     genuinely tall sequence/lifecycle artifacts. */
+  .archify-embed-viewport { height: clamp(18rem, 76vw, 30rem); }
+}
+@media (prefers-color-scheme: dark) {
+  .archify-embed-viewport,
+  .archify-embed-frame { background: #151515; }
+}
+
 /* ===== Astro music room parity ===== */
 .music-experience {
   --music-text: #f7f2ea;

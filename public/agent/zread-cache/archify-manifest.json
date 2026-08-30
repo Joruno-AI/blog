@@ -1,0 +1,140 @@
+{
+  "schemaVersion": 1,
+  "renderer": {
+    "name": "Archify",
+    "version": "2.16.0-dev.0",
+    "commit": "f58298be408d62385407ca26bc5a7b612f68be2b"
+  },
+  "artifacts": {
+    "anthropics/claude-plugins-official": {
+      "b0efeaa7c72d8a11f53be00526f583769258ae7e38179f3c31a798398e8e9d28": "/diagrams/archify/1ed6b86c49a099906024f99e1242ee9f1cf12161d133a7739a37561515bfd845.html"
+    },
+    "anthropics/skills": {
+      "e91fde357233e478456aa4ad9cf9db2a87010e52218d764038e6795ca1e4b656": "/diagrams/archify/9c7e9b28700cf5e8432c61f87e2824c19562d61ad47ce399b03510ebff358389.html"
+    },
+    "jarrodwatts/claude-hud": {
+      "3928e1722278bcc448396e61d245ea4c9d8363ba4e4c1a3447f9b2924168e69b": "/diagrams/archify/9ce01e53ba180c1eaae750d67f487b3920d2846162dd66c80b3e8ea954d842b4.html",
+      "afc0e08ca128055a2a229022afc02557d6c7bd2af0b1e8f1d27d752b6605e734": "/diagrams/archify/92cde08339cffc62e97478638a74008ce44b7baf170ae6eecddb0370962fc696.html"
+    },
+    "K-Dense-AI/scientific-agent-skills": {
+      "d5e40424304c0a249c6ebea5c180eeaaa8a99a95f00c4ab782a257523ec39087": "/diagrams/archify/cad18dc7aeb194b9ecbe08d5246b35ed92161f0627326879fa72cc2858437b83.html"
+    },
+    "qwibitai/nanoclaw": {
+      "7184d8694cca30a15e5143334c5ed30e386ffcee1e4d968c9e51771ecbf2cd9e": "/diagrams/archify/c887e97d8adecc7f693c757b39940273f31b136f13e1a48f2cce19ff687cb9ee.html",
+      "ae5b9c69d597eda4acb77242ae614230608bc2e8428028a1e11a8975519eefd7": "/diagrams/archify/bed491dd17d78e5b53cec1075b1336644f59ed0e16565a2ccad10698451cfa80.html"
+    },
+    "thedotmack/claude-mem": {
+      "936df1ee9bdfc4b482cb59a8549b4241174e87fbd99d5d8e235bfb242eb24114": "/diagrams/archify/598b067fab188936871df418888d8f011dba9391c285f14915412d8f48db635c.html",
+      "dd23e3b05fc6935298645e190f7717364f2a2aeb9980f7cab248b5ffc1c8c7b3": "/diagrams/archify/a8204724c58243c9d3b155d9e1d1d206302955a3b6900f5322293b5ca0f962e0.html"
+    },
+    "VoltAgent/awesome-agent-skills": {
+      "9ad20c1ff05595cac39e6c5df3662c0cf4c6d951a908a2bdec3c0f96a07305ae": "/diagrams/archify/cbba47953715f916da53f0c8647e3be9a29a8fe5476cf5418332111d48de735d.html"
+    }
+  },
+  "metadata": {
+    "anthropics/claude-plugins-official": {
+      "b0efeaa7c72d8a11f53be00526f583769258ae7e38179f3c31a798398e8e9d28": {
+        "type": "architecture",
+        "title": "仓库架构一览",
+        "artifactSha256": "1ed6b86c49a099906024f99e1242ee9f1cf12161d133a7739a37561515bfd845",
+        "sources": [
+          "anthropics/claude-plugins-official/overview.json:$.markdown"
+        ]
+      }
+    },
+    "anthropics/skills": {
+      "e91fde357233e478456aa4ad9cf9db2a87010e52218d764038e6795ca1e4b656": {
+        "type": "architecture",
+        "title": "代码库架构",
+        "artifactSha256": "9c7e9b28700cf5e8432c61f87e2824c19562d61ad47ce399b03510ebff358389",
+        "sources": [
+          "anthropics/skills/overview.json:$.markdown",
+          "anthropics/skills/pages/1-overview.json:$.markdown"
+        ]
+      }
+    },
+    "jarrodwatts/claude-hud": {
+      "3928e1722278bcc448396e61d245ea4c9d8363ba4e4c1a3447f9b2924168e69b": {
+        "type": "architecture",
+        "title": "工作原理",
+        "artifactSha256": "9ce01e53ba180c1eaae750d67f487b3920d2846162dd66c80b3e8ea954d842b4",
+        "sources": [
+          "jarrodwatts/claude-hud/overview.json:$.markdown"
+        ]
+      },
+      "afc0e08ca128055a2a229022afc02557d6c7bd2af0b1e8f1d27d752b6605e734": {
+        "type": "architecture",
+        "title": "架构概览",
+        "artifactSha256": "92cde08339cffc62e97478638a74008ce44b7baf170ae6eecddb0370962fc696",
+        "sources": [
+          "jarrodwatts/claude-hud/overview.json:$.markdown"
+        ]
+      }
+    },
+    "K-Dense-AI/scientific-agent-skills": {
+      "d5e40424304c0a249c6ebea5c180eeaaa8a99a95f00c4ab782a257523ec39087": {
+        "type": "architecture",
+        "title": "工作原理 — 架构",
+        "artifactSha256": "cad18dc7aeb194b9ecbe08d5246b35ed92161f0627326879fa72cc2858437b83",
+        "sources": [
+          "K-Dense-AI/scientific-agent-skills/overview.json:$.markdown"
+        ]
+      }
+    },
+    "qwibitai/nanoclaw": {
+      "7184d8694cca30a15e5143334c5ed30e386ffcee1e4d968c9e51771ecbf2cd9e": {
+        "type": "architecture",
+        "title": "架构一览",
+        "artifactSha256": "c887e97d8adecc7f693c757b39940273f31b136f13e1a48f2cce19ff687cb9ee",
+        "sources": [
+          "qwibitai/nanoclaw/overview.json:$.markdown"
+        ]
+      },
+      "ae5b9c69d597eda4acb77242ae614230608bc2e8428028a1e11a8975519eefd7": {
+        "type": "architecture",
+        "title": "实体模型",
+        "artifactSha256": "bed491dd17d78e5b53cec1075b1336644f59ed0e16565a2ccad10698451cfa80",
+        "sources": [
+          "qwibitai/nanoclaw/overview.json:$.markdown"
+        ]
+      }
+    },
+    "thedotmack/claude-mem": {
+      "936df1ee9bdfc4b482cb59a8549b4241174e87fbd99d5d8e235bfb242eb24114": {
+        "type": "architecture",
+        "title": "数据流——从工具使用到记忆",
+        "artifactSha256": "598b067fab188936871df418888d8f011dba9391c285f14915412d8f48db635c",
+        "sources": [
+          "thedotmack/claude-mem/overview.json:$.markdown"
+        ]
+      },
+      "dd23e3b05fc6935298645e190f7717364f2a2aeb9980f7cab248b5ffc1c8c7b3": {
+        "type": "architecture",
+        "title": "工作原理——宏观架构",
+        "artifactSha256": "a8204724c58243c9d3b155d9e1d1d206302955a3b6900f5322293b5ca0f962e0",
+        "sources": [
+          "thedotmack/claude-mem/overview.json:$.markdown"
+        ]
+      }
+    },
+    "VoltAgent/awesome-agent-skills": {
+      "9ad20c1ff05595cac39e6c5df3662c0cf4c6d951a908a2bdec3c0f96a07305ae": {
+        "type": "architecture",
+        "title": "架构：生态系统的协作方式",
+        "artifactSha256": "cbba47953715f916da53f0c8647e3be9a29a8fe5476cf5418332111d48de735d",
+        "sources": [
+          "VoltAgent/awesome-agent-skills/overview.json:$.markdown",
+          "VoltAgent/awesome-agent-skills/pages/1-overview.json:$.markdown"
+        ]
+      }
+    }
+  },
+  "unsupported": {},
+  "stats": {
+    "repositories": 7,
+    "discovered": 12,
+    "unique": 10,
+    "generated": 10,
+    "unsupported": 0
+  }
+}

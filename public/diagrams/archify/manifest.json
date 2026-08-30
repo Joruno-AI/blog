@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "renderer": {
+    "name": "Archify",
+    "version": "2.16.0-dev.0",
+    "commit": "f58298be408d62385407ca26bc5a7b612f68be2b"
+  },
+  "artifacts": []
+}
