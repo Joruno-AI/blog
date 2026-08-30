@@ -20,9 +20,14 @@ test("the upstream allowlist is derived from every exact Astro Agent repository"
 
 test("anonymous Agent proxies never attach the CMS GitHub token or expose contents", () => {
   const github = readFileSync("app/api/agent/github/[...path]/route.ts", "utf8");
-  assert.doesNotMatch(github, /GITHUB_TOKEN|Authorization|action === "contents"/);
+  const publicGithub = readFileSync("lib/agent/github-public.ts", "utf8");
+  assert.doesNotMatch(`${github}\n${publicGithub}`, /GITHUB_TOKEN|Authorization|action === "contents"/);
   assert.match(github, /isAgentRepositoryAllowed/);
-  assert.match(github, /readLimitedText\(response, 6_000_000\)/);
+  assert.match(github, /cachedAgentResponse/);
+  assert.match(github, /fetchPublicGithubJson\(treePath, \{ recursive: "1" \}\)/);
+  assert.match(github, /fetchPublicGithubJson\(treePath, \{\}, 1_000_000\)/);
+  assert.match(github, /probeRawRepositoryRoot/);
+  assert.match(publicGithub, /readLimitedText\(response, maximumBytes\)/);
   assert.match(github, /slice\(0, 5_000\)/);
 
   for (const route of ["app/api/deepwiki/[...path]/route.ts", "app/api/zread/[...path]/route.ts"]) {

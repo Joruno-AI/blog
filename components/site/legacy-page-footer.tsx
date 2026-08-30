@@ -1,14 +1,12 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 
-import styles from "@/components/site/legacy-page-footer.module.css";
-
 export function LegacyPageFooter({ children }: { children?: ReactNode }) {
   return (
-    <footer className={`slide-enter prose ${styles.footer}`}>
+    <footer className="slide-enter prose legacy-page-footer">
       {children}
       <br />
-      <Link className={styles.backLink} href="/" />
+      <Link prefetch={false} className="legacy-page-footer-back-link" href="/" />
     </footer>
   );
 }

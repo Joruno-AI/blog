@@ -52,6 +52,7 @@ test("keeps the Astro SkillsNav mobile header geometry", () => {
   assert.match(css, /\.agent-page-head \{ padding: \.25rem 0 0; \}/);
   assert.match(css, /\.agent-page-head > h1 \{[\s\S]*?font-size: clamp\(1\.85rem, 9vw, 2\.15rem\);[\s\S]*?line-height: 1\.05;/);
   assert.match(css, /\.agent-page-head > p \{[\s\S]*?margin-top: \.65rem;[\s\S]*?padding-inline: \.75rem;[\s\S]*?font-size: \.82rem;/);
+  assert.match(css, /@media \(max-width: 767px\) \{\s*\.agent-page-shell \{ line-height: 1\.7; \}/);
 });
 
 test("serves Agent aggregate pages with compact SSR projections and browser index refreshes", () => {

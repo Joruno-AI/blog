@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   calculateMasonryLayout,
+  photoInitialRevealDelay,
   PHOTO_LAYOUT_STORAGE_KEY,
   type MasonryStrategy,
   type PhotoItem,
@@ -98,8 +99,20 @@ export function PhotoGallery({
 
   useEffect(() => {
     const controller = new AbortController();
+    const revealStartedAt = window.performance.now();
+    let revealTimer: number | null = null;
     setIsFetching(true);
     setFetchFailed(false);
+
+    const commitFirstBatch = (data: PhotoItem[]) => {
+      if (controller.signal.aborted) return;
+      setItems(data);
+      const initialCount = Math.min(batchSize, data.length);
+      visibleCountRef.current = initialCount;
+      itemCountRef.current = data.length;
+      setVisibleCount(initialCount);
+      setIsFetching(false);
+    };
 
     void fetch(`/photos/photos.${hash}.json`, { signal: controller.signal })
       .then(async (response) => {
@@ -108,12 +121,15 @@ export function PhotoGallery({
       })
       .then(([version, data]) => {
         if (version !== hash || !Array.isArray(data)) throw new Error("Invalid photo endpoint payload");
-        setItems(data);
-        const initialCount = Math.min(batchSize, data.length);
-        visibleCountRef.current = initialCount;
-        itemCountRef.current = data.length;
-        setVisibleCount(initialCount);
-        setIsFetching(false);
+        const remainingDelay = Math.max(
+          0,
+          photoInitialRevealDelay(window.innerWidth) - (window.performance.now() - revealStartedAt),
+        );
+        if (remainingDelay > 0) {
+          revealTimer = window.setTimeout(() => commitFirstBatch(data), remainingDelay);
+        } else {
+          commitFirstBatch(data);
+        }
       })
       .catch((error: unknown) => {
         if (controller.signal.aborted) return;
@@ -122,7 +138,10 @@ export function PhotoGallery({
         setIsFetching(false);
       });
 
-    return () => controller.abort();
+    return () => {
+      controller.abort();
+      if (revealTimer !== null) window.clearTimeout(revealTimer);
+    };
   }, [batchSize, hash]);
 
   useEffect(() => {

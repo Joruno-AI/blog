@@ -7321,6 +7321,13 @@ html.agent-atlas-lock,
   .skills-nav-indicator-item { min-height: 2.75rem; }
 }
 
+/* Astro's mobile BaseLayout uses a 1.7 inherited line box. The unified Next
+   shell otherwise falls back to 1.5, shortening the overview by 159.58px at
+   390px. Keep this mobile-only: desktop overview geometry already matches. */
+@media (max-width: 767px) {
+  .agent-page-shell { line-height: 1.7; }
+}
+
 /* Original monochrome category glyph contract. */
 .skill-category-icon { display: inline-grid; flex: none; place-items: center; overflow: visible; border: 0; background: transparent; color: var(--c-text-soft); }
 .skill-category-icon > :is(svg,.agent-source-icon) { display: block; width: 72%; height: 72%; stroke-width: 1.65; }

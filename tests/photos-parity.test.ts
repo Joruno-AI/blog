@@ -18,6 +18,8 @@ import {
   ASTRO_PHOTO_HASH,
   astroPhotoItems,
   calculateMasonryLayout,
+  photoInitialRevealDelay,
+  PHOTO_MOBILE_INITIAL_REVEAL_MS,
 } from "../lib/parity/photos";
 import { getPublicContentSnapshot } from "../lib/parity/public-content-snapshot";
 import { ASTRO_PUBLIC_CONTENT_BASELINE_REVISION } from "../lib/parity/public-content-snapshot-types";
@@ -200,6 +202,19 @@ test("supports both sequential and shortest-column balanced masonry", () => {
   assert.deepEqual(sequential.positions.map((position) => position.column), [0, 1, 0, 1, 0]);
   assert.deepEqual(balanced.positions.map((position) => position.column), [0, 1, 1, 0, 1]);
   assert.ok(balanced.height < sequential.height);
+});
+
+test("keeps Astro's initial mobile loader window without delaying desktop or changing final masonry", () => {
+  assert.equal(PHOTO_MOBILE_INITIAL_REVEAL_MS, 650);
+  assert.equal(photoInitialRevealDelay(390), 650);
+  assert.equal(photoInitialRevealDelay(767), 650);
+  assert.equal(photoInitialRevealDelay(768), 0);
+  assert.equal(photoInitialRevealDelay(1440), 0);
+
+  const gallery = readFileSync(path.join(process.cwd(), "components/site/photo-gallery.tsx"), "utf8");
+  assert.match(gallery, /photoInitialRevealDelay\(window\.innerWidth\)/);
+  assert.match(gallery, /commitFirstBatch\(data\)/);
+  assert.match(gallery, /window\.clearTimeout\(revealTimer\)/);
 });
 
 test("keeps batch loading, persisted layout, ResizeObserver and ViewerJS focus restoration", () => {

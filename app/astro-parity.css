@@ -855,6 +855,7 @@ body:has(> .astro-site) > .astro-site {
 
 /* Global keyboard shortcut help, ported from d1ec7b0. */
 .shortcuts-help { position: fixed; inset: 0; z-index: 400; display: flex; align-items: center; justify-content: center; background: rgb(0 0 0 / 50%); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+.shortcuts-help.is-hidden { display: none; }
 .shortcuts-help-card { width: min(28rem, calc(100vw - 2rem)); margin-inline: 1rem; padding: 1.5rem; border-radius: .5rem; background: var(--c-bg); color: var(--c-text); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 20%); animation: shortcuts-fade-in .2s ease-out; }
 .shortcuts-help-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
 .shortcuts-help-header h2 { margin: 0; font-size: 1.125rem; font-weight: 600; }
@@ -866,3 +867,10 @@ body:has(> .astro-site) > .astro-site {
 .kbd { display: inline-flex; min-width: 1.5rem; height: 1.5rem; align-items: center; justify-content: center; padding: 0 .4rem; border: 1px solid rgb(128 128 128 / 30%); border-radius: 4px; background: rgb(128 128 128 / 10%); font-family: ui-monospace, monospace; font-size: .75rem; font-weight: 500; }
 .shortcuts-help-tip { margin: 1rem 0 0; text-align: center; font-size: .75rem; opacity: .5; }
 @keyframes shortcuts-fade-in { from { opacity: 0; transform: scale(.95); } to { opacity: 1; transform: scale(1); } }
+
+/* Shared legacy footer styles live in the site stylesheet so Next's dormant
+   not-found boundary does not preload a route-only CSS module on every page. */
+.legacy-page-footer { width: min(100%, 65ch); max-width: 65ch; margin: 2rem auto 0; }
+.legacy-page-footer-back-link { border: 0 !important; font-family: var(--font-mono); opacity: .5; }
+@media print { .legacy-page-footer { display: none; } }
+@media (max-width: 767px) { .legacy-page-footer { line-height: 1.8; } }

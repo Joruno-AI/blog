@@ -96,12 +96,10 @@ export function KeyboardShortcuts() {
     };
   }, [open, router]);
 
-  if (!open) return null;
-
   return (
     <div
       id="shortcuts-help"
-      className="shortcuts-help"
+      className={`shortcuts-help${open ? "" : " is-hidden"}`}
       role="dialog"
       aria-modal="true"
       aria-label="键盘快捷键"

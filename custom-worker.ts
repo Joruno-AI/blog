@@ -3,6 +3,7 @@
 import openNextWorker from "./.open-next/worker.js";
 import { agentRateLimitResponse } from "./lib/platform/agent-rate-limit";
 import { reviewReadOnlyResponse } from "./lib/platform/review-read-only";
+import { isNextStaticAssetPath } from "./lib/platform/stale-client-assets";
 import { serveLegacyStaticAsset } from "./lib/r2/legacy-static-assets";
 import {
   asInternalNotFoundRequest,
@@ -29,6 +30,24 @@ const worker = {
 
     const rateLimitResponse = await agentRateLimitResponse(request, env);
     if (rateLimitResponse) return rateLimitResponse;
+
+    // A browser kept open across a deployment can request a hashed chunk from
+    // the previous build. Found assets are served before this Worker; return a
+    // body-free 404 for the missing case instead of feeding the site's HTML 404
+    // to the JavaScript parser. The site error boundary then performs one
+    // guarded hard reload and picks up the current build atomically.
+    if (
+      (request.method === "GET" || request.method === "HEAD")
+      && isNextStaticAssetPath(url.pathname)
+    ) {
+      return new Response(null, {
+        status: 404,
+        headers: {
+          "cache-control": "no-store",
+          "x-content-type-options": "nosniff",
+        },
+      });
+    }
 
     const legacyStaticAsset = await serveLegacyStaticAsset(request, env.R2_BUCKET);
     if (legacyStaticAsset) return legacyStaticAsset;

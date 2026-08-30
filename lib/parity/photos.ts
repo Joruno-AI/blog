@@ -66,6 +66,19 @@ export const ASTRO_PHOTO_HASH = "132f41f4";
 export const ASTRO_PHOTO_ENDPOINT_FILE = `photos.${ASTRO_PHOTO_HASH}.json`;
 export const PHOTO_LAYOUT_STORAGE_KEY = "photo-layout";
 
+/**
+ * Astro does not append the first mobile batch until its public JSON request
+ * completes. The Worker endpoint is consistently faster, so without a small
+ * floor the Next page skips the loader/reveal state that is visible on the
+ * production site. Desktop remains immediate and the complete masonry result
+ * is unchanged after this one-time gate.
+ */
+export const PHOTO_MOBILE_INITIAL_REVEAL_MS = 650;
+
+export function photoInitialRevealDelay(viewportWidth: number) {
+  return viewportWidth <= 767 ? PHOTO_MOBILE_INITIAL_REVEAL_MS : 0;
+}
+
 /** Exact metadata tuple exposed by the production 132f41f4 photo endpoint. */
 export const astroPhotoItems = [
   {

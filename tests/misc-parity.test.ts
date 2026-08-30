@@ -131,6 +131,41 @@ test("keeps the shared site navigation structurally identical to Astro", () => {
   assert.match(globalCss, /html:not\(:has\(\.astro-site\)\)[^\n]*::-webkit-scrollbar/);
 });
 
+test("keeps hidden shared semantics without speculative route CSS preloads", () => {
+  const root = process.cwd();
+  const home = readFileSync(join(root, "app/(site)/page.tsx"), "utf8");
+  const homeCss = readFileSync(join(root, "app/home-parity.css"), "utf8");
+  const shortcuts = readFileSync(join(root, "components/site/keyboard-shortcuts.tsx"), "utf8");
+  const parityCss = readFileSync(join(root, "app/astro-parity.css"), "utf8");
+  const siteLayout = readFileSync(join(root, "app/(site)/layout.tsx"), "utf8");
+  const rootLayout = readFileSync(join(root, "app/layout.tsx"), "utf8");
+  const header = readFileSync(join(root, "components/site/site-header.tsx"), "utf8");
+  const legacyFooter = readFileSync(join(root, "components/site/legacy-page-footer.tsx"), "utf8");
+
+  assert.match(home, /<HeadingAnchor id="joruno-jobāna"/);
+  assert.match(homeCss, /\.home-shell\s*>\s*:is\(h1, h2\)\s*>\s*\.header-anchor\s*\{[^}]*display:\s*none/);
+
+  assert.doesNotMatch(shortcuts, /if \(!open\) return null/);
+  assert.match(shortcuts, /className=\{`shortcuts-help\$\{open \? "" : " is-hidden"\}`\}/);
+  assert.match(shortcuts, /<h2>键盘快捷键<\/h2>/);
+  assert.match(parityCss, /\.shortcuts-help\.is-hidden\s*\{\s*display:\s*none/);
+
+  assert.equal(header.match(/prefetch=\{false\}/g)?.length, 4);
+  assert.match(legacyFooter, /<Link prefetch=\{false\}/);
+  assert.doesNotMatch(legacyFooter, /legacy-page-footer\.module\.css/);
+  assert.match(parityCss, /\.legacy-page-footer\s*\{/);
+  assert.match(siteLayout, /import "\.\.\/not-found-parity\.css"/);
+  for (const file of [
+    "app/(site)/not-found.tsx",
+    "app/(site)/404/page.tsx",
+    "app/(site)/%5Flegacy-404/page.tsx",
+  ]) {
+    assert.doesNotMatch(readFileSync(join(root, file), "utf8"), /not-found-parity\.css/);
+  }
+
+  assert.match(rootLayout, /rel="preload" href="\/fonts\/inter-latin\.woff2" as="font"/);
+});
+
 test("keeps Blog, Streams and Changelog public navigation and desktop projections on the Astro contract", () => {
   const root = process.cwd();
   const reader = readFileSync(join(root, "components/site/blog-reader-sidebar.tsx"), "utf8");

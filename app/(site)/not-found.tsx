@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 
 import { LegacyPageFooter } from "@/components/site/legacy-page-footer";
 import { legacyMetadata } from "@/lib/parity/legacy-metadata";
-import "@/app/not-found-parity.css";
 
 export const metadata: Metadata = legacyMetadata({ title: "404", description: "Page not found", path: "/404/" });
 

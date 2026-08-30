@@ -232,7 +232,7 @@ export function SiteHeader() {
     <>
       <header ref={headerRef} className="nav-header">
         <div className="logo-wrapper">
-          <Link className="site-link logo-link" href="/" aria-label="Joruno · Joruno Jobāna" aria-current={pathname === "/" ? "page" : undefined}>
+          <Link prefetch={false} className="site-link logo-link" href="/" aria-label="Joruno · Joruno Jobāna" aria-current={pathname === "/" ? "page" : undefined}>
             <span className="logo-container"><JorunoLogo /></span>
           </Link>
         </div>
@@ -240,6 +240,7 @@ export function SiteHeader() {
           <div className="desktop-nav-items">
             {navigation.map(({ href, label, icon }) => (
               <Link
+                prefetch={false}
                 className="nav-icon-link desktop-navigation-link"
                 href={href}
                 key={href}
@@ -290,7 +291,7 @@ export function SiteHeader() {
           >
             <div className="mobile-nav-icon-grid">
               {navigation.map(({ href, label, icon }) => (
-                <Link href={href} key={href} title={label} aria-label={label} aria-current={isActive(href) ? "page" : undefined} onClick={() => closeMenu(false, true)}>
+                <Link prefetch={false} href={href} key={href} title={label} aria-label={label} aria-current={isActive(href) ? "page" : undefined} onClick={() => closeMenu(false, true)}>
                   <NavigationIcon icon={icon} />
                 </Link>
               ))}
@@ -522,6 +523,7 @@ function SearchPanel({ open, onClose }: { open: boolean; onClose: () => void }) 
             {visibleResults.length > 0 ? <div className="search-result-h1">{selectedTab === "blog" ? "Blog" : "Changelog"}</div> : null}
             {visibleResults.map((result, index) => (
               <Link
+                prefetch={false}
                 href={result.path}
                 key={result.id}
                 className="search-result-item"

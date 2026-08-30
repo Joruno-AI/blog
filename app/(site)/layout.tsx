@@ -9,6 +9,7 @@ import "../agent-parity.css";
 import "../docs-parity.css";
 import "../shorts-parity.css";
 import "../music-parity.css";
+import "../not-found-parity.css";
 import "../astro-source-prose.css";
 import "../astro-source-markdown.css";
 import "katex/dist/katex.min.css";
